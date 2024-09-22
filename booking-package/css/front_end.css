@@ -1,0 +1,57 @@
+#booking-package .sun {
+    
+}
+
+#booking-package .mon {
+    
+}
+
+#booking-package .tue {
+    
+}
+
+#booking-package .wed {
+    
+}
+
+#booking-package .thu {
+    
+}
+
+#booking-package .fri {
+    
+}
+
+#booking-package .sat {
+    
+}
+
+#booking-package .nationalHoliday {
+    
+}
+
+#booking-package_calendarPage .dateField {
+    /**
+    background-color: #0f9b79;
+    color: #fff;
+    font-weight: 400;
+    **/
+}
+
+#booking-package_calendarPage .startDateOfFullRoom {
+    /**
+    background-image: repeating-linear-gradient(270deg, #ff8989 0px 50%, transparent 0% 100%);
+    **/
+}
+
+#booking-package_calendarPage .dateOfFullRoom {
+    /**
+    background: #ff8989;
+    **/
+}
+
+#booking-package_calendarPage .endDateOfFullRoom {
+    /**
+    background-image: repeating-linear-gradient(90deg, #ff8989 0px 50%, transparent 0% 100%);
+    **/
+}
