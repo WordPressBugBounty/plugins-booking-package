@@ -5290,9 +5290,9 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                 var checkDate = object._hotel.getCheckDate();
                                 object._console.log(checkDate);
                                 
-                                if(checkDate.checkIn == null){
+                                if (checkDate.checkIn == null) {
                                     
-                                    if(schedule.remainder <= 0){
+                                    if (schedule.remainder <= 0) {
                                         
                                         return null;
                                         

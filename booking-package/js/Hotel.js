@@ -178,11 +178,20 @@
         
     }
     
+    
     Booking_Package_Hotel.prototype.addSchedule = function(schedule){
         
         this._scheduleList[schedule.unixTime] = schedule;
         
     }
+    
+    /**
+    Booking_Package_Hotel.prototype.addSchedule = function(key, schedule){
+        
+        this._scheduleList[key] = schedule;
+        
+    }
+    **/
     
     Booking_Package_Hotel.prototype.setSchedule = function(scheduleList){
         
@@ -339,6 +348,47 @@
         
     };
     
+    Booking_Package_Hotel.prototype.getDaysBetween = function(startDate, endDate, timeZone){
+        
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: timeZone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        });
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        const startFormatted = formatter.format(start);
+        const endFormatted = formatter.format(end);
+        
+        const startInNY = new Date(startFormatted);
+        const endInNY = new Date(endFormatted);
+        
+        const millisecondsPerDay = 24 * 60 * 60 * 1000;
+        const diffInMilliseconds = endInNY - startInNY;
+        
+        return diffInMilliseconds / millisecondsPerDay;
+        
+    };
+    
+    Booking_Package_Hotel.prototype.getNextDayStartUnixTime = function(unixTime, nextDay, timeZone) {
+        
+        const date = new Date(unixTime * 1000);
+        date.setUTCDate(date.getUTCDate() + nextDay);
+        const year = date.getUTCFullYear();
+        const month = date.getUTCMonth() + 1;
+        const day = date.getUTCDate();
+        return {
+            key: year + String(month).padStart(2, '0') + String(day).padStart(2, '0'), 
+            year: year,
+            month: month,
+            day: day
+        };
+        
+
+    }
+    
     Booking_Package_Hotel.prototype.verifySchedule = function(verification){
         
         var object = this;
@@ -384,8 +434,38 @@
             
         }
         
+        const days = object.getDaysBetween(checkIn.year + '-' + String(checkIn.month).padStart(2, '0') + '-' + String(checkIn.day).padStart(2, '0'), checkOut.year + '-' + String(checkOut.month).padStart(2, '0') + '-' + String(checkOut.day).padStart(2, '0'), object._calendarAccount.timezone);
+        
         if (verification === true) {
             
+            let ymdList = {};
+            for (var key in scheduleList) {
+                
+                var ymd = scheduleList[key].year + '' + String(scheduleList[key].month).padStart(2, '0') + '' + String(scheduleList[key].day).padStart(2, '0');
+                ymdList[ymd] = scheduleList[key];
+                
+            }
+            
+            for (var i = 0; i < days; i++) {
+                
+                let nextTime = object.getNextDayStartUnixTime(checkIn.unixTime, i, object._calendarAccount.timezone);
+                if (ymdList[nextTime.key] == null) {
+                    
+                    this._checkDate.checkOut = null;
+                    this._responseGuests.status = false;
+                    this._responseGuests.amount = 0;
+                    this._responseGuests.list = null;
+                    this._responseGuests.nights = 0;
+                    this._responseGuests.checkInKey = null;
+                    this._responseGuests.checkOutKey = null;
+                    this._responseGuests.taxes = {};
+                    return this._responseGuests;
+                    
+                }
+                
+            }
+            
+            /**
             for (var time = parseInt(checkIn.unixTime); time <= parseInt(checkOut.unixTime); time += 1440 * 60) {
                 
                 if (scheduleList[time] == null) {
@@ -403,6 +483,7 @@
                 }
                 
             }
+            **/
             
         }
         

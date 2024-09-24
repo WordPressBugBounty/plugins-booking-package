@@ -328,8 +328,117 @@
     			
                 window.addEventListener('resize', () => {
                     
+                    let hasHiddenOnTextarea = false;
+                    let hasHiddenOnTextareaHover = false;
+                    if (textareaPanel.classList.contains('hidden_panel')) {
+                        
+                        hasHiddenOnTextarea = true;
+                        textareaPanel.classList.remove('hidden_panel');
+                        
+                    }
+                    
+                    if (textareaHoverPanel.classList.contains('hidden_panel')){
+                        
+                        hasHiddenOnTextareaHover = true;
+                        textareaHoverPanel.classList.remove('hidden_panel');
+                        
+                    }
+                    
                     editor.layout();
                     editor_hover.layout();
+                    
+                    if (hasHiddenOnTextarea === true) {
+                        
+                        textareaPanel.classList.add('hidden_panel');
+                        
+                    }
+                    
+                    if (hasHiddenOnTextareaHover === true) {
+                        
+                        textareaHoverPanel.classList.add('hidden_panel');
+                        
+                    }
+                    
+                    /**
+                    let hasHiddenOnTextarea = false;
+                    let hasHiddenOnTextareaHover = false;
+                    if (textareaPanel.classList.contains('hidden_panel')) {
+                        
+                        hasHiddenOnTextarea = true;
+                        textareaPanel.classList.remove('hidden_panel');
+                        
+                    }
+                    
+                    if (textareaHoverPanel.classList.contains('hidden_panel')){
+                        
+                        hasHiddenOnTextareaHover = true;
+                        textareaHoverPanel.classList.remove('hidden_panel');
+                        
+                    }
+                    
+                    var timer = setInterval(function(){
+                        
+                        console.log('resize 2');
+                        
+                        let hasHiddenOnTextarea = false;
+                        let hasHiddenOnTextareaHover = false;
+                        if (textareaPanel.classList.contains('hidden_panel')) {
+                            
+                            hasHiddenOnTextarea = true;
+                            
+                            
+                        }
+                        
+                        if (textareaHoverPanel.classList.contains('hidden_panel')){
+                            
+                            hasHiddenOnTextareaHover = true;
+                            
+                            
+                        }
+                        
+                        textareaPanel.classList.remove('hidden_panel');
+                        textareaHoverPanel.classList.remove('hidden_panel');
+                        
+                        console.log('hasHiddenOnTextarea = ' + hasHiddenOnTextarea);
+                        console.log('hasHiddenOnTextareaHover = ' + hasHiddenOnTextareaHover);
+                        console.log(editor.getContentWidth());
+                        editor.layout();
+                        editor_hover.layout();
+                        
+                        if (hasHiddenOnTextarea === true) {
+                            
+                            textareaPanel.classList.add('hidden_panel');
+                            
+                        }
+                        
+                        if (hasHiddenOnTextareaHover === true) {
+                            
+                            textareaHoverPanel.classList.add('hidden_panel');
+                            
+                        }
+                        
+                        clearInterval(timer);
+                        
+                    }, 1000);
+                    
+                    
+                    console.log('resize 1');
+                    editor.layout();
+                    editor_hover.layout();
+                    
+                    if (hasHiddenOnTextarea === true) {
+                        
+                        textareaPanel.classList.add('hidden_panel');
+                        
+                    }
+                    
+                    if (hasHiddenOnTextareaHover === true) {
+                        
+                        textareaHoverPanel.classList.add('hidden_panel');
+                        
+                    }
+                    
+                    **/
                     
                 });
                 
@@ -1581,6 +1690,7 @@
         inputPanel.textContent = null;
         var textareas = [];
         var editors = [];
+        /**
         for (var i = 0; i < classNames.length; i++) {
             
             var className = classNames[i];
@@ -1601,9 +1711,10 @@
                 
             }
             var classNamePanel = object.create('div', object._i18n.get('CSS class selector:') + ' .' + className, null, null, 'margin: 0.5em;', null, null);
-            textareas[i] = object.createInputElement('textarea', null, null, value, null, null, 'editCss_' + className, null, null, null);
+            textareas[i] = object.createInputElement('div', null, null, value, null, null, 'editCss_' + className, 'height: 20vh;', null, null);
             inputPanel.appendChild(classNamePanel);
             inputPanel.appendChild(textareas[i]);
+            
             editors[i] = CodeMirror.fromTextArea(
                 textareas[i], 
                 {
@@ -1613,8 +1724,56 @@
                 }
             );
             
+            
         }
         object._console.log(inputPanel);
+        **/
+        
+        require.config({
+            paths: {
+                'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs'
+            }
+        });
+        
+        require(['vs/editor/editor.main'], function () {
+            
+            for (var i = 0; i < classNames.length; i++) {
+                
+                var className = classNames[i];
+                var value = '';
+                if (customizeLayouts[id][className] != null) {
+                    
+                    value = (function(styles) {
+                        
+                        var style = '';
+                        for (var name in styles) {
+                            
+                            style += name + ': ' + styles[name] + ";\n";
+                            
+                        }
+                        return style;
+                        
+                    })(customizeLayouts[id][className]);
+                    
+                }
+                var classNamePanel = object.create('div', object._i18n.get('CSS class selector:') + ' .' + className, null, null, 'margin: 0.5em;', null, null);
+                textareas[i] = object.createInputElement('div', null, null, value, null, null, 'editCss_' + className, 'height: 15vh; padding: 0 1em;', null, null);
+                inputPanel.appendChild(classNamePanel);
+                inputPanel.appendChild(textareas[i]);
+                editors[i] = monaco.editor.create(document.getElementById('editCss_' + className), {
+                    value: value,
+                    language: 'css',
+                    theme: 'vs-light'
+                });
+                
+            
+                
+            }
+            object._console.log(inputPanel);
+            
+        });
+        
+        
         document.getElementById("closeCssPanelButton").onclick = function() {
             
             cssPanelInLayouts.classList.add("hidden_panel");
@@ -1636,8 +1795,11 @@
             for (var i = 0; i < classNames.length; i++) {
                 
                 var className = classNames[i];
+                /**
                 editors[i].save();
                 var value = textareas[i].value.replace(/[\n\t]/g, ' ');
+                **/
+                var value = editors[i].getValue().replace(/[\n\t]/g, ' ');
                 value = value.replace(/\/\*\*(.|\n)*?\*\*\//g, '');
                 var styleObject = {};
                 if (value) {

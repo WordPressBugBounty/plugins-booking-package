@@ -2051,7 +2051,7 @@ window.addEventListener('error', function(event) {
             
         }
         
-        object.getPublicSchedule(month, day, year, account, hasIncompletelySchedules, addedPublishingDate, callback);
+        object.getPublishedTimeSlots(month, day, year, account, hasIncompletelySchedules, addedPublishingDate, callback);
         object.editPanelShow(true);
         
     };
@@ -2439,13 +2439,13 @@ window.addEventListener('error', function(event) {
             });
             
         };
-        object.createSchedulePanel(object.weekKey, [], 'getPublicSchedule');
+        object.createSchedulePanel(object.weekKey, [], 'getPublishedTimeSlots');
         
         object.editPanelShow(true);
         
     };
     
-    SCHEDULE.prototype.getPublicSchedule = function(month, day, year, account, hasIncompletelySchedules, addedPublishingDate, callback){
+    SCHEDULE.prototype.getPublishedTimeSlots = function(month, day, year, account, hasIncompletelySchedules, addedPublishingDate, callback){
         
         var object = this;
         object._console.log(account);
@@ -2468,17 +2468,17 @@ window.addEventListener('error', function(event) {
         object.buttonPanel.appendChild(saveButton);
         
         object.loadingPanel.setAttribute("class", "loading_modal_backdrop");
-        var post = {nonce: object.nonce, action: object.action, mode: 'getPublicSchedule', month: month, day: day, year: year};
+        var post = {nonce: object.nonce, action: object.action, mode: 'getPublishedTimeSlots', month: month, day: day, year: year};
         if(account != null){
             
             post.accountKey = account.key;
             
         }
-        object.setFunction("getPublicSchedule", post);
+        object.setFunction("getPublishedTimeSlots", post);
         object.xmlHttp = new Booking_App_XMLHttp(object.url, post, object._webApp, function(json){
                 
             object._console.log(json);
-            object.createSchedulePanel(object.weekKey, json, 'getPublicSchedule');
+            object.createSchedulePanel(object.weekKey, json, 'getPublishedTimeSlots');
             object.loadingPanel.setAttribute("class", "hidden_panel");
                 
         }, function(text){
@@ -2491,7 +2491,7 @@ window.addEventListener('error', function(event) {
             
             object.loadingPanel.setAttribute("class", "loading_modal_backdrop");
             var post = {nonce: object.nonce, action: object.action, mode: "deletePublicSchedule", month: month, day: day, year: year};
-            object.setFunction("getPublicSchedule", post);
+            object.setFunction("getPublishedTimeSlots", post);
             object.xmlHttp = new Booking_App_XMLHttp(object.url, post, object._webApp, function(json){
                 
                 callback(json);
@@ -2550,7 +2550,7 @@ window.addEventListener('error', function(event) {
             
             object.loadingPanel.setAttribute("class", "loading_modal_backdrop");
             var post = {nonce: object.nonce, action: object.action, mode: "deletePerfectPublicSchedule", month: month, day: day, year: year, accountKey: account.key};
-            object.setFunction("getPublicSchedule", post);
+            object.setFunction("getPublishedTimeSlots", post);
             object.xmlHttp = new Booking_App_XMLHttp(object.url, post, object._webApp, function(json){
                 
                 object.loadingPanel.setAttribute("class", "hidden_panel");
@@ -3064,7 +3064,7 @@ window.addEventListener('error', function(event) {
         var tdDelete = object.create('td', null, [deleteSlots], 'allScheduleDelete', null, null, null);
         
         var thead = object.create('thead', null, [th, tdTime, tdDeadlineTime, tdTitle, tdCapacities], null, 'width: 100%; background: #fff; position: sticky; top: 0; left: 0; z-index: 1;', null, null);
-        if (mode == 'getPublicSchedule') {
+        if (mode == 'getPublishedTimeSlots') {
             
             thead.appendChild(tdRemaining);
             
@@ -3195,7 +3195,7 @@ window.addEventListener('error', function(event) {
             var tr = object.create('tr', null, [th, timeTd, deadlineTimeTd, titleTd, capacityTd, remainderTd, stopTd, deleteTd], 'time_slots_' + i, null, null, null);
             tbody.appendChild(tr);
             
-            if (mode != 'getPublicSchedule') {
+            if (mode != 'getPublishedTimeSlots') {
                 
                 tr.removeChild(remainderTd);
                 
@@ -3245,7 +3245,7 @@ window.addEventListener('error', function(event) {
                     
                 }
                 
-                if (mode == 'getPublicSchedule') {
+                if (mode == 'getPublishedTimeSlots') {
                     
                     remainderBlock.textContent = scheduleData[i]['remainder'];
                     remainderBlock.setAttribute("data-key", scheduleData[i]['remainder']);

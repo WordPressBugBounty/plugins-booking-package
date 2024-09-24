@@ -4330,7 +4330,7 @@
 			
         }
         
-        public function getPublicSchedule(){
+        public function getPublishedTimeSlots(){
         	
         	$accountKey = 1;
             if (isset($_POST['accountKey'])) {
@@ -4449,7 +4449,7 @@
 								}
 								**/
 							}
-							
+							/**
 							$wpdb->update( 
 								$table_name,
 								array(
@@ -4463,6 +4463,40 @@
 								array('%d', '%d', '%d', '%s', '%d'),
 								array('%d')
 							);
+							**/
+							if ($account['type'] === 'day') {
+								
+								$wpdb->update( 
+									$table_name,
+									array(
+										'cost' => intval($value->cost), 
+										'capacity' => intval($value->capacity), 
+										'remainder' => intval($value->remainder),
+										'stop' => sanitize_text_field($value->stop),
+										'publishingDate' => intval($publishingDate),
+									),
+									array('key' => intval($value->key)),
+									array('%d', '%d', '%d', '%s', '%d'),
+									array('%d')
+								);
+								
+							} else {
+								
+								$wpdb->update( 
+									$table_name,
+									array(
+										'cost' => intval($value->cost), 
+										'capacity' => intval($value->capacity), 
+										'remainder' => intval($value->remainder),
+										'stop' => sanitize_text_field($value->stop),
+										'publishingDate' => intval($publishingDate),
+									),
+									array('accountKey' => intval($value->accountKey), 'year' => intval($value->year), 'month' => intval($value->month), 'day' => intval($value->day)),
+									array('%d', '%d', '%d', '%s', '%d'),
+									array('%d', '%d', '%d', '%d')
+								);
+								
+							}
 							
 						}
 						
@@ -4798,6 +4832,7 @@
 				foreach ((array) $rows as $row) {
 					
 					date_default_timezone_set($row['timezone']);
+					$timeZone = $row['timezone'];
 					$maxAccountScheduleDay = intval($row['maxAccountScheduleDay']);
 					$accountKey = $row['key'];
 					$accountType = $row['type'];
@@ -4858,23 +4893,18 @@
 						$month = date('m', $unixTime);
 						$day = date('d', $unixTime);
 						$week = date('w', $unixTime);
-						$dayBeforeUnixTime = $unixTime + (1440 * 60);
+						
+						$now = new DateTime("@$unixTime");
+						$now->setTimezone(new DateTimeZone($timeZone));
+						$now->modify('+1 day');
+						$dayBeforeUnixTime = $now->getTimestamp();
+						$unixTime = $now->getTimestamp();
+						
+						#$dayBeforeUnixTime = $unixTime + (1440 * 60);
 						$dayBeforeNationalHolidayKey = date('Y', $dayBeforeUnixTime) . date('m', $dayBeforeUnixTime) . date('d', $dayBeforeUnixTime);
 						$nationalHolidayKey = $year . sprintf('%02d', $month) . sprintf('%02d', $day);
-						$unixTime += 1440 * 60;
+						#$unixTime += 1440 * 60;
 						$table_name = $wpdb->prefix . "booking_package_schedules";
-						
-						/**
-						$table_name = $wpdb->prefix . "booking_package_schedules";
-						$sql = "SELECT `key` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND (`status` = 'open' OR `status` = 'deleted') LIMIT 0, 1;";
-						if ($calendarAccount['type'] == 'hotel') {
-							
-							$sql = "SELECT `key`, `stop` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND (`status` = 'open' OR `status` = 'deleted') LIMIT 0, 1;";
-							
-						}
-						$valueArray = array(intval($accountKey), intval($year), intval($month), intval($day));
-						$row = $wpdb->get_row($wpdb->prepare($sql, $valueArray));
-						**/
 						
 						$hasSchedules = (function($year, $month, $day, $addedSchedules) {
 							
@@ -5992,14 +6022,14 @@
 						
 						$table_name = $wpdb->prefix . "booking_package_schedules";
 						$sql = $wpdb->prepare(
-							"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND `holiday` = 'false' AND `status` = 'open' AND `publishingDate` = 0 AND (`stop` = 'false' OR  `stop` = 'true') ORDER BY `unixTime` ASC;", 
+							"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND `holiday` = 'false' AND `status` = 'open' AND `publishingDate` = 0 AND (`stop` = 'false' OR  `stop` = 'true') ORDER BY `unixTime`, `key` ASC;", 
 							array(intval($accountCalendarKey), intval($value['year']), intval($value['month']), intval($i))
 						);
 						
 						if ($public === false) {
 							
 							$sql = $wpdb->prepare(
-								"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND `holiday` = 'false' AND `status` = 'open' AND (`stop` = 'false' OR  `stop` = 'true') ORDER BY `unixTime` ASC;", 
+								"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND `holiday` = 'false' AND `status` = 'open' AND (`stop` = 'false' OR  `stop` = 'true') ORDER BY `unixTime`, `key` ASC;", 
 								array(intval($accountCalendarKey), intval($value['year']), intval($value['month']), intval($i))
 							);
 							
@@ -6007,6 +6037,12 @@
 						
 						$key = intval($value['year'].sprintf("%02d%02d", $value['month'], $i));
 						$rows = $wpdb->get_results($sql, ARRAY_A);
+						if (is_null($rows)) {
+							
+							$rows = array();
+							
+						}
+						
 						foreach ((array) $rows as $scheduleKey => $scheduleData) {
 							
 							$rows[$scheduleKey] = $this->fixUnixTimeShift($scheduleData, $account['timezone']);
@@ -6016,6 +6052,12 @@
 						}
 						
 						$schedule[$key] = $rows;
+						if ($account['type'] == "hotel" && count($rows) > 0) {
+							
+							$schedule[$key] = array($rows[0]);
+							
+						}
+						
 						if (isset($regularHoliday['calendar'][$key]) && intval($regularHoliday['calendar'][$key]['status']) == 1) {
 							
 							if ($account['type'] == "hotel") {
@@ -7515,6 +7557,7 @@
 			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$numberKeys = $setting->getListOfDaysOfWeek();
 			$calendarAccount = $this->getCalendarAccount($calendarAccountKey);
+			$timeZone = $calendarAccount['timezone'];
 			$accountKey = $calendarAccount['key'];
 			$person = 0;
 			$nights = 0;
@@ -7580,8 +7623,58 @@
 				$accommodationDetails['scheduleList'] = array();
 				$accommodationDetails['scheduleDetails'] = array();
 				$first = reset($scheduleList);
+				$first_unixTime = $first['unixTime'];
 				$last = array('unixTime' => strtotime("+" . $nights . " days", intval($first['unixTime']) ) );
 				$table_name = $wpdb->prefix . "booking_package_schedules";
+				
+				for ($i = 0; $i <= ($nights - 1); $i++) {
+					
+					$check_in_date = new DateTime("@$first_unixTime");
+					$check_in_date->setTimezone(new DateTimeZone($timeZone));
+					$time = $check_in_date->modify('+' . $i . ' day')->getTimestamp();
+					#$time = $time->getTimestamp();
+					#echo $i . ' = ' . date('Y-m-d H:i', $time) . '<br>';
+					$sql = $wpdb->prepare(
+						"SELECT `key`, `month`, `day`, `year`, `title`, `stop`, `weekKey`, `unixTime`, `cost`, `remainder` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `month` = %d AND `day` = %d AND `year` = %d AND `status` = 'open' ORDER BY `unixTime` ASC;", 
+						array(intval($accountKey), intval(date('n', $time)), intval(date('j', $time)), intval(date('Y', $time)))
+					);
+					$row = $wpdb->get_row($sql, ARRAY_A);
+					if (is_null($row)) {
+						
+						$date = $this->dateFormat($dateFormat, $positionOfWeek, $time, '', false, false, 'text');
+						return array("status" => "error", "message" => sprintf(__("There is no vacancy in the room on %s", 'booking-package'), $date), 'applicantCount' => 0, );
+						
+					} else {
+						
+						$scheduleCount++;
+						array_push($accommodationDetails['scheduleList'], $row['key']);
+						$accommodationDetails['scheduleDetails'][$row['unixTime']] = $row;
+						$date = $this->dateFormat($dateFormat, $positionOfWeek, $row['unixTime'], $row['title'], false, false, 'text');
+						if ($type == 'book' && $row['remainder'] <= 0) {
+							
+							return array("status" => "error", "message" => sprintf(__("There is no vacancy in the room on %s", 'booking-package'), $date));
+							
+						}
+						
+						if ($this->confirmRegularHolidays($accountKey, $row['month'], $row['day'], $row['year']) === true) {
+							
+							return array("status" => "error", "message" => __("The requested schedule has been closed.", 'booking-package'));
+							
+						}
+						
+						if ($row['stop'] == 'true' || $row['stop'] == 'auto_publish') {
+							
+							return array("status" => "error", "message" => sprintf(__("Booking of %s is suspended.", 'booking-package'), $date));
+								
+						}
+						
+						$totalCost += intval($row['cost']) * $applicantCount;
+						
+					}
+					
+				}
+				
+				/**
 				for ($time = $first['unixTime']; $time < $last['unixTime']; $time += 1440 * 60) {
 					
 			        $sql = $wpdb->prepare(
@@ -7623,6 +7716,8 @@
 					}
 			        
 			    }
+			    **/
+			    
 				/**
 				$sql = $wpdb->prepare(
 					"SELECT `key`,`month`,`day`,`year`, `title`, `stop`,`weekKey`,`unixTime`,`cost`,`remainder` FROM `" . $table_name . "` WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` < %d) AND `status` = 'open' ORDER BY `unixTime` ASC;", 
@@ -10519,7 +10614,7 @@
 				$unixTimeStart = 0;
 				$accommodationDetails = array();
 				$table_name = $wpdb->prefix . "booking_package_booked_customers";
-				$sql = "SELECT * FROM `".$table_name."` WHERE `key` = %d;";
+				$sql = "SELECT * FROM `" . $table_name . "` WHERE `key` = %d;";
 				$sql = $wpdb->prepare("SELECT * FROM `".$table_name."` WHERE `key` = %d;", array(intval($deleteKey)));
 				$row = $wpdb->get_row($sql, ARRAY_A);
 				if (is_null($row) === false) {
