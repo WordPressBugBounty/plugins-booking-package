@@ -2939,6 +2939,13 @@
 				
 			}
 			
+			
+			$timezone = new DateTimeZone($row['timezone']);
+			$datetime = new DateTime('now', $timezone);
+			$offset = $datetime->getOffset();
+			$minutes = $offset / 60;
+			$row['timezonOffset'] = ($minutes >= 0 ? "+" : "") . $minutes;
+			
 			if (is_null($row['paymentMethod'])) {
 				
 				$row['paymentMethod'] = $this->setPaymentMethod($accountKey);
@@ -6880,7 +6887,8 @@
 				
 				$guestsList = array();
 				$guests = json_decode($row['guests'], true);
-				if (is_null($guests) === false && isset($guests['guests'])) {
+				//if (is_null($guests) === false && isset($guests['guests'])) {
+				if (is_null($guests) === false && array_key_exists('guests', $guests) === true && is_null($guests['guests']) === false ) {
 					
 					$reflectAdditional = intval($guests['reflectAdditional']);
 					$reflectAdditionalTitle = $guests['reflectAdditionalTitle'];
@@ -10208,11 +10216,13 @@
 					
 				}
 				
+				/**
 				if (count($costs) === 0) {
 					
 					array_push($costs, $costsWithKey['cost_1']);
 					
 				}
+				**/
 				
 				$response['costs'] = $costs;
 				$response['totalCost'] = $totalCost1 + $totalCost2;
@@ -10228,6 +10238,7 @@
 				
 			}
 			
+			/**
 			if (is_array($costs) == true && count($costs) > 0) {
 				
 				$response['max'] = max($costs);
@@ -10245,7 +10256,7 @@
 				$response['hasMultipleCosts'] = true;
 				
 			}
-			
+			**/
 			
 			return $response;
 			
@@ -12883,7 +12894,7 @@
 			$reflectService = 1;
 			$reflectServiceTitle = null;
 			$guestsList = array();
-			if (is_null($guests) === false && isset($guests['guests'])) {
+			if (is_null($guests) === false && array_key_exists('guests', $guests) === true && is_null($guests['guests']) === false ) {
 				
 				$reflectAdditional = intval($guests['reflectAdditional']);
 				$reflectAdditionalTitle = $guests['reflectAdditionalTitle'];
@@ -13043,7 +13054,7 @@
 			$reflectServiceTitle = null;
 			$guestsList = array();
 			
-			if (is_null($guests) === false && isset($guests['guests'])) {
+			if (is_null($guests) === false && array_key_exists('guests', $guests) === true && is_null($guests['guests']) === false ) {
 				
 				$reflectAdditional = intval($guests['reflectAdditional']);
 				$reflectAdditionalTitle = $guests['reflectAdditionalTitle'];
@@ -13374,7 +13385,7 @@
 						foreach ((array) $services as $key => $service) {
 							
 							$responseCostInService = $this->getCostsInService($calendarAccount, $service, $guestsList);
-							$costs = $responseCostInService['costs'];
+							#$costs = $responseCostInService['costs'];
 							$subtotalInService = $responseCostInService['totalCost'];
 							$details = $service['name'];
 							$detailsExcludedGuests = $service['name'];
@@ -13438,7 +13449,7 @@
 									$detailsExcludedGuests = "#".$no." ".$option['name']." ";
 									$detailsExcludedGuestsAndCosts = "#".$no." ".$option['name']." ";
 									$responseCostInOption = $this->getCostsInService($calendarAccount, $option, $guestsList);
-									$costs = $responseCostInOption['costs'];
+									#$costs = $responseCostInOption['costs'];
 									$subtotalInOption = $responseCostInOption['totalCost'];
 									if ($subtotalInOption > 0) {
 										

@@ -372,9 +372,13 @@
         
     };
     
-    Booking_Package_Hotel.prototype.getNextDayStartUnixTime = function(unixTime, nextDay, timeZone) {
+    Booking_Package_Hotel.prototype.getNextDayStartUnixTime = function(unixTime, offset, nextDay, timeZone) {
         
-        const date = new Date(unixTime * 1000);
+        /**
+        console.error(offset);
+        console.error(parseInt(unixTime) + (offset * 60));
+        **/
+        const date = new Date((parseInt(unixTime) + (offset * 60)) * 1000);
         date.setUTCDate(date.getUTCDate() + nextDay);
         const year = date.getUTCFullYear();
         const month = date.getUTCMonth() + 1;
@@ -396,6 +400,7 @@
         var checkOut = this._checkDate.checkOut;
         var scheduleList = this._scheduleList;
         object._console.log(object._calendarAccount);
+        const offset = parseInt(object._calendarAccount.timezonOffset);
         var maximumNights = parseInt(object._calendarAccount.maximumNights);
         var minimumNights = parseInt(object._calendarAccount.minimumNights);
         
@@ -448,7 +453,7 @@
             
             for (var i = 0; i < days; i++) {
                 
-                let nextTime = object.getNextDayStartUnixTime(checkIn.unixTime, i, object._calendarAccount.timezone);
+                let nextTime = object.getNextDayStartUnixTime(checkIn.unixTime, offset, i, object._calendarAccount.timezone);
                 if (ymdList[nextTime.key] == null) {
                     
                     this._checkDate.checkOut = null;
