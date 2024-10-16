@@ -8872,6 +8872,88 @@
 			
 		}
 		
+		public function verifyGoogleReCaptchaWithGoogleCloud($googleReCaptchaToken) {
+			
+			$response = array('status' => true, 'message' => null, 'v' => null);
+			$googleReCAPTCHA_active = get_option($this->prefix . "googleReCAPTCHA_active", "0");
+			$siteKey = get_option($this->prefix . "googleReCAPTCHA_site_key", null);
+			$projectId = get_option($this->prefix . "googleCloudProjectId", null);
+			$apiKey = get_option($this->prefix . "googleCloudApiKey", null);
+			if (intval($googleReCAPTCHA_active) == 0) {
+				
+				return $response;
+				
+			}
+			
+			if (empty($projectId)) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: The Google Cloud Project ID is not entered.';
+				return $response;
+				
+			}
+			
+			if (empty($siteKey)) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: The Google Cloud Site Key is not entered.';
+				return $response;
+				
+			}
+			
+			if (empty($apiKey)) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: The Google Cloud API Key is not entered.';
+				return $response;
+				
+			}
+			
+			if (empty($googleReCaptchaToken)) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: ' . __('Unknown error.', 'booking-package');
+				return $response;
+				
+			}
+			
+			$event = array(
+	            'event' => array(
+	                'token' => $googleReCaptchaToken,
+	                'expectedAction' => 'booking_package',
+	                'siteKey' => $siteKey,
+	            )
+	        );
+	        
+	        $args = array(
+                'method' => 'POST',
+                'body' => $event,
+            );
+            $json = wp_remote_request('https://recaptchaenterprise.googleapis.com/v1/projects/' . $projectId . '/assessments?key=' . $apiKey, $args);
+            $statusCode = wp_remote_retrieve_response_code($json);
+            $result = json_decode(wp_remote_retrieve_body($json), true);
+			$response['reCaptcha'] = $result;
+			
+			if (isset($result['error'])) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: ' . $result['error']['message'];
+				return $response;
+				
+			}
+			
+			$score = $result['riskAnalysis']['score'];
+			if (floatval($score) < 0.5) {
+				
+				$response['status'] = false;
+				$response['message'] = 'reCaptcha: Your score (' . $score . ') is too low..';
+				
+			}
+			
+			return $response;
+			
+		}
+		
 		public function verifyGoogleReCaptchaToken($googleReCaptchaToken) {
 			
 			$response = array('status' => true, 'message' => null, 'v' => null);
@@ -10144,14 +10226,26 @@
 			
 			if (intval($calendarAccount['guestsBool']) === 1 && is_array($guests)) {
 				
+				$countActives = 0;
 				foreach ($guests as $key => $guest) {
 					
 					if (intval($guest['reflectService']) === 1) {
 						
 						$hasReflectService = true;
-						break;
 						
 					}
+					
+					if ($guest['active'] === 'true') {
+						
+						$countActives++;
+						
+					}
+					
+				}
+				
+				if ($countActives === 0) {
+					
+					$calendarAccount['guestsBool'] = 0;
 					
 				}
 				
@@ -10216,13 +10310,11 @@
 					
 				}
 				
-				/**
 				if (count($costs) === 0) {
 					
 					array_push($costs, $costsWithKey['cost_1']);
 					
 				}
-				**/
 				
 				$response['costs'] = $costs;
 				$response['totalCost'] = $totalCost1 + $totalCost2;
