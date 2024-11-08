@@ -6839,6 +6839,22 @@ window.addEventListener('error', function(event) {
             
         }
         
+        if (inputTypeList.maxBookingSlotsPerDay != null) {
+            
+            console.error(inputTypeList.maxBookingSlotsPerDay);
+            console.error(account.maxBookingSlotsPerDay);
+            inputTypeList.maxBookingSlotsPerDay.valueList[0].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsPerDayStatus);
+            inputTypeList.maxBookingSlotsPerDay.valueList[1].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnMonday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[2].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnTuesday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[3].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnWednesday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[4].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnThursday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[5].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnFriday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[6].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnSaturday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[7].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnSunday);
+            inputTypeList.maxBookingSlotsPerDay.valueList[8].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnNationalHoliday);
+            
+        }
+        
         if (inputTypeList.displayRemainingSlots != null) {
             
             //displayRemainingCapacityInCalendar
@@ -7558,6 +7574,20 @@ window.addEventListener('error', function(event) {
                 inputTypeList.account_email_address.valueList[0].value = object._defaultEmail.email_to;
                 inputTypeList.account_email_address.valueList[1].value = object._defaultEmail.email_from_title;
                 inputTypeList.account_email_address.valueList[2].value = object._defaultEmail.email_from;
+                
+            }
+            
+            if (inputTypeList.maxBookingSlotsPerDay != null) {
+                
+                inputTypeList.maxBookingSlotsPerDay.valueList[0].value = 0;
+                inputTypeList.maxBookingSlotsPerDay.valueList[1].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[2].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[3].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[4].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[5].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[6].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[7].value = 10;
+                inputTypeList.maxBookingSlotsPerDay.valueList[8].value = 0;
                 
             }
             
@@ -11538,7 +11568,7 @@ window.addEventListener('error', function(event) {
             var overflow = object.create('div', null, [menuList, content], null, 'overflow-x: auto;', null, null);
             valuePanel.appendChild(overflow);
             
-            var weeks = [object._i18n.get("Sun"), object._i18n.get("Mon"), object._i18n.get("Tue"), object._i18n.get("Wed"), object._i18n.get("Thu"), object._i18n.get("Fri"), object._i18n.get("Sat"), object._i18n.get("National holiday")];
+            var weeks = [object._i18n.get("Sun"), object._i18n.get("Mon"), object._i18n.get("Tue"), object._i18n.get("Wed"), object._i18n.get("Thu"), object._i18n.get("Fri"), object._i18n.get("Sat"), object._i18n.get("Public holiday")];
             var values = input.value;
             for (var day = 0; day < 8; day++) {
                 

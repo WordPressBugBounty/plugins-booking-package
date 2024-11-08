@@ -127,6 +127,7 @@
 					"customizeButtons"								=> "`customizeButtons`						TEXT DEFAULT NULL",
 					"customizeLayoutsBool"							=> "`customizeLayoutsBool`					INT(1) DEFAULT 0",
 					"customizeLayouts"								=> "`customizeLayouts`						TEXT DEFAULT NULL",
+					"maxBookingSlotsPerDay"							=> "`maxBookingSlotsPerDay`					TEXT DEFAULT NULL",
 				),
 			);
 			
@@ -172,6 +173,7 @@
 					"title" 				=> "`title`			    	VARCHAR(255) DEFAULT NULL",
 					"status" 				=> "`status`				VARCHAR(255) DEFAULT 'open'",
 					"cost"					=> "`cost`			    	FLOAT DEFAULT NULL",
+					"bookingCount"			=> "`bookingCount`			INT(11) DEFAULT 0",
 					"capacity"				=> "`capacity`		    	INT(11) NOT NULL",
 					"remainder" 			=> "`remainder`		    	INT(11) NOT NULL",
 					"deadlineTime"			=> "`deadlineTime`			INT(11) NOT NULL DEFAULT 0",

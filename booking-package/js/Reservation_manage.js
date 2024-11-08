@@ -4182,6 +4182,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         }
         
         var paymentMethodPanel = object.createRowPanel(object._i18n.get('Payment method'), paymentMethodValue, "payment_method", null, null);
+        paymentMethodPanel.classList.add('payment_method_row');
         formPanel.appendChild(paymentMethodPanel);
         
         if (reservationData.payId == "stripe" || reservationData.payId == "stripe_konbini" || reservationData.payId == "paypal") {

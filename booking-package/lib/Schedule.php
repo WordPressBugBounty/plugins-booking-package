@@ -2760,6 +2760,13 @@
 					
 				}
 				
+				if (array_key_exists('maxBookingSlotsPerDay', $row)) {
+					
+					$rows[$key]['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('set', $rows[$key]['maxBookingSlotsPerDay']);
+					
+				}
+				
+				
 				/**
 				if ($columns === '*') {
 					
@@ -2867,6 +2874,7 @@
 			$row['customizeLabels'] = $this->setCustomizeLabels($row, $row['customizeLabels'], false);
 			$row['customizeButtons'] = $this->setCustomizeButtons($row, $row['customizeButtons']);
 			$row['customizeLayouts'] = $this->setCustomizeLayouts($row, $row['customizeLayouts']);
+			$row['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('set', $row['maxBookingSlotsPerDay']);
 			
 			/**
 			if (isset($row['minimumGuests'])) {
@@ -2961,6 +2969,36 @@
 			
 			
 			return $row;
+        	
+        }
+        
+        public function updateMaxBookingSlotsPerDay($mode, $maxBookingSlotsPerDay) {
+        	
+        	if (is_null($maxBookingSlotsPerDay) === true) {
+        		
+        		$maxBookingSlotsPerDay = '[]';
+        		
+        	}
+        	
+        	$maxBookingSlotsPerDay = JSON_decode($maxBookingSlotsPerDay, true);
+        	$keys = array('maxBookingSlotsPerDayStatus' => 0, 'maxBookingSlotsOnMonday' => 10, 'maxBookingSlotsOnTuesday' => 10, 'maxBookingSlotsOnWednesday' => 10, 'maxBookingSlotsOnThursday' => 10, 'maxBookingSlotsOnFriday' => 10, 'maxBookingSlotsOnSaturday' => 10, 'maxBookingSlotsOnSunday' => 10, 'maxBookingSlotsOnNationalHoliday' => 0);
+        	foreach ($keys as $key => $value) {
+        		
+        		if ($mode === 'add' && isset($_POST[$key])) {
+        			
+        			$maxBookingSlotsPerDay[$key] = intval($_POST[$key]);
+        			
+        		}
+        		
+        		if (array_key_exists($key, $maxBookingSlotsPerDay) === false) {
+        			
+        			$maxBookingSlotsPerDay[$key] = $value;
+        			
+        		}
+        		
+        	}
+        	
+        	return $maxBookingSlotsPerDay;
         	
         }
         
@@ -3154,6 +3192,8 @@
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
 			
+			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
+			
 			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
 				'hotelChargeOnSunday', 
@@ -3302,6 +3342,7 @@
 					'formatNightDay' => intval($_POST['formatNightDay']),
 					'messagingService' => sanitize_text_field($messagingService),
 					'autoPublish' => intval($_POST['autoPublish']),
+					'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($maxBookingSlotsPerDay) ),
 				), 
 				array(
 					'%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', 
@@ -3311,7 +3352,7 @@
 					'%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', 
 					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
 					'%d', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d',
-					'%s', '%s', '%d', '%d', '%d', '%d', '%s', '%d', 
+					'%s', '%s', '%d', '%d', '%d', '%d', '%s', '%d', '%s', 
 				)
 			);
 			
@@ -3596,6 +3637,7 @@
 			$_POST['displayRemainingCapacityHasMoreThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasMoreThenThreshold']);
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
+			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
 			
 			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
@@ -3739,6 +3781,7 @@
 						'formatNightDay' => intval($_POST['formatNightDay']),
 						'messagingService' => sanitize_text_field($messagingService),
 						'autoPublish' => intval($_POST['autoPublish']),
+						'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($maxBookingSlotsPerDay) ),
 					),
 					array('key' => intval($_POST['accountKey'])),
 					array(
@@ -3749,7 +3792,7 @@
 						'%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
 						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
 						'%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', '%d', 
-						'%s', '%d', 
+						'%s', '%d', '%s', 
 					),
 					array('%d')
 				);
@@ -9593,6 +9636,7 @@
 						return $response;
 						
 					}
+					$this->updateBookingCount('add', intval($_POST['timeKey']), intval($applicantCount));
 					$status = $this->getStatus();
 					$privateResponse = $this->insertPrivateData($sendDate, $_POST['permission'], $status, $_POST['timeKey'], $scheduleUnixTime, $scheduleTitle, $scheduleCost, $services, $form, $emails, $currency, null, null, $accountKey, $permalink, $preparation, $taxes, $responseGuests, $coupon, $administrator, $applicantCount);
 					
@@ -9796,6 +9840,63 @@
 			
 		}
 		
+		public function updateBookingCount($mode, $key, $applicantCount) {
+			
+			global $wpdb;
+			$table_name = $wpdb->prefix . "booking_package_schedules";
+			$sql = $wpdb->prepare(
+    			"SELECT `bookingCount` FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
+    			array(intval($key))
+    		);
+    		$row = $wpdb->get_row($sql, ARRAY_A);
+    		$bookingCount = intval($row['bookingCount']);
+    		
+    		
+			try {
+				
+				$wpdb->query("START TRANSACTION");
+				$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_schedules" . "` WRITE");
+				
+				if ($mode === 'add') {
+					
+					$bookingCount += $applicantCount;
+					
+				} else {
+					
+					$bookingCount -= $applicantCount;
+					if ($bookingCount < 0) {
+						
+						$bookingCount = 0;
+						
+					}
+					
+				}
+				
+				$updateSql = $wpdb->prepare(
+					'UPDATE `' . $table_name . '` SET `bookingCount` = %d WHERE `key` = %d;', 
+					array(intval($bookingCount), intval($key))
+				);
+				$bool = $wpdb->query($updateSql);
+				
+				$wpdb->query('COMMIT');
+				$wpdb->query('UNLOCK TABLES');
+				
+			} catch (Exception $e) {
+				
+				$wpdb->query('ROLLBACK');
+				$wpdb->query('UNLOCK TABLES');
+				$error = json_decode($e->getMessage(), true);
+				return $error;
+				
+			}
+    		/** finally {
+    			
+    			$wpdb->query('UNLOCK TABLES');
+    			
+    		}
+    		**/
+			
+		}
 		public function cancelPayment() {
 			
 			if (isset($_POST['payType']) && $_POST['payType'] == 'stripe') {
@@ -10330,26 +10431,6 @@
 				
 			}
 			
-			/**
-			if (is_array($costs) == true && count($costs) > 0) {
-				
-				$response['max'] = max($costs);
-				$response['min'] = min($costs);
-				
-			} else {
-				
-				$totalCost += $costsWithKey['cost_1'];
-				$response['totalCost'] = $totalCost;
-				
-			}
-			
-			if ($response['max'] != $response['min']) {
-				
-				$response['hasMultipleCosts'] = true;
-				
-			}
-			**/
-			
 			return $response;
 			
 		}
@@ -10736,6 +10817,7 @@
 					$sql = null;
 					$month = date('m', $row['scheduleUnixTime']);
 					$year = date('Y', $row['scheduleUnixTime']);
+					$scheduleKey = $row['scheduleKey'];
 					$applicantCount = $row['applicantCount'];
 					$payId = $row['payId'];
 					$payToken = $row['payToken'];
@@ -10866,6 +10948,8 @@
 							return $updateSchedule;
 							
 						}
+						
+						$this->updateBookingCount('remove', $scheduleKey, intval($applicantCount));
 						
             		}
 					
@@ -11053,6 +11137,9 @@
 				
 			}
 			
+			$oldScheduleKey = null;
+			$newScheduleKey = null;
+			
 			$response_user = array();
 			$selectedOptions = array();
 			$resultArray = array();
@@ -11167,6 +11254,7 @@
 					$table_name = $wpdb->prefix . "booking_package_schedules";
 					
 					$scheduleKey = $row['scheduleKey'];
+					$oldScheduleKey = $row['scheduleKey'];
 					$scheduleUnixTime = $row['scheduleUnixTime'];
 					$scheduleTitle = $row['scheduleTitle'];
 					$scheduleCost = $row['scheduleCost'];
@@ -11265,6 +11353,7 @@
 							} else {
 								
 								$scheduleKey = $rowSchedule['key'];
+								$newScheduleKey = $rowSchedule['key'];
 								$scheduleUnixTime = $rowSchedule['unixTime'];
 								$scheduleTitle = $rowSchedule['title'];
 								$scheduleCost = $rowSchedule['cost'];
@@ -11388,10 +11477,18 @@
 						
 					}
 					
-					$table_name = $wpdb->prefix . "booking_package_booked_customers";
-					$wpdb->query("START TRANSACTION");
-					#$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
+					if (is_null($oldScheduleKey) === false && is_null($newScheduleKey) === false) {
+						
+						$this->updateBookingCount('remove', intval($oldScheduleKey), intval($applicantCount));
+						$this->updateBookingCount('add', intval($newScheduleKey), intval($applicantCount));
+						
+					}
+					
 					try {
+						
+						$table_name = $wpdb->prefix . "booking_package_booked_customers";
+						$wpdb->query("START TRANSACTION");
+						$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_booked_customers" . "` WRITE");
 						
 						$bool = $wpdb->update(
 							$table_name,
@@ -11418,19 +11515,24 @@
 							),
 							array('%d')
 						);
+						
 						$wpdb->query('COMMIT');
-						#$wpdb->query('UNLOCK TABLES');
+						$wpdb->query('UNLOCK TABLES');
 						
 					} catch (Exception $e) {
 						
 						$wpdb->query('ROLLBACK');
-						#$wpdb->query('UNLOCK TABLES');
+						$wpdb->query('UNLOCK TABLES');
+						$error = json_decode($e->getMessage(), true);
+						return $error;
 						
-					}/** finally {
+					}
+					/** finally {
 						
 						$wpdb->query('UNLOCK TABLES');
 						
-					}**/
+					}
+					**/
 					
 				}
 				
@@ -11445,10 +11547,11 @@
 					
 				}
 				
-				$table_name = $wpdb->prefix . "booking_package_booked_customers";
-				$wpdb->query("START TRANSACTION");
-				#$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				try {
+					
+					$table_name = $wpdb->prefix . "booking_package_booked_customers";
+					$wpdb->query("START TRANSACTION");
+					$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_booked_customers" . "` WRITE");
 					
 					$bool = $wpdb->update(
 						$table_name,
@@ -11462,19 +11565,24 @@
 						array('%s', '%s', '%d', '%d'),
 						array('%d')
 					);
+					
 					$wpdb->query('COMMIT');
-					#$wpdb->query('UNLOCK TABLES');
+					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					#$wpdb->query('UNLOCK TABLES');
+					$wpdb->query('UNLOCK TABLES');
+					$error = json_decode($e->getMessage(), true);
+					return $error;
 					
-				}/** finally {
+				}
+				/** finally {
 					
 					$wpdb->query('UNLOCK TABLES');
 					
-				}**/
+				}
+				**/
 				
             }
             

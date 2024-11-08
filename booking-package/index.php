@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.65
+Version:     1.6.66
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -26,7 +26,7 @@ Domain Path: /languages
 	
 	class BOOKING_PACKAGE {
 		
-		public $db_version = "1.1.7";
+		public $db_version = "1.1.8";
 		
 		public $plugin_version = 0;
 		
@@ -110,6 +110,8 @@ Domain Path: /languages
 		
 		public $customizeLayouts = 0;
 		
+		public $maxBookingSlotsPerDay = 0;
+		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
 			require_once(plugin_dir_path( __FILE__ ) . 'lib/Setting.php');
@@ -125,6 +127,7 @@ Domain Path: /languages
             global $wpdb;
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->setting->setMessagingApp($this->messagingApp);
+            $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);
             $this->currencies = $this->setting->getCurrencies();
             $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name);
             $this->widget = $widget;
@@ -3505,7 +3508,7 @@ Domain Path: /languages
 							<div id="menuList" class="menuList" style="grid-template-columns: auto;">
 								<div id="settingLink" class="menuItem active hidden_panel" style="grid-column-start: 1;"><?php _e("Settings", 'booking-package'); ?></div>
 								<div id="holidayLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Closing days", 'booking-package'); ?></div>
-								<div id="nationalHolidayLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("National holidays", 'booking-package'); ?></div>
+								<div id="nationalHolidayLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Public holidays", 'booking-package'); ?></div>
 								<div id="blockEmailListsLink" class="menuItem hidden_panel"  style="grid-column-start: 4;"><?php _e("Blocks list", 'booking-package'); ?></div>
 								<div id="memberLink" class="menuItem hidden_panel"  style="grid-column-start: 5;"><?php _e("Users", 'booking-package'); ?></div>
 								<div id="syncLink" class="menuItem hidden_panel"  style="grid-column-start: 6;"><?php _e("Sync", 'booking-package'); ?></div>
@@ -3524,7 +3527,7 @@ Domain Path: /languages
 								<div id="holidaysCalendarPanel"></div>
 							</div>
 							<div id="nationalHolidayPanel" class="hidden_panel">
-								<div class="title"><?php _e("National holidays", 'booking-package'); ?></div>
+								<div class="title"><?php _e("Public holidays", 'booking-package'); ?></div>
 								<div id="nationalHolidaysCalendarPanel"></div>
 							</div>
 							<div id="blockEmailListsPanel" class="hidden_panel">
@@ -6227,7 +6230,7 @@ Domain Path: /languages
 				$dictionary['Received URL'] = __('Received URL', 'booking-package');
 				$dictionary['Customer details'] = __('Customer details', 'booking-package');
 				$dictionary['URL of customer details for administrator'] = __('URL of customer details for administrator', 'booking-package');
-				$dictionary['National holiday'] = __('National holiday', 'booking-package');
+				$dictionary['Public holiday'] = __('Public holiday', 'booking-package');
 				$dictionary['Open'] = __('Open', 'booking-package');
 				$dictionary['Surcharges'] = __('Surcharges', 'booking-package');
 				$dictionary['Payment method'] = __('Payment method', 'booking-package');

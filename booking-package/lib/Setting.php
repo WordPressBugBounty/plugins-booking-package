@@ -17,6 +17,8 @@
         
         public $messagingApp = 0;
         
+        public $maxBookingSlotsPerDay = 0;
+        
         public $member_setting = array(
             'function_for_member' => array('name' => 'User account', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
             'reject_non_membder' => array('name' => 'Reject non-user account bookings', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
@@ -68,6 +70,12 @@
         public function setMessagingApp($messagingApp) {
             
             $this->messagingApp = $messagingApp;
+            
+        }
+        
+        public function setMaxBookingSlotsPerDay($maxBookingSlotsPerDay) {
+            
+            $this->maxBookingSlotsPerDay = $maxBookingSlotsPerDay;
             
         }
         
@@ -1265,7 +1273,105 @@
                 'status' => array('key' => 'status', 'name' => __('Calendar status', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('open' => __('Enabled', 'booking-package'), 'closed' => __('Disabled', 'booking-package'))),
                 'maxAccountScheduleDay' => array('key' => 'maxAccountScheduleDay', 'name' => 'Public days from today', 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
                 'unavailableDaysFromToday' => array('key' => 'unavailableDaysFromToday', 'name' => 'Unavailable days from today', 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30')),
-                
+                'maxBookingSlotsPerDay' => array(
+                    'key' => 'maxBookingSlotsPerDay', 
+                    'name' => __('Max booking slots per weekday', 'booking-package'), 
+                    'target' => 'day', 
+                    'disabled' => 0,
+                    'value' => 'false', 
+                    'inputLimit' => 2, 
+                    'inputType' => 'MULTIPLE_FIELDS', 
+                    'isExtensionsValid' => 1, 
+                    'option' => 0, 
+                    'valueList' => array(
+                        0 => array(
+                            'key' => 'maxBookingSlotsPerDayStatus',
+                            'name' => '',
+                            'value' => null,
+                            'inputType' => 'RADIO',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'extensionsValidMessage' => 1,
+                            'isExtensionsValid' => 0, 
+                            'actions' => null,
+                            'valueList' => array(1 => __('Enabled', 'booking-package'), 0 => __('Disabled', 'booking-package')),
+                        ),
+                        1 => array(
+                            'key' => 'maxBookingSlotsOnMonday',
+                            'name' => __('Monday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        2 => array(
+                            'key' => 'maxBookingSlotsOnTuesday',
+                            'name' => __('Tuesday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        3 => array(
+                            'key' => 'maxBookingSlotsOnWednesday',
+                            'name' => __('Wednesday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        4 => array(
+                            'key' => 'maxBookingSlotsOnThursday',
+                            'name' => __('Thursday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        5 => array(
+                            'key' => 'maxBookingSlotsOnFriday',
+                            'name' => __('Friday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        6 => array(
+                            'key' => 'maxBookingSlotsOnSaturday',
+                            'name' => __('Saturday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        7 => array(
+                            'key' => 'maxBookingSlotsOnSunday',
+                            'name' => __('Sunday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                        ), 
+                        8 => array(
+                            'key' => 'maxBookingSlotsOnNationalHoliday',
+                            'name' => __('Public holiday', 'booking-package'),
+                            'value' => 0,
+                            'inputType' => 'TEXT',
+                            'class' => 'multiple_fields_margin_top',
+                            'action' => null,
+                            'isExtensionsValid' => 0, 
+                            'message' => __('To disable the maximum booking slots for a specific weekday, please enter "0".', 'booking-package'),
+                        ), 
+                    ),
+                    "message" => '',
+                ),
                 'calendar_sharing' => array(
                     'key' => 'calendar_sharing', 
                     'name' => __('Share the available slots of other calendar accounts', 'booking-package'), 
@@ -1405,13 +1511,13 @@
                         ), 
                         7 => array(
                             'key' => 'hotelChargeOnDayBeforeNationalHoliday',
-                            'name' => __('The day Before National holiday', 'booking-package'),
+                            'name' => __('The day of the week before a public holiday', 'booking-package'),
                             'value' => 0,
                             'isExtensionsValid' => 1, 
                         ), 
                         8 => array(
                             'key' => 'hotelChargeOnNationalHoliday',
-                            'name' => __('National holiday', 'booking-package'),
+                            'name' => __('Public holiday', 'booking-package'),
                             'value' => 0,
                             'isExtensionsValid' => 1, 
                         ), 
@@ -1905,6 +2011,12 @@
                 ),
                 
             );
+            
+            if ($this->maxBookingSlotsPerDay === 0) {
+                
+                unset($calendarAccount['maxBookingSlotsPerDay']);
+                
+            }
             
             return $calendarAccount;
             
