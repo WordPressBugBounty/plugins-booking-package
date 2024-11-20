@@ -7135,12 +7135,25 @@
 				
 			}
 			
+			$lineBreakCodes = get_option($this->prefix . 'lineBreakCodesInCsv', 'LF');
+			
 			$temp = tmpfile();
 			$path = stream_get_meta_data($temp)['uri'];
 			$fp = fopen($path, 'w');
 			foreach ((array) $customersList as $key => $value) {
 				
-				fputcsv($fp, $value);
+				
+				if ($lineBreakCodes === 'LF') {
+					
+					fputcsv($fp, $value);
+					
+				} else {
+					
+					#$value = implode(',', $value) . "\r\n";
+					#fwrite($fp, $value);
+					fwrite($fp, rtrim(fputcsv($fp, $value, ',', "\"", "\\", "")) . "\r\n");
+					
+				}
 				
 			}
 			fseek($fp, 0);

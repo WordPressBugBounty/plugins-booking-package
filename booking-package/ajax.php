@@ -3,26 +3,6 @@
     /** Load WordPress Bootstrap */
 	require_once dirname( __DIR__, 3 ) . '/wp-load.php';
 	
-	/** Allow for cross-domain requests (from the front end). */
-	send_origin_headers();
-	
-	header('Content-Type: text/html; charset=' . get_option('blog_charset'));
-	header('X-Robots-Tag: noindex');
-	
-	// Require a valid action parameter.
-	if (empty($_REQUEST['action']) || !is_scalar($_REQUEST['action'])) {
-		wp_die('0', 400);
-	}
-	
-	/** Load WordPress Administration APIs */
-	#require_once ABSPATH . 'wp-admin/includes/admin.php';
-	
-	/** Load Ajax Handlers for WordPress Core */
-	#require_once ABSPATH . 'wp-admin/includes/ajax-actions.php';
-	
-	send_nosniff_header();
-	nocache_headers();
-
     define('WP_USE_THEMES', false);
 	
     class BOOKING_PACKAGE_AJAX {
@@ -66,6 +46,27 @@
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->currencies = $this->setting->getCurrencies();
             $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name);
+            
+            /** Allow for cross-domain requests (from the front end). */
+			send_origin_headers();
+			
+			header('Content-Type: text/html; charset=' . get_option('blog_charset'));
+			header('X-Robots-Tag: noindex');
+			
+			// Require a valid action parameter.
+			if (empty($_REQUEST['action']) || !is_scalar($_REQUEST['action'])) {
+				wp_die('0', 400);
+			}
+			
+			/** Load WordPress Administration APIs */
+			#require_once ABSPATH . 'wp-admin/includes/admin.php';
+			
+			/** Load Ajax Handlers for WordPress Core */
+			#require_once ABSPATH . 'wp-admin/includes/ajax-actions.php';
+			
+			send_nosniff_header();
+			nocache_headers();
+            
             $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
 			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
 			$textdomain = load_plugin_textdomain($this->plugin_name, false, dirname( plugin_basename( __FILE__ ) ) . '/languages');

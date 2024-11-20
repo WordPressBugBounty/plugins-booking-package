@@ -19,6 +19,8 @@
         
         public $maxBookingSlotsPerDay = 0;
         
+        public $lineBreakCodes = 0;
+        
         public $member_setting = array(
             'function_for_member' => array('name' => 'User account', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
             'reject_non_membder' => array('name' => 'Reject non-user account bookings', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
@@ -76,6 +78,12 @@
         public function setMaxBookingSlotsPerDay($maxBookingSlotsPerDay) {
             
             $this->maxBookingSlotsPerDay = $maxBookingSlotsPerDay;
+            
+        }
+        
+        public function setLineBreakCodes($lineBreakCodes) {
+            
+            $this->lineBreakCodes = $lineBreakCodes;
             
         }
         
@@ -626,6 +634,8 @@
                     'javascriptSyntaxErrorNotification' => array('name' => __('Javascript syntax error notification', 'booking-package'), 'deprecated' => false, 'value' => 1, 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Automatically notify developers', 'booking-package'))), 
                     
                     'characterCodeOfDownloadFile' => array('name' => __('Character code of download file', 'booking-package'), 'value' => 'UTF-8', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('UTF-8' => 'UTF-8', 'EUC-JP' => 'EUC-JP', 'SJIS' => 'SJIS')),
+                    'lineBreakCodesInCsv' => array('name' => __('Line break codes in a CSV file', 'booking-package'), 'value' => 'LF', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('LF' => 'LF', 'CRLF' => 'CRLF')),
+                    
                     'googleAnalytics' => array('name' => __('Tracking ID for the Google analytics', 'booking-package'), 'deprecated' => true, 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     
                     'customizeStatus' => array(
@@ -822,6 +832,12 @@
                     
                 ),
             );
+            
+            if ($this->lineBreakCodes === 0) {
+                
+                unset($list['General']['lineBreakCodesInCsv']);
+                
+            }
             
             $newDataFormatList = array();
             

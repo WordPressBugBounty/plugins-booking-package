@@ -3088,6 +3088,28 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log(element);
         object._console.log('shortestTime = ' + shortestTime);
         var calendarAccount = object._calendarAccount;
+        var calendarKey = parseInt(element.key);
+        const publicHolidays = calendarData.nationalHoliday.calendar;
+        const maxBookingSlotsPerDay = calendarAccount.maxBookingSlotsPerDay;
+        const maxBookingSlotsPerDayStatus = parseInt(maxBookingSlotsPerDay.maxBookingSlotsPerDayStatus);
+        const maxBookingSlotsWeekday = [
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnSunday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnMonday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnTuesday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnWednesday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnThursday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnFriday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnSaturday), 
+            parseInt(maxBookingSlotsPerDay.maxBookingSlotsOnNationalHoliday),
+        ];
+        var weekKey = parseInt(element.week);
+        var weekKeyForMaxBookingSlots = parseInt(element.week);
+        if (publicHolidays[calendarKey] != null && parseInt(publicHolidays[calendarKey].status) === 1) {
+            
+            weekKeyForMaxBookingSlots = 7;
+            
+        }
+        
         var createSymbolPanel = function(calendarAccount, point, capacity, remainder) {
             
             object._console.log("point = " + point);
@@ -3129,9 +3151,6 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         };
         
-        //if (calendarAccount.displayRemainingCapacityInCalendar != null && parseInt(calendarAccount.displayRemainingCapacityInCalendar) == 1) {
-            
-        var calendarKey = parseInt(element.key);
         var panel = element.eventPanel;
         var regularHoliday = calendarData.regularHoliday.calendar;
         if (regularHoliday[calendarKey] != null && parseInt(regularHoliday[calendarKey].status) == 0) {
@@ -3152,9 +3171,22 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                     }
                     var schedule = calendarData['schedule'][calendarKey][i];
-                    capacity += parseInt(schedule.capacity);
-                    remainder += parseInt(schedule.remainder);
-                    if (parseInt(schedule["remainder"]) == 0 || schedule["stop"] == 'true') {
+                    
+                    if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
+                        
+                        capacity = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots];
+                        remainder += parseInt(schedule.bookingCount);
+                        
+                    } else {
+                        
+                        capacity += parseInt(schedule.capacity);
+                        remainder += parseInt(schedule.remainder);
+                        
+                        
+                        
+                    }
+                    
+                    if (parseInt(schedule["remainder"]) === 0 || schedule["stop"] == 'true') {
                         
                         var rejectionTime = (parseInt(schedule["hour"]) * 60 + parseInt(schedule["min"])) - shortestTime;
                         object._console.log(schedule["hour"] + ' : ' + schedule["min"]);
@@ -3196,6 +3228,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                 }
+                object._console.log("capacity = " + capacity + " remainder = " + remainder);
+                if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
+                    
+                    remainder = capacity - remainder;
+                    
+                }
                 
                 object._console.log("capacity = " + capacity + " remainder = " + remainder);
                 if (capacity > 0) {
@@ -3226,6 +3264,8 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             } else {
                 
+                let bookingCount = 0;
+                capacity = parseInt(element.capacity);
                 if (object._preparationTime > 0) {
                     
                     const availableSlots = {};
@@ -3241,6 +3281,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         var schedule = calendarData['schedule'][calendarKey][i];
                         const key =  parseInt(schedule.hour) * 60 + parseInt(schedule.min);
+                        bookingCount += parseInt(schedule.bookingCount);
                         if (parseInt(schedule.remainder) === 0 || schedule["stop"] == 'true') {
                             
                             (function(timeSlots, timeSlot, availableSlots) {
@@ -3288,20 +3329,50 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                     remainder = 0;
-                    for (var key in availableSlots) {
+                    if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                         
-                        remainder += availableSlots[key].remainder;
+                        remainder = bookingCount;
+                        
+                    } else {
+                        
+                        for (var key in availableSlots) {
+                            
+                            remainder += availableSlots[key].remainder;
+                            
+                        }
                         
                     }
                     
                 } else {
                     
-                    remainder = parseInt(element.remainder);
+                    
+                    if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
+                        
+                        remainder = 0;
+                        for (var i = 0; i < calendarData['schedule'][calendarKey].length; i++) {
+                            
+                            var schedule = calendarData['schedule'][calendarKey][i];
+                            remainder += parseInt(schedule.bookingCount);
+                            
+                        }
+                        
+                        
+                    } else {
+                        
+                        remainder = parseInt(element.remainder);
+                        
+                    }
                     
                 }
                 
-                capacity = parseInt(element.capacity);
-                //remainder = parseInt(element.remainder);
+                if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
+                    
+                    remainder = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] - remainder;
+                    
+                    
+                }
+                console.error(remainder);
+                console.error(capacity);
                 point = remainder / capacity * 100;
                 if (calendarAccount.displayRemainingCapacityInCalendar != null && parseInt(calendarAccount.displayRemainingCapacityInCalendar) == 1) {
                     
