@@ -3159,6 +3159,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             var point = 0;
             var capacity = 0;
             var remainder = 0;
+            var remainderForBookingCount = 0;
             if (parseInt(calendarAccount.courseBool) == 1) {
                 
                 object._console.log(schedules[calendarKey]);
@@ -3171,18 +3172,18 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                     }
                     var schedule = calendarData['schedule'][calendarKey][i];
-                    
+                    capacity += parseInt(schedule.capacity);
+                    remainder += parseInt(schedule.remainder);
                     if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                         
-                        capacity = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots];
-                        remainder += parseInt(schedule.bookingCount);
+                        //capacity = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots];
+                        //remainder += parseInt(schedule.bookingCount);
+                        remainderForBookingCount += parseInt(schedule.bookingCount);
                         
                     } else {
                         
-                        capacity += parseInt(schedule.capacity);
-                        remainder += parseInt(schedule.remainder);
-                        
-                        
+                        //capacity += parseInt(schedule.capacity);
+                        //remainder += parseInt(schedule.remainder);
                         
                     }
                     
@@ -3228,10 +3229,20 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                 }
-                object._console.log("capacity = " + capacity + " remainder = " + remainder);
+                object._console.log("capacity = " + capacity + " remainder = " + remainder + " remainderForBookingCount = " + remainderForBookingCount);
                 if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                     
-                    remainder = capacity - remainder;
+                    capacity = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots]
+                    if (capacity > remainder) {
+                        
+                        capacity = remainder;
+                        
+                    } else {
+                        
+                        remainder = capacity - remainderForBookingCount;
+                        
+                    }
+                    
                     
                 }
                 
@@ -3329,46 +3340,60 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                     remainder = 0;
+                    for (var key in availableSlots) {
+                        
+                        remainder += availableSlots[key].remainder;
+                        
+                    }
                     if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                         
-                        remainder = bookingCount;
+                        remainderForBookingCount = bookingCount;
                         
                     } else {
-                        
+                        /**
                         for (var key in availableSlots) {
                             
                             remainder += availableSlots[key].remainder;
                             
                         }
-                        
+                        **/
                     }
                     
                 } else {
                     
-                    
+                    remainder = parseInt(element.remainder);
                     if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                         
-                        remainder = 0;
+                        remainderForBookingCount = 0;
                         for (var i = 0; i < calendarData['schedule'][calendarKey].length; i++) {
                             
                             var schedule = calendarData['schedule'][calendarKey][i];
-                            remainder += parseInt(schedule.bookingCount);
+                            remainderForBookingCount += parseInt(schedule.bookingCount);
                             
                         }
                         
                         
                     } else {
                         
-                        remainder = parseInt(element.remainder);
+                        //remainder = parseInt(element.remainder);
                         
                     }
                     
                 }
                 
+                object._console.log("capacity = " + capacity + " remainder = " + remainder + " remainderForBookingCount = " + remainderForBookingCount);
                 if (maxBookingSlotsPerDayStatus === 1 && maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] !== 0) {
                     
-                    remainder = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] - remainder;
-                    
+                    capacity = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots];
+                    if (capacity > remainder) {
+                        
+                        capacity = remainder;
+                        
+                    } else {
+                        
+                        remainder = maxBookingSlotsWeekday[weekKeyForMaxBookingSlots] - remainderForBookingCount;
+                        
+                    }
                     
                 }
                 console.error(remainder);
