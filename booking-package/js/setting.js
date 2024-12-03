@@ -76,6 +76,7 @@ window.addEventListener('error', function(event) {
 		this._jsEditor = null;
 		this._tab = null;
 		this._prefix = setting_data.prefix;
+		this._my_subscription_url = setting_data.my_subscription_url
 		if (setting_data.tab != null) {
 			
 			this._tab = setting_data.tab;
@@ -545,7 +546,7 @@ window.addEventListener('error', function(event) {
 			object._loadingPanel.setAttribute("class", "loading_modal_backdrop");
 			var form = document.createElement("form");
 			form.method = "post";
-			form.action = "https://saasproject.net/update-subscription/";
+			form.action = object._my_subscription_url;
 			subscriptionPanel.appendChild(form);
 			var subscriptionDiteils = {
 				customer_id: object._setting_data.customer_id_for_subscriptions,

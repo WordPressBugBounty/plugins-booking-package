@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.68
+Version:     1.6.69
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -21,6 +21,8 @@ Domain Path: /languages
 	define("BOOKING_PACKAGE_EXTENSION_URL", "https://saasproject.net/api/1.7/");
 	
 	define('BOOKING_PACKAGE_UPGRRADE_URL', "https://saasproject.net/upgrade/");
+	
+	define('BOOKING_PACKAGE_MY_SUBSCRIPTION_URL', "https://saasproject.net/update-subscription/");
 	
 	define("BOOKING_PACKAGE_MAX_DEADLINE_TIME", 1440);
 	
@@ -5303,6 +5305,7 @@ Domain Path: /languages
 					'subscription_status' => $setting->getSubscriptionStatus(),
 					'subscriptionLink' => admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"),
 					'numberFormatter' => $numberFormatter,
+					'my_subscription_url' => BOOKING_PACKAGE_MY_SUBSCRIPTION_URL,
 				);
 				
 			} else if ($mode == 'booking_package_front_end') {

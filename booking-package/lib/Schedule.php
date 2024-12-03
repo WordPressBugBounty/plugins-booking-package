@@ -2102,6 +2102,37 @@
 			
 		}
 		
+		public function confirmPublicHolidays($month, $day, $year) {
+			
+			$value = false;
+			global $wpdb;
+			$table_name = $wpdb->prefix . "booking_package_regular_holidays";
+			$sql = $wpdb->prepare(
+				"SELECT `status` FROM `" . $table_name . "` WHERE `month` = %d AND `day` = %d AND `year` = %d AND `accountKey` = 'national';", 
+				array(
+					intval($month), 
+					intval($day), 
+					intval($year), 
+					sanitize_text_field($accountKey)
+				)
+			);
+			
+			$holidays = $wpdb->get_results($sql, ARRAY_A);
+			foreach ((array) $holidays as $key => $holiday) {
+				
+				if (intval($holiday['status']) == 1) {
+					
+					$value = true;
+					break;
+					
+				}
+				
+			}
+			
+			return $value;
+			
+		}
+		
 		public function getRegularHolidays($month, $year, $accountKey = null, $startOfWeek = 0, $share = false) {
 			
 			$last_day = date('t', mktime(0, 0, 0, $month, 1, $year));
@@ -2970,6 +3001,58 @@
 			
 			return $row;
         	
+        }
+        
+        public function verificationMaxBookingSlotsPerDay($calendarAccount, $schedule, $applicantCount) {
+			
+			global $wpdb;
+			$isExtensionsValid = $this->getExtensionsValid();
+			$response = array('status' => true, 'message' => null);
+			$maxBookingSlotsPerDay = $calendarAccount['maxBookingSlotsPerDay'];
+			if (intval($maxBookingSlotsPerDay['maxBookingSlotsPerDayStatus']) === 1 && $isExtensionsValid === 1) {
+				
+				$maxBookingSlotsWeekday = array(
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnSunday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnMonday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnTuesday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnWednesday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnThursday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnFriday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnSaturday']), 
+					intval($maxBookingSlotsPerDay['maxBookingSlotsOnNationalHoliday']), 
+				);
+				
+				$weekKey = intval($schedule['weekKey']);
+				$publicHoliday = $this->confirmPublicHolidays($schedule['month'], $schedule['day'], $schedule['year']);
+				if ($publicHoliday === true) {
+					
+					$weekKey = 7;
+					
+				}
+				
+				$bookingCount = 0;
+				$table_name = $wpdb->prefix . "booking_package_schedules";
+				$sql = $wpdb->prepare("SELECT * FROM `" . $table_name . "` WHERE `accountKey` = %d AND `month` = %d AND `day` = %d AND `year` = %d AND `status` = 'open';", array(intval($calendarAccount['key']), intval($schedule['month']), intval($schedule['day']), intval($schedule['year'])));
+				$rows = $wpdb->get_results($sql, ARRAY_A);
+				foreach ((array) $rows as $row) {
+					
+					$unixTime = date('U', mktime($row['hour'], $row['min'], 0, $row['month'], $row['day'], $row['year']));
+					$bookingCount += intval($row['bookingCount']);
+					
+				}
+				#var_dump($bookingCount + $applicantCount);
+				#var_dump($maxBookingSlotsWeekday[$weekKey]);
+				if ($maxBookingSlotsWeekday[$weekKey] < ($bookingCount + intval($applicantCount))) {
+					
+					$response['status'] = false;
+					$response['message'] = 'No Slots';
+					
+				}
+				
+			}
+			
+			return $response;
+
         }
         
         public function updateMaxBookingSlotsPerDay($mode, $maxBookingSlotsPerDay) {
@@ -7738,93 +7821,7 @@
 					
 				}
 				
-				/**
-				for ($time = $first['unixTime']; $time < $last['unixTime']; $time += 1440 * 60) {
-					
-			        $sql = $wpdb->prepare(
-						"SELECT `key`, `month`, `day`, `year`, `title`, `stop`, `weekKey`, `unixTime`, `cost`, `remainder` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `month` = %d AND `day` = %d AND `year` = %d AND `status` = 'open' ORDER BY `unixTime` ASC;", 
-						array(intval($accountKey), intval(date('n', $time)), intval(date('j', $time)), intval(date('Y', $time)))
-					);
-					$row = $wpdb->get_row($sql, ARRAY_A);
-					if (is_null($row)) {
-						
-						$date = $this->dateFormat($dateFormat, $positionOfWeek, $time, '', false, false, 'text');
-						return array("status" => "error", "message" => sprintf(__("There is no vacancy in the room on %s", 'booking-package'), $date), 'applicantCount' => 0, );
-						
-					} else {
-						
-						$scheduleCount++;
-						array_push($accommodationDetails['scheduleList'], $row['key']);
-						$accommodationDetails['scheduleDetails'][$row['unixTime']] = $row;
-						$date = $this->dateFormat($dateFormat, $positionOfWeek, $row['unixTime'], $row['title'], false, false, 'text');
-						if ($type == 'book' && $row['remainder'] <= 0) {
-							
-							return array("status" => "error", "message" => sprintf(__("There is no vacancy in the room on %s", 'booking-package'), $date));
-							
-						}
-						
-						if ($this->confirmRegularHolidays($accountKey, $row['month'], $row['day'], $row['year']) === true) {
-							
-							return array("status" => "error", "message" => __("The requested schedule has been closed.", 'booking-package'));
-							
-						}
-						
-						if ($row['stop'] == 'true' || $row['stop'] == 'auto_publish') {
-							
-							return array("status" => "error", "message" => sprintf(__("Booking of %s is suspended.", 'booking-package'), $date));
-								
-						}
-						
-						$totalCost += intval($row['cost']) * $applicantCount;
-						
-					}
-			        
-			    }
-			    **/
-			    
-				/**
-				$sql = $wpdb->prepare(
-					"SELECT `key`,`month`,`day`,`year`, `title`, `stop`,`weekKey`,`unixTime`,`cost`,`remainder` FROM `" . $table_name . "` WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` < %d) AND `status` = 'open' ORDER BY `unixTime` ASC;", 
-					array(intval($accountKey), intval($first['unixTime']), intval($last['unixTime']))
-				);
-				$rows = $wpdb->get_results($sql, ARRAY_A);
-				**/
-				
 				if ($scheduleCount != 0) {
-					
-				/**	
-				if (count($rows) != 0 && !is_null($rows)) {
-					
-					$accommodationDetails['scheduleList'] = array();
-					$accommodationDetails['scheduleDetails'] = array();
-					
-					foreach ((array) $rows as $row) {
-						
-						array_push($accommodationDetails['scheduleList'], $row['key']);
-						$accommodationDetails['scheduleDetails'][$row['unixTime']] = $row;
-						$date = $this->dateFormat($dateFormat, $positionOfWeek, $row['unixTime'], $row['title'], false, false, 'text');
-						if ($type == 'book' && $row['remainder'] <= 0) {
-							
-							return array("status" => "error", "message" => sprintf(__("There is no vacancy in the room on %s", 'booking-package'), $date));
-							
-						}
-						
-						if ($this->confirmRegularHolidays($accountKey, $row['month'], $row['day'], $row['year']) === true) {
-							
-							return array("status" => "error", "message" => __("The requested schedule has been closed.", 'booking-package'));
-							
-						}
-						
-						if ($row['stop'] == 'true' || $row['stop'] == 'auto_publish') {
-							
-							return array("status" => "error", "message" => sprintf(__("Booking of %s is suspended.", 'booking-package'), $date));
-								
-						}
-						
-						$totalCost += intval($row['cost']) * $applicantCount;
-						
-					}
-				**/
 					
 					ksort($accommodationDetails['scheduleDetails']);
 					
@@ -9512,6 +9509,15 @@
 								return $responseGuests;
 								
 							}
+							
+						}
+						
+						$verificationMaxBookingSlotsPerDay = $this->verificationMaxBookingSlotsPerDay($calendarAccount, $row, $applicantCount);
+						if ($verificationMaxBookingSlotsPerDay['status'] === false) {
+							
+							$this->cancelPayment();
+							$verificationMaxBookingSlotsPerDay['status'] = 'error';
+							return $verificationMaxBookingSlotsPerDay;
 							
 						}
 						
