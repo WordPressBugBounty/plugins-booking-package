@@ -3396,8 +3396,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                 }
-                console.error(remainder);
-                console.error(capacity);
+                
                 point = remainder / capacity * 100;
                 if (calendarAccount.displayRemainingCapacityInCalendar != null && parseInt(calendarAccount.displayRemainingCapacityInCalendar) == 1) {
                     

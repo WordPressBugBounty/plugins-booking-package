@@ -3009,7 +3009,7 @@
 			$isExtensionsValid = $this->getExtensionsValid();
 			$response = array('status' => true, 'message' => null);
 			$maxBookingSlotsPerDay = $calendarAccount['maxBookingSlotsPerDay'];
-			if (intval($maxBookingSlotsPerDay['maxBookingSlotsPerDayStatus']) === 1 && $isExtensionsValid === 1) {
+			if (intval($maxBookingSlotsPerDay['maxBookingSlotsPerDayStatus']) === 1) {
 				
 				$maxBookingSlotsWeekday = array(
 					intval($maxBookingSlotsPerDay['maxBookingSlotsOnSunday']), 
@@ -3045,7 +3045,13 @@
 				if ($maxBookingSlotsWeekday[$weekKey] < ($bookingCount + intval($applicantCount))) {
 					
 					$response['status'] = false;
-					$response['message'] = 'No Slots';
+					$dateFormat = intval(get_option($this->prefix . "dateFormat", 0));
+					$positionOfWeek = get_option($this->prefix . "positionOfWeek", "before");
+					$response['message'] = sprintf(
+						__('Based on the "%s" settings, all remaining booking slots for %s have been filled.', 'booking-package'), 
+						__('Max booking slots per weekday', 'booking-package'), 
+						$this->dateFormat($dateFormat, $positionOfWeek, intval($schedule['unixTime']), null, true, false, 'text')
+					);
 					
 				}
 				
