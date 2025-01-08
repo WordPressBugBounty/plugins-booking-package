@@ -2647,7 +2647,23 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         var formData = response.formData;
         var totalNumberOfGuestsPanel = response.totalNumberOfGuestsPanel;
         
-        var cancelToEdit = function(){
+        var cancelToEdit = function(closePanel){
+            
+            if (closePanel === false) {
+                
+                callback({status: 'returnButton', month: reservationDate.month, day: reservationDate.day, year: reservationDate.year});
+                object.showUserInfo(key, calendarData, reservationData, animation, accountKey, callback);
+                
+            }
+            
+            document.getElementById("beforButton").classList.remove("hidden_panel");
+            document.getElementById("nextButton").classList.remove("hidden_panel");
+            document.getElementById('downloadCsvForDay').classList.remove('hidden_panel');
+            document.getElementById("beforChangeButton").classList.add("hidden_panel");
+            document.getElementById("nextChangeButton").classList.add("hidden_panel");
+            
+            return null;
+            
             
             bookingTimeChange.classList.add("hidden_panel");
             bookingTimeChange.setAttribute("data-status", "1");
@@ -2774,7 +2790,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 infoPanel.setAttribute("class", "return_panel");
                 object._contentPanel.removeChild(blockPanel);
                 
-                cancelToEdit();
+                cancelToEdit(true);
                 callback({status: 'closedCustomersPanel', month: month, day: day, year: year});
                 
                 
@@ -3232,7 +3248,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     document.getElementById("changePanel").setAttribute("class", "return_change_panel");
                     
                 }
-                
+                object._contentPanel.removeChild(blockPanel);
                 object._rightButtonPanel.removeChild(returnButton);
                 object._rightButtonPanel.removeChild(saveButton);
                 editButton.setAttribute("class", "button media-button button-primary button-large media-button-insert");
@@ -3252,7 +3268,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 }
                 
-                cancelToEdit();
+                cancelToEdit(false);
                 object._buttonAction = "showUserInfo";
                 
             }
@@ -3366,6 +3382,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 data_status = 0;
                 bookingTimeChange.textContent = object._i18n.get("Change");
+                bookingTimeChange.classList.add('hidden_panel');
                 courseChange.classList.add("hidden_panel");
                 object.createToChangePanelForTimeOrCourse(month, day, year, reservationData, calendarData, "date", options, accountKey, function(response){
                     
@@ -3441,6 +3458,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 data_status = 0;
                 courseChange.textContent = object._i18n.get("Change");
                 bookingTimeChange.classList.add("hidden_panel");
+                courseChange.classList.add("hidden_panel");
                 object.createToChangePanelForTimeOrCourse(month, day, year, reservationData, calendarData, "course", options, accountKey, function(response){
                     
                     object._console.log(response);
@@ -4845,7 +4863,16 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         var checkBox = checkBoxList[parseInt(key)];
                         if (checkBox.checked == true) {
                             
-                            checkBox.checked = false;
+                            if (parseInt(object._calendarAccount.hasMultipleServices) === 1) {
+                                
+                                checkBox.checked = false;
+                                
+                            } else {
+                                
+                                checkBox.checked = true;
+                                
+                            }
+                            //checkBox.checked = false;
                             this.setAttribute("class", "courseAndScheduleRow");
                             object._courseList[parseInt(key)].selected = 0;
                             
@@ -4891,7 +4918,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             if (checkBox.checked == true) {
                                 
                                 var selectOptionsPanel = document.getElementById("selectOptionsPanel");
-                                object.getOptionsPanel(courseData, options, guests, function(response){
+                                object.getOptionsPanel(courseData, options, guests, false, function(response){
                                     
                                     var selectedOptions = response.selectedOptions;
                                     object._courseList[key]["selectedOptionsList"] = selectedOptions;
@@ -5747,7 +5774,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         
     }
     
-    this.getOptionsPanel = function(course, options, guestsList, callback){
+    this.getOptionsPanel = function(course, options, guestsList, closeWithClick, callback){
         
         var object = this;
         var selectedOptions = [];
@@ -5922,31 +5949,20 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             var response = {status: "createSchedule", selectedOptions: selectedOptions};
             callback(response);
-            /**
-            selectOptionsPanel.classList.add("hidden_panel");
-            object.createSchedule(mainPanel, courseMainPanel, scheduleMainPanel, formMainPanel, month, day, year, calendarData, course, selectedOptions, accountKey, function(response){
+            
+        };
+        
+        if (closeWithClick === true) {
+            
+            selectOptionsPanel.getElementsByClassName("blockPanel")[0].onclick = function(){
                 
+                var response = {status: "close", selectedOptions: selectedOptions};
                 callback(response);
                 
-            });
-            **/
+            };
             
         }
         
-        selectOptionsPanel.getElementsByClassName("blockPanel")[0].onclick = function(){
-            
-            var response = {status: "close", selectedOptions: selectedOptions};
-            callback(response);
-            /**
-            selectOptionsPanel.classList.add("hidden_panel");
-            if (coursePanel != null) {
-                
-                coursePanel.setAttribute("class", "courseAndScheduleRow");
-                
-            }
-            **/
-            
-        }
         
         object._console.log(course);
         
@@ -5956,7 +5972,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         
         var object = this;
         var selectOptionsPanel = document.getElementById("selectOptionsPanel");
-        object.getOptionsPanel(course, course.options, calendarData.guestsList, function(response){
+        object.getOptionsPanel(course, course.options, calendarData.guestsList, false, function(response){
             
             if (response.status == "createSchedule") {
                 
