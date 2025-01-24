@@ -10685,7 +10685,7 @@
 				"SELECT * FROM `" . $table_name . "` WHERE `key` = %d AND `cancellationToken` = %s;", 
 				array(
 					intval($key), 
-					sanitize_text_field($token)
+					sanitize_text_field( esc_html($token) )
 				)
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);

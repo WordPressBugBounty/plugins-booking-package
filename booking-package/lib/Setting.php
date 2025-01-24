@@ -5631,7 +5631,7 @@
             
         }
         
-        public function lookingForSubscription($customer_id, $subscription_id, $email) {
+        public function lookingForSubscription($customer_id, $subscription_id) {
             
             global $wpdb;
             $url = BOOKING_PACKAGE_EXTENSION_URL;
@@ -5640,7 +5640,6 @@
                 'status' => 0,
                 'customer_id' => trim(esc_html($customer_id)),
                 'subscription_id' => trim(esc_html($subscription_id)),
-                'email' => trim(esc_html($email)),
                 'url' => get_site_url(),
                 'expiration_date' => 0,
             );
@@ -5651,7 +5650,6 @@
                     'mode' => 'error', 
                     'subscription_mode' => 'lookingForSubscription',
                     'customer_id_for_subscriptions' => $license['customer_id'],
-                    'customer_email_for_subscriptions' => $license['email'],
                     'subscriptions_id_for_subscriptions' => $license['subscription_id'],
                     'url' => $license['url'],
                 )
@@ -5765,7 +5763,7 @@
                     
                     if (intval($expiration) > 0) {
                         
-                        $subscriptionDetails = $this->lookingForSubscription($response['customer_id_for_subscriptions'], $response['id_for_subscriptions'], $response['customer_email_for_subscriptions']);
+                        $subscriptionDetails = $this->lookingForSubscription($response['customer_id_for_subscriptions'], $response['id_for_subscriptions']);
                         $expiration = $subscriptionDetails['expiration_date'];
                         if (intval($subscriptionDetails['status']) === 1) {
                             
@@ -5943,7 +5941,7 @@
                 
                 if ($mode == 'activation') {
                     
-                    $this->lookingForSubscription($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions'], $subscriptions['customer_email_for_subscriptions']);
+                    $this->lookingForSubscription($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions']);
                     
                 } else if ($mode == 'deactivation') {
                     
@@ -5963,7 +5961,7 @@
 			if ($unique !== false && wp_hash($site) === $unique) {
 				
 				$subscriptions = $this->upgradePlan('get');
-			    $response = $this->lookingForSubscription($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions'], $subscriptions['customer_email_for_subscriptions']);
+			    $response = $this->lookingForSubscription($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions']);
                 return $response;
                 
 			}

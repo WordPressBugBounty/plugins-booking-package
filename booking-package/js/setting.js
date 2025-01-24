@@ -290,7 +290,7 @@ window.addEventListener('error', function(event) {
 			subscription_statu: object._i18n.get('Subscription status'),
 			customer_id_for_subscriptions: object._i18n.get("ID"),
 			id_for_subscriptions: object._i18n.get("Subscription ID"),
-			customer_email_for_subscriptions: object._i18n.get("Your email"),
+			customer_email_for_subscriptions: object._i18n.get("Email address"),
 			expiration_date: object._i18n.get("Expiration date"),
 			
 		};
@@ -438,13 +438,11 @@ window.addEventListener('error', function(event) {
 			var subscriptionData = {
 				customer_id_for_subscriptions: null,
 				subscriptions_id_for_subscriptions: null,
-				customer_email_for_subscriptions: null,
 			};
 			
 			var nameList = {
 				customer_id_for_subscriptions: object._i18n.get("ID"),
 				subscriptions_id_for_subscriptions: object._i18n.get("Subscription ID"),
-				customer_email_for_subscriptions: object._i18n.get("Your email"),
 			};
 			
 			for (var key in nameList) {
@@ -461,11 +459,6 @@ window.addEventListener('error', function(event) {
 					
 					input.value = object._setting_data.id_for_subscriptions;
 					subscriptionData[key] = object._setting_data.id_for_subscriptions;
-					
-				} else if (key == 'customer_email_for_subscriptions') {
-					
-					input.value = object._setting_data.customer_email_for_subscriptions;
-					subscriptionData[key] = object._setting_data.customer_email_for_subscriptions;
 					
 				}
 				

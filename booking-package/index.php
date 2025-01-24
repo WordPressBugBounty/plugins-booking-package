@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.71
+Version:     1.6.72
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -330,20 +330,20 @@ Domain Path: /languages
 			
 			if (isset($_POST['locale'])) {
 				
-				$this->locale = sanitize_text_field($_POST['locale']);
-				return sanitize_text_field($_POST['locale']);
+				$this->locale = sanitize_text_field( esc_html($_POST['locale']) );
+				return $this->locale;
 				
 			}
 			
 			if (isset($_GET['locale'])) {
 				
-				$this->locale = sanitize_text_field($_GET['locale']);
-				return sanitize_text_field($_GET['locale']);
+				$this->locale = sanitize_text_field( esc_html($_GET['locale']) );
+				return $this->locale;
 				
 			}
 			
-			$this->locale = $locale;
-			return $locale;
+			$this->locale = sanitize_text_field( esc_html($locale) );
+			return $this->locale;
 			
 		}
 		
@@ -3469,7 +3469,6 @@ Domain Path: /languages
 			$memberSetting = $setting->getMemberSetting($isExtensionsValid);
 			$localize_script['memberSetting'] = $memberSetting;
 			$country = get_option($this->prefix . 'country' , 'US');
-			//if (strtolower($localize_script['locale']) != 'ja' && strtolower($localize_script['locale']) != 'ja_jp' && strtolower($localize_script['locale']) != 'ja-jp') {
 			if (strtolower($country) != 'jp') {
 				
 				unset($localize_script['list']['General'][$this->prefix . 'characterCodeOfDownloadFile']);
@@ -4542,7 +4541,7 @@ Domain Path: /languages
 			
 			if ($_POST['mode'] == 'lookingForSubscription') {
 				
-				$response = $setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']), sanitize_text_field($_POST['customer_email_for_subscriptions']) );
+				$response = $setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']) );
 				
 			}
 			
@@ -4737,7 +4736,7 @@ Domain Path: /languages
 		public function activatePaidSubscription() {
 			
 			$setting = $this->setting;
-			$setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']), sanitize_text_field($_POST['customer_email_for_subscriptions']) );
+			$setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']) );
 			header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
 			die();
 			
