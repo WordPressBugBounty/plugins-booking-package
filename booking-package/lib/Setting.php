@@ -2503,6 +2503,32 @@
             
         }
         
+        public function getFormInputTypeForUser() {
+            
+            $input = array(
+                'id' => array('key' => 'id', 'name' => __('Unique ID', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', "class" => ""),
+                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', "class" => ""),
+                'uri' => array('key' => 'uri', 'name' => 'URL', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
+                'placeholder' => array('key' => 'placeholder', 'name' => __('Placeholder text', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
+                'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', "class" => ""),
+                'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
+                'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => 'true', 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
+                'type' => array('key' => 'type', 'name' => __('Type', 'booking-package'), 'value' => 'TEXT', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('TEXT' => 'TEXT', 'SELECT' => 'SELECT', 'CHECK' => 'CHECK', 'RADIO' => 'RADIO', 'TEXTAREA' => 'TEXTAREA'), "class" => ""),
+                'options' => array('key' => 'options', 'name' => __('Options', 'booking-package'), 'value' => array(''), 'inputLimit' => 2, 'inputType' => 'OPTION', 'format' => 'array', "class" => "", "options" => array("name" => "text"), 'format' => 'jsonString', 'optionsType' => array(array("type" => "TEXT", "value" => "", "target" => "both"))),
+            );
+            
+            foreach ($input as $key => $value) {
+                
+                $input[$key]['id'] = $value['key'];
+                $input[$key]['type'] = $value['inputType'];
+                $input[$key]['options'] = $value['valueList'];
+                
+            }
+            
+            return $input;
+            
+        }
+        
         public function getFormInputType(){
             
             $formInputType = array(
@@ -2708,6 +2734,27 @@
             
             update_option($key, $token);
             return array('status' => 'success', 'token' => $token, 'key' => $key);
+            
+        }
+        
+        public function getInputFieldForUserManagement() {
+            
+            $inputFieldForUserManagement = get_option($this->prefix . "inputFieldForUserManagement", false);
+            if ($inputFieldForUserManagement === false) {
+                
+                $inputFieldForUserManagement = array(
+                    array('id' => 'firstname', 'active' => 'false', 'name' => 'First name', 'isName' => 'true'),
+                    array('id' => 'lastname', 'active' => 'false', 'name' => 'Last name', 'isName' => 'true'),
+                );
+                
+            } else {
+                
+                $inputFieldForUserManagement = json_decode($inputFieldForUserManagement, true);
+                
+            }
+            
+            
+            return $inputFieldForUserManagement;
             
         }
         

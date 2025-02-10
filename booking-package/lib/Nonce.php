@@ -8,7 +8,13 @@
         
         private $session_id = null;
         
-        public function __construct($prefix, $pluginName) {
+        public function __construct($prefix, $pluginName, $ajaxNonceFunction) {
+            
+            if ($ajaxNonceFunction !== 'custom_nonce_validation') {
+                
+                return false;
+                
+            }
             
             if (session_status() == PHP_SESSION_NONE) {
                 

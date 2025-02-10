@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.72
+Version:     1.6.73
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -114,6 +114,8 @@ Domain Path: /languages
 		
 		public $maxBookingSlotsPerDay = 0;
 		
+		public $managementUsersV2 = 0;
+		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
 			require_once(plugin_dir_path( __FILE__ ) . 'lib/Setting.php');
@@ -127,11 +129,13 @@ Domain Path: /languages
             require_once(plugin_dir_path( __FILE__ ) . 'lib/Nonce.php');
 			
             global $wpdb;
+            $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
+			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->setting->setMessagingApp($this->messagingApp);
             $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);
             $this->currencies = $this->setting->getCurrencies();
-            $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name);
+            $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name, $this->ajaxNonceFunction);
             $this->widget = $widget;
             #$this->schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName); 
 			if ($shortcodes > 0) {
@@ -139,9 +143,6 @@ Domain Path: /languages
 				$this->shortcodes = $shortcodes;
 				
 			}
-			
-			$this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
-			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
 			
 			$monitorNumberOfShortcode = get_option($this->prefix . "monitorNumberOfShortcode", 1);
 			if (intval($monitorNumberOfShortcode) == 1) {
@@ -2348,6 +2349,7 @@ Domain Path: /languages
 			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js'.$p_v);
 			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js'.$p_v);
 			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js'.$p_v);
+			wp_enqueue_script('Input_js', plugin_dir_url( __FILE__ ).'js/Input.js'.$p_v);
 			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ).'js/Hotel.js'.$p_v);
 			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js'.$p_v);
 			wp_enqueue_script('Reservation_manage', plugin_dir_url( __FILE__ ).'js/Reservation_manage.js'.$p_v);
@@ -2363,6 +2365,97 @@ Domain Path: /languages
 			?>
 			<div id="booking_pacage_users" class="wrap">
 				
+				
+				<div id="tabFrame">
+					<div style="overflow-x: auto;">
+						<div id="menuList" class="menuList" style="grid-template-columns: auto;">
+							<div id="usersLink" class="menuItem active hidden_panel" style="grid-column-start: 1;"><?php _e("Users", 'booking-package'); ?></div>
+							<div id="formFieldsLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Form fields", 'booking-package'); ?></div>
+							<div id="settingLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Settings", 'booking-package'); ?></div>
+						</div>
+					</div>
+					<div id="contentPanel" class="content">
+						<div id="member_list" class="">
+							
+							<div class="actionButtonPanel">
+								
+								<div class="actionButtonPanelLeft">
+									<input type="text" id="search_users_text" class="serch_users_text" placeholder="Keywords" />
+									<button id="search_user_button" type="button" class="w3tc-button-save button-primary serch_user_button"><?php _e("Search", 'booking-package'); ?></button>
+									<button id="clear_user_button" type="button" class="w3tc-button-save button-primary clear_user_button"><?php _e("Clear", 'booking-package'); ?></button>
+								</div>
+								<div class="actionButtonPanelRight">
+									<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add user", 'booking-package'); ?></button>
+									<?php
+									$this->upgradeButton($isExtensionsValid, true);
+									?>
+								</div>
+							</div>
+							
+							<table id="member_list_table" class="wp-list-table widefat fixed striped">
+								<tbody id="member_list_tbody">
+								<?php
+									print "<tr><td>ID</td><td>" . __("Username", 'booking-package') . "</td><td>" . __("Email", 'booking-package') . "</td><td>" . __("Registered", 'booking-package') . "</td></tr>\n";
+									$users_data = array();
+									foreach ((array) $users as $key => $user) {
+										
+										$priority_high = "";
+										if (empty($user->status) || intval($user->status) == 0) {
+											
+											$priority_high = '<span class="material-icons priority_high">priority_high</span>';
+											
+										}
+										$users_data['user_id_' . $user->ID] = $user;
+										print "<tr id='user_id_" . $user->ID . "' class='tr_user'><td><span class='userId'>" . $user->ID . "</span>".$priority_high."</td><td>" . $user->user_login . "</td><td>" . $user->user_email . "</td><td>" . $user->user_registered . "</td></tr>\n";
+										
+									}
+									
+								?>
+								</tbody>
+							</table>
+							
+							<div class="page_action_panel">
+								<select id="swich_authority" class="select_limit<?php echo $swich_authority_by_hidden; ?>">
+									<option value="user">Booking Package</option>
+									<?php
+										if (intval($memberSetting['accept_subscribers_as_users']['value']) == 1) {
+										
+											print '<option value="subscriber">' . __("Subscriber", 'booking-package') . '</option>';
+										
+										}
+										
+										if (intval($memberSetting['accept_contributors_as_users']['value']) == 1) {
+										
+											print '<option value="contributor">' . __("Contributor", 'booking-package') . '</option>';
+										
+										}
+										
+									?>
+								</select>
+								
+								<select id="member_limit" class="select_limit">
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="30">30</option>
+									<option value="40">40</option>
+									<option value="50">50</option>
+								</select>
+								<button id="before_page" class="material-icons page_button w3tc-button-save button-primary">navigate_before</button>
+								<button id="next_page" class="material-icons page_button w3tc-button-save button-primary">navigate_next</button>
+								
+							</div>
+							
+						</div>
+						<div id="formFieldsPanel" class="hidden_panel">
+							
+						</div>
+						<div id="settingPanel" class="hidden_panel">
+							
+						</div>
+					</div>
+				</div>
+				
+				<!--
 				<div id="member_list">
 					
 					<div class="actionButtonPanel">
@@ -2433,6 +2526,7 @@ Domain Path: /languages
 					</div>
 					
 				</div>
+				-->
 				
 				<div id="editPanel" class="edit_modal hidden_panel">
 					<button type="button" id="media_modal_close" class="media_modal_close">
@@ -4207,6 +4301,12 @@ Domain Path: /languages
 				
 			}
 			
+			if ($_POST['mode'] == 'getInputFieldForUserManagement') {
+				
+				$response = $setting->getInputFieldForUserManagement();
+				
+			}
+			
 			if ($_POST['mode'] == 'getForm') {
 				
 				$response = $setting->getForm($_POST['accountKey'], false);
@@ -5405,6 +5505,8 @@ Domain Path: /languages
 					'bookedList' => 1,
 					'locale' => $locale,
 					'numberFormatter' => $numberFormatter,
+					'managementUsersV2' => intval($this->managementUsersV2),
+					'inputType' => $setting->getFormInputTypeForUser(),
 				);
 				
 			}

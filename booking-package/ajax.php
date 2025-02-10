@@ -42,10 +42,12 @@
             require_once(plugin_dir_path( __FILE__ ) . 'lib/Nonce.php');
             
             global $wpdb;
+            $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
+			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
             #$this->schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->userRoleName); 
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->currencies = $this->setting->getCurrencies();
-            $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name);
+            $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name, $this->ajaxNonceFunction);
             
             /** Allow for cross-domain requests (from the front end). */
 			send_origin_headers();
@@ -67,8 +69,6 @@
 			send_nosniff_header();
 			nocache_headers();
             
-            $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
-			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
 			$textdomain = load_plugin_textdomain($this->plugin_name, false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
             
         }

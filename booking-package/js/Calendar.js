@@ -3197,7 +3197,7 @@
         return this._console.error;
         
     }
-	
+    
 	function Booking_Package_Elements (debug) {
 	    
 	    this._debug = new Booking_Package_Console(debug);

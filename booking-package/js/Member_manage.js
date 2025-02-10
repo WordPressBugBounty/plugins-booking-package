@@ -66,11 +66,20 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
     this._emailEnableList = {};
     this._locale = setting_data.locale;
     this._numberFormatter = false;
+    this._managementUsersV2 = 0;
+    this._inputType = setting_data.inputType;
     if (parseInt(setting_data.numberFormatter) === 1) {
         
         this._numberFormatter = true;
         
     }
+    
+    if (parseInt(setting_data.managementUsersV2) === 1) {
+        
+        this._managementUsersV2 = 1;
+        
+    }
+    
     this._currencies = setting_data.currencies;
     this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
     
@@ -250,7 +259,8 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
     
     this.loadingPanel(0);
     object._console.log(this._users);
-    this.start();
+    //this.start();
+    this.loadTabFrame();
     this.lookingForUsers(member_limit.options[member_limit.selectedIndex].value);
     
 };
@@ -330,6 +340,786 @@ Member_manage.prototype.getSelectedKey = function(){
     return this._selectedKey;
     
 };
+
+Member_manage.prototype.loadTabFrame = function() {
+    
+    var object = this;
+	var menuList = {usersLink: 'member_list', formFieldsLink: 'formFieldsPanel', settingLink: 'settingPanel'};
+	object._console.log('_managementUsersV2 = ' + object._managementUsersV2);
+	
+	if (object._managementUsersV2 === 0) {
+	    
+	    document.getElementById('menuList').classList.add('hidden_panel');
+	    document.getElementById('member_list').classList.remove('hidden_panel');
+	    object.start();
+	    return null;
+	    
+	}
+	
+	for (var key in menuList) {
+		
+		var button = document.getElementById(key);
+		button.classList.remove("hidden_panel");
+		button.setAttribute("data-key", key);
+		button.onclick = function(event) {
+			
+			var clickKey = this.getAttribute("data-key");
+			object._console.log(clickKey);
+			for (var key in menuList) {
+				
+				var link = document.getElementById(key);
+				var panel = document.getElementById(menuList[key]);
+				console.log(panel);
+				if (clickKey == key) {
+					
+					link.setAttribute("class", "menuItem active");
+					panel.setAttribute("class", "");
+					
+					if (clickKey == 'usersLink') {
+						
+						object.start();
+						
+					} else if (clickKey == 'formFieldsLink') {
+					    
+					    var loadingPanel = document.getElementById("loadingPanel");
+						loadingPanel.classList.remove("hidden_panel");
+						var postData = {mode: "getInputFieldForUserManagement", nonce: object._nonce, action: object._action};
+						var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
+							
+							object._console.log(json);
+							object.formFieldsPanel(json);
+							loadingPanel.classList.add("hidden_panel");
+							
+						});
+						
+					} else if (clickKey == 'settingPanel') {
+						
+						object.settingPanel();
+						
+					}
+					
+				} else {
+					
+					link.setAttribute("class", "menuItem");
+					panel.setAttribute("class", "hidden_panel");
+					
+				}
+				
+			}
+			
+		};
+		
+	}
+    
+};
+
+Member_manage.prototype.formFieldsPanel = function(formDataList) {
+    
+    var object = this;
+    var editBool = true;
+    object._console.log('formFieldsPanel');
+    object._console.log(formDataList);
+    
+    var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+    addButton.disabled = false;
+    var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+    saveButton.disabled = true;
+    var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
+    
+    var mainPanel = document.getElementById("formFieldsPanel");
+    mainPanel.textContent = null;
+    mainPanel.appendChild(buttonPanel);
+    
+    var panel = object.create('div', null, null, 'formSort', null, 'dnd', null);
+    var buttons = {};
+    var columns = {};
+    var ranking_columns = {};
+    
+    for (var key = 0; key < formDataList.length; key++) {
+        
+        object._console.log(formDataList[key]);
+        if (typeof formDataList[key]['name'] == "string") {
+            
+            formDataList[key]['name'] = formDataList[key]['name'].replace(/\\/g, "");
+            
+        }
+        
+        var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
+        var content_name = object.create('div', formDataList[key]['name'], null, null, null, 'content_name', null);
+        var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+        if (formDataList[key].required == 'true' || formDataList[key].required == 'true_frontEnd') {
+            
+            contentPanel.classList.add("dnd_required");
+            
+        }
+        
+        if(formDataList[key]["active"] != "true"){
+            
+            content_name.classList.add("dnd_content_unactive");
+            
+        }
+        
+        var rank_down_button = object.create('div', 'expand_more', null, null, null, 'material-icons rank_up_down_button', {key: key});
+        var editLabel = object.create('label', object._i18n.get("Edit"), null, null, null, 'dnd_edit', {key: key} );
+        var deleteLabel = object.create('label', object._i18n.get("Delete"), null, null, null, 'dnd_delete', {key: key} );
+        var optionPanel = object.create('div', null, [rank_down_button, editLabel, deleteLabel], null, null, 'content_block dnd_optionBox', null);
+        var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
+        columns[key] = column;
+        ranking_columns['key_' + key] = column;
+        panel.appendChild(column);
+        
+        rank_up_button.onclick = function() {
+            
+            const key = 'key_' + this.getAttribute("data-key");
+            const keys = object.getRankingUpAndDownKeys(ranking_columns, key);
+            const target_column = ranking_columns[keys.up];
+            console.log(target_column);
+            if (target_column == null) {
+                
+                return null;
+                
+            }
+            ranking_columns = object.moveRankingUp(ranking_columns, key);
+            console.log(ranking_columns);
+            panel.insertBefore(ranking_columns[key], target_column);
+            //panel.insertBefore(target_column, child3.ranking_columns[key]);
+            saveButton.disabled = false;
+            
+        };
+        
+        rank_down_button.onclick = function() {
+            
+            const key = 'key_' + this.getAttribute("data-key");
+            const keys = object.getRankingUpAndDownKeys(ranking_columns, key);
+            const target_column = ranking_columns[keys.down];
+            console.log(target_column);
+            if (target_column == null) {
+                
+                return null;
+                
+            }
+            ranking_columns = object.moveRankingDown(ranking_columns, key);
+            console.log(ranking_columns);
+            panel.insertBefore(target_column, ranking_columns[key]);
+            saveButton.disabled = false;
+            
+        };
+        
+        editLabel.onclick = function(event){
+            
+            if (editBool === true) {
+                
+                addButton.disabled = true;
+                editBool = false;
+                var key = this.getAttribute("data-key");
+                for (var formKey in columns) {
+                    
+                    if (formKey != key) {
+                        
+                        columns[formKey].classList.add("hidden_panel");
+                        
+                    }
+                    
+                }
+                
+                object._console.log(formDataList[key]);
+                /**
+                object.editItem(columns, key, mainPanel, panel, 'updateForm', account, formDataList[key], object.schedule_data['formInputType'], function(action){
+                    
+                    editBool = true;
+                    if (action !== 'cancel') {
+                        
+                        object.createFormPanel(action);
+                        
+                    }
+                    
+                    addButton.disabled = false;
+                    for (var formKey in columns) {
+                        
+                        columns[formKey].classList.remove("hidden_panel");
+                        
+                    }
+                    
+                });
+                **/
+            }
+            
+        };
+        
+        deleteLabel.onclick = function(event){
+            
+            if (editBool === true) {
+                
+                editBool = false;
+                var dataKey = parseInt(this.getAttribute("data-key"));
+                var result = confirm(object._i18n.get('Do you delete the "%s"?', [formDataList[dataKey].name]));
+                if (result === true) {
+                    /** 
+                    object.deleteItem(dataKey, "deleteFormItem", account, function(json){
+                        
+                        object.createFormPanel(json);
+                        
+                    });
+                    **/
+                }
+                editBool = true;
+                
+            }
+            
+        };
+        
+    }
+    
+    mainPanel.appendChild(panel);
+    
+    addButton.onclick = function(event){
+        
+        if (editBool === true) {
+            
+            panel.classList.add("hidden_panel");
+            editBool = false;
+            addButton.disabled = true;
+            object.addItem(mainPanel, 'addInput', function(action){
+                
+                editBool = true;
+                if (action == "close") {
+                    
+                    addButton.disabled = false;
+                    
+                } else {
+                    
+                    object._console.log(typeof action);
+                    if (typeof action == 'object') {
+                        
+                        if (action['status'] != 'error') {
+                            
+                            object._console.log(action);
+                            object.formFieldsPanel(action);
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                panel.classList.remove("hidden_panel");
+                
+            });
+            
+        }
+
+    };
+    
+    saveButton.onclick = function(event){
+        
+        formDataList = object.changeRank('name', 'dnd_column', formDataList, panel, 'changeFormRank', account, function(json){
+            
+            formData = json;
+            saveButton.disabled = true;
+            var panelList = panel.getElementsByClassName('dnd_column');
+            object.reviewPanels(panelList);
+            object.createFormPanel(formData, account);
+            
+        });
+        
+        object._console.log(formDataList);
+        
+    };
+    
+    
+}
+
+Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
+    
+    var object = this;
+    const inputTypeList = object._inputType;
+    const input = new Booking_Package_Input(object._debug);
+    object._console.log(mode);
+    object._console.log(mainPanel);
+    object._console.log(inputTypeList);
+    var inputData = {};
+    var closeHeghit = mainPanel.clientHeight;
+    var addPanel = object.create('div', null, null, 'addCoursePanel', null, null, null);
+    mainPanel.appendChild(addPanel);
+    var table = object.create('table', null, null, null, null, 'form-table', null);
+	var trList = {};
+    for (var key in inputTypeList) {
+        
+        object._console.log(key);
+        object._console.log(inputTypeList[key]);
+        var data = inputTypeList[key];
+        
+        var value = document.createElement('div');
+        if (data.inputType === 'OPTION') {
+            
+            var valuePanel = object.create('div', null, null, null, null, 'valuePanel', null);
+            var options = data.value;
+            object._console.log(options);
+            
+            var addButton = object.create('div', object._i18n.get("Add"), null, null, null, 'addLink', null);
+            let table = object.create('table', null, null, null, null, 'table_option wp-list-table widefat fixed striped', null);
+            valuePanel.appendChild(addButton);
+            valuePanel.appendChild(table);
+            inputData[data.id] = {};
+            var tr_index = 0;
+            var table_tr = {};
+            
+            for (var i = 0; i < options.length; i++) {
+                
+                create_tr(tr_index, table, data, options[i]);
+                tr_index++;
+                
+            }
+            
+            addButton.onclick = function(){
+                
+                create_tr(tr_index, table, data, "");
+                tr_index++;
+                
+            }
+            
+            value = valuePanel;
+            
+        } else {
+            
+            value = input.createInput(data.id, data, inputData, null);
+            
+        }
+        //var inputPanel = object.createInputRowPanel(data.name, value, data.id, data.required, null);
+        var th = document.createElement("th");
+        th.setAttribute("scope", "row");
+        th.textContent = data.name;
+        var td = object.create('td', null, [value], null, null, null, null);
+        var tr = object.create('tr', null, [th, td], "booking-package_input_" + key, null, null, null);
+        tr.setAttribute("valign", "top");
+        trList[key] = tr;
+        table.appendChild(tr);
+        
+        
+    }
+    
+    function add_class(input, className) {
+        
+        object._console.log(className);
+        if (className != null) {
+            
+            for (var i = 0; i < className.length; i++) {
+                
+                input.classList.add(className[i]);
+                
+            }
+            
+        }
+        
+        return input;
+        
+    };
+    
+    function create_tr(tr_index, table, input, valueList){
+        
+        if (typeof valueList == "string") {
+            
+            valueList = [valueList];
+            
+        }
+        object._console.log(valueList);
+        var inputName = input.id;
+        
+        object._console.log(inputName);
+        object._console.log(input);
+        object._console.log(input.optionsType);
+        object._console.log(valueList);
+        var tr = object.create('tr', null, null, null, null, 'tr_option', null);
+        inputData[inputName][tr_index] = {};
+        for (var key in input.optionsType) {
+            
+            object._console.log('key = ' + key);
+            var type = {type: "TEXT"};
+            if (input.optionsType != null && input.optionsType[key] != null) {
+                
+                type = input.optionsType[key];
+                
+            } else {
+                
+                continue;
+                
+            }
+            object._console.log(type);
+            
+            var value = '';
+            if (valueList != null) {
+                
+                value = valueList[key];
+                
+            }
+            object._console.log("value = " + value);
+            object._console.log(input.optionsType[key]);
+            
+            var filedTd = object.create('td', null, null, null, null, 'td_option', null);
+            if (type.type == "TEXT") {
+                
+                var textBox = document.createElement("input");
+                textBox.id = tr_index + "_" + key;
+                textBox.setAttribute("data-key", tr_index);
+                textBox.setAttribute("data-type", type.type);
+                textBox.setAttribute("class", "regular-text");
+                textBox = add_class(textBox, type.class);
+                
+                textBox.type = "text";
+                if (value != null && value.length != 0) {
+                    
+                    textBox.value = value;
+                    inputData[inputName][tr_index].value = value;
+                    
+                }
+                filedTd.appendChild(textBox);
+                textBox.onchange = function () {
+                    
+                    var dataKey = this.getAttribute("data-key");
+                    var value = this.value;
+                    var valueList = JSON.parse(inputData[inputName][dataKey].json);
+                    for (var key in valueList) {
+                        
+                        if (document.getElementById(tr_index + "_" + key) == null) {
+                            
+                            continue;
+                            
+                        }
+                        
+                        var textValue = document.getElementById(tr_index + "_" + key).value;
+                        value = value.replace(/\"/g, "'");
+                        textValue = textValue.replace(/\"/g, "'");
+                        valueList[key] = textValue;
+                        
+                    }
+                    
+                    var json = JSON.stringify(valueList);
+                    inputData[inputName][dataKey].json = json;
+                    inputData[inputName][dataKey].value = value;
+                    object._console.log(valueList);
+                    object._console.log(json);
+                    object._console.log(inputData);
+                    object._console.log("dataKey = " + dataKey + " value = " + value);
+                    
+                };
+                
+                object._console.log(textBox);
+                
+                
+            } else if (type.type == "SELECT") {
+                
+                var selectBox = document.createElement("select");
+                selectBox.id = tr_index + "_" + key;
+                selectBox.setAttribute("data-key", tr_index);
+                selectBox.setAttribute("data-type", type.type);
+                filedTd.appendChild(selectBox);
+                for (var i = parseInt(type.start); i < parseInt(type.end); i = i + parseInt(type.addition)) {
+                    
+                    var optionBox = document.createElement("option");
+                    optionBox.value = i;
+                    optionBox.textContent = object._i18n.get(type.unit, [i]);
+                    if (value != null && parseInt(value) == i) {
+                        
+                        optionBox.selected = true;
+                        inputData[inputName][tr_index].value = value;
+                        
+                    }
+                    selectBox.appendChild(optionBox);
+                    
+                }
+                
+                selectBox.onchange = function () {
+                    
+                    var dataKey = this.getAttribute("data-key");
+                    var value = this.value;
+                    for (var key in valueList) {
+                        
+                        var textValue = document.getElementById(tr_index + "_" + key).value;
+                        valueList[key] = textValue;
+                        object._console.log("textValue = " + textValue);
+                        
+                    }
+                    
+                    var json = JSON.stringify(valueList);
+                    inputData[inputName][dataKey].json = json;
+                    inputData[inputName][dataKey].value = value;
+                    
+                };
+                
+            }
+            
+            tr.appendChild(filedTd);
+            
+            
+        }
+        
+        object._console.log(tr.hasChildNodes());
+        if (tr.hasChildNodes() === true) {
+            
+            inputData[inputName][tr_index].json = "";
+            if (JSON.stringify(valueList)) {
+                
+                inputData[inputName][tr_index].json = JSON.stringify(valueList);
+                
+            }
+            
+            var deleteButton = object.create('label', 'delete', null, null, null, 'material-icons deleteLink', {key: tr_index} );
+            var deleteTd = object.create('td', null, [deleteButton], null, null, 'td_delete td_option', null);
+            tr.appendChild(deleteTd);
+            table.appendChild(tr);
+            table_tr[tr_index] = tr;
+            deleteButton.onclick = function(){
+                
+                var result = false;
+                var dataKey = this.getAttribute("data-key");
+                object._console.log(dataKey);
+                var json = JSON.parse(inputData[inputName][dataKey].json);
+                object._console.log(json);
+                
+                var tr = table_tr[parseInt(dataKey)];
+                object._console.log(tr);
+                table.removeChild(tr);
+                delete table_tr[dataKey];
+                delete inputData[inputName][dataKey];
+            
+            };
+            
+        }
+        
+    };
+    
+    addPanel.appendChild(table);
+    
+    var saveButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Save") );
+    var cancelButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Cancel") );
+    var buttonPanel = object.create('div', null, [saveButton, cancelButton], null, null, 'bottomButtonPanel', null);
+    addPanel.appendChild(buttonPanel);
+    
+    window.scrollTo(0, addPanel.offsetTop);
+    
+    cancelButton.onclick = function(event){
+        
+        mainPanel.removeChild(addPanel);
+        mainPanel.style.height = null;
+        object._console.log("cancelButton closeHeghit = " + closeHeghit);
+        callback("close");
+        
+    };
+
+    saveButton.onclick = function(event){
+        
+        object._console.log(inputTypeList);
+        object._console.log(inputData);
+        var response = null;
+        var postData = {mode: mode, nonce: object._nonce, action: object._action};
+        var jsonObj = {};
+        for (let key in inputTypeList) {
+            
+            var parentPanel = document.getElementById('booking-package_input_' + key);
+            parentPanel.classList.remove('errorPanel');
+            const inputFormat = inputTypeList[key];
+            jsonObj[key] = null;
+            if (inputFormat.type === 'TEXT' || inputFormat.type === 'TEXTAREA') {
+                
+                jsonObj[key] = inputData[key]['textBox'].value.trim();
+                if (inputFormat.inputLimit === 1 && jsonObj[key].length === 0) {
+                    
+                    parentPanel.classList.add('errorPanel');
+                    return null;
+                    
+                }
+                
+            } else if (inputFormat.type === 'CHECK') {
+                
+                const values = (function (inputElements) {
+                    
+                    const values = [];
+                    for (var key in inputElements) {
+                        
+                        if (inputElements[key].checked === true) {
+                            
+                            values.push(inputElements[key].getAttribute("data-value"));
+                            
+                        }
+                        
+                    }
+                    
+                    return values;
+                    
+                })(inputData[key]);
+                jsonObj[key] = values;
+                
+            } else if (inputFormat.type === 'SELECT') {
+                
+                var inputObject = inputData[key]['selectBox'];
+                var index = inputObject.selectedIndex;
+                if (inputObject.options[index] != null) {
+                    
+                    jsonObj[key] = inputObject.options[index].value;
+                    
+                }
+                
+            } else if (inputFormat.type === 'OPTION') {
+                
+                const values = (function (inputElements) {
+                    
+                    const values = [];
+                    for (var key in inputElements) {
+                        
+                        if (inputElements[key].value != null && inputElements[key].value.trim().length !== 0) {
+                            
+                            values.push(inputElements[key].value.trim());
+                            
+                        }
+                        
+                    }
+                    
+                    return values;
+                    
+                })(inputData[key]);
+                jsonObj[key] = values;
+                
+            }
+            
+        }
+        
+        const optionsPanel = document.getElementById('booking-package_input_options');
+        if ((jsonObj.type == 'CHECK' || jsonObj.type == 'SELECT' || jsonObj.type == 'RADIO') && jsonObj.options.length === 0 && optionsPanel != null) {
+            
+            optionsPanel.classList.add('errorPanel');
+            
+        }
+        
+        postData.jsonStr = JSON.stringify(jsonObj);
+        object._console.log(jsonObj);
+        object._console.log(postData);
+        return null;
+        
+    	var post = true;
+    	for(var key in response){
+    			
+    		if(typeof response[key] == 'boolean'){
+    			
+    			object._console.log("error key = " + key + " bool = " + response[key]);
+    			if (trList[key] != null) {
+    			    
+    			    trList[key].classList.add("errorPanel");
+    			    
+    			}
+    			post = false;
+    			
+    		}else{
+    			
+    			postData[key] = response[key];
+    			if(trList[key] != null){
+    			    
+    			    trList[key].classList.remove("errorPanel");
+    			    
+    			}
+    			
+    		}
+    		
+    	}
+        
+        if (post === true) {
+            
+            object._console.log(postData);
+            object.loadingPanel.setAttribute("class", "loading_modal_backdrop");
+            object.setFunction("addItem", post);
+            object.xmlHttp = new Booking_App_XMLHttp(object.url, postData, object._webApp, function(json){
+                    
+                if (json['status'] != 'error') {
+                    
+                    mainPanel.removeChild(addPanel);
+                    mainPanel.style.height = null;
+                    object._console.log(json);
+                    callback(json);
+                    
+                } else {
+                    
+                    alert(json["message"]);
+                    
+                }
+                object.loadingPanel.setAttribute("class", "hidden_panel");
+                
+			}, function(text){
+                
+                object.setResponseText(text);
+                
+            });
+            
+        }
+    	
+		
+    };
+}
+
+Member_manage.prototype.createInputRowPanel = function (name, value, id, required, actionElement) {
+    
+    var object = this;
+    if (typeof name == "string") {
+        
+        name = name.replace(/\\/g, "");
+        
+    }
+    object._console.log(value);
+    if (typeof value == "string") {
+        
+        value = value.replace(/\\/g, "");
+        
+    } else if (typeof value == 'object' && typeof value.join == 'function') {
+        
+        value = value.join('\n');
+        
+    }
+    object._console.log(value);
+    
+    var namePanel = document.createElement("div");
+    namePanel.setAttribute("class", "name");
+    namePanel.textContent = name;
+    if ( (typeof required == "string" && required == 'true') || (typeof required == "number" && required == 1) ) {
+        
+        namePanel.setAttribute("class", "name required");
+        
+    }
+    
+    var inputPanel = null;
+    if (typeof value == 'string' || typeof value == 'number') {
+        
+        inputPanel = document.createElement("div");
+        inputPanel.textContent = value;
+        if (id != null) {
+            
+            inputPanel.id = id;
+            
+        }
+        
+    } else {
+        
+        inputPanel = value;
+        if (id != null) {
+            
+            inputPanel.id = id;
+            
+        }
+        
+    }
+    inputPanel.setAttribute("class", "value");
+    var rowPanel = document.createElement("div");
+    rowPanel.setAttribute("class", "row");
+    rowPanel.appendChild(namePanel);
+    rowPanel.appendChild(inputPanel);
+    
+    return rowPanel;
+    
+}
+
+Member_manage.prototype.settingPanel = function () {
+    
+    var object = this;
+    object._console.log('settingPanel');
+    
+}
 
 Member_manage.prototype.start = function(){
     
