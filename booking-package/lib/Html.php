@@ -15,12 +15,20 @@
         
         public $currencies = array();
         
+        public $managementUsersV2 = 1;
+        
         public function __construct($prefix, $pluginName, $currencies){
             
             $this->prefix = $prefix;
             $this->plugin_name = $pluginName;
             $this->currencies = $currencies;
             $this->visitorSubscriptionForStripe = 1;
+            
+        }
+        
+        public function setManagementUsersV2($managementUsersV2) {
+            
+            $this->managementUsersV2 = $managementUsersV2;
             
         }
         
@@ -208,24 +216,90 @@ EOT;
                 
             }
             
-            
-            
-		    
 		    if (isset($user['check_email_for_member']) && intval($user['check_email_for_member']) == 0) {
 		        
 		        $text['Registration confirmation will be emailed to you.'] = '';
 		        
 		    }
 		    
-		    $html = '';
-			if(is_string($member_login_error)){
+			$addUserPanel = '<div id="booking-package-user-form" class="hidden_panel">';
+			$addUserPanel .= '  <div>';
+			$addUserPanel .= '      <div class="titlePanel">';
+			$addUserPanel .= '          <div class="title">' . $text["Sign up"] . '</div>';
+			$addUserPanel .= '          <div id="booking-package-register_user_return_button" class="material-icons closeButton" style="font-family: \'Material Icons\' !important;">close</div>';
+			$addUserPanel .= '      </div>';
+			$addUserPanel .= '      <div id="addCustomFormFieldPanel" class="">';
+			
+			/**
+			if ($this->managementUsersV2 === 0) {
+			    
+			    $addUserPanel .= '          <div> <label>' . $text['Username'] . '</label> <input type="text" name="booking-package-user_login" id="booking-package-user_login" class="input" value="" size="20"> </div>';
+			    $addUserPanel .= '          <div> <label>' . $text['Email'] . '</label> <input type="text" name="booking-package-user_email" id="booking-package-user_email" class="input" value="" size="20"> </div>';
+			    $addUserPanel .= '          <div> <label>' . $text['Password'] . '</label> <input type="password" name="booking-package-user_pass" id="booking-package-user_pass" class="input" value="" size="20"> </div>';
+			    
+			}
+			**/
+			
+			$addUserPanel .= '      </div>';
+			$addUserPanel .= '      <div id="booking-package-user_regist_message">' . $text["Registration confirmation will be emailed to you."] . '</div>';
+			$addUserPanel .= '      <div id="booking-package-user_regist_error_message" class="login_error hidden_panel"></div>';
+			$addUserPanel .= '      <button id="booking-package-register_user_button" class="register_button">' . $text["Register"] . '</button>';
+			$addUserPanel .= '  </div>';
+			$addUserPanel .= '</div>';
+			
+			$editUserPanel = '<div id="booking-package-user-edit-form" class="hidden_panel">';
+			$editUserPanel .= ' <div>';
+			$editUserPanel .= '     <div class="titlePanel">';
+			$editUserPanel .= '         <div class="title">' . $text["Profile"] . '</div>';
+			$editUserPanel .= '         <div id="booking-package-edit_user_return_button" class="material-icons closeButton" style="font-family: \'Material Icons\' !important">close</div>';
+			$editUserPanel .= '     </div>';
+			
+			$editUserPanel .= '     <div id="booking-package-tabFrame" class="tabFrame hidden_panel">';
+			$editUserPanel .= '         <div class="menuList ' . $hidden_panel . '">';
+			$editUserPanel .= '             <div id="booking-package-user_profile_tab" class="menuItem active">' . $text["Profile"] . '</div>';
+			$editUserPanel .= '             <div id="booking-package-user_subscribed_tab" class="menuItem">' . $text["Subscribed items"] . '</div>';
+			$editUserPanel .= '         </div>';
+			$editUserPanel .= '     </div>';
+			
+			$editUserPanel .= '      <div id="editCustomFormFieldPanel" class="">abc</div>';
+			
+			$editUserPanel .= '     <div id="booking-package-user-profile" class="inputPanel">';
+			$editUserPanel .= '         <div> <label>' . $text['Username'] . '</label> <input type="text" name="booking-package-user_edit_login" id="booking-package-user_edit_login" class="input" value="' . $user_login . '" size="20" disabled> </div>';
+			$editUserPanel .= '         <div> <label>' . $text['Email'] . '</label> <input type="text" name="booking-package-user_edit_email" id="booking-package-user_edit_email" class="input" value="' . $user_email . '" size="20"> </div>';
+			$editUserPanel .= '         <div id="booking-package-user_status_field">';
+			$editUserPanel .= '             <label>' . $text["Status"] . '</label>';
+			$editUserPanel .= '             <label> <input type="checkbox" name="booking-package-user_edit_status" id="booking-package-user_edit_status" class="" value="1"> ' . $text["Approved"] . ' </label>';
+			$editUserPanel .= '         </div>';
+			$editUserPanel .= '         <div id="booking-package-edit_password_filed">';
+			$editUserPanel .= '             <label>' . $text["Password"] . '</label>';
+			$editUserPanel .= '             <button id="booking-package-user_edit_change_password_button" class="change_user_password_button">' . $text["Change password"] . '</button>';
+			$editUserPanel .= '             <input type="password" name="booking-package-user_edit_pass" id="booking-package-user_edit_pass" class="input hidden_panel" value="" size="20">';
+			$editUserPanel .= '         </div>';
+			$editUserPanel .= '     </div>';
+			
+			$editUserPanel .= '     <div id="booking-package-user-subscribed" class="inputPanel hidden_panel">';
+			$editUserPanel .= '         <table> <tbody id="booking-package-user_subscribed_tbody"></tbody> </table>';
+			$editUserPanel .= '     </div>';
+			$editUserPanel .= '     <div>';
+			$editUserPanel .= '         <button id="booking-package-edit_user_button" class="update_user_button">' . $text["Update Profile"] . '</button>';
+			$editUserPanel .= '         <button id="booking-package-edit_user_delete_button" class="delete_user_button">' . $text["Delete"] . '</button>';
+			$editUserPanel .= '     </div>';
+			$editUserPanel .= ' </div>';
+			$editUserPanel .= '</div>';
+			$editUserPanel .= '<input type="hidden" id="booking-package-permalink" value="' . $permalink . '">';
+			
+			$html = '';
+			if (is_string($member_login_error)) {
 				
 				$html .= '<div class="member_login_error">'.$member_login_error.'</div>';
 				
 			}
+			$html .= $addUserPanel;
+			$html .= $editUserPanel;
 			
 $html .= <<< EOT
-
+    
+    <!--
     <div id="booking-package-user-form" class="hidden_panel">
         <div>
             <div class="titlePanel">
@@ -233,6 +307,7 @@ $html .= <<< EOT
                 <div id="booking-package-register_user_return_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important;">close</div>
             </div>
             <div class="inputPanel">
+                
                 <div>
                     <label>{$text["Username"]}</label>
                     <input type="text" name="booking-package-user_login" id="booking-package-user_login" class="input" value="" size="20">
@@ -245,14 +320,18 @@ $html .= <<< EOT
                     <label>{$text["Password"]}</label>
                     <input type="password" name="booking-package-user_pass" id="booking-package-user_pass" class="input" value="" size="20">
                 </div>
+                
+                <div id='addCustomFormFieldPanel'></div>
                 <div id="booking-package-user_regist_message">{$text["Registration confirmation will be emailed to you."]}</div>
                 <div id="booking-package-user_regist_error_message" class="login_error hidden_panel"></div>
+                
             </div>
             <button id="booking-package-register_user_button" class="register_button">{$text["Register"]}</button>
-            <!-- <button id="booking-package-register_user_return_button" class="hidden_panel return_button">{$text["Return"]}</button> -->
         </div>
     </div>
+    -->
     
+    <!--
     <div id="booking-package-user-edit-form" class="hidden_panel">
         <div>
             <div class="titlePanel">
@@ -295,13 +374,13 @@ $html .= <<< EOT
             <div>
                 <button id="booking-package-edit_user_button" class="update_user_button">{$text["Update Profile"]}</button>
                 <button id="booking-package-edit_user_delete_button" class="delete_user_button">{$text["Delete"]}</button>
-                <!-- <button id="booking-package-edit_user_return_button" class="hidden_panel return_button">{$text["Return"]}</button> -->
                 
             </div>
         </div>
     </div>
     <input type="hidden" id="booking-package-permalink" value="$permalink">
-            
+    -->
+    
 EOT;
             
             return $html;

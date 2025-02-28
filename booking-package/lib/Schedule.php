@@ -646,11 +646,19 @@
 					
 				}
 				
+				$customUserFields = array('TEXT' => array(), 'SELECT' => array(), 'CHECK' => array(), 'RADIO' => array(), 'TEXTAREA' => array());
+				if (isset($_POST['customUserFields']) === true) {
+					
+					$customUserFields = json_decode(sanitize_text_field( stripslashes($_POST['customUserFields']) ), true);
+					
+				}
+				
 				update_user_meta($user_id, 'show_admin_bar_front', 'false');
 				$hash = wp_hash(sanitize_text_field($_POST['user_email']).sanitize_text_field($_POST['user_login']).date('U'));
 				$response['user_id'] = $user_id;
 				$response['user_login'] = esc_html($_POST['user_login']);
 				$response['user_email'] = esc_html($_POST['user_email']);
+				$response['profile'] = $customUserFields;
 				$this->add_user($user_id, $_POST['user_login'], $_POST['user_email'], $activation, $hash);
 				
 				if ($activation == 1) {
@@ -819,6 +827,13 @@
 				
 			} else {
 				
+				$customUserFields = array('TEXT' => array(), 'SELECT' => array(), 'CHECK' => array(), 'RADIO' => array(), 'TEXTAREA' => array());
+				if (isset($_POST['customUserFields']) === true) {
+					
+					$customUserFields = json_decode(sanitize_text_field( stripslashes($_POST['customUserFields']) ), true);
+					
+				}
+				
 				$login = 0;
 				$status = 1;
 				$hash = 0;
@@ -856,7 +871,7 @@
 						
 					}
 					
-					$bool = $this->update_profile($userId, $_POST['user_email'], $status, $hash);
+					$bool = $this->update_profile($userId, $_POST['user_email'], $status, $customUserFields, $hash);
 					
 					if ($login == 1) {
 						
@@ -881,7 +896,7 @@
         	
         }
         
-        public function update_profile($userId, $email, $status, $hash = null){
+        public function update_profile($userId, $email, $status, $customUserFields, $hash = null){
         	
         	global $wpdb;
         	$table_name = $wpdb->prefix . "booking_package_users";
@@ -895,9 +910,10 @@
 						'email' => sanitize_text_field($email), 
 						'status' => $status,
 						'user_activation_key' => $hash,
+						'profile' => sanitize_text_field( json_encode($customUserFields) ), 
 					),
 					array('key' => intval($userId)),
-					array('%s', '%d', '%s'),
+					array('%s', '%d', '%s', '%s'),
 					array('%d')
 				);
 				
@@ -987,39 +1003,49 @@
 				
 			}
 			
-        	if (!isset($_POST['keywords'])) {
-        		
-        		$args = array(
-	        		'role' => $role,
-	        		'orderby' => 'ID',
-	        		'order' => 'ASC',
-	        		'offset' => intval($offset),
-	        		'number' => intval($number),
-	        		'fields' => array('ID', 'user_login', 'user_email', 'user_registered'),
-	        	);
-	        	
-	        	if (!is_null($search)) {
-	        		$args['search'] = $search;
-	        	}
-	        	
-	        	$users = get_users($args);
-	        	$table_name = $wpdb->prefix . "booking_package_users";
-	        	foreach ((array) $users as $key => $user) {
-	        		
-		        	$sql = $wpdb->prepare(
-		        		"SELECT `key`, `status`, `user_login`, `subscription_list`, `user_registered` FROM `".$table_name."` WHERE `email` = %s;", 
-		        		array(sanitize_text_field($user->user_email))
-		        	);
+			if (!isset($_POST['keywords'])) {
+				
+				$args = array(
+					'role' => $role,
+					'orderby' => 'ID',
+					'order' => 'ASC',
+					'offset' => intval($offset),
+					'number' => intval($number),
+					'fields' => array('ID', 'user_login', 'user_email', 'user_registered'),
+				);
+				
+				if (!is_null($search)) {
+					$args['search'] = $search;
+				}
+				
+				$users = get_users($args);
+				$table_name = $wpdb->prefix . "booking_package_users";
+				foreach ((array) $users as $key => $user) {
+					
+					$sql = $wpdb->prepare(
+						"SELECT `key`, `status`, `user_login`, `subscription_list`, `profile`, `user_registered` FROM `".$table_name."` WHERE `email` = %s;", 
+						array(sanitize_text_field($user->user_email))
+					);
 					$row = $wpdb->get_row($sql, ARRAY_A);
 					if (empty($row)) {
 						
 						$this->add_user($user->ID, $user->user_login, $user->user_email, 1, null);
 						$user->status = '1';
+						$user->profile = array();
 						#continue;
 						
 					} else {
 						
 						$user->status = $row['status'];
+						if (empty($row['profile']) === true) {
+							
+							$user->profile = array();
+							
+						} else {
+							
+							$user->profile = json_decode($row['profile'], true);
+							
+						}
 						
 					}
 					
@@ -1075,56 +1101,63 @@
 					
 				}
 				
-        		$keywords = stripslashes($keywords);
-        		$keywords = explode(' ', sanitize_text_field($keywords));
-        		for ($i = 0; $i < count($keywords); $i++) {
-        			
-        			array_push($queryList, "`user_login` LIKE '%%%s%%'");
-        			array_push($queryList, "`email` LIKE '%%%s%%'");
-        			array_push($queryList, "`value` LIKE '%%%s%%'");
-        			array_push($valueList, $keywords[$i]);
-        			array_push($valueList, $keywords[$i]);
-        			$word = rtrim(ltrim(json_encode($keywords[$i]), '"'), '"');
-        			$word = str_replace('\\', '%\\', $word);
-        			array_push($valueList, $word);
-        			
-        		}
-        		
-        		if (intval($_POST['offset']) < 0) {
-        			
-        			$_POST['offset'] = 0;
-        			
-        		}
-        		
-        		array_push($valueList, intval($_POST['offset']));
-        		array_push($valueList, intval($_POST['number']));
-        		
-        		$table_name = $wpdb->prefix."booking_package_users";
-        		#$sql = "SELECT `email`, `status`, `subscription_list` FROM `".$table_name."` WHERE " . implode(" OR ", $queryList) . ";";
-        		$sql = $wpdb->prepare(
-	        		"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
-	        		$valueList
-	        	);
-	        	
-	        	if (isset($_POST['meta']) && intval($_POST['meta']) == 1) {
-	        		
-	        		$sql = $wpdb->prepare(
-		        		"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
-		        		$valueList
-		        	);
-	        		
-	        	}
-	        	
-	        	$rows = $wpdb->get_results($sql, ARRAY_A);
-	        	return $rows;
-	        	#return array("sql" => $sql, "row" => $row);
-        		
-        	}
-        	
-        	
-        	
-        	return $users;
-        	
+				$keywords = stripslashes($keywords);
+				$keywords = explode(' ', sanitize_text_field($keywords));
+				for ($i = 0; $i < count($keywords); $i++) {
+					
+					array_push($queryList, "`user_login` LIKE '%%%s%%'");
+					array_push($queryList, "`email` LIKE '%%%s%%'");
+					array_push($queryList, "`value` LIKE '%%%s%%'");
+					array_push($valueList, $keywords[$i]);
+					array_push($valueList, $keywords[$i]);
+					$word = rtrim(ltrim(json_encode($keywords[$i]), '"'), '"');
+					$word = str_replace('\\', '%\\', $word);
+					array_push($valueList, $word);
+					
+				}
+				
+				if (intval($_POST['offset']) < 0) {
+					
+					$_POST['offset'] = 0;
+					
+				}
+				
+				array_push($valueList, intval($_POST['offset']));
+				array_push($valueList, intval($_POST['number']));
+				
+				$table_name = $wpdb->prefix."booking_package_users";
+				$sql = $wpdb->prepare(
+					"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
+					$valueList
+				);
+				
+				if (isset($_POST['meta']) && intval($_POST['meta']) == 1) {
+					
+					$sql = $wpdb->prepare(
+						"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
+						$valueList
+					);
+					
+				}
+				
+				$rows = $wpdb->get_results($sql, ARRAY_A);
+				foreach ($rows as $key => $row) {
+					
+					if (empty($row['profile']) === true) {
+						
+						$row['profile'] = '{}';
+						$rows[$key] = $row;
+						
+					}
+					
+				}
+				
+				return $rows;
+			
+			}
+			
+			return $users;
+			
         }
         
         public function login($userId, $statusCheck = true) {
@@ -1139,35 +1172,44 @@
 			global $wpdb;
 			$table_name = $wpdb->prefix."booking_package_users";
 			$sql = $wpdb->prepare(
-				"SELECT `value`,`status` FROM `".$table_name."` WHERE `key` = %d;", 
+				"SELECT `value`,`status`,`profile` FROM `" . $table_name . "` WHERE `key` = %d;", 
 				array(intval($userId))
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);
-			$value = 0;
+			$response = 0;
 			
 			if (!empty($row) && intval($row['status']) == 1) {
 				
 				$value = json_decode($row['value'], true);
-				#update_user_meta($userId, 'show_admin_bar_front', 'true');
-				if (empty($value)) {
-					
-					$value = array();
-					
-				}
+				$profile = json_decode($row['profile'], true);
+				$response = array('value' => $value, 'profile' => $profile);
 				
 			} else {
 				
-				$value = 0;
+				$response = 0;
 				if ($statusCheck === false && !empty($row)) {
 					
 					$value = json_decode($row['value'], true);
-					#update_user_meta($userId, 'show_admin_bar_front', 'true');
+					$profile = json_decode($row['profile'], true);
+					$response = array('value' => $value, 'profile' => $profile);
 					
 				}
 				
 			}
 			
-        	return $value;
+			if (is_int($response) === false && empty($response['value'])) {
+				
+				$response['value'] = array();
+				
+			}
+			
+			if (is_int($response) === false && empty($response['profile'])) {
+				
+				$response['profile'] = array();
+				
+			}
+			
+        	return $response;
         	
         }
         
@@ -1180,7 +1222,14 @@
 			}
 			
 			global $wpdb;
-			$table_name = $wpdb->prefix."booking_package_users";
+			$customUserFields = array('TEXT' => array(), 'SELECT' => array(), 'CHECK' => array(), 'RADIO' => array(), 'TEXTAREA' => array());
+			if (isset($_POST['customUserFields']) === true) {
+				
+				$customUserFields = json_decode(sanitize_text_field( stripslashes($_POST['customUserFields']) ), true);
+				
+			}
+			
+			$table_name = $wpdb->prefix . "booking_package_users";
 			$wpdb->insert(
 				$table_name, 
 				array(
@@ -1191,9 +1240,10 @@
 					'lastname' => "", 
 					'email' => sanitize_text_field($email),
 					'value' => json_encode(array()),
-					'user_activation_key' => $hash
+					'user_activation_key' => $hash,
+					'profile' => sanitize_text_field( json_encode($customUserFields) ),
 				), 
-				array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s')
+				array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
 			);
 			
 			do_action('booking_package_add_user', $userId);
@@ -1320,9 +1370,22 @@
         	
         	if ($reality === true) {
         		
+        		if (isset($value['profile']['TEXT']['user_login']) === false) {
+        			
+        			$value['profile']['TEXT']['user_login'] = array('id' => 'user_login', 'value' => $user->user_login);
+        			
+        		}
+        		
+        		if (isset($value['profile']['TEXT']['user_email']) === false) {
+        			
+        			$value['profile']['TEXT']['user_email'] = array('id' => 'user_email', 'value' => $user->user_email);
+        			
+        		}
+        		
         		$memberSetting['user_login'] = $user->user_login;
 				$memberSetting['user_email'] = $user->user_email;
-				$memberSetting['value'] = $value;
+				$memberSetting['value'] = $value['value'];
+				$memberSetting['profile'] = $value['profile'];
 				$memberSetting['current_member_id'] = intval($userId);
 				$memberSetting['login'] = 1;
 				$memberSetting['subscription_list'] = $this->get_subscription_list_of_user($userId);

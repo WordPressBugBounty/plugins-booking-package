@@ -106,7 +106,7 @@
 			
 		}
 		
-		if (input['type'] == 'TEXT') {
+		if (input['type'] == 'TEXT' || input['type'] == 'PASSWORD') {
 			
 			var textBox = object.createInputElement('input', 'text', null, input['value'], null, null, inputId, null, 'regular-text form_text', null);
 			object._console.log(typeof input.placeholder);
@@ -129,9 +129,23 @@
 				
 			}
 			
+			if (input.disabled != null && parseInt(input.disabled) === 1) {
+				
+				textBox.disabled = true;
+				
+			}
+			
 			if (eventAction != null) {
 				    
 				textBox.onchange = eventAction;
+				
+			}
+			
+			if (input['type'] == 'PASSWORD') {
+				
+				textBox.type = 'password';
+				textBox.value = '';
+				textBox.onchange = null;
 				
 			}
 			
@@ -166,6 +180,11 @@
 			
 			object._console.log(input.value);
 			var selectBox = object.createInputElement('select', null, null, null, null, null, inputId, null, 'form_select', null);
+			if (input.disabled != null && parseInt(input.disabled) === 1) {
+				
+				selectBox.disabled = true;
+				
+			}
 			//for(var i = 0; i < list.length; i++){
 			for (var key in list) {
 				
@@ -284,6 +303,12 @@
 				var valueName = object.create('span', list[i], null, null, null, 'radio_title', null);
 				var checkBox = object.createInputElement('input', 'checkbox', inputName, list[i], null, null, null, null, 'form_checkbox', {value: i} );
 				checkBox.checked = false;
+				if (input.disabled != null && parseInt(input.disabled) === 1) {
+					
+					checkBox.disabled = true;
+					
+				}
+				
 				for (var a = 0; a < valueList.length; a++) {
 					
 					object._console.log(valueList[a]);
@@ -721,6 +746,237 @@
 		return bool;
 		
     };
+	
+	
+	Booking_Package_Input.prototype.getUserFieldValue = function (inputFormat, elements) {
+		
+		var object = this;
+		var values = null;
+		object._console.log(inputFormat);
+		object._console.log(elements);
+		if (inputFormat.type === 'TEXT' || inputFormat.type === 'TEXTAREA' || inputFormat.type === 'PASSWORD') {
+			
+			values = elements['textBox'].value.trim();
+			
+			
+		} else if (inputFormat.type === 'CHECK') {
+			
+			values = (function (inputElements) {
+				
+				const values = [];
+				for (var key in elements) {
+					
+					if (elements[key].checked === true) {
+						
+						values.push(elements[key].getAttribute("data-value"));
+						
+					}
+					
+				}
+				
+				return values;
+				
+			})(elements);
+			
+		} else if (inputFormat.type === 'RADIO') {
+			
+			values = (function (elements) {
+				
+				const values = [];
+				for (var key in elements) {
+					
+					if (elements[key].checked === true) {
+						
+						values.push(elements[key].getAttribute("data-value"));
+						
+					}
+					
+				}
+				
+				return values;
+				
+			})(elements);
+			
+		} else if (inputFormat.type === 'SELECT') {
+			
+			var inputObject = elements['selectBox'];
+			var index = inputObject.selectedIndex;
+			if (inputObject.options[index] != null) {
+				
+				values = inputObject.options[index].value;
+				
+			}
+			
+		} else if (inputFormat.type === 'OPTION') {
+			
+			values = (function (elements) {
+				
+				const values = [];
+				for (var key in elements) {
+					
+					if (elements[key].value != null && elements[key].value.trim().length !== 0) {
+						
+						values.push(elements[key].value.trim());
+						
+					}
+					
+				}
+				
+				return values;
+				
+			})(elements);
+			
+		}
+		
+		return values;
+		
+	}
+	
+	
+    Booking_Package_Input.prototype.validateInputValues = function(formFields, inputData) {
+    	
+    	const object = this;
+    	let scrollIntoView = true;
+    	let response = {updata: true, error: [], customUserFields: { 'TEXT': {}, 'SELECT': {}, 'CHECK': {}, 'RADIO': {}, 'TEXTAREA': {} } };
+        for (var i = 0; i < formFields.length; i++) {
+            
+            const field = formFields[i];
+            const elements = inputData['customFormFiel_' + field.id];
+            if (typeof elements === 'object') {
+                
+                const tr = document.getElementById('tr_input_field_' + field.id);
+                tr.classList.remove('error_empty_value');
+                let values = object.getUserFieldValue(field, elements);
+                if (field.type !== 'PASSWORD') {
+                	
+                	response.customUserFields[field.type][field.id] = {id: field.id, value: values};
+                	
+                } else if (field.type === 'CHECK' || field.type === 'RADIO') {
+                	
+                	values = (function(indexes, options) {
+                        
+                        let values = [];
+                        for (var i = 0; i < indexes.length; i++) {
+                            
+                            values.push(options[ indexes[i] ]);
+                            
+                        }
+                        
+                        return values;
+                        
+                    })(values, field.options);
+                    response.customUserFields[field.type][field.id] = {id: field.id, value: values};
+                	
+                }
+                
+                if (field.required === 'true' && values.length === 0) {
+                    
+                    response.error.push(field.id);
+					tr.classList.add('error_empty_value');
+                    response.updata = false;
+                    if (scrollIntoView === true) {
+                    	
+                    	tr.scrollIntoView();
+                    	scrollIntoView = false;
+                    	
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        return response;
+    	
+    };
+    
+    Booking_Package_Input.prototype.createUserFieldPanel = function(formFields, userProfile, inputData, elementName, defaultName) {
+		
+		let parentElementName = 'table';
+		let trElementName = 'tr';
+		let thElementName = 'th';
+		let tdElementName = 'td';
+		if (elementName === 'div') {
+			
+			parentElementName = 'div';
+			trElementName = 'div';
+			thElementName = 'div';
+			tdElementName = 'div';
+			
+		}
+		
+		
+		const object = this;
+		const table = object.create(parentElementName, null, null, null, null, 'wp-list-table widefat', null);
+		for (var key in formFields) {
+			
+			const id = formFields[key].id;
+			const field = formFields[key];
+			if (defaultName.hasOwnProperty(id) === false && field.active === 'true') {
+				
+				object._console.log(id);
+				object._console.log(field);
+				if (typeof userProfile[field.type] !== 'undefined' && typeof userProfile[field.type][field.id] !== 'undefined') {
+					
+					field.value = userProfile[field.type][field.id].value;
+					
+				}
+				
+				if (field.type === 'CHECK' || field.type === 'RADIO') {
+					
+					field.value = (function(field) {
+						
+						const values = [];
+						for (var i = 0; i < field.value.length; i++) {
+							
+							const key = parseInt( field.value[i] );
+							if (field.options.hasOwnProperty(key) === true) {
+								
+								values.push(field.options[key]);
+								
+							}
+							
+						}
+						
+						return values;
+						
+					})(field);
+					
+				}
+				
+				const inputElement = object.createInput('customFormFiel_' + field.id, field, inputData, null);
+				object._console.log(inputElement);
+				var th = document.createElement(thElementName);
+				th.textContent = field.name;
+				if (field.required === 'true') {
+					
+					th.classList.add('required');
+					
+				}
+				var td = object.create(tdElementName, null, [inputElement], null, null, null, null);
+				var tr = object.create(trElementName, null, [th, td], 'tr_input_field_' + field.id, null, null, null);
+				tr.setAttribute("valign", "top");
+				if (elementName === 'div') {
+					
+					tr.classList.add('row');
+					th.classList.add('name');
+					td.classList.add('value');
+					
+				}
+				
+				
+				table.appendChild(tr);
+				
+			}
+			
+			
+		}
+		
+		
+		return table;
+		
+    }
     
     Booking_Package_Input.prototype.create = function(elementType, text, childElements, id, style, className, data_x) {
         

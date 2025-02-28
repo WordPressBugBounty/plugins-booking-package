@@ -200,6 +200,33 @@
 	
 }
 
+#booking-package-loginform p {
+    
+    padding: 0 10px 10px 10px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    
+}
+
+#booking-package-loginform label {
+    
+    display: inline-block;
+    font-weight: normal;
+    padding-bottom: 5px;
+    
+}
+
+#addUserFileds tr {
+    
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: 1em;
+    text-align: left;
+    
+    
+}
+
 #booking-package-loginform label, #booking-package-user-form label, #booking-package-user-profile label {
     
     display: block;
@@ -212,7 +239,7 @@
     
 }
 
-#booking-package-user-form, #booking-package-loginform, #booking-package-subscription_form, #booking-package-subscribed_panel {
+#booking-package-user-form, #booking-package-loginform, #booking-package-subscription_form, #booking-package-subscribed_panel, #booking-package-user-edit-form {
     
     max-width: 320px;
     padding: 8% 10px;
@@ -243,6 +270,32 @@
     margin: 0;
     font-size: 1.5em !important;
     font-weight: normal;
+    
+}
+
+#addCustomFormFieldPanel table {
+    
+    border-spacing: 0;
+    border-width: 0;
+    
+}
+
+#addCustomFormFieldPanel tr {
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+}
+
+#addCustomFormFieldPanel th {
+    
+    grid-start: 1;
+    
+}
+
+#addCustomFormFieldPanel td {
+    
+    
     
 }
 
@@ -367,14 +420,6 @@
     
 }
 
-#booking-package-user-edit-form {
-    
-    width: 100%;
-    padding: 8% 10px;
-    margin: auto;
-    
-}
-
 #booking-package-subscription_form .subscription {
     
     text-align: center;
@@ -434,12 +479,13 @@
 
 #booking-package-memberActionPanel button, #booking-package-memberActionPanel input[type=submit] {
     
+    margin-top: 1em;
     margin-bottom: 1em;
     text-transform: uppercase;
     
 }
 
-#booking-package-memberActionPanel div, #booking-package-memberActionPanel .row_reCAPTCHA {
+#booking-package-memberActionPanel div, #booking-package-user-edit-form div, #booking-package-memberActionPanel .row_reCAPTCHA {
     
     margin-bottom: 0;
     /** display: contents; **/
@@ -454,7 +500,9 @@
 
 #booking-package-memberActionPanel div {
     
+    /**
     margin-bottom: 1em;
+    **/
     
 }
 
@@ -580,13 +628,13 @@
     
 }
 
-#booking-package input[type=text], #booking-package textarea {
+#booking-package input[type=text], #booking-package textarea, #booking-package-user-form input[type=text], #booking-package-user-form input[type=password], #booking-package-user-form textarea, #booking-package-loginform input[type=text], #booking-package-loginform input[type=password], #booking-package-loginform textarea, #booking-package-user-edit-form input[type=text], #booking-package-user-edit-form input[type=password], #booking-package-user-edit-form textarea {
     
     border: 1px solid #d6d6d6;
     
 }
 
-#booking-package select {
+#booking-package select, #booking-package-user-form select {
     
     border: 1px solid #ddd;
     
@@ -1257,6 +1305,7 @@
 
 #booking-package_calendarPage .day_slot  {
 	
+	display: grid;
 	border-width: 1px;
 	border-style: solid;
 	margin-left: -1px;
@@ -1368,7 +1417,7 @@
     font-weight: inherit;
     font-size: 1em !important;
     text-align: center;
-    text-overflow: ellipsis;
+    text-overflow: clip;
     white-space: nowrap;
     padding: 5px 0;
     
@@ -2317,9 +2366,8 @@
 }
 
 #booking-package_schedulePage .courseCostPanel, #booking-package_schedulePage .serviceCost, #booking-package_servicePage .serviceCost {
-    /**
-    float: right;
-    **/
+    
+    padding-left: 0.5em;
     text-align: right;
 }
 
@@ -2571,7 +2619,7 @@
     
 }
 
-#booking-package_inputFormPanel .row, #booking-package_myBookingDetails .row, #booking-package_serviceDetails .row, #booking-package_myBookingDetailsFroVisitor .row {
+#booking-package_inputFormPanel .row, #booking-package_myBookingDetails .row, #booking-package_serviceDetails .row, #booking-package_myBookingDetailsFroVisitor .row, #booking-package-user-form .row, #booking-package-loginform .row, #booking-package-user-edit-form .row {
     
     padding: 10px;
     margin: 0;
@@ -2587,13 +2635,15 @@
     
 }
 
-#booking-package_inputFormPanel .error_empty_value, #booking-package_serviceDetails .error_empty_value {
+
+
+#booking-package_inputFormPanel .error_empty_value, #booking-package_serviceDetails .error_empty_value, #booking-package-user-form .error_empty_value, #booking-package-user-edit-form .error_empty_value {
     
     background-color: #FFD5D5;
     
 }
 
-#booking-package_inputFormPanel .name, #booking-package_serviceDetails .name, #booking-package_myBookingDetailsFroVisitor .name, #booking-package_myBookingDetails_panel .name {
+#booking-package_inputFormPanel .name, #booking-package_serviceDetails .name, #booking-package_myBookingDetailsFroVisitor .name, #booking-package_myBookingDetails_panel .name, #booking-package-user-form .name, #booking-package-loginform .name, #booking-package-user-edit-form .name {
     
     display: inline-block;
     font-weight: normal;
@@ -2601,7 +2651,7 @@
     
 }
 
-#booking-package_inputFormPanel .value, #booking-package_serviceDetails .value, #booking-package_myBookingDetailsFroVisitor .value, #booking-package_myBookingDetails_panel .value {
+#booking-package_inputFormPanel .value, #booking-package_serviceDetails .value, #booking-package_myBookingDetailsFroVisitor .value, #booking-package_myBookingDetails_panel .value, #booking-package-user-form .value, #booking-package-loginform .value, #booking-package-user-edit-form .value {
     
     
     
@@ -2720,7 +2770,7 @@
     
 }
 
-#booking-package_inputFormPanel .required:after {
+#booking-package_inputFormPanel .required:after, #addCustomFormFieldPanel .required:after {
     
     position: relative;
     top: 3px;
@@ -2731,14 +2781,14 @@
     
 }
 
-#booking-package_inputFormPanel .form_text {
+#booking-package_inputFormPanel .form_text, #booking-package-loginform .form_text, #booking-package-user-form .form_text, #booking-package-user-edit-form .form_text {
     
     width: 100%;
     padding: 0.2em;
     
 }
 
-#booking-package_inputFormPanel select {
+#booking-package_inputFormPanel select, #booking-package-user-form select, #booking-package-user-edit-form select {
     
     padding: 0.2em 0.5em;
     width: 100%;
@@ -3213,7 +3263,7 @@
         font-weight: normal;
         font-size: 1em !important;
         text-align: center;
-        text-overflow: ellipsis;
+        text-overflow: clip;
         white-space: nowrap;
         padding: 0;
         

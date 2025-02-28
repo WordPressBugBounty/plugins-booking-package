@@ -68,6 +68,8 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
     this._numberFormatter = false;
     this._managementUsersV2 = 0;
     this._inputType = setting_data.inputType;
+    this._userFunctions = setting_data.userFunctions;
+    this._userFormFields = setting_data.userFormFields;
     if (parseInt(setting_data.numberFormatter) === 1) {
         
         this._numberFormatter = true;
@@ -80,13 +82,20 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
         
     }
     
+    if (typeof this._userFormFields === 'undefined' || setting_data.formFields === null) {
+        
+        this._userFormFields = [];
+        
+    }
+    object._console.log(this._userFormFields);
+    
     this._currencies = setting_data.currencies;
     this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
     
     this._weekName = [this._i18n.get('Sun'), this._i18n.get('Mon'), this._i18n.get('Tue'), this._i18n.get('Wed'), this._i18n.get('Thu'), this._i18n.get('Fri'), this._i18n.get('Sat')];
     this._hotel = new Booking_Package_Hotel(this._currency, this._weekName, this._dateFormat, this._positionOfWeek, this._positionTimeDate, this._startOfWeek, this._numberFormatter, this._currency_info, booking_package_dictionary, this._debug);
     this._booking_manage = new Booking_manage(setting_data, booking_package_dictionary);
-    
+    this._defaultName = {'user_login': object._i18n.get('Username'), 'user_email': object._i18n.get('Email'), 'user_pass': object._i18n.get('Password')};
     this._contentPanel = document.getElementById("media_frame_reservation_content");
     
     for (var key in setting_data.calendarAccountList) {
@@ -344,7 +353,7 @@ Member_manage.prototype.getSelectedKey = function(){
 Member_manage.prototype.loadTabFrame = function() {
     
     var object = this;
-	var menuList = {usersLink: 'member_list', formFieldsLink: 'formFieldsPanel', settingLink: 'settingPanel'};
+	var menuList = {usersLink: 'member_list', formFieldsLink: 'formFieldsPanel', settingLink: 'userSettingPanel'};
 	object._console.log('_managementUsersV2 = ' + object._managementUsersV2);
 	
 	if (object._managementUsersV2 === 0) {
@@ -356,6 +365,7 @@ Member_manage.prototype.loadTabFrame = function() {
 	    
 	}
 	
+	object.start();
 	for (var key in menuList) {
 		
 		var button = document.getElementById(key);
@@ -383,7 +393,7 @@ Member_manage.prototype.loadTabFrame = function() {
 					    
 					    var loadingPanel = document.getElementById("loadingPanel");
 						loadingPanel.classList.remove("hidden_panel");
-						var postData = {mode: "getInputFieldForUserManagement", nonce: object._nonce, action: object._action};
+						var postData = {mode: "getUserInputFields", nonce: object._nonce, action: object._action};
 						var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
 							
 							object._console.log(json);
@@ -392,9 +402,9 @@ Member_manage.prototype.loadTabFrame = function() {
 							
 						});
 						
-					} else if (clickKey == 'settingPanel') {
+					} else if (clickKey == 'settingLink') {
 						
-						object.settingPanel();
+						object.userSettingPanel();
 						
 					}
 					
@@ -413,12 +423,13 @@ Member_manage.prototype.loadTabFrame = function() {
     
 };
 
-Member_manage.prototype.formFieldsPanel = function(formDataList) {
+Member_manage.prototype.formFieldsPanel = function(formFields) {
     
     var object = this;
+    object._userFormFields = formFields;
     var editBool = true;
     object._console.log('formFieldsPanel');
-    object._console.log(formDataList);
+    object._console.log(formFields);
     
     var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
     addButton.disabled = false;
@@ -435,25 +446,31 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
     var columns = {};
     var ranking_columns = {};
     
-    for (var key = 0; key < formDataList.length; key++) {
+    for (var key = 0; key < formFields.length; key++) {
         
-        object._console.log(formDataList[key]);
-        if (typeof formDataList[key]['name'] == "string") {
+        object._console.log(formFields[key]);
+        if (typeof formFields[key].name == "string") {
             
-            formDataList[key]['name'] = formDataList[key]['name'].replace(/\\/g, "");
+            formFields[key].name = formFields[key].name.replace(/\\/g, "");
+            
+        }
+        
+        if (object._defaultName.hasOwnProperty(formFields[key].id) === true) {
+            
+            formFields[key].name = object._defaultName[formFields[key].id];
             
         }
         
         var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
-        var content_name = object.create('div', formDataList[key]['name'], null, null, null, 'content_name', null);
+        var content_name = object.create('div', formFields[key]['name'], null, null, null, 'content_name', null);
         var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
-        if (formDataList[key].required == 'true' || formDataList[key].required == 'true_frontEnd') {
+        if (formFields[key].required == 'true' || formFields[key].required == 'true_frontEnd') {
             
             contentPanel.classList.add("dnd_required");
             
         }
         
-        if(formDataList[key]["active"] != "true"){
+        if(formFields[key]["active"] != "true"){
             
             content_name.classList.add("dnd_content_unactive");
             
@@ -473,16 +490,13 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
             const key = 'key_' + this.getAttribute("data-key");
             const keys = object.getRankingUpAndDownKeys(ranking_columns, key);
             const target_column = ranking_columns[keys.up];
-            console.log(target_column);
             if (target_column == null) {
                 
                 return null;
                 
             }
             ranking_columns = object.moveRankingUp(ranking_columns, key);
-            console.log(ranking_columns);
             panel.insertBefore(ranking_columns[key], target_column);
-            //panel.insertBefore(target_column, child3.ranking_columns[key]);
             saveButton.disabled = false;
             
         };
@@ -492,14 +506,12 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
             const key = 'key_' + this.getAttribute("data-key");
             const keys = object.getRankingUpAndDownKeys(ranking_columns, key);
             const target_column = ranking_columns[keys.down];
-            console.log(target_column);
             if (target_column == null) {
                 
                 return null;
                 
             }
             ranking_columns = object.moveRankingDown(ranking_columns, key);
-            console.log(ranking_columns);
             panel.insertBefore(target_column, ranking_columns[key]);
             saveButton.disabled = false;
             
@@ -514,59 +526,124 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
                 var key = this.getAttribute("data-key");
                 for (var formKey in columns) {
                     
-                    if (formKey != key) {
+                    columns[formKey].classList.add("hidden_panel");
+                    
+                }
+                object._console.log(formFields);
+                object._console.log(formFields[key]);
+                let inputType = JSON.parse(JSON.stringify(object._inputType));
+                (function(item, inputType) {
+                    
+                    for (var key in item) {
                         
-                        columns[formKey].classList.add("hidden_panel");
+                        if (inputType[key] != null) {
+                            
+                            inputType[key].value = item[key];
+                            
+                        }
+                        
+                        if (key === 'active' || key === 'required') {
+                            
+                            if (item[key] === 'true') {
+                                
+                                inputType[key].value = [object._i18n.get('Enabled')];
+                                
+                            } else {
+                                
+                                inputType[key].value = [];
+                                
+                            }
+                            
+                        }
                         
                     }
+                    
+                    return inputType;
+                    
+                })(formFields[key], inputType);
+                
+                inputType.id.disabled = 1;
+                if (object._defaultName.hasOwnProperty(formFields[key].id) === true) {
+                    
+                    inputType.active.disabled = 1;
+                    inputType.name.disabled = 1;
+                    inputType.required.disabled = 1;
+                    inputType.type.disabled = 1;
                     
                 }
                 
-                object._console.log(formDataList[key]);
-                /**
-                object.editItem(columns, key, mainPanel, panel, 'updateForm', account, formDataList[key], object.schedule_data['formInputType'], function(action){
+                
+                object.addItem(mainPanel, 'editUserInput', inputType, function(action){
                     
                     editBool = true;
-                    if (action !== 'cancel') {
+                    if (action == "close") {
                         
-                        object.createFormPanel(action);
+                        addButton.disabled = false;
+                        for (var formKey in columns) {
+                            
+                            columns[formKey].classList.remove("hidden_panel");
+                            
+                        }
+                        
+                    } else {
+                        
+                        if (typeof action == 'object') {
+                            
+                            if (action['status'] != 'error') {
+                                
+                                object._console.log(action);
+                                object.formFieldsPanel(action);
+                                
+                            }
+                            
+                        }
                         
                     }
                     
-                    addButton.disabled = false;
-                    for (var formKey in columns) {
-                        
-                        columns[formKey].classList.remove("hidden_panel");
-                        
-                    }
+                    panel.classList.remove("hidden_panel");
                     
                 });
-                **/
+                
             }
             
         };
         
-        deleteLabel.onclick = function(event){
+        if (object._defaultName.hasOwnProperty(formFields[key].id) === false) {
             
-            if (editBool === true) {
+            deleteLabel.onclick = function(event){
                 
-                editBool = false;
-                var dataKey = parseInt(this.getAttribute("data-key"));
-                var result = confirm(object._i18n.get('Do you delete the "%s"?', [formDataList[dataKey].name]));
-                if (result === true) {
-                    /** 
-                    object.deleteItem(dataKey, "deleteFormItem", account, function(json){
+                if (editBool === true) {
+                    
+                    editBool = false;
+                    const key = parseInt(this.getAttribute("data-key"));
+                    var result = confirm(object._i18n.get('Do you delete the "%s"?', [formFields[key].name]));
+                    if (result === true) {
                         
-                        object.createFormPanel(json);
+                        var loadingPanel = document.getElementById("loadingPanel");
+                        loadingPanel.classList.remove("hidden_panel");
+                        var postData = {mode: 'deleteUserInput', nonce: object._nonce, action: object._action, index: key};
+                        new Booking_App_XMLHttp(object._url, postData, false, function(json){
+                            
+                            loadingPanel.classList.add("hidden_panel");
+                            object._console.log(json);
+                            object.formFieldsPanel(json);
+                            
+                        });
                         
-                    });
-                    **/
+                    }
+                    editBool = true;
+                    
                 }
-                editBool = true;
                 
-            }
+            };
             
-        };
+        } else {
+            
+            deleteLabel.setAttribute('style', 'text-decoration: line-through; color: #ff3333; cursor: auto;');
+            
+        }
+        
+        
         
     }
     
@@ -576,10 +653,13 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
         
         if (editBool === true) {
             
+            let inputType = JSON.parse(JSON.stringify(object._inputType));
+            inputType.active.value = [object._i18n.get('Enabled')];
+            inputType.required.value = [object._i18n.get('Enabled')];
             panel.classList.add("hidden_panel");
             editBool = false;
             addButton.disabled = true;
-            object.addItem(mainPanel, 'addInput', function(action){
+            object.addItem(mainPanel, 'addUserInput', inputType, function(action){
                 
                 editBool = true;
                 if (action == "close") {
@@ -612,27 +692,73 @@ Member_manage.prototype.formFieldsPanel = function(formDataList) {
     
     saveButton.onclick = function(event){
         
-        formDataList = object.changeRank('name', 'dnd_column', formDataList, panel, 'changeFormRank', account, function(json){
+        var keys = [];
+        var panelList = panel.getElementsByClassName('dnd_column');
+        for(var i = 0; i < panelList.length; i++){
             
-            formData = json;
-            saveButton.disabled = true;
-            var panelList = panel.getElementsByClassName('dnd_column');
-            object.reviewPanels(panelList);
-            object.createFormPanel(formData, account);
+            var panelKey = parseInt(panelList[i].getAttribute("data-key"));
+            keys.push(formFields[panelKey].id);
+        
+        }
+        
+        var postData = {mode: 'changedOrderUserInput', nonce: object._nonce, action: object._action, keys: JSON.stringify(keys)};
+        object._console.log(postData);
+        var loadingPanel = document.getElementById("loadingPanel");
+        loadingPanel.classList.remove("hidden_panel");
+        new Booking_App_XMLHttp(object._url, postData, false, function(json){
+            
+            loadingPanel.classList.add("hidden_panel");
+            object.formFieldsPanel(json);
             
         });
-        
-        object._console.log(formDataList);
         
     };
     
     
 }
 
-Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
+Member_manage.prototype.getRankingUpAndDownKeys = function (obj, key) {
+    
+    let entries = Object.entries(obj);
+    let index = entries.findIndex(entry => entry[0] === key);
+    let upKey = index > 0 ? entries[index - 1][0] : null;
+    let downKey = index < entries.length - 1 ? entries[index + 1][0] : null;
+    return {up: upKey, down: downKey};
+    
+}
+
+Member_manage.prototype.moveRankingUp = function (obj, key) {
+    
+    let entries = Object.entries(obj);
+    let index = entries.findIndex(entry => entry[0] === key);
+    if (index > 0) {
+        
+        [entries[index], entries[index - 1]] = [entries[index - 1], entries[index]];
+        
+    }
+    
+    return Object.fromEntries(entries);
+    
+};
+
+Member_manage.prototype.moveRankingDown = function (obj, key) {
+    
+    let entries = Object.entries(obj);
+    let index = entries.findIndex(entry => entry[0] === key);
+    if (index !== -1 && index < entries.length - 1) {
+        
+        [entries[index], entries[index + 1]] = [entries[index + 1], entries[index]];
+        
+    }
+    
+    return Object.fromEntries(entries);
+    
+};
+
+Member_manage.prototype.addItem = function (mainPanel, mode, inputType, callback) {
     
     var object = this;
-    const inputTypeList = object._inputType;
+    const inputTypeList = inputType;
     const input = new Booking_Package_Input(object._debug);
     object._console.log(mode);
     object._console.log(mainPanel);
@@ -723,6 +849,7 @@ Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
             
         }
         object._console.log(valueList);
+        
         var inputName = input.id;
         
         object._console.log(inputName);
@@ -910,6 +1037,7 @@ Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
         
         object._console.log(inputTypeList);
         object._console.log(inputData);
+        const input = new Booking_Package_Input(object._debug);
         var response = null;
         var postData = {mode: mode, nonce: object._nonce, action: object._action};
         var jsonObj = {};
@@ -918,68 +1046,7 @@ Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
             var parentPanel = document.getElementById('booking-package_input_' + key);
             parentPanel.classList.remove('errorPanel');
             const inputFormat = inputTypeList[key];
-            jsonObj[key] = null;
-            if (inputFormat.type === 'TEXT' || inputFormat.type === 'TEXTAREA') {
-                
-                jsonObj[key] = inputData[key]['textBox'].value.trim();
-                if (inputFormat.inputLimit === 1 && jsonObj[key].length === 0) {
-                    
-                    parentPanel.classList.add('errorPanel');
-                    return null;
-                    
-                }
-                
-            } else if (inputFormat.type === 'CHECK') {
-                
-                const values = (function (inputElements) {
-                    
-                    const values = [];
-                    for (var key in inputElements) {
-                        
-                        if (inputElements[key].checked === true) {
-                            
-                            values.push(inputElements[key].getAttribute("data-value"));
-                            
-                        }
-                        
-                    }
-                    
-                    return values;
-                    
-                })(inputData[key]);
-                jsonObj[key] = values;
-                
-            } else if (inputFormat.type === 'SELECT') {
-                
-                var inputObject = inputData[key]['selectBox'];
-                var index = inputObject.selectedIndex;
-                if (inputObject.options[index] != null) {
-                    
-                    jsonObj[key] = inputObject.options[index].value;
-                    
-                }
-                
-            } else if (inputFormat.type === 'OPTION') {
-                
-                const values = (function (inputElements) {
-                    
-                    const values = [];
-                    for (var key in inputElements) {
-                        
-                        if (inputElements[key].value != null && inputElements[key].value.trim().length !== 0) {
-                            
-                            values.push(inputElements[key].value.trim());
-                            
-                        }
-                        
-                    }
-                    
-                    return values;
-                    
-                })(inputData[key]);
-                jsonObj[key] = values;
-                
-            }
+            jsonObj[key] = input.getUserFieldValue(inputFormat, inputData[key]);
             
         }
         
@@ -991,67 +1058,114 @@ Member_manage.prototype.addItem = function (mainPanel, mode, callback) {
         }
         
         postData.jsonStr = JSON.stringify(jsonObj);
-        object._console.log(jsonObj);
-        object._console.log(postData);
-        return null;
-        
-    	var post = true;
-    	for(var key in response){
-    			
-    		if(typeof response[key] == 'boolean'){
-    			
-    			object._console.log("error key = " + key + " bool = " + response[key]);
-    			if (trList[key] != null) {
-    			    
-    			    trList[key].classList.add("errorPanel");
-    			    
-    			}
-    			post = false;
-    			
-    		}else{
-    			
-    			postData[key] = response[key];
-    			if(trList[key] != null){
-    			    
-    			    trList[key].classList.remove("errorPanel");
-    			    
-    			}
-    			
-    		}
-    		
-    	}
-        
-        if (post === true) {
+        var loadingPanel = document.getElementById("loadingPanel");
+        loadingPanel.classList.remove("hidden_panel");
+        new Booking_App_XMLHttp(object._url, postData, false, function(json){
+                
+            if (json['status'] != 'error') {
+                
+                mainPanel.removeChild(addPanel);
+                mainPanel.style.height = null;
+                object._console.log(json);
+                callback(json);
+                
+            } else {
+                
+                alert(json["message"]);
+                
+            }
+            loadingPanel.classList.add("hidden_panel");
             
-            object._console.log(postData);
-            object.loadingPanel.setAttribute("class", "loading_modal_backdrop");
-            object.setFunction("addItem", post);
-            object.xmlHttp = new Booking_App_XMLHttp(object.url, postData, object._webApp, function(json){
-                    
-                if (json['status'] != 'error') {
-                    
-                    mainPanel.removeChild(addPanel);
-                    mainPanel.style.height = null;
-                    object._console.log(json);
-                    callback(json);
-                    
-                } else {
-                    
-                    alert(json["message"]);
-                    
-                }
-                object.loadingPanel.setAttribute("class", "hidden_panel");
-                
-			}, function(text){
-                
-                object.setResponseText(text);
-                
-            });
-            
-        }
+		});
     	
 		
     };
+}
+
+Member_manage.prototype.getUserFieldValue = function (inputFormat, elements) {
+    
+    var object = this;
+    var values = null;
+    object._console.log(inputFormat);
+    object._console.log(elements);
+    if (inputFormat.type === 'TEXT' || inputFormat.type === 'TEXTAREA') {
+        
+        values = elements['textBox'].value.trim();
+        
+        
+    } else if (inputFormat.type === 'CHECK') {
+        
+        values = (function (inputElements) {
+            
+            const values = [];
+            for (var key in elements) {
+                
+                if (elements[key].checked === true) {
+                    
+                    values.push(elements[key].getAttribute("data-value"));
+                    
+                }
+                
+            }
+            
+            return values;
+            
+        })(elements);
+        
+    } else if (inputFormat.type === 'RADIO') {
+        
+        values = (function (elements) {
+            
+            const values = [];
+            for (var key in elements) {
+                
+                if (elements[key].checked === true) {
+                    
+                    values.push(elements[key].getAttribute("data-value"));
+                    
+                }
+                
+            }
+            
+            return values;
+            
+        })(elements);
+        
+    } else if (inputFormat.type === 'SELECT') {
+        
+        var inputObject = elements['selectBox'];
+        var index = inputObject.selectedIndex;
+        if (inputObject.options[index] != null) {
+            
+            values = inputObject.options[index].value;
+            
+        }
+        
+        
+    } else if (inputFormat.type === 'OPTION') {
+        
+        values = (function (elements) {
+            
+            const values = [];
+            for (var key in elements) {
+                
+                if (elements[key].value != null && elements[key].value.trim().length !== 0) {
+                    
+                    values.push(elements[key].value.trim());
+                    
+                }
+                
+            }
+            
+            return values;
+            
+        })(elements);
+        
+        
+    }
+    
+    return values;
+    
 }
 
 Member_manage.prototype.createInputRowPanel = function (name, value, id, required, actionElement) {
@@ -1114,10 +1228,73 @@ Member_manage.prototype.createInputRowPanel = function (name, value, id, require
     
 }
 
-Member_manage.prototype.settingPanel = function () {
+Member_manage.prototype.userSettingPanel = function () {
     
     var object = this;
-    object._console.log('settingPanel');
+    object._console.log('userSettingPanel');
+    object._console.log(object._userFunctions);
+    var table = object.create('table', null, null, null, null, 'form-table', null);
+    var mainPanel = document.getElementById("userSettingPanel");
+    mainPanel.textContent = null;
+    mainPanel.appendChild(table);
+    for (var key in object._userFunctions) {
+        
+        const userFunction = object._userFunctions[key];
+        object._console.log(userFunction);
+        
+        var settingNameSpan = object.create('span', userFunction.name, null, null, null, null, null);
+		var th = object.create('th', null, [settingNameSpan], null, null, null, null);
+		th.setAttribute("scope", "row");
+        
+        let valueName = object.create('span', object._i18n.get("Enabled"), null, null, null, 'radio_title', null);
+        let checkBox = object.createInputElement('input', 'checkbox', userFunction.name, null, null, false, key, null, null, null);
+        if (parseInt(userFunction.value) === 1) {
+            
+            checkBox.value = 1;
+            checkBox.checked = true;
+            
+        }
+        const label = object.create('label', null, [checkBox, valueName], null, null, null, null);
+        var td = object.create('td', null, [label], null, null, null, null);
+        var tr = object.create('tr', null, [th, td], null, null, null, null);
+		tr.setAttribute("valign", "top");
+		table.appendChild(tr);
+        object._console.log(label);
+        
+    }
+    
+    var saveButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Save") );
+    var buttonPanel = object.create('div', null, [saveButton], null, null, 'bottomButtonPanel', null);
+    mainPanel.appendChild(buttonPanel);
+    saveButton.onclick = function() {
+        
+        var postData = {mode: 'updateMemberSetting', nonce: object._nonce, action: object._action};
+        for (var key in object._userFunctions) {
+            
+            object._console.log(key);
+            const radioButton = document.getElementById(key);
+             postData[key] = 0;
+             if (radioButton.checked === true) {
+                 
+                 postData[key]  = 1;
+                 
+             }
+            
+        }
+        
+        
+        object._console.log(postData);
+        var loadingPanel = document.getElementById("loadingPanel");
+        loadingPanel.classList.remove("hidden_panel");
+        new Booking_App_XMLHttp(object._url, postData, false, function(json){
+            
+            loadingPanel.classList.add("hidden_panel");
+            object._userFunctions = json;
+            object.userSettingPanel();
+            
+        });
+        
+    };
     
 }
 
@@ -1663,8 +1840,14 @@ Member_manage.prototype.lookingForUsers = function(number) {
 Member_manage.prototype.editUser = function(tr, user){
     
     var object = this;
+    const userProfile = user.profile;
     object._console.log(user);
+    object._console.log(userProfile);
     object._console.log(tr);
+    object._console.log(object._userFormFields);
+    const input = new Booking_Package_Input(object._debug);
+    const tr_input_field_user_email = document.getElementById('profile_tr_input_field_user_email');
+    const tr_input_field_user_pass = document.getElementById('profile_tr_input_field_user_pass');
     var user_login = document.getElementById("user_edit_login");
     var user_email = document.getElementById("user_edit_email");
     var user_status = document.getElementById("user_edit_status");
@@ -1689,6 +1872,21 @@ Member_manage.prototype.editUser = function(tr, user){
         
     }
     
+    var inputData = {};
+    const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+    const custom_title = object.create('div', object._i18n.get('Custom form fields'), null, null, '', 'custom_title', null);
+    if (object._managementUsersV2 === 0) {
+        
+        custom_title.textContent = null;
+        
+    }
+    const table = input.createUserFieldPanel(formFields, userProfile, inputData, 'table', object._defaultName);
+    table.classList.add('fixed');
+    const customFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
+    customFormFieldPanel.textContent = null;
+    customFormFieldPanel.appendChild(custom_title);
+    customFormFieldPanel.appendChild(table);
+    
     user_pass_change_button.onclick = function(event){
         
         user_pass.textContent = null;
@@ -1697,26 +1895,33 @@ Member_manage.prototype.editUser = function(tr, user){
         
     };
     
-    upload_button.onclick = function(event){
+    upload_button.onclick = function(event) {
         
-        var updata = true;
-        user_email.parentElement.classList.remove("errorPanel");
+        const response = input.validateInputValues(formFields, inputData);
+        let updata = response.updata;
+        let customUserFields = response.customUserFields;
+        object._console.log(customUserFields);
+        
+        tr_input_field_user_email.classList.remove('errorPanel');
+        tr_input_field_user_pass.classList.remove('errorPanel');
+        
         user_pass.parentElement.classList.remove("errorPanel");
-        if(!user_email.value.match(/.+@.+\..+/)){
+        if (!user_email.value.match(/.+@.+\..+/)) {
             
             updata = false;
-            user_email.parentElement.classList.add("errorPanel");
+            tr_input_field_user_email.classList.add("errorPanel");
             
         }
         
-        if(user_pass.value.length > 0 && user_pass.value.length < 8){
+        if (user_pass.value.length > 0 && user_pass.value.length < 8) {
             
+            object._console.log(user_pass.value);
             updata = false;
-            user_pass.parentElement.classList.add("errorPanel");
+            tr_input_field_user_pass.classList.add("errorPanel");
             
         }
         
-        var post = {mode: 'updateUser', nonce: object._nonce, action: object._action, user_login: user.user_login};
+        var post = {mode: 'updateUser', nonce: object._nonce, action: object._action, user_login: user.user_login, customUserFields: JSON.stringify(customUserFields)};
         if (user_status.checked == true) {
             
             post.status = 1;
@@ -1745,6 +1950,11 @@ Member_manage.prototype.editUser = function(tr, user){
                     
                     user.user_email = post.user_email;
                     user.status = post.status;
+                    user.profile = customUserFields;
+                    object._console.log(user);
+                    /**
+                    user.user_email = post.user_email;
+                    user.status = post.status;
                     tr.textContent = null;
                     var tdList = ["ID", "user_login", "user_email", "user_registered"];
                     for (var i = 0; i < tdList.length; i++) {
@@ -1770,6 +1980,7 @@ Member_manage.prototype.editUser = function(tr, user){
                         tr.appendChild(td);
                         
                     }
+                    **/
                     
                 } else if (response.status == 'error') {
                     
@@ -2164,6 +2375,14 @@ Member_manage.prototype.userForm = function(){
     object._console.log("userForm");
     if(parseInt(object._isExtensionsValid) == 1){
         
+        const input = new Booking_Package_Input(object._debug);
+        const documentHeight = document.documentElement.clientHeight - 240;
+        const customFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
+        customFormFieldPanel.setAttribute('style', 'max-height: ' + documentHeight + 'px;');
+        object._console.log('documentHeight = ' + documentHeight + 'px');
+        object._console.log(customFormFieldPanel);
+        
+        
         document.getElementById("booking-package-user_regist_message").textContent = null;
         var user_form = document.getElementById("booking-package-user-form");
         user_form.classList.remove("hidden_panel");
@@ -2173,64 +2392,97 @@ Member_manage.prototype.userForm = function(){
         var register_button = document.getElementById("booking-package-register_user_button");
         register_button.setAttribute("class", "w3tc-button-save button-primary sendButton");
         //document.getElementById("booking-package-user_pass").autocomplete = 'new-password';
-        document.getElementById("booking-package-user_pass").type = 'text';
-        document.getElementById("booking-package-user_pass").value = null;
-        register_button.onclick = function(){
+        
+        var inputData = {};
+        const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+        object._console.log(formFields);
+        const custom_title = object.create('div', object._i18n.get('Custom form fields'), null, null, '', 'custom_title', null);
+        if (object._managementUsersV2 === 0) {
+            
+            custom_title.textContent = null;
+            
+        }
+        const table = input.createUserFieldPanel(formFields, {}, inputData, 'table', {});
+        object._console.log(table);
+        const addCustomFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
+        addCustomFormFieldPanel.textContent = null;
+        addCustomFormFieldPanel.appendChild(table);
+        
+        
+        document.getElementById("input_user_pass").type = 'text';
+        document.getElementById("input_user_pass").value = null;
+        register_button.onclick = function() {
+            
+            
+            const response = input.validateInputValues(formFields, inputData);
+            let updata = response.updata;
+            let customUserFields = response.customUserFields;
+            object._console.log(response);
+            if (updata === false) {
+                
+                return null;
+                
+            }
             
             var user_data = {
-                user_login: document.getElementById("booking-package-user_login"),
-                user_email: document.getElementById("booking-package-user_email"),
-                user_pass: document.getElementById("booking-package-user_pass"),
+                user_login: document.getElementById("input_user_login").value,
+                user_email: document.getElementById("input_user_email").value,
+                user_pass: document.getElementById("input_user_pass").value,
             };
             user_data['user_pass'].type = 'text';
             object._console.log(user_data['user_pass']);
             var registering = true;
-            var post = {mode: 'createUser', nonce: object._nonce, action: object._action};
+            var post = {mode: 'createUser', nonce: object._nonce, action: object._action, user_login: user_data.user_login, user_email: user_data.user_email, user_pass: user_data.user_pass, customUserFields: JSON.stringify(customUserFields)};
             for(var key in user_data){
                 
-                var panel = user_data[key].parentElement;
-                panel.classList.remove("errorPanel");
-                object._console.log(panel);
-                
-                var value = user_data[key].value;
-                post[key] = value;
+                let errorPanel = null;
+                var value = user_data[key];
                 object._console.log(key + " = " + value);
                 
-                if(key == 'user_login' && (value.length < 4 || !value.match(/^[A-Za-z0-9.-_]*$/))){
+                if (key == 'user_login' && (value.length < 4 || !value.match(/^[A-Za-z0-9.-_]*$/))) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_login');
                     console.error("error key = " + key + " value = " + value);
                     
                 }
                 
-                if(key == 'user_email' && !value.match(/.+@.+\..+/)){
+                if (key == 'user_email' && !value.match(/.+@.+\..+/)) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_email');
                     console.error("error key = " + key + " value = " + value);
                     
                 }
                 
-                if(key == 'user_pass' && value.length < 8){
+                if (key == 'user_pass' && value.length < 8) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_pass');
+                    
                     console.error("error key = " + key + " value = " + value);
+                    
+                }
+                
+                if (registering === false) {
+                    
+                    errorPanel.classList.add('errorPanel');
+                    errorPanel.scrollIntoView();
+                    break;
                     
                 }
                 
             }
             
             object._console.log(post);
-            if(registering == true){
+            if (registering == true) {
                 
                 object._console.log(post);
                 object.loadingPanel(1);
-                new Booking_App_XMLHttp(object._url, post, false, function(response){
+                new Booking_App_XMLHttp(object._url, post, false, function(response) {
                     
                     object._console.log(response);
-                    if(response.status == 'success'){
+                    if (response.status == 'success') {
                         
                         user_form.classList.add("hidden_panel");
                         object._blockPanel.classList.add("hidden_panel");
@@ -2240,7 +2492,7 @@ Member_manage.prototype.userForm = function(){
                         var limit = member_limit.options[index].value;
                         object.movePage(null, limit, null);
                         
-                    }else if(response.status == 'error'){
+                    } else if (response.status == 'error') {
                         
                         window.alert(response.error_messages);
                         

@@ -19,23 +19,7 @@
         
         public $maxBookingSlotsPerDay = 0;
         
-        public $member_setting = array(
-            'function_for_member' => array('name' => 'User account', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            'reject_non_membder' => array('name' => 'Reject non-user account bookings', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            'visitors_registration_for_member' => array('name' => 'User registration from visitors', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            'check_email_for_member' => array('name' => 'Send the verification code by email when registering and editing', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            'accept_subscribers_as_users' => array('name' => 'Approve subscriber as users', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            'accept_contributors_as_users' => array('name' => 'Approve contributors as users', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            /**
-            'accept_authors_as_users' => array('name' => 'Approve authors as users', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enable')), 
-            **/
-            'user_toolbar' => array('name' => 'Toolbar', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-            /**
-            'subject_email_for_member' => array('Subject of email sent when confirming email address' => 'Active', 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'valueList' => array()), 
-            'body_email_for_member' => array('Body of email sent when confirming email address' => 'Active', 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXTAREA', 'valueList' => array()), 
-            **/
-            'lost_password' => array('name' => 'Lost password', 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
-        );
+        
         
         public $form = array(
         	array('id' => 'firstname', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -82,6 +66,27 @@
         public function setGuestForDayOfTheWeekRates($guestForDayOfTheWeekRates) {
             
             $this->guestForDayOfTheWeekRates = $guestForDayOfTheWeekRates;
+            
+        }
+        
+        public function userFunctions() {
+            
+            $userFunctions = array(
+                'function_for_member' => array('name' => __('User account', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'reject_non_membder' => array('name' => __('Reject bookings from non-user accounts', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'visitors_registration_for_member' => array('name' => __('User registration from customers', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'check_email_for_member' => array('name' => __('Send a verification code to the user by email during registration and editing', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'accept_subscribers_as_users' => array('name' => __('Accept subscribers as users', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'accept_contributors_as_users' => array('name' => __('Accept contributors as users', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                'user_toolbar' => array('name' => __('Toolbar', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+                /**
+                'subject_email_for_member' => array('Subject of email sent when confirming email address' => 'Active', 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'valueList' => array()), 
+                'body_email_for_member' => array('Body of email sent when confirming email address' => 'Active', 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXTAREA', 'valueList' => array()), 
+                **/
+                'lost_password' => array('name' => __('Lost password', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array('0' => 'Enabled')), 
+            );
+            
+            return $userFunctions;
             
         }
         
@@ -959,14 +964,14 @@
         
         public function getMemberSetting($extension = false){
             
-            $member_setting = $this->member_setting;
-            foreach ((array) $member_setting as $key => $input) {
+            $userFunctions = $this->userFunctions();
+            foreach ((array) $userFunctions as $key => $input) {
                 
                 $defaultValue = $input['value'];
                 $value = get_option($this->prefix . $key);
                 if ($value !== false) {
                     
-                    $member_setting[$key]['value'] = $value;
+                    $userFunctions[$key]['value'] = $value;
                     
                 } else {
                     
@@ -976,32 +981,31 @@
                 
                 if ($extension !== true && $input['isExtensionsValid'] == 1) {
                     
-                    $member_setting[$key]['value'] = 0;
-                    #update_option($this->prefix . $key, "0");
+                    $userFunctions[$key]['value'] = 0;
                     
                 }
                 
             }
             
-            return $member_setting;
+            return $userFunctions;
             
         }
         
         public function getMemberSettingValues(){
             
-            $member_setting = $this->member_setting;
+            $userFunctions = $this->userFunctions();
             $values = array(
-                'function_for_member' => $member_setting['function_for_member']['value'],
-                'visitors_registration_for_member' => $member_setting['visitors_registration_for_member']['value'],
-                'check_email_for_member' => $member_setting['check_email_for_member']['value'],
-                'reject_non_membder' => $member_setting['reject_non_membder']['value'],
-                'accept_subscribers_as_users' => $member_setting['accept_subscribers_as_users']['value'],
-                'accept_contributors_as_users' => $member_setting['accept_contributors_as_users']['value'],
+                'function_for_member' => $userFunctions['function_for_member']['value'],
+                'visitors_registration_for_member' => $userFunctions['visitors_registration_for_member']['value'],
+                'check_email_for_member' => $userFunctions['check_email_for_member']['value'],
+                'reject_non_membder' => $userFunctions['reject_non_membder']['value'],
+                'accept_subscribers_as_users' => $userFunctions['accept_subscribers_as_users']['value'],
+                'accept_contributors_as_users' => $userFunctions['accept_contributors_as_users']['value'],
                 /**
-                'accept_authors_as_users' => $member_setting['accept_authors_as_users']['value'],
+                'accept_authors_as_users' => $userFunctions['accept_authors_as_users']['value'],
                 **/
-                'user_toolbar' => $member_setting['user_toolbar']['value'],
-                'lost_password' => $member_setting['lost_password']['value'],
+                'user_toolbar' => $userFunctions['user_toolbar']['value'],
+                'lost_password' => $userFunctions['lost_password']['value'],
             );
             
             foreach ((array) $values as $key => $value) {
@@ -2469,7 +2473,7 @@
         public function getOptionsForHotelData(){
             
             $options = array(
-                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => ''),
+                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'disabled' => 0),
                 'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'target' => 'both'),
                 'active' => array('name' => __('Status', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'CHECK', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => array('true' => __('Enabled', 'booking-package'))),
                 'required' => array('key' => 'required', 'name' => 'Required', 'value' => 'true', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
@@ -2511,17 +2515,23 @@
                 'uri' => array('key' => 'uri', 'name' => 'URL', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
                 'placeholder' => array('key' => 'placeholder', 'name' => __('Placeholder text', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
                 'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', "class" => ""),
-                'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
-                'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => 'true', 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
+                'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => array('Enabled'), 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
+                'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => array('Enabled'), 'inputLimit' => 1, 'inputType' => 'CHECK', 'valueList' => array(__('Enabled', 'booking-package')), "class" => ""),
                 'type' => array('key' => 'type', 'name' => __('Type', 'booking-package'), 'value' => 'TEXT', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('TEXT' => 'TEXT', 'SELECT' => 'SELECT', 'CHECK' => 'CHECK', 'RADIO' => 'RADIO', 'TEXTAREA' => 'TEXTAREA'), "class" => ""),
                 'options' => array('key' => 'options', 'name' => __('Options', 'booking-package'), 'value' => array(''), 'inputLimit' => 2, 'inputType' => 'OPTION', 'format' => 'array', "class" => "", "options" => array("name" => "text"), 'format' => 'jsonString', 'optionsType' => array(array("type" => "TEXT", "value" => "", "target" => "both"))),
             );
             
             foreach ($input as $key => $value) {
                 
+                $input[$key]['disabled'] = 0;
                 $input[$key]['id'] = $value['key'];
                 $input[$key]['type'] = $value['inputType'];
-                $input[$key]['options'] = $value['valueList'];
+                
+                if (isset($value['valueList']) === true) {
+                    
+                    $input[$key]['options'] = $value['valueList'];
+                    
+                }
                 
             }
             
@@ -2588,8 +2598,8 @@
                 
             }
             
-            $member_setting = $this->member_setting;
-            foreach ((array) $member_setting as $key => $input) {
+            $userFunctions = $this->userFunctions();
+            foreach ((array) $userFunctions as $key => $input) {
                 
                 if (isset($_POST[$key])) {
                     
@@ -2607,13 +2617,13 @@
                     }
                     
                     update_option($this->prefix.$key, $value);
-                    $member_setting[$key]["value"] = $value;
+                    $userFunctions[$key]["value"] = $value;
                     
                 }
                 
             }
             
-            return $member_setting;
+            return $userFunctions;
             
         }
         
@@ -2737,24 +2747,182 @@
             
         }
         
-        public function getInputFieldForUserManagement() {
+        public function initialUserInputFields () {
             
-            $inputFieldForUserManagement = get_option($this->prefix . "inputFieldForUserManagement", false);
-            if ($inputFieldForUserManagement === false) {
+            $requiredKeys = array('user_login', 'user_email', 'user_pass');
+            $initialUserInputFields = array(
+                'user_login' => array('id' => 'user_login', 'active' => 'true', 'name' => 'Username', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+                'user_email' => array('id' => 'user_email', 'active' => 'true', 'name' => 'Email', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+                'user_pass' => array('id' => 'user_pass', 'active' => 'true', 'name' => 'Password', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'PASSWORD'),
+                'first_name' => array('id' => 'first_name', 'active' => 'false', 'name' => 'First name', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+                'last_name' => array('id' => 'last_name', 'active' => 'false', 'name' => 'Last name', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+            );
+            $userInputFields = get_option("_" . $this->prefix . "getUserInputFields", null);
+            if (empty($userInputFields) === true) {
                 
-                $inputFieldForUserManagement = array(
-                    array('id' => 'firstname', 'active' => 'false', 'name' => 'First name', 'isName' => 'true'),
-                    array('id' => 'lastname', 'active' => 'false', 'name' => 'Last name', 'isName' => 'true'),
-                );
-                
+                $userInputFields = $initialUserInputFields;
+                add_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                    
             } else {
                 
-                $inputFieldForUserManagement = json_decode($inputFieldForUserManagement, true);
+                $userInputFields = json_decode($userInputFields, true);
+                $required = true;
+                for ($i = 0; $i < count($requiredKeys); $i++) {
+                    
+                    if (array_key_exists($requiredKeys[$i], $userInputFields) === false) {
+                        
+                        $required = false;
+                        break;
+                        
+                    }
+                    
+                }
+                
+                if ($required === false) {
+                    
+                    $userInputFields = array_merge($initialUserInputFields, $userInputFields);
+                    update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                    
+                }
+                
+            }
+            
+            return array_values($userInputFields);
+            
+        }
+        
+        public function updateUserInputFields($mode) {
+            
+            function checkEnabled($json) {
+                
+                if (count($json['active']) === 0) {
+                    
+                    $json['active'] = 'false';
+                    
+                } else {
+                    
+                    $json['active'] = 'true';
+                    
+                }
+                
+                if (count($json['required']) === 0) {
+                    
+                    $json['required'] = 'false';
+                    
+                } else {
+                    
+                    $json['required'] = 'true';
+                    
+                }
+                
+                if (array_key_exists('value', $json) === false) {
+                    
+                    $json['value'] = '';
+                    
+                }
+                
+                return $json;
+                
+            }
+            
+            function updateUserInputFields($items) {
+                
+                $defaultName = array('user_login' => 'Username', 'user_email' => 'Email', 'user_pass' => 'Password');
+                $userInputFields = array();
+                for ($i = 0; $i < count($items); $i++) {
+                    
+                    $item = $items[$i];
+                    if (array_key_exists($item['id'], $defaultName) === true) {
+                        
+                        $item['name'] = $defaultName[ $item['id'] ];
+                        
+                    }
+                    
+                    $userInputFields[$item['id']] = $item;
+                    
+                }
+                
+                return $userInputFields;
+                
+            }
+            
+            $userInputFields = $this->initialUserInputFields();
+            if ($mode === 'addUserInput') {
+                
+                $json = json_decode(sanitize_text_field( stripslashes($_POST['jsonStr']) ), true);
+                $json = checkEnabled($json);
+                array_push($userInputFields, $json);
+                $userInputFields = updateUserInputFields($userInputFields);
+                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                
+            } else if ($mode === 'editUserInput') {
+                
+                $json = json_decode(sanitize_text_field( stripslashes($_POST['jsonStr']) ), true);
+                $json = checkEnabled($json);
+                if ($json['id'] === 'user_pass') {
+                    
+                    $json['type'] = 'PASSWORD';
+                    
+                }
+                for ($i = 0; $i < count($userInputFields); $i++) {
+                    
+                    if ($userInputFields[$i]['id'] === $json['id']) {
+                        
+                        $userInputFields[$i] = $json;
+                        break;
+                        
+                    }
+                    
+                }
+                $userInputFields = updateUserInputFields($userInputFields);
+                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                
+            } else if ($mode === 'deleteUserInput') {
+                
+                array_splice($userInputFields, intval($_POST['index']), 1);
+                $userInputFields = updateUserInputFields($userInputFields);
+                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                
+            } else if ($mode === 'changedOrderUserInput') {
+                
+                $sortedUserInputFields = array();
+                $json = json_decode(sanitize_text_field( stripslashes($_POST['keys']) ), true);
+                for ($i = 0; $i < count($json); $i++) {
+                    
+                    $item = (function($id, $userInputFields) {
+                        
+                        for ($i = 0; $i < count($userInputFields); $i++) {
+                            
+                            if ($id === $userInputFields[$i]['id']) {
+                                
+                                return $userInputFields[$i];
+                                
+                            }
+                            
+                        }
+                        
+                    })($json[$i], $userInputFields);
+                    array_push($sortedUserInputFields, $item);
+                    
+                    
+                }
+                
+                $userInputFields = updateUserInputFields($sortedUserInputFields);
+                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
                 
             }
             
             
-            return $inputFieldForUserManagement;
+            
+            
+            return array_values($userInputFields);
+            
+        }
+        
+        public function getUserInputFields() {
+            
+            $userInputFields = $this->initialUserInputFields();
+            return $userInputFields;
             
         }
         

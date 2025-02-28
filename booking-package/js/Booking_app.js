@@ -1377,6 +1377,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         var object = this;
         var services = object._courseList;
+        var guestsList = object.getGuestsList();
         object._console.log(calendarData);
         object.setSkipServicesPanel(false);
         object._console.log(services);
@@ -1445,6 +1446,9 @@ var error_hCaptcha_for_booking_package = function(response) {
                     option.selected = 0;
                     object._console.log(option);
                     
+                    var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+                    object._console.log(responseCosts);
+                    
                     var titleLabel = document.createElement("span");
                     titleLabel.textContent = option.name;
                     
@@ -1453,7 +1457,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     optionPanel.setAttribute("data-serviceKey", serviceKey);
                     optionPanel.classList.add("selectable_option_element");
                     optionPanel.appendChild(titleLabel);
-                    
+                    /**
                     if(option.cost != null && option.cost != 0){
                         
                         var cost = object._format.formatCost(option.cost, object._currency);
@@ -1461,6 +1465,25 @@ var error_hCaptcha_for_booking_package = function(response) {
                         optionCostPanel.classList.add("serviceCost");
                         optionCostPanel.textContent = cost;
                         optionPanel.appendChild(optionCostPanel);
+                        
+                    }
+                    **/
+                    if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
+                        
+                        var optionCostPanel = document.createElement("span");
+                        optionCostPanel.classList.add("serviceCost");
+                        optionPanel.appendChild(optionCostPanel);
+                        var cost = object._format.formatCost(responseCosts.max, object._currency);
+                        if (responseCosts.hasMultipleCosts === true) {
+                            
+                            cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
+                            object.createmMximumAndMinimumElements(responseCosts, optionPanel);
+                            
+                        } else {
+                            
+                            optionCostPanel.textContent = cost;
+                            
+                        }
                         
                     }
                     

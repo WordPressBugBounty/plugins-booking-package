@@ -1,8 +1,10 @@
-/*globals I18n */
-/*globals Booking_App_Calendar */
-/*globals Booking_App_ObjectsControl */
-/*globals Booking_App_XMLHttp */
-/*globals Booking_manage */
+/* globals I18n */
+/* globals Booking_App_Calendar */
+/* globals Booking_App_ObjectsControl */
+/* globals Booking_App_XMLHttp */
+/* globals Booking_manage */
+/* globals Booking_Package_Input */
+/* Booking_Package_Elements */
     
     function Booking_Package_Member(prefix, plugin_name, calendarAccount, setting, subscription, url, nonce, action, reservation_info, booking_package_dictionary, debug) {
         
@@ -43,6 +45,8 @@
         this._currency = reservation_info.currency;
         this._currencies = reservation_info.currencies;
         this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
+        this._defaultName = {'user_login': this._i18n.get('Username'), 'user_email': this._i18n.get('Email'), 'user_pass': this._i18n.get('Password')};
+        this._userFormFields = reservation_info.userFormFields;
         object._console.log('_bookingVerificationCode = ' + this._bookingVerificationCode);
         object._console.log('this._plugin_name = ' + this._plugin_name);
         object._console.log(setting);
@@ -65,11 +69,24 @@
         this._calendar.setClock(reservation_info.clock);
         //this._hotel = new Hotel(this._currency, this._weekName, this._dateFormat, this._positionOfWeek, this._startOfWeek, booking_package_dictionary, this._debug);
         this._booking_manage = new Booking_manage(reservation_info, booking_package_dictionary);
-        
+        this._input = new Booking_Package_Input(this._debug);
+        this._element = new Booking_Package_Elements(this._debug);
         for (var key in reservation_info.calendarAccountList) {
             
             var account = reservation_info.calendarAccountList[key];
             object._calendarAccountList[parseInt(account.key)] = account;
+            
+        }
+        
+        for (var i = 0; i < this._userFormFields.length; i++) {
+            
+            const field = this._userFormFields[i];
+            if (this._defaultName.hasOwnProperty(field.id) === true) {
+                
+                field.name = this._defaultName[field.id];
+                
+            }
+            
             
         }
         
@@ -169,12 +186,15 @@
         object._console.log(subscriptions);
         object.hiddenLoginErrorMessage();
         
-        if(parseInt(memberSetting.function_for_member) == 1){
+        if (parseInt(memberSetting.function_for_member) == 1) {
             
+            /**
             var user_status_field = document.getElementById("booking-package-user_status_field");
             user_status_field.textContent = null;
             user_status_field.classList.add("hidden_panel");
+            **/
             
+            document.getElementById('booking-package-user-profile').textContent = null;
             var myBookingDetailsFroVisitor = document.getElementById('booking-package_myBookingDetailsFroVisitor');
             var login = document.getElementById("booking-package-login");
             var logout = document.getElementById("booking-package-logout");
@@ -194,10 +214,41 @@
             var myBookingDetails = document.getElementById("booking-package_myBookingDetails");
             var login_submit = login_form.getElementsByClassName("login-submit")[0];
             var login_input = login_submit.getElementsByTagName("input");
+            //var pElements = login_form.getElementsByClassName("login-submit")[0];
+            
+            const activeChildren = login_form.querySelectorAll('.login-username, .login-password, .login-remember');
+            activeChildren.forEach(child => {
+                
+                const className = child.getAttribute('class');
+                let label = null;
+                let inputElement = null;
+                if (className === 'login-username' || className === 'login-password') {
+                    
+                    label = child.children[0].textContent;
+                    inputElement = child.children[1];
+                    let namePanel = object.create('div', label, null, null, null, className + ' name', null);
+                    let valuePanel = object.create('div', null, [inputElement], null, null, 'value', null);
+                    let rowPanel = object.create('div', null, [namePanel, valuePanel], null, null, 'row', null);
+                    login_form.appendChild(rowPanel);
+                    
+                } else {
+                    
+                    label = child.children[0];
+                    let rowPanel = object.create('div', null, [label], null, null, className + ' row', null);
+                    login_form.appendChild(rowPanel);
+                    
+                }
+                
+                login_form.removeChild(child);
+                
+            });
+            login_form.appendChild(login_submit);
+            
             var register_user_button = document.getElementById("booking-package-register_user_button");
             if (document.getElementById("wp-submit") != null) {
                 
                 document.getElementById("wp-submit").classList.add('login_button');
+                
                 
             }
             
@@ -310,7 +361,7 @@
                 }
                 
             }
-            //user_form
+            
             var inputFields = [...login_form.getElementsByTagName('input'), ...user_form.getElementsByTagName('input'), ...edit_form.getElementsByTagName('input')];
             for (var i = 0; i < inputFields.length; i++) {
                 
@@ -605,9 +656,12 @@
                 edit.classList.remove("hidden_panel");
                 subscribed.classList.remove("hidden_panel");
                 bookingHistory.classList.remove("hidden_panel");
-                
+                /**
+                console.error(object._userFormFields);
                 var user_login = document.getElementById("booking-package-user_login");
                 user_login.textContent = memberSetting.user_login;
+                **/
+                
                 object._userInformation = memberSetting.value;
                 
             }else{
@@ -1361,22 +1415,144 @@
         var object = this;
         object._console.log(object._setting);
         var setting = object._setting;
+        const userInfo = {user_login: setting.user_login, user_email: setting.user_email};
         var edit_panel = document.getElementById("booking-package-user-edit-form");
+        object._console.log(setting);
+        var inputData = {};
+        const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+        for (var i = 0; i < formFields.length; i++) {
+            
+            if (formFields[i].id === 'user_login') {
+                
+                formFields[i].disabled = 1;
+                
+            }
+            
+            if (formFields[i].id === 'user_pass') {
+                
+                formFields[i].required = 'false';
+                
+            }
+            
+        }
+        object._console.log(formFields);
+        const input = new Booking_Package_Input(object._debug);
+        object._input.setPrefix(object._prefix + 'edit_form');
+        const table = object._input.createUserFieldPanel(formFields, setting.profile, inputData, 'div', {});
+        object._console.log(table);
+        const editCustomFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
+        editCustomFormFieldPanel.textContent = null;
+        editCustomFormFieldPanel.appendChild(table);
+        const change_password_button = object.create('button', object._i18n.get('Change password'), null, null, null, 'change_user_password_button', null);
+        const inputPassword = document.getElementById('booking_package_edit_forminput_user_pass');
+        inputPassword.classList.add('hidden_panel');
+        inputPassword.insertAdjacentElement('afterend', change_password_button);
+        
+        /**
         var user_login = document.getElementById("booking-package-user_edit_login");
         var user_email = document.getElementById("booking-package-user_edit_email");
         var user_pass = document.getElementById("booking-package-user_edit_pass");
         user_login.textContent = setting.user_login;
         
         var change_password_button = document.getElementById("booking-package-user_edit_change_password_button");
+        **/
+        
+        
         change_password_button.onclick = function(){
             
-            user_pass.classList.remove("hidden_panel");
+            inputPassword.classList.remove("hidden_panel");
             change_password_button.classList.add("hidden_panel");
             
         }
         
         register_user_button.onclick = function(){
             
+            
+            const response = input.validateInputValues(formFields, inputData);
+            let updata = response.updata;
+            let customUserFields = response.customUserFields;
+            object._console.log(response);
+            if (updata === false) {
+                
+                return null;
+                
+            }
+            
+            var user_data = {
+                user_login: document.getElementById("booking_package_edit_forminput_user_login").value,
+                user_email: document.getElementById("booking_package_edit_forminput_user_email").value,
+                user_pass: document.getElementById("booking_package_edit_forminput_user_pass").value,
+            };
+            object._console.log(user_data);
+            
+            if (!user_data.user_email.match(/.+@.+\..+/)) {
+                
+                updata = false;
+                document.getElementById("booking_package_edit_forminput_user_email").classList.add("errorPanel");
+                
+            }
+            
+            if (user_data.user_pass.length > 0 && user_data.user_pass.length < 8) {
+                
+                updata = false;
+                document.getElementById("booking_package_edit_forminput_user_pass").classList.add("errorPanel");
+                
+            }
+            
+            var post = {mode: 'updateUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, user_login: setting.user_login, accountKey: object._calendarAccount.key, customUserFields: JSON.stringify(customUserFields)};
+            if (document.getElementById("booking-package-permalink") != null) {
+                
+                post.permalink = document.getElementById("booking-package-permalink").value;
+                
+            }
+            object._console.log(post);
+            object._console.log("updata = " + updata);
+            if (updata == true) {
+                
+                post.user_email = setting.user_email;
+                user_new_email = user_data.user_email;
+                if (user_data.user_pass.length != 0) {
+                    
+                    post.user_pass = user_data.user_pass;
+                    
+                }
+                
+                object._console.log(post);
+                post.mode = object._prefix + 'sendVerificationCode';
+                post.booking_package_user_action = 1;
+                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
+                    
+                    if (response === true) {
+                        
+                        delete post.booking_package_user_action;
+                        post.mode = 'updateUser';
+                        post.user_email = user_new_email;
+                        var bookingBlockPanel = document.getElementById("bookingBlockPanel");
+                        bookingBlockPanel.classList.remove("hidden_panel");
+                        new Booking_App_XMLHttp(object._url, post, false, function(response){
+                            
+                            object._console.log(response);
+                            object.setNewNonce(response);
+                            if (response.status == 'success') {
+                                
+                                window.location.reload();
+                                
+                            } else if (response.status == 'error') {
+                                
+                                window.alert(response.error_messages);
+                                
+                            }
+                            bookingBlockPanel.classList.add("hidden_panel");
+                            
+                        });
+                        
+                    }
+                    
+                });
+                
+            }
+            
+            /**
             var updata = true;
             var user_new_email = null;
             user_email.parentElement.classList.remove("errorPanel");
@@ -1455,6 +1631,7 @@
                 
                 
             }
+            **/
             
         }
         
@@ -1468,32 +1645,45 @@
         user_regist_error_message.classList.add("hidden_panel");
         user_regist_error_message.textContent = null;
         
-        register_user_button.onclick = function(){
+        var inputData = {};
+        const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+        object._console.log(formFields);
+        const input = new Booking_Package_Input(object._debug);
+        object._input.setPrefix(object._prefix + 'sign_up_');
+        const table = object._input.createUserFieldPanel(formFields, {}, inputData, 'div', {});
+        object._console.log(table);
+        const addCustomFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
+        addCustomFormFieldPanel.textContent = null;
+        addCustomFormFieldPanel.appendChild(table);
+        
+        register_user_button.onclick = function() {
+            
+            const response = input.validateInputValues(formFields, inputData);
+            let updata = response.updata;
+            let customUserFields = response.customUserFields;
+            object._console.log(response);
+            
+            var registering = response.updata;
+            
             
             var user_data = {
-                user_login: document.getElementById("booking-package-user_login"),
-                user_email: document.getElementById("booking-package-user_email"),
-                user_pass: document.getElementById("booking-package-user_pass"),
+                user_login: document.getElementById("booking_package_sign_up_input_user_login").value,
+                user_email: document.getElementById("booking_package_sign_up_input_user_email").value,
+                user_pass: document.getElementById("booking_package_sign_up_input_user_pass").value,
             };
             
-            var registering = true;
             var registeringErrorMessage = '';
-            var post = {mode: 'createUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, accountKey: object._calendarAccount.key};
+            var post = {mode: 'createUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, accountKey: object._calendarAccount.key, user_login: user_data.user_login, user_email: user_data.user_email, user_pass: user_data.user_pass, customUserFields: JSON.stringify(customUserFields)};
             for (var key in user_data) {
                 
-                var panel = user_data[key].parentElement;
-                panel.classList.remove("errorPanel");
-                object._console.log(panel);
-                
-                var value = user_data[key].value;
-                post[key] = value;
+                let errorPanel = null;
+                var value = user_data[key];
                 object._console.log(key + " = " + value);
                 
-                //if (key == 'user_login' && (value.length < 4 || !value.match(/^[A-Za-z0-9.-_]*$/))) {
                 if (key == 'user_login' && (value.length < 4 || !value.match(/^[A-Za-z0-9]*$/))) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_login');
                     registeringErrorMessage = object._i18n.get('Usernames can only contain lowercase letters (a-z) and numbers.');
                     console.error("error key = " + key + " value = " + value);
                     
@@ -1738,4 +1928,32 @@
             
         }
         
-    }
+    };
+    
+    Booking_Package_Member.prototype.create = function(elementType, text, childElements, id, style, className, data_x) {
+        
+        var panel = this._element.create(elementType, text, childElements, id, style, className, data_x);
+        return panel;
+        
+    };
+    
+    Booking_Package_Member.prototype.createButtonPanel = function(id, style, className, buttons) {
+        
+        var buttonPanel = this._element.createButtonPanel(id, style, className, buttons);
+        return buttonPanel;
+        
+    };
+    
+    Booking_Package_Member.prototype.createButton = function(id, style, className, data_x, text) {
+        
+        var button = this._element.createButton(id, style, className, data_x, text);
+        return button;
+        
+    };
+    
+    Booking_Package_Member.prototype.createInputElement = function(tagName, type, name, value, text, disabled, id, style, className, data_x) {
+        
+        var input = this._element.createInputElement(tagName, type, name, value, text, disabled, id, style, className, data_x);
+        return input;
+        
+    };

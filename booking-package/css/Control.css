@@ -73,7 +73,7 @@
     
 }
 
-#booking-package-user-form input, #booking-package-user-edit-form input {
+#booking-package-user-edit-form input {
     
     width: 100%;
     
@@ -161,6 +161,12 @@
 #booking-package-user-form .errorPanel, #booking-package-user-edit-form .errorPanel, #user_detail_panel .errorPanel {
     
     background-color: #FFD5D5;
+    
+}
+
+#booking-package-user-form .error_empty_value, #booking-package-user-edit-form .error_empty_value, #user_detail_panel .error_empty_value, #editCustomFormFieldPanel .error_empty_value {
+    
+    background-color: #FFD5D5 !important;
     
 }
 
@@ -3795,12 +3801,14 @@
 
 .dnd_edit {
     
+    cursor: pointer;
     color: #0073aa;
     
 }
 
 .dnd_copy {
     
+    cursor: pointer;
     color: #0073aa;
     margin-left: 10px;
     
@@ -3808,6 +3816,7 @@
 
 .dnd_delete {
     
+    cursor: pointer;
     color: #0073aa;
     margin-left: 10px;
     
@@ -3822,7 +3831,7 @@
     
 }
 
-.dnd_required:after {
+.dnd_required:after, .required:after {
     
     position: relative;
     top: 3px;
@@ -3839,7 +3848,7 @@
     
 }
 
-#addCoursePanel {
+#addCoursePanel, #userSettingPanel {
     
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -3853,19 +3862,19 @@
     
 }
 
-#addCoursePanel th {
+#addCoursePanel th, #userSettingPanel th {
     
     padding-left: 10px;
     
 }
 
-#addCoursePanel tr, #customizePanel tr {
+#addCoursePanel tr, #customizePanel tr, #userSettingPanel tr {
     
     border-bottom: 1px solid #ddd;
     
 }
 
-#addCoursePanel td, #customizePanel tr {
+#addCoursePanel td, #customizePanel tr, #userSettingPanel tr {
     
     padding-bottom: 10px;
     
@@ -4943,7 +4952,7 @@
     
 }
 
-#settingPanel .bottomButtonPanel, #addCoursePanel .bottomButtonPanel , #setting_table .bottomButtonPanel, #memberPanel .bottomButtonPanel, #cssPanel .bottomButtonPanel, #javascriptPanel .bottomButtonPanel, #customizePanel .bottomButtonPanel {
+#settingPanel .bottomButtonPanel, #addCoursePanel .bottomButtonPanel , #setting_table .bottomButtonPanel, #memberPanel .bottomButtonPanel, #cssPanel .bottomButtonPanel, #javascriptPanel .bottomButtonPanel, #customizePanel .bottomButtonPanel, #userSettingPanel .bottomButtonPanel {
     
     position: sticky;
     bottom: 0px;
@@ -5190,7 +5199,86 @@
     
 }
 
-#setting_table label {
+#booking-package-user-form {
+    position: fixed;
+    margin: auto !important;
+    top: 80px;
+    left: 10%;
+    right: 10%;
+    max-width: 420px !important;
+}
+
+#addCustomFormFieldPanel {
+    
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    display: block !important;
+    overflow: auto;
+    max-height: 400px;
+    
+}
+
+#addCustomFormFieldPanel .widefat {
+    
+    border-spacing: 0;
+    width: auto;
+    
+}
+
+#addCustomFormFieldPanel div {
+    
+    margin-bottom: 0;
+    
+}
+
+#addCustomFormFieldPanel table {
+    
+    border-spacing: 0;
+    border-width: 0;
+    
+}
+
+#addCustomFormFieldPanel input[type="text"] {
+    
+    width: 100%;
+    
+}
+
+#addCustomFormFieldPanel input[type="radio"],  #addCustomFormFieldPanel input[type="checkBox"] {
+    
+    
+    
+}
+
+#addCustomFormFieldPanel tr {
+    /**
+    display: grid;
+    **/
+}
+#addCustomFormFieldPanel th {
+    /**
+    padding-bottom: 0;
+    **/
+    width: 120px;
+}
+
+#addCustomFormFieldPanel td {
+    /**
+    padding-top: 0;
+    **/
+}
+
+#addCustomFormFieldPanel .custom_title, #editCustomFormFieldPanel .custom_title {
+    
+    display: block;
+    padding: 10px;
+    padding-top: 1em;
+    font-size: 1.5em;
+    border-top: 1px solid #ccc;
+    
+}
+
+#setting_table label, #addCustomFormFieldPanel label, #editCustomFormFieldPanel label {
     
     display: table;
     margin-bottom: 0.3em;

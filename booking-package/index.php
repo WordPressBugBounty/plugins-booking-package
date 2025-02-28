@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.73
+Version:     1.6.74
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -28,7 +28,7 @@ Domain Path: /languages
 	
 	class BOOKING_PACKAGE {
 		
-		public $db_version = "1.1.8";
+		public $db_version = "1.1.9";
 		
 		public $plugin_version = 0;
 		
@@ -1124,6 +1124,7 @@ Domain Path: /languages
 			}
 			
             $htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);
+            $htmlElement->setManagementUsersV2($this->managementUsersV2);
             
 			$list = $setting->getList();
 			
@@ -1162,11 +1163,6 @@ Domain Path: /languages
 				$key = sanitize_text_field($_GET['k']);
 				$user_login = sanitize_text_field($_GET['u']);
 				$memberSetting['activation'] = $schedule->setActivationUser($key, $user_login, 1);
-				if ($memberSetting['activation']['status'] == 'success') {
-					
-					#$schedule->login($memberSetting['activation']['id'], true);
-					
-				}
 				
 			}
 			
@@ -1464,6 +1460,7 @@ Domain Path: /languages
 				$localize_script['isExtensionsValid'] = 0;
 				
 			}
+			
 			
 			if (intval($calendarAccount['enableFixCalendar']) == 1) {
 				
@@ -1898,6 +1895,21 @@ Domain Path: /languages
 						'title_in_form' => array('background-color', 'color', 'border-color'),
 						'row' => array('background-color', 'color', 'border-color'),
 					),
+					
+					'booking-package-loginform' => array(
+						'title_in_form' => array('background-color', 'color', 'border-color'),
+						'row' => array('background-color', 'color', 'border-color'),
+					),
+					'booking-package-user-form' => array(
+						'title_in_form' => array('background-color', 'color', 'border-color'),
+						'row' => array('background-color', 'color', 'border-color'),
+					),
+					
+					'booking-package-user-edit-form' => array(
+						'title_in_form' => array('background-color', 'color', 'border-color'),
+						'row' => array('background-color', 'color', 'border-color'),
+					),
+					
 				);
 				
 				$customizeLayouts = $calendarAccount['customizeLayouts'];
@@ -1964,11 +1976,11 @@ Domain Path: /languages
 							
 						} else if ($id == 'form') {
 							
-							$idName = array('booking-package_inputFormPanel');
+							$idName = array('booking-package_inputFormPanel', 'booking-package-user-form', 'booking-package-loginform', 'booking-package-user-edit-form');
 							$customizeClass .= (function ($styles) {
 								
 								$styleLines = '';
-								$ids = ['booking_package_verificationCodeContent', 'booking-package-loginform', 'booking-package-user-form', 'booking-package-user-edit-form'];
+								$ids = ['booking_package_verificationCodeContent', 'booking-package-loginform', 'booking-package-user-form', 'booking-package-user-edit-form', 'booking-package-loginform'];
 								for ($i = 0; $i < count($ids); $i++) {
 									
 									$styleLines .= "#" . $ids[$i] . " .form_text {\n";
@@ -2085,6 +2097,7 @@ Domain Path: /languages
 		public function subscription_form($calendarAccount, $subscription_form){
 			
 			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);
+			$htmlElement->setManagementUsersV2($this->managementUsersV2);
 			$html = $htmlElement->subscription_form($calendarAccount, $subscription_form);
 			return $html;
 			
@@ -2093,6 +2106,7 @@ Domain Path: /languages
 		public function member_form($user = null, $member_login_error = 0, $dictionary = null) {
 			
 			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);
+			$htmlElement->setManagementUsersV2($this->managementUsersV2);
 			$htmlElement->setVisitorSubscriptionForStripe($this->visitorSubscriptionForStripe);
 			$member_form = $htmlElement->member_form($user, $member_login_error, $dictionary);
 			return $member_form;
@@ -2325,6 +2339,8 @@ Domain Path: /languages
 				
 			}
 			
+			$localize_script['userFunctions'] = $setting->getMemberSetting($isExtensionsValid);
+			
 			$accountList = $schedule->getCalendarAccountListData("`key`, `name`, `expressionsCheck`, `type`, `courseTitle`, `includeChildrenInRoom`, `numberOfPeopleInRoom`");
 			$localize_script['calendarAccountList'] = $accountList;
 			$emailEnableList = array();
@@ -2344,7 +2360,7 @@ Domain Path: /languages
 				
 			}
 			
-			$dictionary = $this->getDictionary("setting_page", $this->plugin_name);
+			$dictionary = $this->getDictionary("user_management", $this->plugin_name);
 			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js'.$p_v);
 			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js'.$p_v);
 			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js'.$p_v);
@@ -2449,7 +2465,7 @@ Domain Path: /languages
 						<div id="formFieldsPanel" class="hidden_panel">
 							
 						</div>
-						<div id="settingPanel" class="hidden_panel">
+						<div id="userSettingPanel" class="hidden_panel">
 							
 						</div>
 					</div>
@@ -2554,7 +2570,7 @@ Domain Path: /languages
 											<th><?php _e("Username", 'booking-package'); ?></th>
 											<td><div id="user_edit_login"></div></td>
 										</tr>
-										<tr>
+										<tr id='profile_tr_input_field_user_email'>
 											<th><?php _e("Email", 'booking-package'); ?></th>
 											<td><input type="text" name="user_edit_email" id="user_edit_email" class="input"></td>
 										</tr>
@@ -2567,7 +2583,7 @@ Domain Path: /languages
 												</label>
 											</td>
 										</tr>
-										<tr>
+										<tr id='profile_tr_input_field_user_pass'>
 											<th><?php _e("Password", 'booking-package'); ?></th>
 											<td>
 												<div>
@@ -2578,6 +2594,9 @@ Domain Path: /languages
 										</tr>
 									</tbody>
 								</table>
+								<div id='editCustomFormFieldPanel'>
+									
+								</div>
 							</div>
 							
 						</div>
@@ -4301,9 +4320,33 @@ Domain Path: /languages
 				
 			}
 			
-			if ($_POST['mode'] == 'getInputFieldForUserManagement') {
+			if ($_POST['mode'] == 'addUserInput') {
 				
-				$response = $setting->getInputFieldForUserManagement();
+				$response = $setting->updateUserInputFields($_POST['mode']);
+				
+			}
+			
+			if ($_POST['mode'] == 'editUserInput') {
+				
+				$response = $setting->updateUserInputFields($_POST['mode']);
+				
+			}
+			
+			if ($_POST['mode'] == 'deleteUserInput') {
+				
+				$response = $setting->updateUserInputFields($_POST['mode']);
+				
+			}
+			
+			if ($_POST['mode'] == 'changedOrderUserInput') {
+				
+				$response = $setting->updateUserInputFields($_POST['mode']);
+				
+			}
+			
+			if ($_POST['mode'] == 'getUserInputFields') {
+				
+				$response = $setting->getUserInputFields();
 				
 			}
 			
@@ -5480,6 +5523,8 @@ Domain Path: /languages
 					'd_v' => $installed_ver,
 					'locale_id' => 'booking-package-locale-' . $this->locale,
 					'numberFormatter' => $numberFormatter,
+					'managementUsersV2' => intval($this->managementUsersV2),
+					'userFormFields' => $setting->getUserInputFields(),
 				);
 				
 			} else if ($mode == 'member') {
@@ -5507,7 +5552,27 @@ Domain Path: /languages
 					'numberFormatter' => $numberFormatter,
 					'managementUsersV2' => intval($this->managementUsersV2),
 					'inputType' => $setting->getFormInputTypeForUser(),
+					'userFormFields' => $setting->getUserInputFields(),
 				);
+				
+				
+				
+			}
+			
+			if ($this->managementUsersV2 === 0 && isset($localize_script['userFormFields'])) {
+				
+				$formFields = $localize_script['userFormFields'];
+				$updateFormFields = array();
+				for ($i = 0; $i < count($formFields); $i++) {
+					
+					if ($formFields[$i]['id'] === 'user_login' || $formFields[$i]['id'] === 'user_email' || $formFields[$i]['id'] === 'user_pass') {
+						
+						array_push($updateFormFields, $formFields[$i]);
+						
+					}
+					
+				}
+				$localize_script['userFormFields'] = $updateFormFields;
 				
 			}
 			
@@ -5726,11 +5791,19 @@ Domain Path: /languages
 			$style .= "#bottomPanel { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_schedulePage .selectedDate { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_schedulePage .courseListPanel { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			
+			
+			$style .= "#booking-package-loginform { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			$style .= "#booking-package-loginform .title_in_form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			$style .= "#booking-package-user-form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			$style .= "#booking-package-user-form .title_in_form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			
+			$style .= "#booking-package-user-edit-form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			$style .= "#booking-package-user-edit-form .title_in_form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			
 			$style .= "#booking-package_inputFormPanel { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_inputFormPanel .title_in_form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_myBookingDetails .selectedDate { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
-			//$style .= "#booking-package_calendarPage .week_slot { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithSchedule']['value']."; }\n";
-			//$style .= "#booking-package_calendarPage .dayPanel { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithSchedule']['value']."; }\n";
 			$style .= "#booking-package_calendarPage .closingDay { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithNoSchedule']['value']."; }\n";
 			$style .= "#booking-package_calendarPage .pastDay { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithNoSchedule']['value']."; }\n";
 			
@@ -5780,8 +5853,14 @@ Domain Path: /languages
 				"#booking-package_servicePage .topPanel", 
 				"#booking-package_servicePage .topPanelNoAnimation", 
 				"#booking-package_servicePage .bottomPanel",
+				"#booking-package-loginform .title_in_form",
+				"#booking-package-user-form .title_in_form",
+				"#booking-package-user-edit-form .title_in_form",
 				"#booking-package_inputFormPanel .title_in_form",
 				"#booking-package_myBookingDetails .selectedDate",
+				"#booking-package-loginform .row",
+				"#booking-package-user-form .row",
+				"#booking-package-user-edit-form .row",
 				"#booking-package_inputFormPanel .row",
 				"#booking-package_myBookingDetails .row",
 				"#booking-package_durationStay .row",
@@ -6241,6 +6320,11 @@ Domain Path: /languages
 				'Next page' => __('Next page', 'booking-package'),
 				'Change password' => __('Change password', 'booking-package'),
 				'Update Profile' => __('Update Profile', 'booking-package'),
+				'Change password' => __('Change password', 'booking-package'),
+				'Username' => __('Username', 'booking-package'),
+				'Email' => __('Email', 'booking-package'),
+				'Password' => __('Password', 'booking-package'),
+				'Custom form fields' => __('Custom form fields', 'booking-package'),
 			);
 			
 			
@@ -6485,6 +6569,22 @@ Domain Path: /languages
 				$dictionary['Do you really want to delete the license as a member?'] = __('Do you really want to delete the license as a member?', 'booking-package');
 				$dictionary['We sent a verification code to the following address.'] = __('We sent a verification code to the following address.', 'booking-package');
 				$dictionary['Lost your password?'] = __('Lost your password?', 'booking-package');
+				
+			} else if ($mode == 'user_management') {
+				
+				$dictionary['User account'] = __('User account', 'booking-package');
+				$dictionary['Reject bookings from non-user accounts'] = __('Reject bookings from non-user accounts', 'booking-package');
+				$dictionary['User registration from customers'] = __('User registration from customers', 'booking-package');
+				$dictionary['Send a verification code to the user by email during registration and editing'] = __('Send a verification code to the user by email during registration and editing', 'booking-package');
+				$dictionary['Accept subscribers as users'] = __('Accept subscribers as users', 'booking-package');
+				$dictionary['Accept contributors as users'] = __('Accept contributors as users', 'booking-package');
+				$dictionary['Toolbar'] = __('Toolbar', 'booking-package');
+				$dictionary['Lost password'] = __('Lost password', 'booking-package');
+				$dictionary['Add new item'] = __('Add new item', 'booking-package');
+				$dictionary['Save the changed order'] = __('Save the changed order', 'booking-package');
+				$dictionary['Username'] = __('Username', 'booking-package');
+				$dictionary['Email'] = __('Email', 'booking-package');
+				$dictionary['Password'] = __('Password', 'booking-package');
 				
 			}
 			

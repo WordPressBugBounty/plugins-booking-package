@@ -371,6 +371,7 @@
 					"firstname" 			=> "`firstname` VARCHAR(100) NOT NULL",
 					"lastname"				=> "`lastname` VARCHAR(100) NOT NULL",
 					"email" 				=> "`email` VARCHAR(100) NOT NULL",
+					"profile" 				=> "`profile` longtext DEFAULT NULL",
 					"value" 				=> "`value` longtext DEFAULT NULL",
 					"user_activation_key"	=> "`user_activation_key` VARCHAR(100) DEFAULT ''",
 					"subscription_list" 	=> "`subscription_list` longtext DEFAULT ''",
