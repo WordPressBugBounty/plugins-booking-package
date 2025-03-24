@@ -1237,6 +1237,10 @@ Member_manage.prototype.userSettingPanel = function () {
     var mainPanel = document.getElementById("userSettingPanel");
     mainPanel.textContent = null;
     mainPanel.appendChild(table);
+    var saveButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Save") );
+    var buttonPanel = object.create('div', null, [saveButton], null, null, 'bottomButtonPanel', null);
+    mainPanel.appendChild(buttonPanel);
+    
     for (var key in object._userFunctions) {
         
         const userFunction = object._userFunctions[key];
@@ -1245,7 +1249,7 @@ Member_manage.prototype.userSettingPanel = function () {
         var settingNameSpan = object.create('span', userFunction.name, null, null, null, null, null);
 		var th = object.create('th', null, [settingNameSpan], null, null, null, null);
 		th.setAttribute("scope", "row");
-        
+        let extensionsValidPanel = object.create('div', object._i18n.get('Paid plan subscription required.'), null, null, null, 'extensionsValid hidden_panel', null);
         let valueName = object.create('span', object._i18n.get("Enabled"), null, null, null, 'radio_title', null);
         let checkBox = object.createInputElement('input', 'checkbox', userFunction.name, null, null, false, key, null, null, null);
         if (parseInt(userFunction.value) === 1) {
@@ -1254,7 +1258,16 @@ Member_manage.prototype.userSettingPanel = function () {
             checkBox.checked = true;
             
         }
-        const label = object.create('label', null, [checkBox, valueName], null, null, null, null);
+        
+        if (parseInt(object._isExtensionsValid) == 0) {
+            
+            extensionsValidPanel.classList.remove('hidden_panel');
+            checkBox.disabled = true;
+            saveButton.disabled = true;
+            
+        }
+        
+        const label = object.create('label', null, [extensionsValidPanel, checkBox, valueName], null, null, null, null);
         var td = object.create('td', null, [label], null, null, null, null);
         var tr = object.create('tr', null, [th, td], null, null, null, null);
 		tr.setAttribute("valign", "top");
@@ -1263,9 +1276,7 @@ Member_manage.prototype.userSettingPanel = function () {
         
     }
     
-    var saveButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Save") );
-    var buttonPanel = object.create('div', null, [saveButton], null, null, 'bottomButtonPanel', null);
-    mainPanel.appendChild(buttonPanel);
+    
     saveButton.onclick = function() {
         
         var postData = {mode: 'updateMemberSetting', nonce: object._nonce, action: object._action};
@@ -2373,7 +2384,7 @@ Member_manage.prototype.userForm = function(){
     
     var object = this;
     object._console.log("userForm");
-    if(parseInt(object._isExtensionsValid) == 1){
+    if (parseInt(object._isExtensionsValid) == 1) {
         
         const input = new Booking_Package_Input(object._debug);
         const documentHeight = document.documentElement.clientHeight - 240;

@@ -239,7 +239,11 @@
                     
                 }
                 
-                login_form.removeChild(child);
+                if (child.parentNode === login_form) {
+                    
+                    login_form.removeChild(child);
+                    
+                }
                 
             });
             login_form.appendChild(login_submit);

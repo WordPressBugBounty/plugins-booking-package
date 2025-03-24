@@ -1037,6 +1037,15 @@ var error_hCaptcha_for_booking_package = function(response) {
             var applicantCount = 1;
             var expirationDate = object._calendar.getDateKey(myBookingDetails.scheduleMonth, myBookingDetails.scheduleDay, myBookingDetails.scheduleYear);
             object._servicesControl.setExpirationDate(expirationDate);
+            let coupon = [];
+            if (myBookingDetails.coupon.length !== 0) {
+                
+                coupon = JSON.parse(myBookingDetails.coupon);
+                
+            }
+            
+            
+            
             
             myBookingDetailsPanel.classList.remove("hidden_panel");
             var date = object._calendar.formatBookingDate(schedule.month, schedule.day, schedule.year, schedule.hour, schedule.min, schedule.title, schedule.weekKey, 'elements');
@@ -1133,15 +1142,55 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             }
             
+            
+            if (coupon.key != null) {
+                
+                object.setCoupon(coupon);
+                totalCost = object.getDiscountCostByCoupon(totalCost);
+                
+                /** Coupon name **/
+                var couponNameLabel = document.createElement('div');
+                couponNameLabel.classList.add('name');
+                couponNameLabel.textContent = object._i18n.get('Coupon');
+                var couponValueLabel = document.createElement('div');
+                couponValueLabel.classList.add('value');
+                couponValueLabel.textContent = coupon.name;
+                
+                const couponNamePanel = document.createElement('div');
+                couponNamePanel.id = 'added_coupon_name';
+                couponNamePanel.classList.add('row');
+                couponNamePanel.appendChild(couponNameLabel);
+                couponNamePanel.appendChild(couponValueLabel);
+                myBookingDetailsPanel.appendChild(couponNamePanel);
+                
+                /** Coupon Discount **/
+                var couponDiscountName = document.createElement('div');
+                couponDiscountName.classList.add('name');
+                couponDiscountName.textContent = object._i18n.get('Discount');
+                var couponDiscountValue = document.createElement('div');
+                couponDiscountValue.classList.add('value');
+                if (coupon.method == 'subtraction') {
+                    
+                    couponDiscountValue.textContent = object._format.formatCost(coupon.value, object._currency);
+                    
+                } else {
+                    
+                    couponDiscountValue.textContent = coupon.value + '%';
+                    
+                }
+                var couponDiscountPanel = document.createElement('div');
+                couponDiscountPanel.id = 'added_coupon_discount';
+                couponDiscountPanel.classList.add('row');
+                couponDiscountPanel.appendChild(couponDiscountName);
+                couponDiscountPanel.appendChild(couponDiscountValue);
+                myBookingDetailsPanel.appendChild(couponDiscountPanel);
+                
+            }
+            
             var responseGuests = object._servicesControl.getValueReflectGuests(object.getGuestsList());
             object._console.log(responseGuests);
             var taxes = new TAXES(object._i18n, object._currency, object._debug, object._numberFormatter, object._currency_info);
             var surchargePanel = taxes.createExtraChargesAndTaxesElement(object._prefix + "surchargeTaxPanel_myBookedData");
-            /**
-            var surchargePanel = object.createRowPanel("Surcharge", "", null, null, null, null);
-            surchargePanel.id = object._prefix + "surchargeTaxPanel";
-            **/
-            //myBookingDetailsPanel.appendChild(surchargePanel);
             var taxePanel = object.createRowPanel("Tax", "", null, null, null, null);
             taxes.setBooking_App_ObjectsControl(object._servicesControl);
             taxes.setTaxes(visitorTaxes);

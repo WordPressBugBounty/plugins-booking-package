@@ -5053,7 +5053,7 @@
     
 }
 
-#settingPanel .extensionsValid, #select_package .extensionsValid, #booking_package_calendar_accounts .extensionsValid, #syncPanel .extensionsValid, #memberPanel .extensionsValid, #javascriptPanel .extensionsValid, #blockEmailListsPanel .extensionsValid {
+#settingPanel .extensionsValid, #select_package .extensionsValid, #booking_package_calendar_accounts .extensionsValid, #syncPanel .extensionsValid, #memberPanel .extensionsValid, #javascriptPanel .extensionsValid, #blockEmailListsPanel .extensionsValid, #userSettingPanel .extensionsValid {
     
     color: #ff4646;
     /**
