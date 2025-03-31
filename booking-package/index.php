@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.75
+Version:     1.6.76
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -3489,7 +3489,7 @@ Domain Path: /languages
 				
 				<div id="copyAndPasteOnCalendarSetting" class="hidden_panel">
 					<a href="https://booking-package.saasproject.net/how-does-the-booking-calendar-show-on-the-page/" target="_blank">
-						<?php _e('Copy a shortcode and paste it in your page on the Dashboard > Pages.', 'booking-package'); ?>
+						<?php _e('Copy the shortcode and paste it onto your page content.', 'booking-package'); ?>
 					</a>
 				</div>
 				

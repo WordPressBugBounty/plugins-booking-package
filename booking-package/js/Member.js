@@ -1696,7 +1696,8 @@
                 if (key == 'user_email' && !value.match(/.+@.+\..+/)) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    //panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_email');
                     registeringErrorMessage = object._i18n.get('Please enter a valid email address.');
                     console.error("error key = " + key + " value = " + value);
                     
@@ -1705,7 +1706,8 @@
                 if (key == 'user_pass' && value.length < 8) {
                     
                     registering = false;
-                    panel.classList.add("errorPanel");
+                    //panel.classList.add("errorPanel");
+                    errorPanel = document.getElementById('tr_input_field_user_pass');
                     registeringErrorMessage = object._i18n.get('Please enter a valid password.');
                     console.error("error key = " + key + " value = " + value);
                     

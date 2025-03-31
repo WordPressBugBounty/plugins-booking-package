@@ -106,6 +106,34 @@
 			
 		}
 		
+		var valueList = input.value;
+		if (input['type'] == 'CHECK' || input['type'] == 'RADIO') {
+			
+			if (typeof input.value.split == 'function') {
+				
+				valueList = input.value.split(",");
+				
+			}
+			
+			if (userValue != null && typeof userValue.split == 'function') {
+				
+				valueList = userValue.split(",");
+				
+			} else if (userValue != null && typeof userValue == 'object') {
+				
+				valueList = userValue;
+				
+			}
+			
+			if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
+				
+				valueList = [];
+				
+			}
+			object._console.log(valueList);
+			
+		}
+		
 		if (input['type'] == 'TEXT' || input['type'] == 'PASSWORD') {
 			
 			var textBox = object.createInputElement('input', 'text', null, input['value'], null, null, inputId, null, 'regular-text form_text', null);
@@ -185,7 +213,7 @@
 				selectBox.disabled = true;
 				
 			}
-			//for(var i = 0; i < list.length; i++){
+			
 			for (var key in list) {
 				
 				if (typeof list[key] == "string") {
@@ -231,7 +259,7 @@
 			    
 			}
 			
-			if (userValue != null && userValue.length != 0) {
+			if (optionBox.selected === true && userValue != null && userValue.length != 0) {
 				
 				selectBox.classList.add("hidden_panel");
 				valuePanel.setAttribute("data-edit", "1");
@@ -264,30 +292,6 @@
 				inputData[inputName] = {};
 				
 			}
-			
-			var valueList = input.value;
-			if (typeof input.value.split == 'function') {
-				
-				valueList = input.value.split(",");
-				
-			}
-			
-			if (userValue != null && typeof userValue.split == 'function') {
-				
-				valueList = userValue.split(",");
-				
-			} else if (userValue != null && typeof userValue == 'object') {
-				
-				valueList = userValue;
-				
-			}
-			
-			if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
-				
-				valueList = [];
-				
-			}
-			object._console.log(valueList);
 			
 			var checkBoxPanel = object.create('div', null, null, inputId, null, null, null);
 			valuePanel.appendChild(checkBoxPanel);
@@ -369,6 +373,42 @@
 				
 				object._console.log(valueList);
 				object._console.log(input);
+				var checkValue = "";
+				let hasUserOptions = false;
+				for (var i = 0; i < valueList.length; i++) {
+					
+					if (list.indexOf( valueList[i] ) !== -1) {
+						
+						hasUserOptions = true;
+						checkValue += valueList[i] + "<br />";
+						
+					}
+					
+				}
+				
+				if (hasUserOptions === true) {
+					
+					checkBoxPanel.classList.add("hidden_panel");
+					valuePanel.setAttribute("data-edit", "1");
+					userValuePanel.classList.remove("hidden_panel");
+					userValuePanel.insertAdjacentHTML("beforeend", checkValue);
+					if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
+						
+						checkBoxPanel.classList.remove("hidden_panel");
+						userValuePanel.classList.add("hidden_panel");
+						valuePanel.removeAttribute("data-edit");
+						for (var i in inputData[inputName]) {
+							
+							object._console.log(inputData[inputName][i]);
+							inputData[inputName][i].checked = "";
+							
+						}
+						
+					}
+					
+				}
+				
+				/**
 				checkBoxPanel.classList.add("hidden_panel");
 				valuePanel.setAttribute("data-edit", "1");
 				var checkValue = "";
@@ -393,7 +433,7 @@
 					}
 					
 				}
-				
+				**/
 			}
 			
 		} else if (input['type'] == 'RADIO') {
@@ -467,8 +507,38 @@
 				
 			}
 			
+			
 			if (userValue != null && userValue.length != 0) {
 				
+				var checkValue = "";
+				let hasUserOptions = false;
+				for (var i = 0; i < valueList.length; i++) {
+					
+					if (list.indexOf( valueList[i] ) !== -1) {
+						
+						hasUserOptions = true;
+						checkValue += valueList[i] + "<br />";
+						
+					}
+					
+				}
+				
+				if (hasUserOptions === true) {
+					
+					radioBoxPanel.classList.add("hidden_panel");
+					valuePanel.setAttribute("data-edit", "1");
+					userValuePanel.classList.remove("hidden_panel");
+					userValuePanel.insertAdjacentHTML("beforeend", checkValue);
+					if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
+						
+						radioBoxPanel.classList.remove("hidden_panel");
+						userValuePanel.classList.add("hidden_panel");
+						valuePanel.removeAttribute("data-edit");
+						
+					}
+					
+				}
+				/**
 				radioBoxPanel.classList.add("hidden_panel");
 				valuePanel.setAttribute("data-edit", "1");
 				userValuePanel.classList.remove("hidden_panel");
@@ -480,6 +550,7 @@
 					valuePanel.removeAttribute("data-edit");
 					
 				}
+				**/
 				
 			}
 			
@@ -768,7 +839,8 @@
 					
 					if (elements[key].checked === true) {
 						
-						values.push(elements[key].getAttribute("data-value"));
+						//values.push(elements[key].getAttribute("data-value"));
+						values.push(elements[key].value);
 						
 					}
 					
@@ -787,7 +859,8 @@
 					
 					if (elements[key].checked === true) {
 						
-						values.push(elements[key].getAttribute("data-value"));
+						//values.push(elements[key].getAttribute("data-value"));
+						values.push(elements[key].value);
 						
 					}
 					
@@ -930,12 +1003,21 @@
 						const values = [];
 						for (var i = 0; i < field.value.length; i++) {
 							
+							let key = field.options.indexOf( field.value[i] );
+							if (key !== -1) {
+								
+								values.push(field.options[key]);
+								
+							}
+							/**
 							const key = parseInt( field.value[i] );
+							console.error(key);
 							if (field.options.hasOwnProperty(key) === true) {
 								
 								values.push(field.options[key]);
 								
 							}
+							**/
 							
 						}
 						

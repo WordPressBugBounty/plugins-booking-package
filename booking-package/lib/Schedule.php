@@ -1160,6 +1160,38 @@
 			
         }
         
+        public function margeProfile($bookedValues, $userProfile) {
+        	
+        	foreach ($userProfile as $type => $uniques) {
+				
+				if (array_key_exists($type, $bookedValues)) {
+					
+					foreach ($uniques as $key => $unique) {
+						
+						if (array_key_exists($key, $bookedValues[$type])) {
+							
+							$bookedValues[$type][$key]['value'] = $unique['value'];
+							
+						} else {
+							
+							$bookedValues[$type][$key] = array('id' => $unique['id'], 'value' => $unique['value']);
+							
+						}
+						
+					}
+					
+				} else {
+					
+					$bookedValues[$type] = $userProfile[$type];
+					
+				}
+				
+			}
+			
+			return $bookedValues;
+        	
+        }
+        
         public function login($userId, $statusCheck = true) {
 			
 			$isExtensionsValid = $this->getExtensionsValid();
@@ -1180,8 +1212,15 @@
 			
 			if (!empty($row) && intval($row['status']) == 1) {
 				
+				if (empty($row['profile'])) {
+					
+					$row['profile'] = '[]';
+					
+				}
+				
 				$value = json_decode($row['value'], true);
 				$profile = json_decode($row['profile'], true);
+				$value = $this->margeProfile($value, $profile);
 				$response = array('value' => $value, 'profile' => $profile);
 				
 			} else {
@@ -1189,8 +1228,15 @@
 				$response = 0;
 				if ($statusCheck === false && !empty($row)) {
 					
+					if (empty($row['profile'])) {
+						
+						$row['profile'] = '[]';
+						
+					}
+					
 					$value = json_decode($row['value'], true);
 					$profile = json_decode($row['profile'], true);
+					$value = $this->margeProfile($value, $profile);
 					$response = array('value' => $value, 'profile' => $profile);
 					
 				}

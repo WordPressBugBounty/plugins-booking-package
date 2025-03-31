@@ -1181,6 +1181,57 @@
             
         }
         
+        public function words() {
+            
+            $words = array(
+                __('Arrival/Departure display format', 'booking-package'), 
+                __('Total stay display format', 'booking-package'), 
+                __('Include children in maximum guest count', 'booking-package'), 
+                __('Maximum guests per room', 'booking-package'), 
+                __('Number of available rooms', 'booking-package'), 
+                __('Maximum stay (nights)', 'booking-package'), 
+                __('Minimum stay (nights)', 'booking-package'), 
+                __('Day before public holiday', 'booking-package'), 
+                __('Rates', 'booking-package'), 
+                __('Use <a href="https://material.io/tools/icons/?style=baseline" target="_blank">Material icons</a> web font.', 'booking-package'), 
+                __('When no slots remain (0%)', 'booking-package'), 
+                __('When slots are below threshold', 'booking-package'), 
+                __('When slots exceed threshold', 'booking-package'), 
+                __('Remaining slots threshold', 'booking-package'), 
+                __('Show text/symbols', 'booking-package'), 
+                __('Show numbers', 'booking-package'), 
+                __('Display remaining slots on the calendar', 'booking-package'), 
+                __('Allow selecting multiple services', 'booking-package'), 
+                __('Booking steps on the front-end', 'booking-package'), 
+                __('After the booking time slot', 'booking-package'), 
+                __('Before the booking time slot', 'booking-package'), 
+                __('Before and after the booking time slot', 'booking-package'), 
+                __('Local payment', 'booking-package'), 
+                __('Week starts on', 'booking-package'), 
+                __('Share available time slots from other calendars', 'booking-package'), 
+                __('Number of available days from today', 'booking-package'), 
+                __('Number of unavailable days from today', 'booking-package'), 
+                __('Notification email address', 'booking-package'), 
+                __('Insert booking confirmation page before completion page', 'booking-package'), 
+                __('Reminders are sent only for \'Approved\' bookings.', 'booking-package'), 
+                __('Show canceled booking details on "Booked Customers"', 'booking-package'), 
+                __('Allow customer cancellations', 'booking-package'), 
+                __('Allow cancellation up to', 'booking-package'), 
+                __('Applicable booking status', 'booking-package'), 
+                __('Yes - Front-end and Dashboard', 'booking-package'), 
+                __('Yes - Front-end only', 'booking-package'), 
+                __('Use as Name field', 'booking-package'), 
+                __('Use as Email field', 'booking-package'), 
+                __('Use as SMS field', 'booking-package'), 
+                __('Use as Location field', 'booking-package'), 
+                __('Use as Agreement field (Terms/Privacy)', 'booking-package'), 
+                
+            );
+            
+            return $words;
+            
+        }
+        
         public function getElementForCalendarAccount(){
             
             $preparationTime = array();
