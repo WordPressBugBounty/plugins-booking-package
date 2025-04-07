@@ -2166,7 +2166,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                         var cost = object._format.formatCost(responseCosts.max, object._currency);
                         if (responseCosts.hasMultipleCosts === true) {
                             
-                            //cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
                             object.createmMximumAndMinimumElements(responseCosts, courseCostPanel);
                             
                         } else {
@@ -2386,7 +2385,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                                     var cost = object._format.formatCost(costsWithKey.cost_1, object._currency) + ' ';
                                     if (responseCosts.hasMultipleCosts === true) {
                                         
-                                        //cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
                                         object.createmMximumAndMinimumElements(responseCosts, optionPricePanel);
                                         
                                     } else {
@@ -7366,19 +7364,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                         object._console.log('totalCost = ' + totalCost);
                         
                         /** Coupon code **/
-                        /**
-                        var namePanel = document.createElement('span');
-                        namePanel.classList.add('planName');
-                        namePanel.textContent = object._i18n.get('Coupon code');
-                        var valuePanel = document.createElement('span');
-                        valuePanel.classList.add('serviceCost');
-                        valuePanel.textContent = coupon.id;
-                        var couponCodePanel = document.createElement('div');
-                        couponCodePanel.id = 'added_coupon_code';
-                        couponCodePanel.classList.add('addedAllServices');
-                        couponCodePanel.appendChild(namePanel);
-                        couponCodePanel.appendChild(valuePanel);
-                        **/
                         
                         /** Coupon name **/
                         var namePanel = document.createElement('span');
@@ -7655,7 +7640,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 if (paymentRadios[i].value == 'locally') {
                     
                     paymentSpans[i].classList.add("locally");
-                    paymentSpans[i].textContent = object._i18n.get("Pay locally");
+                    paymentSpans[i].textContent = object._i18n.get("Local payment");
                     
                 } else if (paymentRadios[i].value == 'stripe_konbini') {
                     

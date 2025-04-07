@@ -293,6 +293,8 @@
 				
 			}
 			
+			valueList = JSON.parse(JSON.stringify(valueList));
+			var updatedValueList = [];
 			var checkBoxPanel = object.create('div', null, null, inputId, null, null, null);
 			valuePanel.appendChild(checkBoxPanel);
 			
@@ -324,7 +326,7 @@
 					
 					if (valueList[a] == list[i]) {
 						
-						checkBox.checked = "checked";
+						checkBox.checked = true;
 						
 					}
 					
@@ -333,6 +335,7 @@
 				if (inputData[inputName] != null && inputData[inputName][i] != null) {
 				
 					checkBox = inputData[inputName][i];
+					updatedValueList.push( checkBox.value );
 					
 				}
 				
@@ -358,7 +361,7 @@
 				var label = object.create('label', null, [checkBox, valueName], null, null, null, null);
 				checkBoxPanel.appendChild(label);
 				inputData[inputName][i] = checkBox;
-				
+				object._console.log(checkBox.checked);
 				if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
 					
 					checkBox.checked = false;
@@ -371,6 +374,11 @@
 			
 			if (userValue != null && userValue.length != 0) {
 				
+				if (updatedValueList.length > 0) {
+					
+					valueList = updatedValueList;
+					
+				}
 				object._console.log(valueList);
 				object._console.log(input);
 				var checkValue = "";

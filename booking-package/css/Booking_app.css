@@ -2762,11 +2762,17 @@
     
 }
 
-#booking-package_inputFormPanel label, #booking-package-subscription_form label {
+#booking-package_inputFormPanel label, #booking-package-subscription_form label, #editCustomFormFieldPanel label, #addCustomFormFieldPanel label {
     
     display: flex;
     justify-content: left;
     margin-bottom: 5px;
+    
+}
+
+#booking-package_inputFormPanel label:last-child, #booking-package-subscription_form label:last-child, #editCustomFormFieldPanel label:last-child, #addCustomFormFieldPanel label:last-child {
+    
+    margin-bottom: 0;
     
 }
 

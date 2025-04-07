@@ -1831,36 +1831,30 @@
         
         if (response.totalNumberOfGuests == 1) {
             
-            //response.totalNumberOfGuestsTitle = response.totalNumberOfGuests + ' ' + object._i18n.get('person');
             response.totalNumberOfGuestsTitle = object._i18n.get('%s guest', [response.totalNumberOfGuests]);
             
         } else if (response.totalNumberOfGuests > 1) {
             
-            //response.totalNumberOfGuestsTitle = response.totalNumberOfGuests + ' ' + object._i18n.get('people');
             response.totalNumberOfGuestsTitle = object._i18n.get('%s guests', [response.totalNumberOfGuests]);
             
         }
         
         if (response.reflectService == 1) {
             
-            //response.reflectServiceTitle = response.reflectService + ' ' + object._i18n.get('person');
             response.reflectServiceTitle = object._i18n.get('%s guest', [response.reflectService]);
             
         } else if (response.reflectService > 1) {
             
-            //response.reflectServiceTitle = response.reflectService + ' ' + object._i18n.get('people');
             response.reflectServiceTitle = object._i18n.get('%s guests', [response.reflectService]);
             
         }
         
         if (response.reflectAdditional == 1) {
             
-            //response.reflectAdditionalTitle = response.reflectAdditional + ' ' + object._i18n.get('person');
             response.reflectAdditionalTitle = object._i18n.get('%s guest', [response.reflectAdditional]);
             
         } else if (response.reflectAdditional > 1) {
             
-            //response.reflectAdditionalTitle = response.reflectAdditional + ' ' + object._i18n.get('people');
             response.reflectAdditionalTitle = object._i18n.get('%s guests', [response.reflectAdditional]);
             
         }
@@ -1870,12 +1864,10 @@
             response.reflectService = 1;
             if (response.reflectService == 1) {
                 
-                //response.reflectServiceTitle = response.reflectService + ' ' + object._i18n.get('person');
                 response.reflectServiceTitle = object._i18n.get('%s guest', [response.reflectService]);
                 
             } else if (response.reflectService > 1) {
                 
-                //response.reflectServiceTitle = response.reflectService + ' ' + object._i18n.get('people');
                 response.reflectServiceTitle = object._i18n.get('%s guests', [response.reflectService]);
                 
             }
@@ -1887,12 +1879,10 @@
             response.reflectAdditional = 1;
             if (response.reflectAdditional == 1) {
                 
-                //response.reflectAdditionalTitle = response.reflectAdditional + ' ' + object._i18n.get('person');
                 response.reflectAdditionalTitle = object._i18n.get('%s guest', [response.reflectAdditional]);
                 
             } else if (response.reflectAdditional > 1) {
                 
-                //response.reflectAdditionalTitle = response.reflectAdditional + ' ' + object._i18n.get('people');
                 response.reflectAdditionalTitle = object._i18n.get('%s guests', [response.reflectAdditional]);
                 
             }

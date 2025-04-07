@@ -22,8 +22,8 @@
         
         
         public $form = array(
-        	array('id' => 'firstname', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
-        	array('id' => 'lastname', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
+        	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
+        	array('id' => 'last_name', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'email', 'name' => 'Email', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'true', 'isTerms' => 'false'),
         	array('id' => 'phone', 'name' => 'Phone', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'zip', 'name' => 'Zip', 'value' => '', 'type' => 'TEXT', 'options' => '', 'required' => 'false', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -117,8 +117,8 @@
         public function defaultFrom() {
             
             $form = array(
-            	array('id' => 'firstname', 'name' => __('First name', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
-            	array('id' => 'lastname', 'name' => __('Last name', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
+            	array('id' => 'first_name', 'name' => __('First name', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
+            	array('id' => 'last_name', 'name' => __('Last name', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
             	array('id' => 'email', 'name' => __('Email', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'true', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
             	array('id' => 'phone', 'name' => __('Phone', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
             	array('id' => 'zip', 'name' => __('Zip', 'booking-package'), 'value' => '', 'type' => 'TEXT', 'active' => '', 'options' => '', 'required' => 'false', 'isName' => 'false', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false', 'targetCustomers' => 'customersAndUsers'),
@@ -520,7 +520,7 @@
                         'valueList' => array(
                             0 => array(
                                 'key' => 'email_to',
-                                'name' => __('Receiving email address', 'booking-package') . ': ',
+                                'name' => __('Notification email address', 'booking-package') . ': ',
                                 'value' => '',
                                 'inputType' => 'TEXT',
                                 'isExtensionsValid' => 0, 
@@ -548,7 +548,7 @@
                         ),
                     ),
                     /**
-                    'email_to' => array('name' => __('Receiving email address', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
+                    'email_to' => array('name' => __('Notification email address', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     'email_from' => array('name' => __('Sending email address', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     'email_title_from' => array('name' => __('Sender name', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     **/
@@ -1184,47 +1184,78 @@
         public function words() {
             
             $words = array(
-                __('Arrival/Departure display format', 'booking-package'), 
-                __('Total stay display format', 'booking-package'), 
-                __('Include children in maximum guest count', 'booking-package'), 
-                __('Maximum guests per room', 'booking-package'), 
-                __('Number of available rooms', 'booking-package'), 
-                __('Maximum stay (nights)', 'booking-package'), 
-                __('Minimum stay (nights)', 'booking-package'), 
-                __('Day before public holiday', 'booking-package'), 
                 __('Rates', 'booking-package'), 
-                __('Use <a href="https://material.io/tools/icons/?style=baseline" target="_blank">Material icons</a> web font.', 'booking-package'), 
-                __('When no slots remain (0%)', 'booking-package'), 
-                __('When slots are below threshold', 'booking-package'), 
-                __('When slots exceed threshold', 'booking-package'), 
-                __('Remaining slots threshold', 'booking-package'), 
-                __('Show text/symbols', 'booking-package'), 
-                __('Show numbers', 'booking-package'), 
-                __('Display remaining slots on the calendar', 'booking-package'), 
-                __('Allow selecting multiple services', 'booking-package'), 
-                __('Booking steps on the front-end', 'booking-package'), 
-                __('After the booking time slot', 'booking-package'), 
-                __('Before the booking time slot', 'booking-package'), 
-                __('Before and after the booking time slot', 'booking-package'), 
-                __('Local payment', 'booking-package'), 
-                __('Week starts on', 'booking-package'), 
-                __('Share available time slots from other calendars', 'booking-package'), 
-                __('Number of available days from today', 'booking-package'), 
-                __('Number of unavailable days from today', 'booking-package'), 
-                __('Notification email address', 'booking-package'), 
-                __('Insert booking confirmation page before completion page', 'booking-package'), 
-                __('Reminders are sent only for \'Approved\' bookings.', 'booking-package'), 
-                __('Show canceled booking details on "Booked Customers"', 'booking-package'), 
-                __('Allow customer cancellations', 'booking-package'), 
-                __('Allow cancellation up to', 'booking-package'), 
-                __('Applicable booking status', 'booking-package'), 
-                __('Yes - Front-end and Dashboard', 'booking-package'), 
-                __('Yes - Front-end only', 'booking-package'), 
-                __('Use as Name field', 'booking-package'), 
-                __('Use as Email field', 'booking-package'), 
-                __('Use as SMS field', 'booking-package'), 
-                __('Use as Location field', 'booking-package'), 
-                __('Use as Agreement field (Terms/Privacy)', 'booking-package'), 
+                __('Use as %s field', 'booking-package'), 
+                __('Booking deadline', 'booking-package'), 
+                __('The publication date applies to the front-end calendar.', 'booking-package'), 
+                __('This time slot has not been permanently deleted. If all time slots for this day are deleted, they may be regenerated based on the "Weekly schedule templates".', 'booking-package'), 
+                __('Enable this item', 'booking-package'), 
+                __('Allow selecting multiple options', 'booking-package'), 
+                __('Additional duration', 'booking-package'), 
+                __('Selection required:', 'booking-package'), 
+                __('Display text', 'booking-package'), 
+                __('Pricing basis', 'booking-package'), 
+                __('Charge per day', 'booking-package'), 
+                __('Charge once per booking', 'booking-package'), 
+                __('Charge per day', 'booking-package'), 
+                __('Charge once per booking', 'booking-package'), 
+                __('Unlimited usage', 'booking-package'), 
+                __('One-time use per user', 'booking-package'), 
+                __('Discount type', 'booking-package'), 
+                __('Fixed amount discount', 'booking-package'), 
+                __('Percentage discount', 'booking-package'), 
+                __('Add fixed amount', 'booking-package'), 
+                __('Apply percentage', 'booking-package'), 
+                __('Allow User Accounts', 'booking-package'), 
+                __('Reject bookings from non-registered users', 'booking-package'), 
+                __('Enable customer registration', 'booking-package'), 
+                __('Send email verification for registration and profile updates', 'booking-package'), 
+                __('Enable "Lost Password" feature', 'booking-package'), 
+                __('Show Toolbar', 'booking-package'), 
+                __('Data range', 'booking-package'), 
+                __('Current period ends', 'booking-package'), 
+                __('Manage Billing', 'booking-package'), 
+                __('Booking Details', 'booking-package'), 
+                __('Select a Date', 'booking-package'), 
+                __('Next Page', 'booking-package'), 
+                __('Extra Charges', 'booking-package'), 
+                __('Total Amount', 'booking-package'), 
+                __('Book Now', 'booking-package'), 
+                __('Cancel Booking', 'booking-package'), 
+                __('Service Details', 'booking-package'), 
+                __('%s Slots Left', 'booking-package'), 
+                __('Total Number of Guests', 'booking-package'), 
+                __('Select Payment Method', 'booking-package'), 
+                __('Payment Method', 'booking-package'), 
+                __('Pay Locally', 'booking-package'), 
+                __('Pay With Stripe', 'booking-package'), 
+                __('Pay With Credit Card', 'booking-package'), 
+                __('Pay With PayPal', 'booking-package'), 
+                __('Pay At Convenience Store (Via Stripe)', 'booking-package'), 
+                __('Pay At Convenience Store'), 
+                __('Credit Card', 'booking-package'), 
+                __('Sign Up', 'booking-package'), 
+                __('Sign In', 'booking-package'), 
+                __('Sign Out', 'booking-package'), 
+                __('Create Account', 'booking-package'), 
+                __('Booking History', 'booking-package'), 
+                __('Check-In', 'booking-package'), 
+                __('Check-Out', 'booking-package'), 
+                __('Total Length of Stay', 'booking-package'), 
+                __('Total Number of Options', 'booking-package'), 
+                __('Total Number of Guests', 'booking-package'), 
+                __('Added a Coupon', 'booking-package'), 
+                __('Are you sure you want to cancel your booking?', 'booking-package'), 
+                __('Your booking has been canceled.', 'booking-package'), 
+                __('Accommodation Fees', 'booking-package'), 
+                __('Additional Fees', 'booking-package'), 
+                __('Select Option', 'booking-package'), 
+                __('The total number of guests must be %s or more.', 'booking-package'), 
+                __('The required total number of guests must be %s or more.', 'booking-package'), 
+                __('Name', 'booking-package'), 
+                __('Email', 'booking-package'), 
+                __('Location', 'booking-package'), 
+                __('Terms/Privacy', 'booking-package'), 
                 
             );
             
@@ -1295,7 +1326,7 @@
                     'valueList' => array(
                         0 => array(
                             'key' => 'email_to',
-                            'name' => __('Receiving email address', 'booking-package') . ': ',
+                            'name' => __('Notification email address', 'booking-package') . ': ',
                             'value' => '',
                             'inputType' => 'TEXT',
                             'isExtensionsValid' => 0, 
@@ -1323,13 +1354,13 @@
                     ),
                 ),
                 /**
-                'email_to' => array('key' => 'email_to', 'name' => __('Receiving email address', 'booking-package'), 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
+                'email_to' => array('key' => 'email_to', 'name' => __('Notification email address', 'booking-package'), 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
                 'email_from' => array('key' => 'email_from', 'name' => __('Sending email address', 'booking-package'), 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
                 'email_from_title' => array('key' => 'email_from_title', 'name' => __('Sender name', 'booking-package'), 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
                 **/
                 'status' => array('key' => 'status', 'name' => __('Calendar status', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('open' => __('Enabled', 'booking-package'), 'closed' => __('Disabled', 'booking-package'))),
-                'maxAccountScheduleDay' => array('key' => 'maxAccountScheduleDay', 'name' => 'Public days from today', 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
-                'unavailableDaysFromToday' => array('key' => 'unavailableDaysFromToday', 'name' => 'Unavailable days from today', 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30')),
+                'maxAccountScheduleDay' => array('key' => 'maxAccountScheduleDay', 'name' => __('Number of available days from today', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
+                'unavailableDaysFromToday' => array('key' => 'unavailableDaysFromToday', 'name' => __('Number of unavailable days from today', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30')),
                 'maxBookingSlotsPerDay' => array(
                     'key' => 'maxBookingSlotsPerDay', 
                     'name' => __('Max booking slots per weekday', 'booking-package'), 
@@ -1431,7 +1462,7 @@
                 ),
                 'calendar_sharing' => array(
                     'key' => 'calendar_sharing', 
-                    'name' => __('Share the available slots of other calendar accounts', 'booking-package'), 
+                    'name' => __('Share available time slots from other calendars', 'booking-package'), 
                     'target' => 'both', 
                     'disabled' => 0, 
                     'value' => '1', 
@@ -1462,7 +1493,7 @@
                 ), 
                 
                 'timezone' => array('key' => 'timezone', 'name' => __('Timezone', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'SELECT_TIMEZONE', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array()),
-                'startOfWeek' => array('key' => 'startOfWeek', 'name' => __('Week Starts On', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => __('Sunday', 'booking-package'), '1' => __('Monday', 'booking-package'), '2' => __('Tuesday', 'booking-package'), '3' => __('Wednesday', 'booking-package'), '4' => __('Thursday', 'booking-package'), '5' => __('Friday', 'booking-package'), '6' => __('Saturday', 'booking-package'))),
+                'startOfWeek' => array('key' => 'startOfWeek', 'name' => __('Week starts on', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => __('Sunday', 'booking-package'), '1' => __('Monday', 'booking-package'), '2' => __('Tuesday', 'booking-package'), '3' => __('Wednesday', 'booking-package'), '4' => __('Thursday', 'booking-package'), '5' => __('Friday', 'booking-package'), '6' => __('Saturday', 'booking-package'))),
                 'sendBookingVerificationCode' => array(
                     'key' => 'sendBookingVerificationCode', 
                     'name' => __('Send a booking verification code', 'booking-package'), 
@@ -1507,7 +1538,7 @@
                 
                 'messagingService' => array('key' => 'messagingService', 'name' => __('Messaging Services', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Disabled', 'booking-package'), /**'facebookMessenger' => 'Facebook Messenger',**/ 'whatsApp' => 'WhatsApp', /**'line' => 'LINE',**/ 'twilio' => 'twilio SMS')),
                 
-                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment methods', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Pay locally', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'))),
+                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment methods', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'))),
                 'subscriptionIdForStripe' => array('key' => 'subscriptionIdForStripe', 'name' => 'Product ID of subscription for Stripe', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('subscriptionIdForStripe' => array('title' => 'Product ID', 'inputType' => 'TEXT'), 'enableSubscriptionForStripe' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableSubscriptionForStripe" => "")),
                 'termsOfServiceForSubscription' => array('key' => 'termsOfServiceForSubscription', 'name' => 'The terms of service for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('termsOfServiceForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enableTermsOfServiceForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableTermsOfServiceForSubscription" => "")),
                 'privacyPolicyForSubscription' => array('key' => 'privacyPolicyForSubscription', 'name' => 'The privacy policy for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('privacyPolicyForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enablePrivacyPolicyForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enablePrivacyPolicyForSubscription" => "")),
@@ -1515,7 +1546,7 @@
                 
                 'hotelCharges' => array(
                     'key' => 'hotelCharges', 
-                    'name' => __('Charges', 'booking-package'), 
+                    'name' => __('Rates', 'booking-package'), 
                     'target' => 'hotel', 
                     'disabled' => 0,
                     'value' => 'false', 
@@ -1568,7 +1599,7 @@
                         ), 
                         7 => array(
                             'key' => 'hotelChargeOnDayBeforeNationalHoliday',
-                            'name' => __('The day of the week before a public holiday', 'booking-package'),
+                            'name' => __('Day before public holiday', 'booking-package'),
                             'value' => 0,
                             'isExtensionsValid' => 1, 
                         ), 
@@ -1582,15 +1613,15 @@
                     "message" => '',
                 ),
                 
-                'minimumNights' => array('key' => 'minimumNights', 'name' => __('Minimum nights', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0), 
-                'maximumNights' => array('key' => 'maximumNights', 'name' => __('Maximum nights', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0), 
-                'numberOfRoomsAvailable' => array('key' => 'numberOfRoomsAvailable', 'name' => __('Available room slots', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0), 
-                'numberOfPeopleInRoom' => array('key' => 'numberOfPeopleInRoom', 'name' => __('Maximum number of guests per room', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '2', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0), 
-                'includeChildrenInRoom' => array('key' => 'includeChildrenInRoom', 'name' => __('Include children in the maximum guests of the room', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Include', 0 => 'Exclude')),
+                'minimumNights' => array('key' => 'minimumNights', 'name' => __('Minimum stay (nights)', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0), 
+                'maximumNights' => array('key' => 'maximumNights', 'name' => __('Maximum stay (nights)', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0), 
+                'numberOfRoomsAvailable' => array('key' => 'numberOfRoomsAvailable', 'name' => __('Number of available rooms', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '1', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0), 
+                'numberOfPeopleInRoom' => array('key' => 'numberOfPeopleInRoom', 'name' => __('Maximum guests per room', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => '2', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0), 
+                'includeChildrenInRoom' => array('key' => 'includeChildrenInRoom', 'name' => __('Include children in maximum guest count', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Include', 0 => 'Exclude')),
                 
-                'formatNightDay' => array('key' => 'formatNightDay', 'name' => __('Display format of the "Total length of stay"', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => 2 . ' ' . __('nights', 'booking-package'), 1 => sprintf(__('%s nights %s days', 'booking-package'), '2', '3'))),
+                'formatNightDay' => array('key' => 'formatNightDay', 'name' => __('Total stay display format', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => 2 . ' ' . __('nights', 'booking-package'), 1 => sprintf(__('%s nights %s days', 'booking-package'), '2', '3'))),
                 
-                'expressionsCheck' => array('key' => 'expressionsCheck', 'name' => __('Display format of the "Arrival and Departure"', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Arrival (Check-in) & Departure (Check-out)', 'booking-package'), 1 => __('Arrival & Departure', 'booking-package'), 2 => __('Check-in & Check-out', 'booking-package'))),
+                'expressionsCheck' => array('key' => 'expressionsCheck', 'name' => __('Arrival/Departure display format"', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Arrival (Check-in) & Departure (Check-out)', 'booking-package'), 1 => __('Arrival & Departure', 'booking-package'), 2 => __('Check-in & Check-out', 'booking-package'))),
                 'multipleRooms' => array('key' => 'multipleRooms', 'name' => __('Allow booking of multiple rooms', 'booking-package'), 'target' => 'hotel', 'disabled' => 0, 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 
                 'preparationTimeSetting' => array(
@@ -1621,14 +1652,14 @@
                             'isExtensionsValid' => 1, 
                             'class' => 'multiple_fields_margin_top',
                             'actions' => null,
-                            'valueList' => array('before_after' => __('Before and after the booked time slot', 'booking-package'), 'before' => __('Before the booked time slot', 'booking-package'), 'after' => __('After the booked time slot', 'booking-package')),
+                            'valueList' => array('before_after' => __('Before and after the booking time slot', 'booking-package'), 'before' => __('Before the booking time slot', 'booking-package'), 'after' => __('After the booking time slot', 'booking-package')),
                         ),
                     ),
                 ), 
                 
                 'servicesFunction' => array(
                     'key' => 'servicesFunction', 
-                    'name' => __('Service functions', 'booking-package'), 
+                    'name' => __('Service', 'booking-package'), 
                     'target' => 'day', 
                     'disabled' => 0, 
                     'value' => '1', 
@@ -1648,7 +1679,7 @@
                         ),
                         1 => array(
                             'key' => 'flowOfBooking',
-                            'name' => __('The steps to book on the front-end page', 'booking-package') . ': ',
+                            'name' => __('Booking steps on the front-end', 'booking-package') . ': ',
                             'value' => 0,
                             'inputType' => 'RADIO',
                             'isExtensionsValid' => 0, 
@@ -1658,7 +1689,7 @@
                         ),
                         2 => array(
                             'key' => 'hasMultipleServices',
-                            'name' => __('Selecting multiple services', 'booking-package') . ': ',
+                            'name' => __('Allow selecting multiple services', 'booking-package') . ': ',
                             'value' => 0,
                             'inputType' => 'RADIO',
                             'isExtensionsValid' => 1, 
@@ -1759,7 +1790,7 @@
                 
                 'displayRemainingSlots' => array(
                     'key' => 'displayRemainingSlots', 
-                    'name' => __('Display the remaining slots as numbers or symbols on each day of the calendar', 'booking-package'), 
+                    'name' => __('Display remaining slots on the calendar', 'booking-package'), 
                     'target' => 'both', 
                     'disabled' => 0, 
                     'value' => '1', 
@@ -1767,7 +1798,7 @@
                     'inputType' => 'MULTIPLE_FIELDS', 
                     'isExtensionsValid' => 0, 
                     'option' => 0,
-                    'message' => __('You can use the web font of <a href="https://material.io/tools/icons/?style=baseline" target="_blank">Material icons</a>.', 'booking-package'),
+                    'message' => __('Use <a href="https://material.io/tools/icons/?style=baseline" target="_blank">Material icons</a> web font.', 'booking-package'),
                     'valueList' => array(
                         0 => array(
                             'key' => 'displayRemainingSlotsInCalendar',
@@ -1776,11 +1807,11 @@
                             'inputType' => 'RADIO',
                             'isExtensionsValid' => 0, 
                             'actions' => null,
-                            'valueList' => array(0 => __('Disabled', 'booking-package'), 'int' => __('Numbers', 'booking-package'), 'text' => __('Text or Symbols', 'booking-package')),
+                            'valueList' => array(0 => __('Disabled', 'booking-package'), 'int' => __('Show numbers', 'booking-package'), 'text' => __('Show text/symbols', 'booking-package')),
                         ),
                         1 => array(
                             'key' => 'displayThresholdOfRemainingCapacity',
-                            'name' => __('The threshold value of remaining slots', 'booking-package') . ': ',
+                            'name' => __('Remaining slots threshold', 'booking-package') . ': ',
                             'value' => '50',
                             'inputType' => 'SELECT',
                             'isExtensionsValid' => 0, 
@@ -1799,7 +1830,7 @@
                         ),
                         2 => array(
                             'key' => 'displayRemainingCapacityHasMoreThenThreshold',
-                            'name' => __('When the threshold value is exceeded', 'booking-package') . ': ',
+                            'name' => __('When slots exceed threshold', 'booking-package') . ': ',
                             'value' => array(),
                             'inputType' => 'REMAINING_CAPACITY',
                             'className' => 'multiple_fields_margin_top',
@@ -1809,7 +1840,7 @@
                         ),
                         3 => array(
                             'key' => 'displayRemainingCapacityHasLessThenThreshold',
-                            'name' => __('When the threshold value is not exceeded', 'booking-package') . ': ',
+                            'name' => __('When slots are below threshold', 'booking-package') . ': ',
                             'value' => array(),
                             'inputType' => 'REMAINING_CAPACITY',
                             'className' => 'multiple_fields_margin_top',
@@ -1819,7 +1850,7 @@
                         ),
                         4 => array(
                             'key' => 'displayRemainingCapacityHas0',
-                            'name' => __('When the remaining slots reach 0%', 'booking-package') . ': ',
+                            'name' => __('When no slots remain (0%)', 'booking-package') . ': ',
                             'value' => array(),
                             'inputType' => 'REMAINING_CAPACITY',
                             'className' => 'multiple_fields_margin_top',
@@ -1832,10 +1863,10 @@
                 
                 'displayRemainingCapacity' => array('key' => 'displayRemainingCapacity', 'name' => __('Display the remaining slots as numbers for each booking time slot', 'booking-package'), 'target' => 'day', 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 'fixCalendar' => array('key' => 'fixCalendar', 'name' => __('Fixed calendar', 'booking-package'), 'target' => 'both', 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'FIX_CALENDAR', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => 'month', 1 => 'year')),
-                'insertConfirmedPage' => array('key' => 'insertConfirmedPage', 'name' => __('Insert a booking confirmed page between the input page and the completed page', 'booking-package'), 'target' => 'both', 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
+                'insertConfirmedPage' => array('key' => 'insertConfirmedPage', 'name' => __('Insert booking confirmation page before completion page', 'booking-package'), 'target' => 'both', 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 'blockSameTimeBookingByUser' => array('key' => 'blockSameTimeBookingByUser', 'name' => __('Block multiple booking in the same time slot', 'booking-package'), 'target' => 'day', 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 
-                'bookingReminder' => array('key' => 'bookingReminder', 'name' => __('Reminder notification time', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 1, 'option' => 0, 'message' => sprintf(__('Reminder notifications are only sent if the status of the booked customer is "%s".', 'booking-package'), __('Approved', 'booking-package')), 
+                'bookingReminder' => array('key' => 'bookingReminder', 'name' => __('Reminder notification time', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 1, 'option' => 0, 'message' => __('Reminders are sent only for \'Approved\' bookings.', 'booking-package'), 
                     'valueList' => array(
                         '60' => sprintf(__('About %d hour before', 'booking-package'), 1), 
                         '120' => sprintf(__('About %d hours before', 'booking-package'), 2), 
@@ -1856,10 +1887,10 @@
                         '4320' => sprintf(__('About %d hours before', 'booking-package'), 72), 
                     )
                 ),
-                'displayDetailsOfCanceled' => array('key' => 'displayDetailsOfCanceled', 'name' => __('Display details of canceled customers on the "Booked Customers"', 'booking-package'), 'target' => 'both', 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
+                'displayDetailsOfCanceled' => array('key' => 'displayDetailsOfCanceled', 'name' => __('Show canceled booking details on "Booked Customers"', 'booking-package'), 'target' => 'both', 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 'cancellation_of_booking' => array(
                     'key' => 'cancellation_of_booking', 
-                    'name' => __('Cancel a booking by your customer', 'booking-package'), 
+                    'name' => __('Allow customer cancellations', 'booking-package'), 
                     'target' => 'both', 
                     'disabled' => 0, 
                     'value' => '1', 
@@ -1879,11 +1910,11 @@
                         ),
                         1 => array(
                             'key' => 'allowCancellationVisitor',
-                            'name' => __('Booking start time', 'booking-package') . ': ',
+                            'name' => __('Allow cancellation up to', 'booking-package') . ': ',
                             'value' => '30',
                             'inputType' => 'SELECT',
                             'isExtensionsValid' => 1, 
-                            /** 'insertAfterElement' => __('%s the booking start time', 'booking-package'), **/
+                            /** 'insertAfterElement' => '%s the booking start time', **/
                             'actions' => null,
                             'valueList' => array(
                                 30 => array('key' => 30, 'name' => sprintf(__('%s minutes before', 'booking-package'), "30")), 
@@ -1910,7 +1941,7 @@
                         ),
                         2 => array(
                             'key' => 'refuseCancellationOfBooking',
-                            'name' => __('Status of booking', 'booking-package') . ': ',
+                            'name' => __('Applicable booking status', 'booking-package') . ': ',
                             'value' => '30',
                             'inputType' => 'SELECT',
                             'isExtensionsValid' => 1, 
@@ -2602,12 +2633,12 @@
                 'placeholder' => array('key' => 'placeholder', 'name' => __('Placeholder text', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
                 'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', "class" => ""),
                 'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('true' => __('Enabled', 'booking-package')), "class" => ""),
-                'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package') . ' - ' . __('The front-end and the dashboard', 'booking-package'), 'true_frontEnd' => __('Yes', 'booking-package') . ' - ' . __('The front-end only', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
-                'isName' => array('key' => 'isName', 'name' => sprintf(__('Is the field for %s', 'booking-package'), __('Name', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
-                'isEmail' => array('key' => 'isEmail', 'name' => sprintf(__('Is the field for %s', 'booking-package'), __('Email address', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
-                'isSMS' => array('key' => 'isSMS', 'name' => sprintf(__('Is the field for %s', 'booking-package'), __('SMS (Short Message Service)', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => "", 'message' => sprintf(__('If you select "%s," you will need to change the value of "Messaging Services" in the %s tab.', 'booking-package'), __('Yes', 'booking-package'), __('Settings', 'booking-package'))),
-                'isAddress' => array('key' => 'isAddress', 'name' => sprintf(__('Is the field for %s', 'booking-package'), __('Location', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
-                'isTerms' => array('key' => 'isTerms', 'name' => sprintf(__('Is the field for %s', 'booking-package'), __('Terms of Service or Privacy Policy', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
+                'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes - Front-end and Dashboard', 'booking-package'), 'true_frontEnd' => __('Yes - Front-end only', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
+                'isName' => array('key' => 'isName', 'name' => __('Use as Name field', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
+                'isEmail' => array('key' => 'isEmail', 'name' => __('Use as Email field', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
+                'isSMS' => array('key' => 'isSMS', 'name' => __('Use as SMS field', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => "", 'message' => sprintf(__('If you select "%s," you will need to change the value of "Messaging Services" in the %s tab.', 'booking-package'), __('Yes', 'booking-package'), __('Settings', 'booking-package'))),
+                'isAddress' => array('key' => 'isAddress', 'name' => __('Use as Location field', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
+                'isTerms' => array('key' => 'isTerms', 'name' => __('Use as Agreement field (Terms/Privacy)', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
                 'isAutocomplete' => array('key' => 'isAutocomplete', 'name' => __('Save the values entered by the user', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
                 'targetCustomers' => array('key' => 'targetCustomers', 'name' => __('Target', 'booking-package'), 'value' => 'customers', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('customersAndUsers' => __('Customers and Users', 'booking-package'), 'visitors' => __('Customers', 'booking-package'), 'users' => __('Users', 'booking-package')), "class" => ""),
                 'type' => array('key' => 'type', 'name' => __('Type', 'booking-package'), 'value' => 'TEXT', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('TEXT' => 'TEXT', 'SELECT' => 'SELECT', 'CHECK' => 'CHECK', 'RADIO' => 'RADIO', 'TEXTAREA' => 'TEXTAREA'), "class" => ""),
