@@ -1267,7 +1267,7 @@
         var totalLengthOfStay = document.createElement("div");
         totalLengthOfStay.classList.add("summaryTitle");
         totalLengthOfStay.classList.add("summaryTotalLengthOfStayTitle");
-        totalLengthOfStay.textContent = object._i18n.get("Total length of stay") + ":";
+        totalLengthOfStay.textContent = object._i18n.get("Total Length of Stay") + ":";
         summaryListPanel.insertAdjacentElement("beforeend", totalLengthOfStay);
         summaryListPanel.insertAdjacentElement("beforeend", nightsValue);
         
@@ -1395,7 +1395,7 @@
             
             var totalNumberOfOptionsPanel = document.createElement("div");
             totalNumberOfOptionsPanel.classList.add("summaryTitle");
-            totalNumberOfOptionsPanel.textContent = object._i18n.get("Total number of options") + ":";
+            totalNumberOfOptionsPanel.textContent = object._i18n.get("Total Number of Options") + ":";
             summaryListPanel.insertAdjacentElement("beforeend", totalNumberOfOptionsPanel);
             summaryListPanel.insertAdjacentElement("beforeend", optionsPanel);
             
@@ -1541,7 +1541,7 @@
             
             var totalNumberOfGuestsPanel = document.createElement("div");
             totalNumberOfGuestsPanel.classList.add("summaryTitle");
-            totalNumberOfGuestsPanel.textContent = object._i18n.get("Total number of guests") + ":";
+            totalNumberOfGuestsPanel.textContent = object._i18n.get("Total Number of Guests") + ":";
             summaryListPanel.insertAdjacentElement("beforeend", totalNumberOfGuestsPanel);
             summaryListPanel.insertAdjacentElement("beforeend", personPanel);
             

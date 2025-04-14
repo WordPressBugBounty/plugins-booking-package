@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.77
+Version:     1.6.78
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1722,11 +1722,11 @@ Domain Path: /languages
 			}
 			$html .= '<div class="userTopButtonPanel">';
 			$html .= '<label class="displayName">' . $howdy . '</label>';
-			$html .= '<div id="booking-package-register" class="register">' . $dictionary['Create account'] . '</div>';
-			$html .= '<div id="booking-package-login" class="login">' . $dictionary['Sign in'] . '</div>';
-			$html .= '<div id="booking-package-logout" class="logout hidden_panel">' . $dictionary['Sign out'] . '</div>';
+			$html .= '<div id="booking-package-register" class="register">' . $dictionary['Create Account'] . '</div>';
+			$html .= '<div id="booking-package-login" class="login">' . $dictionary['Sign In'] . '</div>';
+			$html .= '<div id="booking-package-logout" class="logout hidden_panel">' . $dictionary['Sign Out'] . '</div>';
 			$html .= '<div id="booking-package-edit" class="edit">' . $dictionary['Edit My Profile'] . '</div>';
-			$html .= '<div id="booking-package-bookedHistory" class="edit">' . $dictionary['Booking history'] . '</div>';
+			$html .= '<div id="booking-package-bookedHistory" class="edit">' . $dictionary['Booking History'] . '</div>';
 			$html .= '<div id="booking-package-subscribed" class="edit">Subscribed items</div>';
 			$html .= '</div>';
 			$html .= $wq_login_form.$member_form . '</div>';
@@ -1746,7 +1746,7 @@ Domain Path: /languages
 			$html .= '		<div id="' . $this->prefix . 'thanksPostPage" class="hidden_panel">' . $postPages['thanksPostPage']['page'] . '</div>';
 			$html .= '	</div>';
 			$html .= '<div id="booking-package_servicePage" class="hidden_panel"><div id="booking-package_serviceTitle" class="title borderColor">' . $dictionary['Please select a service'] . '</div><div class="list borderColor"></div></div>';
-			$html .= '<div id="booking-package_serviceDetails" class="hidden_panel"><div class="title borderColor">' . $dictionary['Service details'] . '</div><div class="list borderColor"></div></div>';
+			$html .= '<div id="booking-package_serviceDetails" class="hidden_panel"><div class="title borderColor">' . $dictionary['Service Details'] . '</div><div class="list borderColor"></div></div>';
 			#$html .= '<div id="bookingBlockPanel" class="hidden_panel"><img src="'.plugin_dir_url( __FILE__ ).'images/loading_0.gif"></img></div>';
 			$html .= '<div id=""></div>';
 			
@@ -2557,7 +2557,7 @@ Domain Path: /languages
 						<div id="media_title" class="media_left_zero"><h1 id="edit_title"></h1></div>
 						<div id="media_router" class="media_left_zero">
 							<div class="reservation_table_row">
-								<div id="booked_list" class="media_menu_item active"><?php _e("Booking history", 'booking-package'); ?></div>
+								<div id="booked_list" class="media_menu_item active"><?php _e("Booking History", 'booking-package'); ?></div>
 								<div id="edit_user" class="media_menu_item"><?php _e("User", 'booking-package'); ?></div>
 							</div>
 						</div>
@@ -2757,7 +2757,7 @@ Domain Path: /languages
 								<div id="staffLink" class="menuItem hidden_panel"><?php _e("Staff", 'booking-package'); ?></div>
 								<div id="optionsForHotelLink" class="menuItem hidden_panel"><?php _e('Options', 'booking-package'); ?></div>
 								<div id="couponsLink" class="menuItem hidden_panel"><?php _e('Coupons', 'booking-package'); ?></div>
-								<div id="taxLink" class="menuItem hidden_panel"><?php print __('Extra charges', 'booking-package') . ' | ' . __('Taxes', 'booking-package'); ?></div>
+								<div id="taxLink" class="menuItem hidden_panel"><?php print __('Extra Charges', 'booking-package') . ' | ' . __('Taxes', 'booking-package'); ?></div>
 								
 								<div id="extraChargesLink" class="menuItem hidden_panel"><?php _e('Extra Charges', 'booking-package'); ?></div>
 								<div id="taxesLink" class="menuItem hidden_panel"><?php _e('Taxes', 'booking-package'); ?></div>
@@ -2819,7 +2819,7 @@ Domain Path: /languages
 								<tr>
 									<th>No</th>
 									<td class="timeTd">Time</td>
-									<td id="deadlineTime" class="td_width_100_px">Booking end time</td>
+									<td id="deadlineTime" class="td_width_100_px">Booking deadline</td>
 									<td>Title</td>
 									<td class="td_width_50_px">Capacities</td>
 									<td id="remainder" class="td_width_100_px hidden_panel">Remaining</td>
@@ -2949,7 +2949,7 @@ Domain Path: /languages
 					
 					<div>
 						<div class="titlePanel">
-							<div class="title"><?php echo __("Select a date", 'booking-package'); ?></div>
+							<div class="title"><?php echo __("Select a Date", 'booking-package'); ?></div>
 							<div id="deletePublishedSchedulesPanel_return_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important">close</div>
 						</div>
 						
@@ -3141,7 +3141,7 @@ Domain Path: /languages
 					<div>
 						
 						<div class="titlePanel">
-							<div class="title"><?php echo __("Select a date", 'booking-package'); ?></div>
+							<div class="title"><?php echo __("Select a Date", 'booking-package'); ?></div>
 							<div id="calendarPanelForBookingDate_return_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important">close</div>
 						</div>
 						<div class="inputPanel" style="border-width: 0; margin-bottom: 0;">
@@ -3168,7 +3168,7 @@ Domain Path: /languages
 							<span id="setPublicationDate"></span>
 						</div>
 						<div class="inputPanel" style="border-width: 0; padding-bottom: 1em;">
-							<span><?php echo __("The publication date applies to the frontend calendar.", 'booking-package'); ?></span>
+							<span><?php echo __("The publication date applies to the front-end calendar.", 'booking-package'); ?></span>
 						</div>
 						<div class="buttonPanel">
 							<?php
@@ -3244,7 +3244,7 @@ Domain Path: /languages
 								?>
 								</select>
 							</div>
-							<div class="labelTitle"><?php echo __("Booking end time", 'booking-package'); ?></div>
+							<div class="labelTitle"><?php echo __("Booking deadline", 'booking-package'); ?></div>
 							<div>
 								<select id="load_deadline_time_on_time">
 								<?php
@@ -3335,7 +3335,7 @@ Domain Path: /languages
 								-->
 							</div>
 							<div id="selectionSchedule_deadline" class="selectBlock">
-								<div data-key="deadline" class="items"><?php echo __("Booking end time", 'booking-package'); ?>: <span>7</span></div>
+								<div data-key="deadline" class="items"><?php echo __("Booking deadline", 'booking-package'); ?>: <span>7</span></div>
 								<div data-key="deadline" class="selectPanel closed">
 									
 									<?php
@@ -3413,7 +3413,7 @@ Domain Path: /languages
 								</div>
 							</div>
 							<div id="selectionSchedule_deadline" class="selectBlock">
-								<div data-key="deadline" class="items"><?php echo __("Booking end time", 'booking-package'); ?>: <span>7</span></div>
+								<div data-key="deadline" class="items"><?php echo __("Booking deadline", 'booking-package'); ?>: <span>7</span></div>
 								<div data-key="deadline" class="selectPanel closed">
 									
 									<?php
@@ -3666,7 +3666,7 @@ Domain Path: /languages
 									<div class="title"><?php _e("Users", 'booking-package'); ?></div>
 									<table class="form-table">
 										<tr valign="top">
-											<th scope="row"><?php _e("User account", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Allow User Accounts", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -3679,7 +3679,7 @@ Domain Path: /languages
 										</tr>
 										
 										<tr valign="top">
-											<th scope="row"><?php _e("Reject bookings from non-user accounts", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Reject bookings from non-registered users", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -3692,7 +3692,7 @@ Domain Path: /languages
 										</tr>
 										
 										<tr valign="top">
-											<th scope="row"><?php _e("User registration from customers", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Enable customer registration", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -3705,7 +3705,7 @@ Domain Path: /languages
 										</tr>
 										
 										<tr valign="top">
-											<th scope="row"><?php _e("Send a verification code to the user by email during registration and editing", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Send email verification for registration and profile updates", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -3757,7 +3757,7 @@ Domain Path: /languages
 										</tr>
 										-->
 										<tr valign="top">
-											<th scope="row"><?php _e("Toolbar", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Show Toolbar", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -3771,7 +3771,7 @@ Domain Path: /languages
 										
 										
 										<tr valign="top">
-											<th scope="row"><?php _e("Lost password", 'booking-package'); ?></th>
+											<th scope="row"><?php _e("Enable \"Lost Password\" feature", 'booking-package'); ?></th>
 											<td>
 												<div class="valuePanel">
 													<div class="extensionsValid"><?php _e("Paid plan subscription required.", 'booking-package'); ?></div>
@@ -6145,7 +6145,7 @@ Domain Path: /languages
 		public function getDictionary($mode, $pluginName){
 			
 			$dictionary = array(
-				'Book now' => __('Book now', 'booking-package'),
+				'Book Now' => __('Book Now', 'booking-package'),
 				'Verify' => __('Verify', 'booking-package'),
 				'Error' => __('Error', 'booking-package'),
 				'Next' => __('Next', 'booking-package'),
@@ -6210,21 +6210,21 @@ Domain Path: /languages
 				'Departure (Check-out)' => __('Departure (Check-out)', 'booking-package'),
 				'Arrival' => __('Arrival', 'booking-package'),
 				'Departure' => __('Departure', 'booking-package'),
-				'Check-in' => __('Check-in', 'booking-package'),
-				'Check-out' => __('Check-out', 'booking-package'),
+				'Check-In' => __('Check-In', 'booking-package'),
+				'Check-Out' => __('Check-Out', 'booking-package'),
 				'%s guest' => __('%s guest', 'booking-package'),
 				'%s guests' => __('%s guests', 'booking-package'),
 				'Guests' => __('Guests', 'booking-package'),
-				'Total number of guests' => __('Total number of guests', 'booking-package'),
-				'Total length of stay' => __('Total length of stay', 'booking-package'),
+				'Total Number of Guests' => __('Total Number of Guests', 'booking-package'),
+				'Total Length of Stay' => __('Total Length of Stay', 'booking-package'),
 				'Total number of nights' => __('Total number of nights', 'booking-package'),
 				'Additional fees' => __('Additional fees', 'booking-package'),
 				'Room charges' => __('Room charges', 'booking-package'),
 				'Option charges' => __('Option charges', 'booking-package'),
 				'Accommodation fees' => __('Accommodation fees', 'booking-package'),
 				'Subtotal' => __('Subtotal', 'booking-package'),
-				'Total number of options' => __('Total number of options', 'booking-package'),
-				'Total amount' => __('Total amount', 'booking-package'),
+				'Total Number of Options' => __('Total Number of Options', 'booking-package'),
+				'Total Amount' => __('Total Amount', 'booking-package'),
 				'Summary' => __('Summary', 'booking-package'),
 				'%s night %s days' => __('%s night %s days', 'booking-package'),
 				'%s nights %s days' => __('%s nights %s days', 'booking-package'),
@@ -6237,15 +6237,15 @@ Domain Path: /languages
 				'Options' => __('Options', 'booking-package'),
 				'Title' => __('Title', 'booking-package'),
 				'Closed' => __('Closed', 'booking-package'),
-				'Booking details' => __('Booking details', 'booking-package'),
+				'Booking Details' => __('Booking Details', 'booking-package'),
 				'Submission date' => __('Submission date', 'booking-package'),
 				'Clear' => __('Clear', 'booking-package'),
 				'person' => __('person', 'booking-package'),
 				'people' => __('people', 'booking-package'),
-				'Select a date' => __('Select a date', 'booking-package'),
+				'Select a Date' => __('Select a Date', 'booking-package'),
 				'Get a paid subscription' => __('Get a paid subscription', 'booking-package'),
 				'Paid plan subscription required.' => __('Paid plan subscription required.', 'booking-package'),
-				'%s slots left' => __('%s slots left', 'booking-package'),
+				'%s Slots Left' => __('%s Slots Left', 'booking-package'),
 				'An unknown cause of error occurred' => __('An unknown cause of error occurred', 'booking-package'),
 				'Status' => __('Status', 'booking-package'),
 				'approved' => __("approved", 'booking-package'),
@@ -6256,7 +6256,7 @@ Domain Path: /languages
 				'We have canceled your booking.' => __('We have canceled your booking.', 'booking-package'),
 				'Surcharge and Tax' => __('Surcharge and Tax', 'booking-package'),
 				'Surcharge' => __('Surcharge', 'booking-package'),
-				'Extra charges' => __('Extra charges', 'booking-package'),
+				'Extra Charges' => __('Extra Charges', 'booking-package'),
 				'Tax' => __('Tax', 'booking-package'),
 				'Select' => __('Select', 'booking-package'),
 				'Unselected' => __('Unselected', 'booking-package'),
@@ -6284,12 +6284,12 @@ Domain Path: /languages
 				'Apply' => __('Apply', 'booking-package'),
 				' to ' => __(' to ', 'booking-package'),
 				'I will pay locally' => __('I will pay locally', 'booking-package'),
-				'Pay locally' => __('Pay locally', 'booking-package'),
+				'Pay Locally' => __('Pay Locally', 'booking-package'),
 				'Pay with Credit Card' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
-				'Pay at a convenience store' => __('Pay at a convenience store', 'booking-package'),
-				'Pay at a convenience store with Stripe' => __('Pay at a convenience store', 'booking-package'),
+				'Pay at Convenience Store' => __('Pay at Convenience Store', 'booking-package'),
+				'Pay at Convenience Store (via Stripe)' => __('Pay at Convenience Store', 'booking-package'),
 				'Usernames can only contain lowercase letters (a-z) and numbers.' => __('Usernames can only contain lowercase letters (a-z) and numbers.', 'booking-package'),
 				'Please enter a valid email address.' => __('Please enter a valid email address.', 'booking-package'),
 				'Please enter a valid password.' => __('Please enter a valid password.', 'booking-package'),
@@ -6303,21 +6303,21 @@ Domain Path: /languages
 				'Please fill in your details' => __('Please fill in your details', 'booking-package'),
 				'Please confirm your details' => __('Please confirm your details', 'booking-package'),
 				'Booking Completed' => __('Booking Completed', 'booking-package'),
-				'Select payment method' => __('Select payment method', 'booking-package'),
-				'Payment method' => __('Payment method', 'booking-package'),
-				'Credit card' => __('Credit card', 'booking-package'),
-				'Sign in' => __('Sign in', 'booking-package'),
-				'Sign out' => __('Sign out', 'booking-package'),
-				'Create account' => __('Create account', 'booking-package'),
+				'Select Payment Method' => __('Select Payment Method', 'booking-package'),
+				'Payment Method' => __('Payment Method', 'booking-package'),
+				'Credit Card' => __('Credit Card', 'booking-package'),
+				'Sign In' => __('Sign In', 'booking-package'),
+				'Sign Out' => __('Sign Out', 'booking-package'),
+				'Create Account' => __('Create Account', 'booking-package'),
 				'Edit My Profile' => __('Edit My Profile', 'booking-package'),
-				'Booking history' => __('Booking history', 'booking-package'),
+				'Booking History' => __('Booking History', 'booking-package'),
 				'Please select a service' => __('Please select a service', 'booking-package'),
-				'Service details' => __('Service details', 'booking-package'),
+				'Service Details' => __('Service Details', 'booking-package'),
 				'Hello, %s' => __('Hello, %s', 'booking-package'),
-				'Sign up' => __('Sign up', 'booking-package'),
+				'Sign Up' => __('Sign Up', 'booking-package'),
 				'Register' => __('Register', 'booking-package'),
-				'Cancel booking' => __('Cancel booking', 'booking-package'),
-				'Next page' => __('Next page', 'booking-package'),
+				'Cancel Booking' => __('Cancel Booking', 'booking-package'),
+				'Next Page' => __('Next Page', 'booking-package'),
 				'Change password' => __('Change password', 'booking-package'),
 				'Update Profile' => __('Update Profile', 'booking-package'),
 				'Change password' => __('Change password', 'booking-package'),
@@ -6342,7 +6342,7 @@ Domain Path: /languages
 				$dictionary['Are you sure you want to delete this booking?'] = __('Are you sure you want to delete this booking?', 'booking-package');
 				$dictionary['Please create a service.'] = __('Please create a service.', 'booking-package');
 				$dictionary['The user was not found.'] = __('The user was not found.', 'booking-package');
-				$dictionary['Payment method'] = __('Payment method', 'booking-package');
+				$dictionary['Payment Method'] = __('Payment Method', 'booking-package');
 				$dictionary['Payment ID'] = __('Payment ID', 'booking-package');
 				
 			} else if ($mode == "schedule_page") {
@@ -6364,12 +6364,12 @@ Domain Path: /languages
 				$dictionary['hours'] = __('hours', 'booking-package');
 				$dictionary['minutes'] = __('minutes', 'booking-package');
 				$dictionary['Email address'] = __('Email address', 'booking-package');
-				$dictionary['Booking end time'] = __('Booking end time', 'booking-package');
+				$dictionary['Booking deadline'] = __('Booking deadline', 'booking-package');
 				$dictionary['Remaining'] = __('Remaining', 'booking-package');
 				$dictionary['Available slots'] = __('Available slots', 'booking-package');
 				$dictionary['Available room slots'] = __('Available room slots', 'booking-package');
 				$dictionary['Remaining slots'] = __('Remaining slots', 'booking-package');
-				$dictionary['Booking end time'] = __('Booking end time', 'booking-package');
+				$dictionary['Booking deadline'] = __('Booking deadline', 'booking-package');
 				$dictionary['%s min before'] = __('%s min before', 'booking-package');
 				$dictionary['%s min'] = __('%s min', 'booking-package');
 				$dictionary['Choose %s'] = __('Choose %s', 'booking-package');
@@ -6421,7 +6421,7 @@ Domain Path: /languages
 				$dictionary['Public holiday'] = __('Public holiday', 'booking-package');
 				$dictionary['Open'] = __('Open', 'booking-package');
 				$dictionary['Surcharges'] = __('Surcharges', 'booking-package');
-				$dictionary['Payment method'] = __('Payment method', 'booking-package');
+				$dictionary['Payment Method'] = __('Payment Method', 'booking-package');
 				$dictionary['Stop'] = __('Stop', 'booking-package');
 				$dictionary['You can use following shortcodes in content editer.'] = __('You can use following shortcodes in content editer.', 'booking-package');
 				$doctionary['This calendar shares the schedules of the "%s".'] = __('This calendar shares the schedules of the "%s".', 'booking-package');
@@ -6475,7 +6475,7 @@ Domain Path: /languages
 				$dictionary['Enable the function'] = __('Enable the function', 'booking-package');
 				$dictionary['Title of "%s"'] = __('Title of "%s"', 'booking-package');
 				$dictionary['Pay with Stripe'] = __('Pay with Stripe', 'booking-package');
-				$dictionary['Pay at a convenience store with Stripe'] = __('Pay at a convenience store with Stripe', 'booking-package');
+				$dictionary['Pay at Convenience Store (via Stripe)'] = __('Pay at Convenience Store (via Stripe)', 'booking-package');
 				$dictionary['Reset'] = __("Reset", 'booking-package');
 				$dictionary['%s labels'] = __("%s labels", 'booking-package');
 				$dictionary['CSS class selector:'] = __("CSS class selector:", 'booking-package');
@@ -6552,34 +6552,36 @@ Domain Path: /languages
 				$dictionary['Please fill in your details'] = __('Please fill in your details', 'booking-package');
 				$dictionary['Please confirm your details'] = __('Please confirm your details', 'booking-package');
 				$dictionary['Booking Completed'] = __('Booking Completed', 'booking-package');
-				$dictionary['Credit card'] = __('Credit card', 'booking-package');
+				$dictionary['Credit Card'] = __('Credit Card', 'booking-package');
 				$dictionary['Service is not registered. '] = __('Service is not registered. ', 'booking-package');
 				$dictionary['Submit Payment'] = __('Submit Payment', 'booking-package');
-				$dictionary['Sign in'] = __('Sign in', 'booking-package');
-				$dictionary['Cancel booking'] = __('Cancel booking', 'booking-package');
+				$dictionary['Sign In'] = __('Sign In', 'booking-package');
+				$dictionary['Cancel Booking'] = __('Cancel Booking', 'booking-package');
 				$dictionary['Next'] = __('Next', 'booking-package');
-				$dictionary['Next page'] = __('Next page', 'booking-package');
+				$dictionary['Next Page'] = __('Next Page', 'booking-package');
 				$dictionary['You have not selected anything'] = __('You have not selected anything', 'booking-package');
 				$dictionary['Select option'] = __("Select option", 'booking-package');
-				$dictionary['Select payment method'] = __('Select payment method', 'booking-package');
+				$dictionary['Select Payment Method'] = __('Select Payment Method', 'booking-package');
 				$dictionary['I will pay locally'] = __('I will pay locally', 'booking-package');
 				$dictionary['Pay with Credit Card'] = __('Pay with Credit Card', 'booking-package');
 				$dictionary['Pay with PayPal'] = __('Pay with PayPal', 'booking-package');
-				$dictionary['Pay at a convenience store'] = __('Pay at a convenience store', 'booking-package');
+				$dictionary['Pay at Convenience Store'] = __('Pay at Convenience Store', 'booking-package');
 				$dictionary['Do you really want to delete the license as a member?'] = __('Do you really want to delete the license as a member?', 'booking-package');
 				$dictionary['We sent a verification code to the following address.'] = __('We sent a verification code to the following address.', 'booking-package');
 				$dictionary['Lost your password?'] = __('Lost your password?', 'booking-package');
+				$dictionary['Added a Coupon'] = __('Added a Coupon', 'booking-package');
 				
 			} else if ($mode == 'user_management') {
 				
-				$dictionary['User account'] = __('User account', 'booking-package');
-				$dictionary['Reject bookings from non-user accounts'] = __('Reject bookings from non-user accounts', 'booking-package');
-				$dictionary['User registration from customers'] = __('User registration from customers', 'booking-package');
-				$dictionary['Send a verification code to the user by email during registration and editing'] = __('Send a verification code to the user by email during registration and editing', 'booking-package');
+				$dictionary['Allow User Accounts'] = __('Allow User Accounts', 'booking-package');
+				$dictionary['Reject bookings from non-registered users'] = __('Reject bookings from non-registered users', 'booking-package');
+				$dictionary['Enable customer registration'] = __('Enable customer registration', 'booking-package');
+				$dictionary['Send email verification for registration and profile updates'] = __('Send email verification for registration and profile updates', 'booking-package');
 				$dictionary['Accept subscribers as users'] = __('Accept subscribers as users', 'booking-package');
 				$dictionary['Accept contributors as users'] = __('Accept contributors as users', 'booking-package');
 				$dictionary['Toolbar'] = __('Toolbar', 'booking-package');
-				$dictionary['Lost password'] = __('Lost password', 'booking-package');
+				$dictionary['Show Toolbar'] = __('Show Toolbar', 'booking-package');
+				$dictionary['Enable "Lost Password" feature'] = __('Enable "Lost Password" feature', 'booking-package');
 				$dictionary['Add new item'] = __('Add new item', 'booking-package');
 				$dictionary['Save the changed order'] = __('Save the changed order', 'booking-package');
 				$dictionary['Username'] = __('Username', 'booking-package');

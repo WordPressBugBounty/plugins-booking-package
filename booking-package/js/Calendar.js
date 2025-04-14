@@ -358,9 +358,9 @@
         
         var response = {
             arrival: this._i18n.get("Arrival (Check-in)"), 
-            chooseArrival: this._i18n.get("Select a date"),
+            chooseArrival: this._i18n.get("Select a Date"),
             departure: this._i18n.get("Departure (Check-out)"),
-            chooseDeparture: this._i18n.get("Select a date"),
+            chooseDeparture: this._i18n.get("Select a Date"),
         
         };
         
@@ -368,25 +368,25 @@
             
             response.arrival = this._i18n.get("Arrival");
             response.departure = this._i18n.get("Departure");
-            response.chooseArrival = this._i18n.get("Select a date");
-            response.chooseDeparture = this._i18n.get("Select a date");
+            response.chooseArrival = this._i18n.get("Select a Date");
+            response.chooseDeparture = this._i18n.get("Select a Date");
             
         } else if (expressionsCheck == 2) {
             
-            response.arrival = this._i18n.get("Check-in");
-            response.departure = this._i18n.get("Check-out");
-            response.chooseArrival = this._i18n.get("Select a date");
-            response.chooseDeparture = this._i18n.get("Select a date");
+            response.arrival = this._i18n.get("Check-In");
+            response.departure = this._i18n.get("Check-Out");
+            response.chooseArrival = this._i18n.get("Select a Date");
+            response.chooseDeparture = this._i18n.get("Select a Date");
             
         }
         
         if (parseInt(calendarAccount.customizeLabelsBool) === 1 && customizeLabelsBool === true) {
             
             response = {
-                arrival: calendarAccount.customizeLabels['Check-in'], 
-                chooseArrival: calendarAccount.customizeLabels['Select a date'], 
-                departure: calendarAccount.customizeLabels['Check-out'], 
-                chooseDeparture: calendarAccount.customizeLabels['Select a date'], 
+                arrival: calendarAccount.customizeLabels['Check-In'], 
+                chooseArrival: calendarAccount.customizeLabels['Select a Date'], 
+                departure: calendarAccount.customizeLabels['Check-Out'], 
+                chooseDeparture: calendarAccount.customizeLabels['Select a Date'], 
             }
             
         }
@@ -3047,7 +3047,7 @@
             if (surchargeList.length > 0) {
                 
                 var namePanel = surchargePanel.getElementsByClassName("name")[0];
-                namePanel.textContent = this._i18n.get("Extra charges");
+                namePanel.textContent = this._i18n.get("Extra Charges");
                 namePanel.classList.add("surcharge");
                 
             } else {

@@ -3662,12 +3662,12 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             var expressionsCheck = object._calendar.getExpressionsCheck(calendarData.account, false);
             
             var date = object._calendar.formatBookingDate(reservationData.date.checkIn_month, reservationData.date.checkIn_day, reservationData.date.checkIn_year, null, null, null, reservationData.date.checkIn_week, 'text');
-            var checkIn = object.createRowPanel(object._i18n.get('Check-in'), date, "checkIn", "false", null);
+            var checkIn = object.createRowPanel(object._i18n.get('Check-In'), date, "checkIn", "false", null);
             formPanel.appendChild(checkIn);
             document.getElementById("checkIn").setAttribute("data-id", reservationData.scheduleKey);
             
             date = object._calendar.formatBookingDate(reservationData.date.checkOut_month, reservationData.date.checkOut_day, reservationData.date.checkOut_year, null, null, null, reservationData.date.checkOut_week, 'text');
-            var checkOut = object.createRowPanel(object._i18n.get('Check-out'), date, "checkOut", "false", null);
+            var checkOut = object.createRowPanel(object._i18n.get('Check-Out'), date, "checkOut", "false", null);
             formPanel.appendChild(checkOut);
             
             var nightsValue = reservationData.accommodationDetails.nights + ' ' + object._i18n.get("nights");
@@ -3687,7 +3687,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 }
                 
             }
-            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total length of stay"), nightsValue, null, null, null);
+            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total Length of Stay"), nightsValue, null, null, null);
             formPanel.appendChild(totalLengthOfStay);
             
             /** Rooms **/
@@ -3856,7 +3856,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     
                 }
                 
-                totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get("Total number of guests"), String(totalNumberOfGuestsValue), "totalGuests", null, null);
+                totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get("Total Number of Guests"), String(totalNumberOfGuestsValue), "totalGuests", null, null);
                 formPanel.appendChild(totalNumberOfGuestsPanel);
                 
             }
@@ -4191,7 +4191,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
         } else if (reservationData.payId == 'stripe_konbini') {
             
-            paymentMethodValue = object._i18n.get('Pay at a convenience store with Stripe');
+            paymentMethodValue = object._i18n.get('Pay at Convenience Store (via Stripe)');
             
         } else if (reservationData.payId == 'paypal') {
             
@@ -4199,7 +4199,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
         }
         
-        var paymentMethodPanel = object.createRowPanel(object._i18n.get('Payment method'), paymentMethodValue, "payment_method", null, null);
+        var paymentMethodPanel = object.createRowPanel(object._i18n.get('Payment Method'), paymentMethodValue, "payment_method", null, null);
         paymentMethodPanel.classList.add('payment_method_row');
         formPanel.appendChild(paymentMethodPanel);
         
@@ -4293,7 +4293,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         object._console.log(responseGuests);
         if (responseGuests.totalNumberOfGuests > 0) {
             
-            var totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get('Total number of guests'), responseGuests.totalNumberOfGuestsTitle, object._prefix + 'totalNumberOfGuests', null, null);
+            var totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get('Total Number of Guests'), responseGuests.totalNumberOfGuestsTitle, object._prefix + 'totalNumberOfGuests', null, null);
             formPanel.appendChild(totalNumberOfGuestsPanel);
             
         }
@@ -6403,7 +6403,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 var displayRemainingCapacityLabel = document.createElement("span");
                 displayRemainingCapacityLabel.classList.add("displayRemainingCapacityLabel");
                 //displayRemainingCapacityLabel.textContent = object._i18n.get("%s remaining", [schedule.remainder]);
-                displayRemainingCapacityLabel.textContent = object._i18n.get("%s slots left", [schedule.remainder]);
+                displayRemainingCapacityLabel.textContent = object._i18n.get("%s Slots Left", [schedule.remainder]);
                 schedulePanel.appendChild(displayRemainingCapacityLabel);
                 
             }
@@ -6569,7 +6569,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         **/
         
         var bookingButton = document.createElement("button");
-        bookingButton.textContent = object._i18n.get('Book now');
+        bookingButton.textContent = object._i18n.get('Book Now');
         bookingButton.setAttribute("class", "button media-button button-primary button-large media-button-insert");
         bookingButton.setAttribute("style", "margin-left: 10px;");
         object._rightButtonPanel.appendChild(bookingButton);
@@ -6709,14 +6709,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             totalLengthOfStayValue.id = "totalLengthOfStayValue";
             totalLengthOfStayValue.textContent = 0;
             
-            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total length of stay"), totalLengthOfStayValue, null, null, null);
+            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total Length of Stay"), totalLengthOfStayValue, null, null, null);
             formPanel.appendChild(totalLengthOfStay);
             
             var roomListPanel = document.createElement('div');
             roomListPanel.id = 'roomListPanel';
             roomListPanel.classList.add('roomListPanel');
             formPanel.appendChild(roomListPanel);
-            var totalNumberOfGuests = object.createRowPanel(object._i18n.get("Total number of guests"), "0", "totalGuests", null, null);
+            var totalNumberOfGuests = object.createRowPanel(object._i18n.get("Total Number of Guests"), "0", "totalGuests", null, null);
             object._console.log(calendarData.guestsList);
             var hotelOptions = object.getHotelOptions();
             var guestsList = calendarData.guestsList;
@@ -7102,7 +7102,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     
                 }
                 
-                var rowPanel = object.createRowPanel(this._i18n.get("Total number of guests"), 0, null, null, null);
+                var rowPanel = object.createRowPanel(this._i18n.get("Total Number of Guests"), 0, null, null, null);
                 rowPanel.id = object._prefix + 'totalNumberOfGuests';
                 rowPanel.classList.add("total_amount");
                 var errorMessage = document.createElement('div');

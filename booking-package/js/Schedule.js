@@ -1804,7 +1804,7 @@ window.addEventListener('error', function(event) {
         
         var scheduleEditTable = document.getElementById("scheduleEditTable");
         scheduleEditTable.textContent = null;
-        var titleList = [object._i18n.get("Date"), object._i18n.get("Status"), object._i18n.get('Publication date'), object._i18n.get("Charges"), object._i18n.get("Available room slots"), object._i18n.get('Remaining slots')];
+        var titleList = [object._i18n.get("Date"), object._i18n.get("Status"), object._i18n.get('Publication date'), object._i18n.get("Rates"), object._i18n.get("Available room slots"), object._i18n.get('Remaining slots')];
 
         var tr = document.createElement("tr");
         for(var i = 0; i < titleList.length; i++){
@@ -3054,7 +3054,7 @@ window.addEventListener('error', function(event) {
         
         var th = object.create('td', 'No', null, null, null, null, null);
         var tdTime = object.create('td', object._i18n.get('Time'), null, null, null, null, null);
-        var tdDeadlineTime = object.create('td', object._i18n.get('Booking end time'), null, 'deadlineTime', null, null, null);
+        var tdDeadlineTime = object.create('td', object._i18n.get('Booking deadline'), null, 'deadlineTime', null, null, null);
         var tdTitle = object.create('td', object._i18n.get('Title'), null, null, null, null, null);
         var tdCapacities = object.create('td', object._i18n.get('Available slots'), null, null, null, null, null);
         var tdRemaining = object.create('td', object._i18n.get('Remaining slots'), null, 'remainder', null, null, null);
@@ -7014,15 +7014,15 @@ window.addEventListener('error', function(event) {
                     
                     const verifyItems = {
                         maxAccountScheduleDay: object._i18n.get('Public days from today'), 
-                        hotelChargeOnDayBeforeNationalHoliday: object._i18n.get('Charges'), 
-                        hotelChargeOnFriday: object._i18n.get('Charges'), 
-                        hotelChargeOnMonday: object._i18n.get('Charges'), 
-                        hotelChargeOnNationalHoliday: object._i18n.get('Charges'), 
-                        hotelChargeOnSaturday: object._i18n.get('Charges'), 
-                        hotelChargeOnSunday: object._i18n.get('Charges'), 
-                        hotelChargeOnThursday: object._i18n.get('Charges'), 
-                        hotelChargeOnTuesday: object._i18n.get('Charges'), 
-                        hotelChargeOnWednesday: object._i18n.get('Charges'), 
+                        hotelChargeOnDayBeforeNationalHoliday: object._i18n.get('Rates'), 
+                        hotelChargeOnFriday: object._i18n.get('Rates'), 
+                        hotelChargeOnMonday: object._i18n.get('Rates'), 
+                        hotelChargeOnNationalHoliday: object._i18n.get('Rates'), 
+                        hotelChargeOnSaturday: object._i18n.get('Rates'), 
+                        hotelChargeOnSunday: object._i18n.get('Rates'), 
+                        hotelChargeOnThursday: object._i18n.get('Rates'), 
+                        hotelChargeOnTuesday: object._i18n.get('Rates'), 
+                        hotelChargeOnWednesday: object._i18n.get('Rates'), 
                         numberOfRoomsAvailable: object._i18n.get('Available room slots'), 
                     }
                     
@@ -9968,7 +9968,7 @@ window.addEventListener('error', function(event) {
                     servicesExcludedGuests: object._i18n.get("Services excluded guests"), 
                     servicesExcludedGuestsAndCosts: object._i18n.get("Services excluded guests and costs"), 
                     guests: object._i18n.get("Guests"), 
-                    paymentMethod: object._i18n.get('Payment method'),
+                    paymentMethod: object._i18n.get('Payment Method'),
                     
                 };
                 
@@ -9981,7 +9981,7 @@ window.addEventListener('error', function(event) {
                 
                 if (account.type == 'hotel') {
                     
-                    shortcodes = {id: object._i18n.get("ID"), bookingDetails: object._i18n.get("Booking details"), checkIn: object._i18n.get("Arrival (Check-in)"), checkOut: object._i18n.get("Departure (Check-out)"), options: object._i18n.get("Options"), guests: object._i18n.get("Guests"), paymentMethod: object._i18n.get('Payment method')};
+                    shortcodes = {id: object._i18n.get("ID"), bookingDetails: object._i18n.get("Booking Details"), checkIn: object._i18n.get("Arrival (Check-in)"), checkOut: object._i18n.get("Departure (Check-out)"), options: object._i18n.get("Options"), guests: object._i18n.get("Guests"), paymentMethod: object._i18n.get('Payment Method')};
                     
                 }
                 
@@ -9989,7 +9989,7 @@ window.addEventListener('error', function(event) {
                 shortcodes.surcharges = object._i18n.get('Surcharges');
                 shortcodes.taxes = object._i18n.get('Taxes');
                 //shortcodes.totalPaymentAmount = object._i18n.get('Total payment amount');
-                shortcodes.totalAmount = object._i18n.get('Total amount');
+                shortcodes.totalAmount = object._i18n.get('Total Amount');
                 shortcodes.couponCode = object._i18n.get('Coupon code');
                 shortcodes.couponName = object._i18n.get('Coupon name');
                 shortcodes.couponDiscount = object._i18n.get('Discount');

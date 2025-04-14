@@ -1094,8 +1094,8 @@ var error_hCaptcha_for_booking_package = function(response) {
                 object.setGuestsList(guestsDetails.guests);
                 if (totalNumberOfGuests > 1) {
                     
-                    //var totalGuestsPanel = object.createRowPanel(object._i18n.get("Total number of guests"), totalNumberOfGuests + " " + object._i18n.get("people"), null, null, null, null);
-                    var totalGuestsPanel = object.createRowPanel(object._i18n.get("Total number of guests"), object._i18n.get("%s guests", [totalNumberOfGuests]), null, null, null, null);
+                    //var totalGuestsPanel = object.createRowPanel(object._i18n.get("Total Number of Guests"), totalNumberOfGuests + " " + object._i18n.get("people"), null, null, null, null);
+                    var totalGuestsPanel = object.createRowPanel(object._i18n.get("Total Number of Guests"), object._i18n.get("%s guests", [totalNumberOfGuests]), null, null, null, null);
                     myBookingDetailsPanel.appendChild(totalGuestsPanel);
                     
                 }
@@ -1217,7 +1217,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             if (totalCost != 0) {
                 
                 var formatPrice = object._format.formatCost(totalCost, myBookingDetails.currency);
-                var rowPanel = object.createRowPanel(this._i18n.get("Total amount"), formatPrice, null, null, null, null);
+                var rowPanel = object.createRowPanel(this._i18n.get("Total Amount"), formatPrice, null, null, null, null);
                 rowPanel.classList.add("total_amount");
                 myBookingDetailsPanel.appendChild(rowPanel);
                 top += parseInt(rowPanel.clientHeight);
@@ -1304,7 +1304,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             var checkInPanel = object.createRowPanel(expressionsCheck.arrival, checkInDatePanel, null, null, null, null);
             var checkOutPanel = object.createRowPanel(expressionsCheck.departure, checkOutDatePanel, null, null, null, null);
             
-            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total length of stay") + ": " + detailes.totalLengthOfStay.main.replace(/\\/g, ""), "", null, null, null, null);
+            var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total Length of Stay") + ": " + detailes.totalLengthOfStay.main.replace(/\\/g, ""), "", null, null, null, null);
             var valueOfStay = totalLengthOfStay.getElementsByClassName("value")[0];
             for(var i = 0; i < detailes.totalLengthOfStay.sub.length; i++) {
                 
@@ -1317,7 +1317,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             var nameLabel = document.createElement("div");
             nameLabel.classList.add("name");
             //nameLabel.setAttribute("style", "margin-top: 0.5em");
-            nameLabel.textContent = object._i18n.get("Total number of guests") + ": " + detailes.totalLengthOfGuests.main.replace(/\\/g, "");
+            nameLabel.textContent = object._i18n.get("Total Number of Guests") + ": " + detailes.totalLengthOfGuests.main.replace(/\\/g, "");
             valueOfStay.appendChild(nameLabel);
             for (var i = 0; i < detailes.totalLengthOfGuests.sub.length; i++) {
                 
@@ -1336,7 +1336,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             }
             
             var totalCost = object._format.formatCost(accommodationDetails.totalCost, myBookingDetails.currency);
-            var totalPricePanel = object.createRowPanel(object._i18n.get("Total amount"), totalCost, null, null, null, null);
+            var totalPricePanel = object.createRowPanel(object._i18n.get("Total Amount"), totalCost, null, null, null, null);
             totalPricePanel.classList.add("total_amount");
             if (parseInt(accommodationDetails.totalCost) == 0) {
                 
@@ -1360,7 +1360,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         var cancelButton = document.createElement("button");
         cancelButton.classList.add("cancel_booking_button");
-        cancelButton.textContent = object._i18n.get("Cancel booking");
+        cancelButton.textContent = object._i18n.get("Cancel Booking");
         if (status == 'canceled') {
             
             cancelButton.classList.add("hidden_panel");
@@ -1915,14 +1915,14 @@ var error_hCaptcha_for_booking_package = function(response) {
             if(totalCost != 0){
                 
                 var formatPrice = object._format.formatCost(totalCost, object._currency);
-                var rowPanel = object.createRowPanel(object._i18n.get("Total amount"), formatPrice, null, null, null, null);
+                var rowPanel = object.createRowPanel(object._i18n.get("Total Amount"), formatPrice, null, null, null, null);
                 rowPanel.classList.add("total_amount");
                 myServiceDetails.appendChild(rowPanel);
                 
             }
             
             var goToCalendarButton = document.createElement("button");
-            goToCalendarButton.textContent = object._i18n.get("Select a date");
+            goToCalendarButton.textContent = object._i18n.get("Select a Date");
             goToCalendarButton.classList.add("select_date_button");
             myServiceDetails.appendChild(goToCalendarButton);
             goToCalendarButton.onclick = function() {
@@ -3603,7 +3603,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log('lengthOfStayForHotel');
         object._console.log("object._top = " + object._top);
         object._console.log(object._calendarAccount);
-        var totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get("Total number of guests"), String(0), "totalGuests", null, null, null);
+        var totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get("Total Number of Guests"), String(0), "totalGuests", null, null, null);
         totalNumberOfGuestsPanel.id = "totalLengthOfGuestsPanel";
         var bookingNowButton = document.createElement("button");
         object._hotel.setCalendarAccount(object._calendarAccount);
@@ -3620,7 +3620,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         var bookingDetailsTitle = document.createElement("div");
         bookingDetailsTitle.id = 'bookingDetailsTitleOnInputPanel';
         bookingDetailsTitle.classList.add("bookingDetailsTitle");
-        bookingDetailsTitle.textContent = object._i18n.get("Booking details");
+        bookingDetailsTitle.textContent = object._i18n.get("Booking Details");
         
         if (object._headingPosition == 1) {
             
@@ -3676,7 +3676,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         var hotelOptions = object.getHotelOptions();
         var totalLengthOfStayValue = document.createElement("div");
         totalLengthOfStayValue.id = "totalLengthOfStayValue";
-        var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total length of stay"), totalLengthOfStayValue, null, null, null, null);
+        var totalLengthOfStay = object.createRowPanel(object._i18n.get("Total Length of Stay"), totalLengthOfStayValue, null, null, null, null);
         //guestsListPanel.appendChild(totalLengthOfStay);
         guestsListPanel.insertAdjacentElement("beforeend", totalLengthOfStay);
         
@@ -3735,7 +3735,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         //guestsListPanel.appendChild(summaryPanel);
         guestsListPanel.insertAdjacentElement("beforeend", summaryPanel);
         
-        var totalFeePanel = object.createRowPanel(object._i18n.get("Total amount"), String(0), "bookingPrice", null, null, null);
+        var totalFeePanel = object.createRowPanel(object._i18n.get("Total Amount"), String(0), "bookingPrice", null, null, null);
         totalFeePanel.setAttribute("style", "border-width: 0;");
         totalFeePanel.classList.add("total_amount");
         //guestsListPanel.appendChild(totalFeePanel);
@@ -3743,7 +3743,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         
         bookingNowButton.classList.add("next_page_button");
-        bookingNowButton.textContent = object._i18n.get("Next page");
+        bookingNowButton.textContent = object._i18n.get("Next Page");
         bookingNowButton.classList.add("hidden_panel");
         bookingNowButton.disabled = true;
         //guestsListPanel.appendChild(bookingNowButton);
@@ -6272,7 +6272,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
                 var displayRemainingCapacityLabel = document.createElement("span");
                 displayRemainingCapacityLabel.classList.add("remainingSlots");
-                displayRemainingCapacityLabel.textContent = object._i18n.get("%s slots left", [schedule.remainder]);
+                displayRemainingCapacityLabel.textContent = object._i18n.get("%s Slots Left", [schedule.remainder]);
                 schedulePanel.appendChild(displayRemainingCapacityLabel);
                 
             }
@@ -7231,7 +7231,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
-                var rowPanel = object.createRowPanel(this._i18n.get("Total number of guests"), 0, null, null, null, null);
+                var rowPanel = object.createRowPanel(this._i18n.get("Total Number of Guests"), 0, null, null, null, null);
                 rowPanel.id = object._prefix + 'totalNumberOfGuests';
                 rowPanel.classList.add("total_amount");
                 var errorMessage = document.createElement('div');
@@ -7298,7 +7298,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             object._console.log("totalCost = " + totalCost);
             object._console.log(goodsList);
             var formatPrice = object._format.formatCost(0, object._currency);
-            var totalCostPanel = object.createRowPanel(this._i18n.get("Total amount"), formatPrice, null, null, null, null);
+            var totalCostPanel = object.createRowPanel(this._i18n.get("Total Amount"), formatPrice, null, null, null, null);
             totalCostPanel.id = object._prefix + 'totalCost';
             totalCostPanel.classList.add("total_amount");
             totalCostPanel.classList.add("hidden_panel");
@@ -7346,7 +7346,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         object._console.log(coupon);
                         
                         var namePanel = document.getElementById(object._prefix + 'coupons').getElementsByClassName('name')[0];
-                        namePanel.textContent = object._i18n.get('Added a coupon');
+                        namePanel.textContent = object._i18n.get('Added a Coupon');
                         
                         var totalCost = 0;
                         for (var key in goodsList) {
@@ -7503,10 +7503,10 @@ var error_hCaptcha_for_booking_package = function(response) {
             var amount = {label: this._i18n.get("Accommodation fees"), amount: (parseInt(hotelDetails.amount) * countRooms)};
             **/
             var amount = {label: this._i18n.get("Accommodation fees"), amount: (parseInt(hotelDetails.amount) * Object.keys(hotelDetails.rooms).length)};
-            var additionalFee = {label: this._i18n.get("Extra charges"), amount: parseInt(hotelDetails.additionalFee * hotelDetails.nights)};
+            var additionalFee = {label: this._i18n.get("Extra Charges"), amount: parseInt(hotelDetails.additionalFee * hotelDetails.nights)};
             if (hotelDetails.personAmount > 0) {
                 
-                additionalFee = {label: this._i18n.get("Extra charges"), amount: parseInt(hotelDetails.personAmount)};
+                additionalFee = {label: this._i18n.get("Extra Charges"), amount: parseInt(hotelDetails.personAmount)};
                 
             }
             var optionCharges = {label: this._i18n.get("Option charges"), amount: parseInt(hotelDetails.optionsAmount)};
@@ -7624,9 +7624,9 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             };
             
-            var paymentData = {id: "paymentMethod", type: "RADIO", active: "true", name: object._i18n.get("Select payment method"), options: paymentMethod.join(","), value: ""};
+            var paymentData = {id: "paymentMethod", type: "RADIO", active: "true", name: object._i18n.get("Select Payment Method"), options: paymentMethod.join(","), value: ""};
             var value = input.createInput("paymentMethod", paymentData, [], paymentEvent);
-            var paymentMethodPanel = object.createRowPanel(object._i18n.get("Select payment method"), value, "paymentMethod", "true", null, null);
+            var paymentMethodPanel = object.createRowPanel(object._i18n.get("Select Payment Method"), value, "paymentMethod", "true", null, null);
             paymentMethodPanel.id = "booking-package_paymentMethod";
             formPanel.appendChild(paymentMethodPanel);
             
@@ -7645,7 +7645,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 } else if (paymentRadios[i].value == 'stripe_konbini') {
                     
                     paymentSpans[i].classList.add("locally");
-                    paymentSpans[i].textContent = object._i18n.get("Pay at a convenience store with Stripe");
+                    paymentSpans[i].textContent = object._i18n.get("Pay at Convenience Store (via Stripe)");
                     
                 } else if (paymentRadios[i].value == 'stripe') {
                     
@@ -7817,7 +7817,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         var bookingButton = document.createElement("button");
         //bookingButton.classList.add("returnButton");
         bookingButton.classList.add("book_now_button");
-        bookingButton.textContent = object.i18n("Book now");
+        bookingButton.textContent = object.i18n("Book Now");
         
         
         var bookingButtonPanel = document.createElement("div");
@@ -7836,10 +7836,10 @@ var error_hCaptcha_for_booking_package = function(response) {
         var nextPageButton = document.createElement('button');
         nextPageButton.id = 'confirmBookingButton';
         nextPageButton.classList.add('next_page_button');
-        nextPageButton.textContent = object.i18n("Next page");
+        nextPageButton.textContent = object.i18n("Next Page");
         if (object._insertConfirmedPage == 1) {
             
-            //bookingButton.textContent = object.i18n("Next page");
+            //bookingButton.textContent = object.i18n("Next Page");
             captchaPanel.classList.add('hidden_panel');
             cartPanel.classList.add("hidden_panel");
             bottomBarPanel.appendChild(nextPageButton);
@@ -8060,7 +8060,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             returnButton.textContent = object.i18n("Return");
             
             var bookingButton = document.createElement("button");
-            bookingButton.textContent = object.i18n("Book now");
+            bookingButton.textContent = object.i18n("Book Now");
             bookingButton.setAttribute("class", "bookingButton");
             
             var bottomPanel = document.getElementById("bottomPanel");
@@ -9043,7 +9043,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         var konbiniButton = document.createElement('button');
         //konbiniButton.classList.add("returnButton");
         konbiniButton.classList.add("book_now_button");
-        konbiniButton.textContent = object.i18n("Book now");
+        konbiniButton.textContent = object.i18n("Book Now");
         
         var stripeKonbiniPanel = document.createElement("div");
         stripeKonbiniPanel.id = "booking-package_pay_with_stripe_konbini";
@@ -9152,7 +9152,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         var titleLabel = document.createElement("label");
         titleLabel.setAttribute("for", "card-element");
-        titleLabel.textContent = object.i18n("Credit card");
+        titleLabel.textContent = object.i18n("Credit Card");
         
         var card_element = document.createElement("div");
         card_element.id = "card-element";
@@ -9162,7 +9162,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         card_errors.setAttribute("role", "alert");
         
         var submit_payment = document.createElement("button");
-        submit_payment.textContent = object.i18n("Book now");
+        submit_payment.textContent = object.i18n("Book Now");
         submit_payment.setAttribute("class", "book_now_button");
         
         var form_row = document.createElement("div");
@@ -9270,7 +9270,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             country: country,
             currency: currency,
             total: {
-                label: 'Total amount',
+                label: 'Total Amount',
                 amount: total,
             },
             /**displayItems: goodsList**/

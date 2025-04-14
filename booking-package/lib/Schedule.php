@@ -52,55 +52,55 @@
 			
 			$userLabels = array(
 				
-				'Sign up' => __('Sign up', 'booking-package'),
-				'Sign in' => __('Sign in', 'booking-package'),
-				'Sign out' => __('Sign out', 'booking-package'),
+				'Sign Up' => __('Sign Up', 'booking-package'),
+				'Sign In' => __('Sign In', 'booking-package'),
+				'Sign Out' => __('Sign Out', 'booking-package'),
 				'Hello, %s' => __('Hello, %s', 'booking-package'),
-				'Create account' => __('Create account', 'booking-package'),
+				'Create Account' => __('Create Account', 'booking-package'),
 				'Register' => __('Register', 'booking-package'),
 				'Edit My Profile' => __('Edit My Profile', 'booking-package'),
-				'Booking history' => __('Booking history', 'booking-package'),
+				'Booking History' => __('Booking History', 'booking-package'),
 				
 			);
 			
 			$generalLables = array(
-				'Booking details' => __('Booking details', 'booking-package'),
-				'Select a date' => __('Select a date', 'booking-package'),
-				'Next page' => __('Next page', 'booking-package'),
+				'Booking Details' => __('Booking Details', 'booking-package'),
+				'Select a Date' => __('Select a Date', 'booking-package'),
+				'Next Page' => __('Next Page', 'booking-package'),
 				'Return' => __('Return', 'booking-package'),
 				'Calendar' => __('Calendar', 'booking-package'),
 				'Status' => __('Status', 'booking-package'),
 				'Booking Date' => __('Booking Date', 'booking-package'),
-				'Extra charges' => __('Extra charges', 'booking-package'),
+				'Extra Charges' => __('Extra Charges', 'booking-package'),
 				'Taxes' => __('Taxes', 'booking-package'),
-				'Total amount' => __('Total amount', 'booking-package'),
+				'Total Amount' => __('Total Amount', 'booking-package'),
 				'Verify' => __('Verify', 'booking-package'),
-				'Book now' => __('Book now', 'booking-package'),
-				'Cancel booking' => __('Cancel booking', 'booking-package'),
+				'Book Now' => __('Book Now', 'booking-package'),
+				'Cancel Booking' => __('Cancel Booking', 'booking-package'),
 			);
 			
 			$formLabels = array(
 				'Please fill in your details' => __('Please fill in your details', 'booking-package'),
 				'Please confirm your details' => __('Please confirm your details', 'booking-package'),
 				'Booking Completed' => __('Booking Completed', 'booking-package'),
-				'Select payment method' => __('Select payment method', 'booking-package'),
-				'Payment method' => __('Payment method', 'booking-package'),
-				'Pay locally' => __('Pay locally', 'booking-package'),
+				'Select Payment Method' => __('Select Payment Method', 'booking-package'),
+				'Payment Method' => __('Payment Method', 'booking-package'),
+				'Pay Locally' => __('Pay Locally', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
-				'Pay at a convenience store with Stripe' => __('Pay at a convenience store', 'booking-package'),
-				'Credit card' => __('Credit card', 'booking-package'),
+				'Pay at Convenience Store (via Stripe)' => __('Pay at Convenience Store', 'booking-package'),
+				'Credit Card' => __('Credit Card', 'booking-package'),
 			);
 			
 			if ($type === 'day') {
 				
 				$timeSlotLabels = array(
 					'Please select a service' => __('Please select a service', 'booking-package'),
-					'Service details' => __('Service details', 'booking-package'),
-					'%s slots left' => __('%s slots left', 'booking-package'),
+					'Service Details' => __('Service Details', 'booking-package'),
+					'%s Slots Left' => __('%s Slots Left', 'booking-package'),
 					'Service' => __('Service', 'booking-package'),
 					'Guests' => __('Guests', 'booking-package'),
-					'Total number of guests' => __('Total number of guests', 'booking-package'),
+					'Total Number of Guests' => __('Total Number of Guests', 'booking-package'),
 					'Coupon' => __('Coupon', 'booking-package'),
 					'Apply' => __('Apply', 'booking-package'),
 				);
@@ -116,13 +116,13 @@
 			} else {
 				
 				$multiNightLabels = array(
-					'Check-in' => __('Check-in', 'booking-package'),
-					'Check-out' => __('Check-out', 'booking-package'),
-					'Total length of stay' => __('Total length of stay', 'booking-package'),
+					'Check-In' => __('Check-In', 'booking-package'),
+					'Check-Out' => __('Check-Out', 'booking-package'),
+					'Total Length of Stay' => __('Total Length of Stay', 'booking-package'),
 					'Options' => __('Options', 'booking-package'),
-					'Total number of options' => __('Total number of options', 'booking-package'),
+					'Total Number of Options' => __('Total Number of Options', 'booking-package'),
 					'Guests' => __('Guests', 'booking-package'),
-					'Total number of guests' => __('Total number of guests', 'booking-package'),
+					'Total Number of Guests' => __('Total Number of Guests', 'booking-package'),
 					'Summary' => __('Summary', 'booking-package'),
 				);
 				
@@ -2652,9 +2652,9 @@
 					
 				}
 				
-				if (array_key_exists('%s slots left', $customize) === true && strpos($customize['%s slots left'], '%s') === false) {
+				if (array_key_exists('%s Slots Left', $customize) === true && strpos($customize['%s Slots Left'], '%s') === false) {
 					
-					$customize['%s slots left'] = '%s ' . $customize['%s slots left'];
+					$customize['%s Slots Left'] = '%s ' . $customize['%s Slots Left'];
 					
 				}
 				
@@ -2705,8 +2705,8 @@
 						
 					} else if (intval($calendarAccount['expressionsCheck']) === 2) {
 						
-						$defaultLabels['Check-in'] = __('Check-in', 'booking-package');
-						$defaultLabels['Check-out'] = __('Check-out', 'booking-package');
+						$defaultLabels['Check-in'] = __('Check-In', 'booking-package');
+						$defaultLabels['Check-out'] = __('Check-Out', 'booking-package');
 						
 					}
 					
@@ -12945,7 +12945,7 @@
 				
 			}
 			
-			array_push($detailsList, "\n" . __('Total number of options', 'booking-package') . ": " . $totalNumberOfOptions);
+			array_push($detailsList, "\n" . __('Total Number of Options', 'booking-package') . ": " . $totalNumberOfOptions);
 			$objectList['totalLengthOfOptions']['main'] = $totalNumberOfOptions;
 			
 			$roomNo = 0;
@@ -13038,7 +13038,7 @@
 				**/
 			}
 			
-			array_push($detailsList, "\n" . __('Total number of guests', 'booking-package') . ": " . $people);
+			array_push($detailsList, "\n" . __('Total Number of Guests', 'booking-package') . ": " . $people);
 			$objectList['totalLengthOfGuests']['main'] = $people;
 			
 			$roomNo = 0;
@@ -13334,12 +13334,12 @@
 			$coupon = null;
 			$positionTimeDate = get_option($this->prefix . "positionTimeDate", "dateTime");
 			
-			$paymentMethod = array('locally' => __('Pay locally', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_konbini' => __('Pay at a convenience store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
+			$paymentMethod = array('locally' => __('Pay Locally', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_konbini' => __('Pay at Convenience Store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
 			
 			if (intval($calendarAccount['customizeLabelsBool']) === 1) {
 				
 				$customizeLabels = $calendarAccount['customizeLabels'];
-				$paymentMethod = array('locally' => $customizeLabels['Pay locally'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_konbini' => $customizeLabels['Pay at a convenience store with Stripe'], 'paypal' => $customizeLabels['Pay with PayPal']);
+				$paymentMethod = array('locally' => $customizeLabels['Pay Locally'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_konbini' => $customizeLabels['Pay at Convenience Store (via Stripe)'], 'paypal' => $customizeLabels['Pay with PayPal']);
 				
 			}
 			

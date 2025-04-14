@@ -193,7 +193,7 @@ EOT;
 			$permalink = get_permalink();
             
 			$text = array(
-			    'Sign up' => __("Sign up", 'booking-package'),
+			    'Sign Up' => __("Sign Up", 'booking-package'),
 			    'Username' => __("Username", 'booking-package'),
 			    'Email' => __("Email", 'booking-package'),
 			    'Password' => __("Password", 'booking-package'),
@@ -211,7 +211,7 @@ EOT;
 		    
             if (empty($dictionary) === false) {
                 
-                $text['Sign up'] = $dictionary['Sign up'];
+                $text['Sign Up'] = $dictionary['Sign Up'];
                 $text['Register'] = $dictionary['Register'];
                 
             }
@@ -225,7 +225,7 @@ EOT;
 			$addUserPanel = '<div id="booking-package-user-form" class="hidden_panel">';
 			$addUserPanel .= '  <div>';
 			$addUserPanel .= '      <div class="titlePanel">';
-			$addUserPanel .= '          <div class="title">' . $text["Sign up"] . '</div>';
+			$addUserPanel .= '          <div class="title">' . $text["Sign Up"] . '</div>';
 			$addUserPanel .= '          <div id="booking-package-register_user_return_button" class="material-icons closeButton" style="font-family: \'Material Icons\' !important;">close</div>';
 			$addUserPanel .= '      </div>';
 			$addUserPanel .= '      <div id="addCustomFormFieldPanel" class="">';
@@ -303,7 +303,7 @@ $html .= <<< EOT
     <div id="booking-package-user-form" class="hidden_panel">
         <div>
             <div class="titlePanel">
-                <div class="title">{$text["Sign up"]}</div>
+                <div class="title">{$text["Sign Up"]}</div>
                 <div id="booking-package-register_user_return_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important;">close</div>
             </div>
             <div class="inputPanel">
@@ -390,21 +390,21 @@ EOT;
         public function cancelBookingDetailsForVisitor_panel($dictionary) {
             
             $text = array(
-			    'Booking details' => $dictionary["Booking details"],
+			    'Booking Details' => $dictionary["Booking Details"],
 			    'Return to calendar' => __("Return to calendar", 'booking-package'),
-			    'Cancel booking' => $dictionary["Cancel booking"],
+			    'Cancel Booking' => $dictionary["Cancel Booking"],
 		    );
             
 $html = <<< EOT
     <div id="booking-package_myBookingDetailsFroVisitor" class="hidden_panel">
         <div class="titlePanel">
-            <div class="title selectedDate">{$text["Booking details"]}</div>
+            <div class="title selectedDate">{$text["Booking Details"]}</div>
         </div>
         <div class="buttonPanel">
             <div id="myPersonalDetails" class="myPersonalDetails row" style="border-width: 0;"></div>
             <!--
             <button class="returnButton">{$text["Return to calendar"]}</button>
-            <button class="cancelButton">{$text["Cancel booking"]}</button>
+            <button class="cancelButton">{$text["Cancel Booking"]}</button>
             -->
         </div>
     </div>
@@ -419,9 +419,9 @@ EOT;
         public function myBookingHistory_panel($dictionary) {
             
             $text = array(
-			    'Booking history' => $dictionary['Booking history'],
+			    'Booking History' => $dictionary['Booking History'],
 			    'Return to calendar' => __("Return to calendar", 'booking-package'),
-			    'Cancel booking' => __("Cancel booking", 'booking-package'),
+			    'Cancel Booking' => __("Cancel Booking", 'booking-package'),
 			    'ID' => __("ID", 'booking-package'),
 			    "Booking Date" => $dictionary['Booking Date'],
 			    "Calendar" => $dictionary['Calendar'],
@@ -431,7 +431,7 @@ EOT;
 $html = <<< EOT
     <div id="booking-package_myBookingHistory" class="hidden_panel">
         <div class="titlePanel">
-            <div class="title">{$text["Booking history"]}</div>
+            <div class="title">{$text["Booking History"]}</div>
             <div id="booking-package-bookingHistory_close_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important;">close</div>
         </div>
         <div>
@@ -461,10 +461,10 @@ EOT;
         public function myBookingDetails_panel($dictionary) {
             
             $text = array(
-			    'Booking history' => $dictionary["Booking history"],
+			    'Booking History' => $dictionary["Booking History"],
 			    'Return to calendar' => __("Return to calendar", 'booking-package'),
-			    'Cancel booking' => $dictionary["Cancel booking"],
-			    'Booking details' => $dictionary["Booking details"],
+			    'Cancel Booking' => $dictionary["Cancel Booking"],
+			    'Booking Details' => $dictionary["Booking Details"],
 			    'ID' => __("ID", 'booking-package'),
 			    "Booking Date" => __("Booking Date", 'booking-package'),
 			    "Status" => __("Status", 'booking-package'),
@@ -474,7 +474,7 @@ EOT;
 $html = <<< EOT
     <div id="booking-package_myBookingDetails" class="hidden_panel">
         <div class="titlePanel">
-            <div class="title">{$text["Booking details"]}</div>
+            <div class="title">{$text["Booking Details"]}</div>
             <div id="booking-package-myBookingDetails_close_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important;">close</div>
         </div>
         <div id="booking-package_myBookingDetails_panel">
@@ -483,7 +483,7 @@ $html = <<< EOT
         <div class="buttonPanel">
             
             <button id="booking-package-myBookingDetails_returnButton" class="returnButton">{$text["Return"]}</button>
-            <button id="booking-package-cancelThisBooking" class="cancel_user_booking_button">{$text["Cancel booking"]}</button>
+            <button id="booking-package-cancelThisBooking" class="cancel_user_booking_button">{$text["Cancel Booking"]}</button>
             
         </div>
     </div>
