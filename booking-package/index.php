@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.78
+Version:     1.6.79
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -2386,7 +2386,7 @@ Domain Path: /languages
 					<div style="overflow-x: auto;">
 						<div id="menuList" class="menuList" style="grid-template-columns: auto;">
 							<div id="usersLink" class="menuItem active hidden_panel" style="grid-column-start: 1;"><?php _e("Users", 'booking-package'); ?></div>
-							<div id="formFieldsLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Form fields", 'booking-package'); ?></div>
+							<div id="formFieldsLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Form Fields", 'booking-package'); ?></div>
 							<div id="settingLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Settings", 'booking-package'); ?></div>
 						</div>
 					</div>
@@ -2750,8 +2750,8 @@ Domain Path: /languages
 							<div class="menuList">
 								<div id='return_to_calendar_list' class='menuItem material-icons' style='padding-left: 0; color: #000; grid-column-start: 1; grid-column-end: 2;' title='Return'>menu_open</div>
 								<div id="calendarLink" class="menuItem active"><?php _e("Schedules", 'booking-package'); ?></div>
-								<div id="closedDaysLink" class="menuItem hidden_panel"><?php _e("Closing days", 'booking-package'); ?></div>
-								<div id="formLink" class="menuItem hidden_panel"><?php _e("Form fields", 'booking-package'); ?></div>
+								<div id="closedDaysLink" class="menuItem hidden_panel"><?php _e("Closing Days", 'booking-package'); ?></div>
+								<div id="formLink" class="menuItem hidden_panel"><?php _e("Form Fields", 'booking-package'); ?></div>
 								<div id="courseLink" class="menuItem hidden_panel"><?php _e("Services", 'booking-package'); ?></div>
 								<div id="guestsLink" class="menuItem hidden_panel"><?php _e("Guests", 'booking-package'); ?></div>
 								<div id="staffLink" class="menuItem hidden_panel"><?php _e("Staff", 'booking-package'); ?></div>
@@ -2819,7 +2819,7 @@ Domain Path: /languages
 								<tr>
 									<th>No</th>
 									<td class="timeTd">Time</td>
-									<td id="deadlineTime" class="td_width_100_px">Booking deadline</td>
+									<td id="deadlineTime" class="td_width_100_px">Booking Deadline</td>
 									<td>Title</td>
 									<td class="td_width_50_px">Capacities</td>
 									<td id="remainder" class="td_width_100_px hidden_panel">Remaining</td>
@@ -3164,7 +3164,7 @@ Domain Path: /languages
 							</span>
 						</div>
 						<div class="inputPanel" style="border-width: 0;">
-							<span><?php echo __("Publication date", 'booking-package'); ?>: </span>
+							<span><?php echo __("Publication Date", 'booking-package'); ?>: </span>
 							<span id="setPublicationDate"></span>
 						</div>
 						<div class="inputPanel" style="border-width: 0; padding-bottom: 1em;">
@@ -3244,7 +3244,7 @@ Domain Path: /languages
 								?>
 								</select>
 							</div>
-							<div class="labelTitle"><?php echo __("Booking deadline", 'booking-package'); ?></div>
+							<div class="labelTitle"><?php echo __("Booking Deadline", 'booking-package'); ?></div>
 							<div>
 								<select id="load_deadline_time_on_time">
 								<?php
@@ -3298,7 +3298,7 @@ Domain Path: /languages
 									<th><label><?php echo __("Target", 'booking-package') . ':'; ?></label></th>
 									<td>
 										<label><input type="checkbox" name="target" class="target" value="schedules" checked="checked"> <?php echo __("Schedules", 'booking-package'); ?></label>
-										<label><input type="checkbox" name="target" class="target" value="form" checked="checked"> <?php echo __("Form fields", 'booking-package'); ?></label>
+										<label><input type="checkbox" name="target" class="target" value="form" checked="checked"> <?php echo __("Form Fields", 'booking-package'); ?></label>
 										<label><input type="checkbox" name="target" class="target" value="services" checked="checked"> <?php echo __("Services", 'booking-package'); ?></label>
 										<label><input type="checkbox" name="target" class="target" value="guests" checked="checked"> <?php echo __("Guests", 'booking-package'); ?></label>
 										<label><input type="checkbox" name="target" class="target" value="taxes" checked="checked"> <?php echo __("Surcharge and Tax", 'booking-package'); ?></label>
@@ -3335,7 +3335,7 @@ Domain Path: /languages
 								-->
 							</div>
 							<div id="selectionSchedule_deadline" class="selectBlock">
-								<div data-key="deadline" class="items"><?php echo __("Booking deadline", 'booking-package'); ?>: <span>7</span></div>
+								<div data-key="deadline" class="items"><?php echo __("Booking Deadline", 'booking-package'); ?>: <span>7</span></div>
 								<div data-key="deadline" class="selectPanel closed">
 									
 									<?php
@@ -3413,7 +3413,7 @@ Domain Path: /languages
 								</div>
 							</div>
 							<div id="selectionSchedule_deadline" class="selectBlock">
-								<div data-key="deadline" class="items"><?php echo __("Booking deadline", 'booking-package'); ?>: <span>7</span></div>
+								<div data-key="deadline" class="items"><?php echo __("Booking Deadline", 'booking-package'); ?>: <span>7</span></div>
 								<div data-key="deadline" class="selectPanel closed">
 									
 									<?php
@@ -3621,14 +3621,14 @@ Domain Path: /languages
 						<div style="overflow-x: auto;">
 							<div id="menuList" class="menuList" style="grid-template-columns: auto;">
 								<div id="settingLink" class="menuItem active hidden_panel" style="grid-column-start: 1;"><?php _e("Settings", 'booking-package'); ?></div>
-								<div id="holidayLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Closing days", 'booking-package'); ?></div>
-								<div id="nationalHolidayLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Public holidays", 'booking-package'); ?></div>
-								<div id="blockEmailListsLink" class="menuItem hidden_panel"  style="grid-column-start: 4;"><?php _e("Blocks list", 'booking-package'); ?></div>
+								<div id="holidayLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Closing Days", 'booking-package'); ?></div>
+								<div id="nationalHolidayLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Public Holidays", 'booking-package'); ?></div>
+								<div id="blockEmailListsLink" class="menuItem hidden_panel"  style="grid-column-start: 4;"><?php _e("Blocks List", 'booking-package'); ?></div>
 								<div id="memberLink" class="menuItem hidden_panel"  style="grid-column-start: 5;"><?php _e("Users", 'booking-package'); ?></div>
 								<div id="syncLink" class="menuItem hidden_panel"  style="grid-column-start: 6;"><?php _e("Sync", 'booking-package'); ?></div>
 								<div id="cssLink" class="menuItem hidden_panel"  style="grid-column-start: 7;">CSS</div>
 								<div id="javascriptLink" class="menuItem hidden_panel"  style="grid-column-start: 8;">JavaScript</div>
-								<div id="subscriptionLink" class="menuItem hidden_panel"  style="grid-column-start: 9;"><?php _e("Paid subscription", 'booking-package'); ?></div>
+								<div id="subscriptionLink" class="menuItem hidden_panel"  style="grid-column-start: 9;"><?php _e("Paid Subscription", 'booking-package'); ?></div>
 							</div>
 						</div>
 						<div id="contentPanel" class="content">
@@ -3637,15 +3637,15 @@ Domain Path: /languages
 								<div class="bottomButtonPanel"><button id="save_setting" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 							</div>
 							<div id="holidayPanel" class="hidden_panel">
-								<div class="title"><?php _e("Closing days", 'booking-package'); ?></div>
+								<div class="title"><?php _e("Closing Days", 'booking-package'); ?></div>
 								<div id="holidaysCalendarPanel"></div>
 							</div>
 							<div id="nationalHolidayPanel" class="hidden_panel">
-								<div class="title"><?php _e("Public holidays", 'booking-package'); ?></div>
+								<div class="title"><?php _e("Public Holidays", 'booking-package'); ?></div>
 								<div id="nationalHolidaysCalendarPanel"></div>
 							</div>
 							<div id="blockEmailListsPanel" class="hidden_panel">
-								<div class="title"><?php _e("Blocks list", 'booking-package'); ?></div>
+								<div class="title"><?php _e("Blocks List", 'booking-package'); ?></div>
 								<?php
 								if ($isExtensionsValid === false) {
 									
@@ -5247,7 +5247,7 @@ Domain Path: /languages
 					
 				}
 				$taxColumns['value']['name'] = __('Fixed tax amount', 'booking-package');
-				$extraChargeColumns['value']['name'] = __('Extra charge', 'booking-package');
+				$extraChargeColumns['value']['name'] = __('Extra Charge', 'booking-package');
 				
 				$schedule->deleteOldDaysInSchedules();
 				$timestamp = $schedule->getTimestamp();
@@ -6333,12 +6333,12 @@ Domain Path: /languages
 				$dictionary['Download CSV'] = __("Download CSV", 'booking-package');
 				$dictionary['Timezone'] = __("Timezone", 'booking-package');
 				$dictionary['Booking'] = __("Booking", 'booking-package');
-				$dictionary['No schedules'] = __('No schedules', 'booking-package');
-				$dictionary['No visitors'] = __('No visitors', 'booking-package');
+				$dictionary['There are no time slots.'] = __('There are no time slots.', 'booking-package');
+				$dictionary['There are no customers.'] = __('There are no customers.', 'booking-package');
 				$dictionary['This booking was paid through %s. Will the payment be refunded to the customer?'] = __('This booking was paid through %s. Will the payment be refunded to the customer?', 'booking-package');
 				$dictionary['Will emails be sent to both customers and administrators?'] = __('Will emails be sent to both customers and administrators?', 'booking-package');
-				$dictionary['This booking has been paid by credit card. Do you refund the price to the customer?'] = __('This booking has been paid by credit card. Do you refund the price to the customer?', 'booking-package');
-				$dictionary['Do you send e-mail notifications to customers or administrators?'] = __('Do you send e-mail notifications to customers or administrators?', 'booking-package');
+				#$dictionary['This booking has been paid by credit card. Do you refund the price to the customer?'] = __('This booking has been paid by credit card. Do you refund the price to the customer?', 'booking-package');
+				#$dictionary['Do you send e-mail notifications to customers or administrators?'] = __('Do you send e-mail notifications to customers or administrators?', 'booking-package');
 				$dictionary['Are you sure you want to delete this booking?'] = __('Are you sure you want to delete this booking?', 'booking-package');
 				$dictionary['Please create a service.'] = __('Please create a service.', 'booking-package');
 				$dictionary['The user was not found.'] = __('The user was not found.', 'booking-package');
@@ -6353,7 +6353,7 @@ Domain Path: /languages
 				$dictionary['Themes'] = __('Themes', 'booking-package');
 				$dictionary['Charges'] = __('Charges', 'booking-package');
 				$dictionary['Published'] = __("Published", 'booking-package');
-				$dictionary['Publication date'] = __("Publication date", 'booking-package');
+				$dictionary['Publication Date'] = __("Publication Date", 'booking-package');
 				$dictionary['Paused'] = __("Paused", 'booking-package');
 				$dictionary['Book the publication date'] = __("Book the publication date", 'booking-package');
 				$dictionary['Publication'] = __("Publication", 'booking-package');
@@ -6364,12 +6364,12 @@ Domain Path: /languages
 				$dictionary['hours'] = __('hours', 'booking-package');
 				$dictionary['minutes'] = __('minutes', 'booking-package');
 				$dictionary['Email address'] = __('Email address', 'booking-package');
-				$dictionary['Booking deadline'] = __('Booking deadline', 'booking-package');
+				$dictionary['Booking Deadline'] = __('Booking Deadline', 'booking-package');
 				$dictionary['Remaining'] = __('Remaining', 'booking-package');
 				$dictionary['Available slots'] = __('Available slots', 'booking-package');
-				$dictionary['Available room slots'] = __('Available room slots', 'booking-package');
 				$dictionary['Remaining slots'] = __('Remaining slots', 'booking-package');
-				$dictionary['Booking deadline'] = __('Booking deadline', 'booking-package');
+				$dictionary['Available Rooms'] = __('Available Rooms', 'booking-package');
+				$dictionary['Remaining Rooms'] = __('Remaining Rooms', 'booking-package');
 				$dictionary['%s min before'] = __('%s min before', 'booking-package');
 				$dictionary['%s min'] = __('%s min', 'booking-package');
 				$dictionary['Choose %s'] = __('Choose %s', 'booking-package');
@@ -6418,7 +6418,7 @@ Domain Path: /languages
 				$dictionary['Received URL'] = __('Received URL', 'booking-package');
 				$dictionary['Customer details'] = __('Customer details', 'booking-package');
 				$dictionary['URL of customer details for administrator'] = __('URL of customer details for administrator', 'booking-package');
-				$dictionary['Public holiday'] = __('Public holiday', 'booking-package');
+				$dictionary['Public Holiday'] = __('Public Holiday', 'booking-package');
 				$dictionary['Open'] = __('Open', 'booking-package');
 				$dictionary['Surcharges'] = __('Surcharges', 'booking-package');
 				$dictionary['Payment Method'] = __('Payment Method', 'booking-package');
@@ -6462,7 +6462,7 @@ Domain Path: /languages
 				$dictionary['Including tax'] = __("Including tax", 'booking-package');
 				$dictionary['Display format: %s'] = __("Display format: %s", 'booking-package');
 				$dictionary['Prices'] = __("Prices", 'booking-package');
-				$dictionary['Number of guests'] = __("Number of guests", 'booking-package');
+				$dictionary['Number of Guests'] = __("Number of Guests", 'booking-package');
 				$dictionary['Price adjustment for "%s" based on selected number of guests'] = __('Price adjustment for "%s" based on selected number of guests', 'booking-package');
 				$dictionary['Insert a booking confirmation form between the booking form and the booking completion form'] = __('Insert a booking confirmation form between the booking form and the booking completion form', 'booking-package');
 				$dictionary['Per day'] = __("Per day", 'booking-package');
@@ -6472,7 +6472,7 @@ Domain Path: /languages
 				$dictionary['Are you sure you want to delete the selected days?'] = __("Are you sure you want to delete the selected days?", 'booking-package');
 				$dictionary['Based on the value of %s, schedules will be re-registered on %s.'] = __('Based on the value of %s, schedules will be re-registered on %s.', 'booking-package');
 				$dictionary['Based on the value of %s, schedules will be re-registered from %s to %s.'] = __('Based on the value of %s, schedules will be re-registered from %s to %s.', 'booking-package');
-				$dictionary['Enable the function'] = __('Enable the function', 'booking-package');
+				$dictionary['Enable This Item'] = __('Enable This Item', 'booking-package');
 				$dictionary['Title of "%s"'] = __('Title of "%s"', 'booking-package');
 				$dictionary['Pay with Stripe'] = __('Pay with Stripe', 'booking-package');
 				$dictionary['Pay at Convenience Store (via Stripe)'] = __('Pay at Convenience Store (via Stripe)', 'booking-package');

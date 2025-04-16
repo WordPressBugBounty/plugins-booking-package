@@ -6075,7 +6075,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             var errorPanel = document.createElement("div");
             errorPanel.setAttribute("class", "noSchedule");
-            errorPanel.textContent = object.i18n("No schedules");
+            errorPanel.textContent = object.i18n("There are no time slots.");
             scheduleMainPanel.appendChild(errorPanel);
             
         } else if (calendarData['schedule'][calendarKey].length == 1 && parseInt(object._calendarAccount.hasMultipleServices) == 0 && unselect === false) {

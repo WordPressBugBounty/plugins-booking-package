@@ -1446,7 +1446,6 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 object._console.log("enable = " + enable);
                 
-                //confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Do you send e-mail notifications to customers or administrators?"), enable, 0, function(sendEmail) {
                 confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
                     
                     if (reload == true) {
@@ -1630,7 +1629,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             var errorPanel = document.createElement("div");
             errorPanel.setAttribute("class", "noReservations");
-            errorPanel.textContent = object._i18n.get("No visitors");
+            errorPanel.textContent = object._i18n.get("There are no customers.");
             reservation_usersPanel.appendChild(errorPanel);
             return null;
             
@@ -3302,7 +3301,6 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("This booking was paid through %s. Will the payment be refunded to the customer?", [reservationData.payName]), refoundBool, 0, function(refoundValue) {
                 
                 object._console.log("refoundValue = " + refoundValue);
-                //confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Do you send e-mail notifications to customers or administrators?"), enable, 0, function(sendEmail) {
                 confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
                     
                     object._console.log("sendEmail = " + sendEmail);
@@ -3893,7 +3891,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             var totalPrice = object._format.formatCost(reservationData.accommodationDetails.totalCost, object._currency);
             object._console.log("totalPrice = " + totalPrice);
             
-            var rowPanel = object.createRowPanel(object._i18n.get("Total amount"), totalPrice, "totalPrice", null, null);
+            var rowPanel = object.createRowPanel(object._i18n.get("Total Amount"), totalPrice, "totalPrice", null, null);
             formPanel.appendChild(rowPanel);
             
             /**
@@ -4176,8 +4174,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             if (cost != 0) {
                 
                 cost = object._format.formatCost(cost, reservationData.currency);
-                object._console.log('Total amount = ' + cost);
-                var rowPanel = object.createRowPanel(object._i18n.get("Total amount"), cost, "booking_cost", null, null);
+                object._console.log('Total Amount = ' + cost);
+                var rowPanel = object.createRowPanel(object._i18n.get("Total Amount"), cost, "booking_cost", null, null);
                 formPanel.appendChild(rowPanel);
                 
             }
@@ -4560,7 +4558,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 var errorPanel = document.createElement("div");
                 errorPanel.setAttribute("class", "noSchedule");
-                errorPanel.textContent = object._i18n.get("No schedules");
+                errorPanel.textContent = object._i18n.get("There are no time slots.");
                 changePanel.appendChild(errorPanel);
                 
             }
@@ -6229,7 +6227,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             console.error("error = schedule zero");
             var errorPanel = document.createElement("div");
             errorPanel.setAttribute("class", "noSchedule");
-            errorPanel.textContent = object._i18n.get("No schedules");
+            errorPanel.textContent = object._i18n.get("There are no time slots.");
             scheduleMainPanel.appendChild(errorPanel);
             return null;
             
@@ -6773,7 +6771,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             
             var formatPrice = object._format.formatCost(0, object._currency);
-            var rowPanel = object.createRowPanel(object._i18n.get("Total amount"), formatPrice, "totalPrice", null, null);
+            var rowPanel = object.createRowPanel(object._i18n.get("Total Amount"), formatPrice, "totalPrice", null, null);
             formPanel.appendChild(rowPanel);
             
             object._hotel.setCallback(function(response){
@@ -7155,7 +7153,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             object._console.log("totalCost = " + totalCost);
             var formatPrice = object._format.formatCost(0, object._currency);
-            var totalCostPanel = object.createRowPanel(object._i18n.get("Total amount"), formatPrice, "bookingFee", null, null);
+            var totalCostPanel = object.createRowPanel(object._i18n.get("Total Amount"), formatPrice, "bookingFee", null, null);
             totalCostPanel.id = object._prefix + 'totalCost';
             totalCostPanel.classList.add('hidden_panel');
             formPanel.appendChild(totalCostPanel);
@@ -7238,7 +7236,6 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             object._console.log("enable = " + enable);
             
             var confirm = new Confirm(object._debug);
-            //confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Do you send e-mail notifications to customers or administrators?"), enable, 0, function(sendEmail) {
             confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
                 
                 var valueList = {};

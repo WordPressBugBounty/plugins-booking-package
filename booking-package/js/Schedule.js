@@ -1804,7 +1804,7 @@ window.addEventListener('error', function(event) {
         
         var scheduleEditTable = document.getElementById("scheduleEditTable");
         scheduleEditTable.textContent = null;
-        var titleList = [object._i18n.get("Date"), object._i18n.get("Status"), object._i18n.get('Publication date'), object._i18n.get("Rates"), object._i18n.get("Available room slots"), object._i18n.get('Remaining slots')];
+        var titleList = [object._i18n.get("Date"), object._i18n.get("Status"), object._i18n.get('Publication Date'), object._i18n.get("Rates"), object._i18n.get("Available Rooms"), object._i18n.get('Remaining Rooms')];
 
         var tr = document.createElement("tr");
         for(var i = 0; i < titleList.length; i++){
@@ -3054,7 +3054,7 @@ window.addEventListener('error', function(event) {
         
         var th = object.create('td', 'No', null, null, null, null, null);
         var tdTime = object.create('td', object._i18n.get('Time'), null, null, null, null, null);
-        var tdDeadlineTime = object.create('td', object._i18n.get('Booking deadline'), null, 'deadlineTime', null, null, null);
+        var tdDeadlineTime = object.create('td', object._i18n.get('Booking Deadline'), null, 'deadlineTime', null, null, null);
         var tdTitle = object.create('td', object._i18n.get('Title'), null, null, null, null, null);
         var tdCapacities = object.create('td', object._i18n.get('Available slots'), null, null, null, null, null);
         var tdRemaining = object.create('td', object._i18n.get('Remaining slots'), null, 'remainder', null, null, null);
@@ -4076,7 +4076,7 @@ window.addEventListener('error', function(event) {
         
         let enableFunction = false;
         var enableFunctionPanel = object.create('div', object._i18n.get('Despite having valid items, the functionality of "%s" is disabled.', [object._i18n.get('Coupons')]), null, null, 'color: #ff3333;', 'hidden_panel', null);
-        var directlySwitchPanel = object.createSwitchPanel( account, 'couponsBool', 'directlySwitchForGuests', 'switch2', 'Enable the function', enableFunctionPanel, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'couponsBool', 'directlySwitchForGuests', 'switch2', 'Enable This Item', enableFunctionPanel, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             for (var i in json) {
@@ -4299,7 +4299,7 @@ window.addEventListener('error', function(event) {
         
         let enableFunction = false;
         var enableFunctionPanel = object.create('div', object._i18n.get('Despite having valid items, the functionality of "%s" is disabled.', [object._i18n.get('Staff')]), null, null, 'color: #ff3333;', 'hidden_panel', null);
-        var directlySwitchPanel = object.createSwitchPanel( account, 'staffBool', 'directlySwitchForGuests', 'switch3', 'Enable the function', enableFunctionPanel, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'staffBool', 'directlySwitchForGuests', 'switch3', 'Enable This Item', enableFunctionPanel, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             for (var i in json) {
@@ -4538,7 +4538,7 @@ window.addEventListener('error', function(event) {
     	
     	let enableFunction = false;
         var enableFunctionPanel = object.create('div', object._i18n.get('Despite having valid items, the functionality of "%s" is disabled.', [object._i18n.get('Guests')]), null, null, 'color: #ff3333;', 'hidden_panel', null);
-    	var directlySwitchPanel = object.createSwitchPanel( account, 'guestsBool', 'directlySwitchForGuests', 'switch1', 'Enable the function', enableFunctionPanel, 'updateAccountFunction', function(json) {
+    	var directlySwitchPanel = object.createSwitchPanel( account, 'guestsBool', 'directlySwitchForGuests', 'switch1', 'Enable This Item', enableFunctionPanel, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             for (var i in json) {
@@ -5085,7 +5085,7 @@ window.addEventListener('error', function(event) {
         
         let enableFunction = false;
         var enableFunctionPanel = object.create('div', object._i18n.get('Despite having valid items, the functionality of "%s" is disabled.', [object._i18n.get('Services')]), null, null, 'color: #ff3333;', 'hidden_panel', null);
-        var directlySwitchPanel = object.createSwitchPanel( account, 'courseBool', 'directlySwitchForServices', 'switch1', 'Enable the function', enableFunctionPanel, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'courseBool', 'directlySwitchForServices', 'switch1', 'Enable This Item', enableFunctionPanel, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             for (var i in json) {
@@ -6585,7 +6585,7 @@ window.addEventListener('error', function(event) {
         var object = this;
         object._console.log(customizePanel)
         customizePanel.textContent = null;
-        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeLabelsBool', 'directlySwitchForGuests', 'switch4', 'Enable the function', null, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeLabelsBool', 'directlySwitchForGuests', 'switch4', 'Enable This Item', null, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             callback(json);
@@ -6629,7 +6629,7 @@ window.addEventListener('error', function(event) {
         var inputData = {};
         customizePanel.textContent = null;
         var disabled = false;
-        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeButtonsBool', 'directlySwitchForGuests', 'switch5', 'Enable the function', null, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeButtonsBool', 'directlySwitchForGuests', 'switch5', 'Enable This Item', null, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             callback(json);
@@ -6683,7 +6683,7 @@ window.addEventListener('error', function(event) {
             
         }
         
-        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeLayoutsBool', 'directlySwitchForGuests', 'switch5', 'Enable the function', null, 'updateAccountFunction', function(json) {
+        var directlySwitchPanel = object.createSwitchPanel( account, 'customizeLayoutsBool', 'directlySwitchForGuests', 'switch5', 'Enable This Item', null, 'updateAccountFunction', function(json) {
             
             object.setAccountList(json);
             callback(json);
@@ -11569,7 +11569,7 @@ window.addEventListener('error', function(event) {
             var overflow = object.create('div', null, [menuList, content], null, 'overflow-x: auto;', null, null);
             valuePanel.appendChild(overflow);
             
-            var weeks = [object._i18n.get("Sun"), object._i18n.get("Mon"), object._i18n.get("Tue"), object._i18n.get("Wed"), object._i18n.get("Thu"), object._i18n.get("Fri"), object._i18n.get("Sat"), object._i18n.get("Public holiday")];
+            var weeks = [object._i18n.get("Sun"), object._i18n.get("Mon"), object._i18n.get("Tue"), object._i18n.get("Wed"), object._i18n.get("Thu"), object._i18n.get("Fri"), object._i18n.get("Sat"), object._i18n.get("Public Holiday")];
             var values = input.value;
             for (var day = 0; day < 8; day++) {
                 

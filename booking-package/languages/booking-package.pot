@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Booking_Package"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-14 04:11+0000\n"
+"POT-Creation-Date: 2025-04-16 11:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: MASAAKI_TANAKA"
@@ -50,8 +50,8 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3627
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3666
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:235
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2608
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2641
 msgid "Users"
 msgstr ""
 
@@ -94,13 +94,13 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3484
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3868
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:138
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2526
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2602
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2603
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2604
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2605
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2606
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2607
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2559
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2635
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2636
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2637
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2638
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2639
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2640
 msgid "Yes"
 msgstr ""
 
@@ -111,14 +111,14 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3485
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3869
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:138
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2526
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2601
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2602
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2603
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2604
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2605
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2606
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2607
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2559
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2634
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2635
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2636
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2637
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2638
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2639
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2640
 msgid "No"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:101
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:3468
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:3912
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1627
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1660
 msgid "Service"
 msgstr ""
 
@@ -204,8 +204,8 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2216
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:235
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2608
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2641
 msgid "Customers"
 msgstr ""
 
@@ -232,13 +232,14 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2389
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2754
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3301
-msgid "Form fields"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6451
+msgid "Form Fields"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2390
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2768
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3623
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2604
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2637
 msgid "Settings"
 msgstr ""
 
@@ -272,9 +273,9 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6588
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Html.php:198
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:122
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1195
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1482
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1496
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1515
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1529
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2636
 msgid "Email"
 msgstr ""
 
@@ -313,18 +314,18 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:97
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:137
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:234
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2113
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2422
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2525
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2565
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2600
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2146
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2455
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2558
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2598
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2633
 msgid "Status"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2582
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6395
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Html.php:205
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1917
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1950
 msgid "Approved"
 msgstr ""
 
@@ -374,21 +375,22 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2752
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3300
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6444
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1956
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1989
 msgid "Schedules"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2753
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3624
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3640
-msgid "Closing days"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6450
+msgid "Closing Days"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2755
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3302
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6449
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:142
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1969
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2002
 msgid "Services"
 msgstr ""
 
@@ -409,10 +411,10 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6388
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:122
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:146
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2338
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2530
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2568
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2610
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2371
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2563
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2601
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2643
 msgid "Options"
 msgstr ""
 
@@ -469,13 +471,13 @@ msgid "Weekly schedule templates"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2865
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1504
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1537
 msgid "Messaging Services"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:2868
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1497
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1516
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1530
 msgid "SMS"
 msgstr ""
 
@@ -512,34 +514,34 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:812
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:818
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:824
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1326
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1350
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1446
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1481
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1482
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1495
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1496
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1497
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1507
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1508
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1509
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1643
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1664
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1687
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1730
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1874
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2050
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2113
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2270
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2336
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2378
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2422
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2450
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2525
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2565
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2566
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2600
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1359
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1383
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1479
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1514
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1515
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1516
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1529
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1530
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1540
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1541
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1542
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1676
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1697
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1720
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1763
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1907
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2083
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2146
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2303
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2369
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2411
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2455
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2483
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2558
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2598
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2599
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2633
 msgid "Enabled"
 msgstr ""
 
@@ -597,7 +599,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3028
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3207
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3215
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2274
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2307
 msgid "From:"
 msgstr ""
 
@@ -636,8 +638,8 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12431
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:205
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2085
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2395
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2118
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2428
 msgid "May"
 msgstr ""
 
@@ -694,7 +696,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3087
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3223
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3231
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2304
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2337
 msgid "To:"
 msgstr ""
 
@@ -747,7 +749,7 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3167
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6356
-msgid "Publication date"
+msgid "Publication Date"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3171
@@ -785,7 +787,7 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3242
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6374
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2355
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2388
 #, php-format
 msgid "%s min"
 msgstr ""
@@ -794,8 +796,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3338
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3416
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6367
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6372
-msgid "Booking deadline"
+msgid "Booking Deadline"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3252
@@ -808,8 +809,8 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3350
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3428
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6369
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2134
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2136
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2169
 msgid "Available slots"
 msgstr ""
 
@@ -821,18 +822,17 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6158
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6486
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:71
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1946
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1979
 msgid "Calendar"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3298
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:140
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:235
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2155
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2426
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2528
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2608
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2188
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2459
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2641
 msgid "Target"
 msgstr ""
 
@@ -852,9 +852,9 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3362
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3440
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6371
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2134
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2136
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6370
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2169
 msgid "Remaining slots"
 msgstr ""
 
@@ -884,16 +884,16 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3625
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3644
-msgid "Public holidays"
+msgid "Public Holidays"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3626
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3648
-msgid "Blocks list"
+msgid "Blocks List"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3631
-msgid "Paid subscription"
+msgid "Paid Subscription"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:3637
@@ -990,8 +990,8 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:5250
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:175
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2423
-msgid "Extra charge"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2456
+msgid "Extra Charge"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:5297
@@ -1006,16 +1006,16 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:812
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:818
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:824
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1326
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1350
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1484
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1498
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1504
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1643
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1664
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1775
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1874
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2132
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1359
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1383
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1517
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1531
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1537
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1676
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1697
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1808
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1907
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2165
 msgid "Disabled"
 msgstr ""
 
@@ -1102,151 +1102,151 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6181
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:201
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2081
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2391
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2424
 msgid "Jan"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6182
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:202
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2082
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2392
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2115
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2425
 msgid "Feb"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6183
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:203
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2083
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2393
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2116
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2426
 msgid "Mar"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6184
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:204
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2084
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2394
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2117
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2427
 msgid "Apr"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6186
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:206
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2086
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2396
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2119
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2429
 msgid "Jun"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6187
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:207
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2087
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2397
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2120
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2430
 msgid "Jul"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6188
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:208
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2088
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2398
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2121
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2431
 msgid "Aug"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6189
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:209
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2089
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2399
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2122
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2432
 msgid "Sep"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6190
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:210
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2090
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2400
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2123
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2433
 msgid "Oct"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6191
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:211
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2091
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2401
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2124
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2434
 msgid "Nov"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6192
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12437
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:212
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2092
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2402
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2125
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2435
 msgid "Dec"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6193
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:165
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1408
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1561
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1441
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1594
 msgid "Sunday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6194
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:159
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1354
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1525
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1387
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1558
 msgid "Monday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6195
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:160
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1363
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1531
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1396
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1564
 msgid "Tuesday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6196
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:161
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1372
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1537
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1405
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1570
 msgid "Wednesday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6197
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:162
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1381
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1543
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1414
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1576
 msgid "Thursday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6198
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:163
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1390
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1549
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1423
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1582
 msgid "Friday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6199
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12432
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:164
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1399
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1555
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1432
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1588
 msgid "Saturday"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6230
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12813
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1587
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
 #, php-format
 msgid "%s nights %s days"
 msgstr ""
@@ -1415,7 +1415,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6232
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12809
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12810
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1587
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
 msgid "nights"
 msgstr ""
 
@@ -1495,15 +1495,15 @@ msgid "Surcharge"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6260
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2423
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2424
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2456
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2457
 msgid "Tax"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6261
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:10151
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:3537
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:4955
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:3570
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:4988
 msgid "Select"
 msgstr ""
 
@@ -1634,7 +1634,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6567
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:90
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13337
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1539
 msgid "Pay with PayPal"
 msgstr ""
 
@@ -1798,16 +1798,16 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6334
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6443
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1460
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1493
 msgid "Timezone"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6336
-msgid "No schedules"
+msgid "There are no time slots."
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6337
-msgid "No visitors"
+msgid "There are no customers."
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6338
@@ -1819,16 +1819,6 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6339
 msgid "Will emails be sent to both customers and administrators?"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6340
-msgid ""
-"This booking has been paid by credit card. Do you refund the price to the "
-"customer?"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6341
-msgid "Do you send e-mail notifications to customers or administrators?"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6342
@@ -1896,12 +1886,16 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6366
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:512
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1283
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1316
 msgid "Email address"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6370
-msgid "Available room slots"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6371
+msgid "Available Rooms"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6372
+msgid "Remaining Rooms"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6375
@@ -1927,23 +1921,23 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6380
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:135
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:232
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1194
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2111
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2357
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2421
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2523
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2561
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2593
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2144
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2390
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2454
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2556
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2594
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2626
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2635
 msgid "Name"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6381
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:136
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:233
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2112
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2524
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2564
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2599
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2145
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2557
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2597
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2632
 msgid "Description"
 msgstr ""
 
@@ -1959,30 +1953,30 @@ msgid "Active"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6384
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2334
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2367
 msgid "Duration time"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6385
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6517
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:320
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2428
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2594
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2461
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2627
 msgid "Value"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6386
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:138
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2566
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2601
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2599
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2634
 msgid "Required"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6387
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6518
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2423
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2567
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2609
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2456
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2600
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2642
 msgid "Type"
 msgstr ""
 
@@ -2009,7 +2003,7 @@ msgid "New"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6396
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1916
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1949
 msgid "Pending"
 msgstr ""
 
@@ -2107,9 +2101,7 @@ msgid "URL of customer details for administrator"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6421
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1417
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1573
-msgid "Public holiday"
+msgid "Public Holiday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6422
@@ -2160,7 +2152,7 @@ msgid "Select all time slots"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6435
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2335
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2368
 msgid "Specify the time slots for each day of the week"
 msgstr ""
 
@@ -2218,16 +2210,6 @@ msgstr ""
 msgid "You changed to a value less than the current \"%s\"."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6450
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1217
-msgid "Closing Days"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6451
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1221
-msgid "Form Fields"
-msgstr ""
-
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6452
 msgid "Services excluded guests"
 msgstr ""
@@ -2242,19 +2224,19 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6455
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6468
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2427
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2460
 msgid "Per day"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6456
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6469
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2427
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2460
 msgid "Per one booking"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6457
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6470
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2427
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2460
 msgid "Per one booking for all guests"
 msgstr ""
 
@@ -2280,15 +2262,15 @@ msgid "Display format: %s"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6464
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2180
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2213
 msgid "Prices"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6465
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:173
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1701
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1744
-msgid "Number of guests"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1734
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1777
+msgid "Number of Guests"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6466
@@ -2324,7 +2306,7 @@ msgid ""
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6475
-msgid "Enable the function"
+msgid "Enable This Item"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6476
@@ -2333,7 +2315,7 @@ msgid "Title of \"%s\""
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6477
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1539
 msgid "Pay with Stripe"
 msgstr ""
 
@@ -2493,8 +2475,8 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6521
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:239
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2254
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2431
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2287
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2464
 msgid "Expiration date"
 msgstr ""
 
@@ -2640,7 +2622,7 @@ msgid ""
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:3161
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1331
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1364
 msgid "Max booking slots per weekday"
 msgstr ""
 
@@ -2787,22 +2769,22 @@ msgid "Select the service price from Base Price to Price 6"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:139
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2192
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2359
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2225
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2392
 msgid "Base Price"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:139
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2202
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2212
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2222
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2232
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2242
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2360
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2361
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2362
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2363
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2364
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2235
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2245
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2255
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2265
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2275
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2393
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2394
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2395
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2396
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2397
 #, php-format
 msgid "Price %s"
 msgstr ""
@@ -2824,8 +2806,8 @@ msgid "Excluded"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:141
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1697
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1740
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1730
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1773
 msgid "Included"
 msgstr ""
 
@@ -2842,8 +2824,8 @@ msgid "National holiday"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:174
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2545
-msgid "Display text"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2578
+msgid "Display Text"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:176
@@ -2855,34 +2837,33 @@ msgid "Coupon usage"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:236
-msgid "Offer unlimited coupons"
+msgid "Unlimited Usage"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:236
-msgid "Offer a limited one-time coupon per users"
+msgid "One-Time Use Per User"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:259
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2454
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2487
 msgid "From"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:289
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2484
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2517
 msgid "To"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:319
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2425
-msgid "Calculation method"
+msgid "Discount Type"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:319
-msgid "Subtraction"
+msgid "Fixed Amount Discount"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:319
-msgid "Multiplication"
+msgid "Percentage Discount"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:509
@@ -2890,17 +2871,17 @@ msgid "Site name"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:523
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1294
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1327
 msgid "Notification email address"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:532
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1303
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1336
 msgid "Sender name"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:541
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1312
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1345
 msgid "Sending email address"
 msgstr ""
 
@@ -3196,653 +3177,802 @@ msgid "Compact"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1187
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1514
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1547
 msgid "Rates"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1188
-msgid "Available Rooms"
+msgid "Calculation Method"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1189
-msgid "Remaining Rooms"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1205
+msgid "Expiration Date"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1190
-msgid "Publication Date"
+msgid "Duration Time"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1191
-msgid "Booking Deadline"
+msgid "Specify the Time Slots for Each Day of the Week"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1192
-msgid "Placeholder Text"
+msgid "Allow Selecting Multiple Options"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1193
-#, php-format
-msgid "Use as %s Field"
+msgid "Select All Time Slots"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1194
+msgid "Additional Duration"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1195
+msgid "Update Order"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1196
-msgid "Location"
+msgid "Extra Charges & Taxes"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1197
-msgid "Agreement (Terms/Privacy)"
+msgid "Add New Item"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1198
-msgid "Save User Input Values"
+msgid "Return to Calendar"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1199
-msgid "Number of Guests"
+msgid "Change Password"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1200
-msgid "Display Text"
+msgid "Applicable Price Level"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1201
-msgid "Extra Charge"
+msgid "Count Towards Availability Limit"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1202
-msgid "Pricing Basis"
+msgid "Enable Quantity-Based Price Adjustment for Services"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1203
-msgid "Calculation Basis"
+msgid "Enable Quantity-Based Price Adjustment for Extra Charges"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1204
-msgid "Charge per Day"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1205
-msgid "Charge Once per Booking"
+msgid "Coupon Usage"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1206
-msgid "Per Guest"
+msgid "Notify the Administrator"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1207
-msgid "Per Room"
+msgid "Attach an iCalendar File in the Email"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1208
-msgid "Extra Charge per Adult"
+msgid "For Customer"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1209
-msgid "Extra Charge per Child"
+msgid "For Administrator"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1210
-msgid "Extra Charge per Room"
+msgid "You can use the following shortcodes in the content editor."
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1211
-msgid "Enable This Item"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1248
+msgid "Set the Publication Date"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1212
-msgid "Unlimited Usage"
+msgid "Email Address"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1213
-msgid "One-Time Use Per User"
+msgid "Recipient Email Address"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1214
-msgid "Discount Type"
+msgid "Sender Name"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1215
-msgid "Fixed Amount Discount"
+msgid "Sending Email Address"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1216
-msgid "Percentage Discount"
+msgid "Calendar Status"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1217
+msgid "Number of Available Days From Today"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1218
-msgid "Public Holidays"
+msgid "Number of Unavailable Days From Today"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1219
-msgid "Blocks List"
+msgid "Week Starts On"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1220
-msgid "Paid Subscription"
+msgid "Send Booking Verification Code"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1221
+msgid "For Customers"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1222
-msgid "Add Fixed Amount"
+msgid "For Users"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1223
-msgid "Apply Percentage"
+msgid "Payment Methods"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1224
+msgid "Local Payment"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1225
+msgid "Preparation Time"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1226
+msgid "Display Remaining Slots on Calendar"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1227
+msgid "Display Remaining Slots per Time Slot"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1228
+msgid "Fixed Calendar"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1229
+msgid "Insert Booking Confirmation Page Before Completion Page"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1230
+msgid "Prevent Multiple Bookings"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1231
+msgid "Reminder Notification Time"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1232
+msgid "Show Canceled Booking Details on \"Booked Customers\""
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1233
+msgid "Allow Customer Cancellations"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1234
+msgid "Allow Cancellation Up To"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1235
+msgid "Applicable Booking Status"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1236
+msgid "Insert Custom Page at Each Step"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1237
+msgid "Service Selection"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1238
+msgid "Booking Form"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1239
+msgid "Booking Confirmation Form"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1240
+msgid "Booking Completion Form"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1241
+#, php-format
+msgid "%s Page"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1242
+msgid "Redirect After Booking"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1243
+msgid "Weekly Schedule Templates"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1244
+msgid "Select Multiple Days"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1245
+msgid "Available Slots"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1246
+msgid "Remaining Slots"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1247
+msgid "Add a Time Slot"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1249
+msgid "Add Booking Calendar"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1250
+msgid "Copy Booking Calendar"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1251
+msgid "Refresh Token"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1252
+msgid "Data Range"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1253
+#, php-format
+msgid "Last %s Days"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1254
+msgid "Submission Date"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1255
+msgid "Update Status"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1256
+msgid "Select Booking Calendar Type"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1269
 #, php-format
 msgid "%s minutes"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1326
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1359
 msgid "Calendar status"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1327
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1360
 msgid "Number of available days from today"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1328
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1361
 msgid "Number of unavailable days from today"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1423
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1450
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
+msgid "Public holiday"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1456
 msgid ""
 "To disable the maximum booking slots for a specific weekday, please enter "
 "\"0\"."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1430
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1463
 msgid "Share available time slots from other calendars"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1450
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
 msgid "Select the calendar to share"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1461
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1494
 msgid "Week starts on"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1464
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1497
 msgid "Send a booking verification code"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1475
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1508
 msgid "For customers"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1481
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1495
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1514
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
 msgid "Email and SMS"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1522
 msgid "For users"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1539
 msgid "Payment methods"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1539
 msgid "Local payment"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1539
 msgid "Pay at a convenience store with Stripe"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1567
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1600
 msgid "Day before public holiday"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1581
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1614
 msgid "Minimum stay (nights)"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1582
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1615
 msgid "Maximum stay (nights)"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1583
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1616
 msgid "Number of available rooms"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1584
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1617
 msgid "Maximum guests per room"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1585
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1618
 msgid "Include children in maximum guest count"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1587
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
 msgid "Total stay display format"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1589
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1622
 msgid "Arrival/Departure display format"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1589
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1622
 msgid "Arrival (Check-in) & Departure (Check-out)"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1589
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1622
 msgid "Arrival & Departure"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1589
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1622
 msgid "Check-in & Check-out"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1590
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1623
 msgid "Allow booking of multiple rooms"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1594
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1627
 msgid "Preparation time"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1614
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1647
 msgid "Position"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1653
 msgid "Before and after the booking time slot"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1653
 msgid "Before the booking time slot"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1620
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1653
 msgid "After the booking time slot"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1647
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1680
 msgid "Booking steps on the front-end"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1653
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1686
 msgid "Start with date selection"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1653
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1686
 msgid "Start with service selection"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1657
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1690
 msgid "Allow selecting multiple services"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1671
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1704
 msgid "Minimum the number of guests per one booking"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1691
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1734
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1724
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1767
 msgid "Includes \"No\" selected on \"Required\" in the Guests"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1714
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1747
 msgid "Maximum the number of guests per one booking"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1758
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1791
 msgid "Display remaining slots on the calendar"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1766
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1799
 msgid ""
 "Use <a href=\"https://material.io/tools/icons/?style=baseline\" target="
 "\"_blank\">Material icons</a> web font."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1770
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1803
 msgid "Display Method"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1775
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1808
 msgid "Show numbers"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1775
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1808
 msgid "Show text/symbols"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1779
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1812
 msgid "Remaining slots threshold"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1798
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1831
 msgid "When slots exceed threshold"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1808
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1841
 msgid "When slots are below threshold"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1818
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1851
 msgid "When no slots remain (0%)"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1829
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1862
 msgid "Display the remaining slots as numbers for each booking time slot"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1830
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1863
 msgid "Fixed calendar"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1831
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1864
 msgid "Insert booking confirmation page before completion page"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1832
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1865
 msgid "Block multiple booking in the same time slot"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1834
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1867
 msgid "Reminder notification time"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1834
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1867
 msgid "Reminders are sent only for 'Approved' bookings."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1836
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1869
 #, php-format
 msgid "About %d hour before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1837
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1838
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1839
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1840
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1841
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1842
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1843
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1844
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1845
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1846
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1847
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1848
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1849
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1850
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1851
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1852
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1870
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1871
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1872
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1873
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1874
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1875
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1876
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1877
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1878
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1879
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1880
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1881
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1882
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1883
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1884
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1885
 #, php-format
 msgid "About %d hours before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1855
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1888
 msgid "Show canceled booking details on \"Booked Customers\""
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1858
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1891
 msgid "Allow customer cancellations"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1878
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1911
 msgid "Allow cancellation up to"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1885
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1918
 #, php-format
 msgid "%s minutes before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1886
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1919
 #, php-format
 msgid "%s hour before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1887
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1888
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1889
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1890
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1920
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1921
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1922
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1923
 #, php-format
 msgid "%s hours before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1891
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1924
 #, php-format
 msgid "%s day before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1892
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1893
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1894
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1895
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1896
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1897
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1898
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1899
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1900
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1901
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1902
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1903
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1904
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1925
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1926
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1927
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1928
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1929
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1930
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1931
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1932
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1933
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1934
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1935
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1936
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1937
 #, php-format
 msgid "%s days before"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1909
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1942
 msgid "Applicable booking status"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1915
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1948
 msgid "Pending and Approved"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1934
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1967
 msgid "Insert a custom page at each step"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1942
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2051
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1975
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2084
 msgid ""
 "To add custom pages to the select box, you need to add a custom field named "
 "\"booking-package\" to the page, with a value of \"front-end.\"."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1982
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2015
 msgid "Booking form"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1995
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2028
 msgid "Booking confirmation form"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2008
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2041
 msgid "Booking completion form"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2024
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2057
 msgid "Redirect to another page without displaying the booking completion page"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2040
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2044
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2073
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2077
 msgid "Pages"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2040
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2055
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2073
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2088
 msgid "URL"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2608
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2641
 msgid "Customers and Users"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2117
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2150
 msgid "Stop this service under the following conditions"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2122
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2155
 msgid ""
 "If you have selected a value other than the \"Disabled\", the \"Selection of "
 "multiple services\" will be disabled."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2134
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
 #, php-format
 msgid "The \"%s\" and \"%s\" values for the time slot do not match."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2136
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2169
 #, php-format
 msgid "The \"%s\" and \"%s\" values for the time slot are equal."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2137
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2170
 msgid "When the specified number of times is reached."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2149
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2182
 msgid ""
 "If the same service is already booked for this time slot, the booking will "
 "not be allowed."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2161
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2194
 msgid "Per day slots"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2162
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2195
 msgid "Per time slots"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2168
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2201
 msgid "Number of times"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2336
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2369
 msgid "Allow selecting multiple options"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2366
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2399
 msgid "Additional duration"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2379
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2380
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2412
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2413
 msgid "Invalid"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2379
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2380
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2412
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2413
 msgid "Valid"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2424
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2457
 msgid "Tax-exclusive pricing"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2424
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2457
 msgid "Tax-inclusive pricing"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2425
-msgid "Add fixed amount"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2458
+msgid "Calculation method"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2425
-msgid "Apply percentage"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2458
+msgid "Add Fixed Amount"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2426
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2528
-msgid "Per room"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2458
+msgid "Apply Percentage"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2426
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2528
-msgid "Per guest"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2459
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2561
+msgid "Per Room"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2427
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2459
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2561
+msgid "Per Guest"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2460
 msgid "Range of tax or surcharge"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2527
-msgid "Pricing basis"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2527
-msgid "Charge per day"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2527
-msgid "Charge once per booking"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2546
-msgid "Extra charge per adult"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2547
-msgid "Extra charge per child"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2548
-msgid "Extra charge per room"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2560
+msgid "Pricing Basis"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2560
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2592
+msgid "Charge Once per Booking"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2561
+msgid "Calculation Basis"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2579
+msgid "Extra Charge per Adult"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2580
+msgid "Extra Charge per Child"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2581
+msgid "Extra Charge per Room"
+msgstr ""
+
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2593
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2625
 msgid "Unique ID"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2563
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2598
-msgid "Placeholder text"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2596
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2631
+msgid "Placeholder Text"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2601
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2634
 msgid "Yes - Front-end and Dashboard"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2601
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2634
 msgid "Yes - Front-end only"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2602
-msgid "Use as Name field"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2635
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2636
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2637
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2638
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2639
+#, php-format
+msgid "Use as %s Field"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2603
-msgid "Use as Email field"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2604
-msgid "Use as SMS field"
-msgstr ""
-
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2604
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2637
 #, php-format
 msgid ""
 "If you select \"%s,\" you will need to change the value of \"Messaging "
 "Services\" in the %s tab."
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2605
-msgid "Use as Location field"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2638
+msgid "Location"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2606
-msgid "Use as Agreement field (Terms/Privacy)"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2639
+msgid "Agreement (Terms/Privacy)"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2607
-msgid "Save the values entered by the user"
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:2640
+msgid "Save User Input Values"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:3995
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:4028
 #, php-format
 msgid "You have already added the \"%s\"."
 msgstr ""
