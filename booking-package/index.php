@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.80
+Version:     1.6.81
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -6283,7 +6283,6 @@ Domain Path: /languages
 				'Discount' => __('Discount', 'booking-package'),
 				'Apply' => __('Apply', 'booking-package'),
 				' to ' => __(' to ', 'booking-package'),
-				'I will pay locally' => __('I will pay locally', 'booking-package'),
 				'Pay Locally' => __('Pay Locally', 'booking-package'),
 				'Pay with Credit Card' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
@@ -6564,7 +6563,6 @@ Domain Path: /languages
 				$dictionary['You have not selected anything'] = __('You have not selected anything', 'booking-package');
 				$dictionary['Select option'] = __("Select option", 'booking-package');
 				$dictionary['Select Payment Method'] = __('Select Payment Method', 'booking-package');
-				$dictionary['I will pay locally'] = __('I will pay locally', 'booking-package');
 				$dictionary['Pay with Credit Card'] = __('Pay with Credit Card', 'booking-package');
 				$dictionary['Pay with PayPal'] = __('Pay with PayPal', 'booking-package');
 				$dictionary['Pay at Convenience Store'] = __('Pay at Convenience Store', 'booking-package');

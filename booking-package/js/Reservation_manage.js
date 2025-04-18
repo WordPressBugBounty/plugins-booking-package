@@ -4182,7 +4182,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
         }
         
-        var paymentMethodValue = object._i18n.get('I will pay locally');
+        var paymentMethodValue = object._i18n.get('Local Payment');
         if (reservationData.payId == 'stripe') {
             
             paymentMethodValue = object._i18n.get('Pay with Stripe');

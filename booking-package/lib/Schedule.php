@@ -85,7 +85,7 @@
 				'Booking Completed' => __('Booking Completed', 'booking-package'),
 				'Select Payment Method' => __('Select Payment Method', 'booking-package'),
 				'Payment Method' => __('Payment Method', 'booking-package'),
-				'Pay Locally' => __('Pay Locally', 'booking-package'),
+				'Local Payment' => __('Local Payment', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
 				'Pay at Convenience Store (via Stripe)' => __('Pay at Convenience Store', 'booking-package'),
@@ -13334,12 +13334,12 @@
 			$coupon = null;
 			$positionTimeDate = get_option($this->prefix . "positionTimeDate", "dateTime");
 			
-			$paymentMethod = array('locally' => __('Pay Locally', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_konbini' => __('Pay at Convenience Store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
+			$paymentMethod = array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_konbini' => __('Pay at Convenience Store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
 			
 			if (intval($calendarAccount['customizeLabelsBool']) === 1) {
 				
 				$customizeLabels = $calendarAccount['customizeLabels'];
-				$paymentMethod = array('locally' => $customizeLabels['Pay Locally'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_konbini' => $customizeLabels['Pay at Convenience Store (via Stripe)'], 'paypal' => $customizeLabels['Pay with PayPal']);
+				$paymentMethod = array('locally' => $customizeLabels['Local Payment'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_konbini' => $customizeLabels['Pay at Convenience Store (via Stripe)'], 'paypal' => $customizeLabels['Pay with PayPal']);
 				
 			}
 			
