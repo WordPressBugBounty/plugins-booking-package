@@ -373,8 +373,8 @@
             
         } else if (expressionsCheck == 2) {
             
-            response.arrival = this._i18n.get("Check-In");
-            response.departure = this._i18n.get("Check-Out");
+            response.arrival = this._i18n.get("Check-in");
+            response.departure = this._i18n.get("Check-out");
             response.chooseArrival = this._i18n.get("Select a Date");
             response.chooseDeparture = this._i18n.get("Select a Date");
             
@@ -383,9 +383,9 @@
         if (parseInt(calendarAccount.customizeLabelsBool) === 1 && customizeLabelsBool === true) {
             
             response = {
-                arrival: calendarAccount.customizeLabels['Check-In'], 
+                arrival: calendarAccount.customizeLabels['Check-in'], 
                 chooseArrival: calendarAccount.customizeLabels['Select a Date'], 
-                departure: calendarAccount.customizeLabels['Check-Out'], 
+                departure: calendarAccount.customizeLabels['Check-out'], 
                 chooseDeparture: calendarAccount.customizeLabels['Select a Date'], 
             }
             

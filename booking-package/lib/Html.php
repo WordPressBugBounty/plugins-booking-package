@@ -203,7 +203,7 @@ EOT;
 			    'Profile' => __("Profile", 'booking-package'),
 			    'Status' => __("Status", 'booking-package'),
 			    'Approved' => __("Approved", 'booking-package'),
-			    'Change password' => __("Change password", 'booking-package'),
+			    'Change Password' => __("Change Password", 'booking-package'),
 			    'Update Profile' => __("Update Profile", 'booking-package'),
 			    'Delete' => __("Delete", 'booking-package'),
 			    'Subscribed items' => __("Subscribed items", 'booking-package'),
@@ -272,7 +272,7 @@ EOT;
 			$editUserPanel .= '         </div>';
 			$editUserPanel .= '         <div id="booking-package-edit_password_filed">';
 			$editUserPanel .= '             <label>' . $text["Password"] . '</label>';
-			$editUserPanel .= '             <button id="booking-package-user_edit_change_password_button" class="change_user_password_button">' . $text["Change password"] . '</button>';
+			$editUserPanel .= '             <button id="booking-package-user_edit_change_password_button" class="change_user_password_button">' . $text["Change Password"] . '</button>';
 			$editUserPanel .= '             <input type="password" name="booking-package-user_edit_pass" id="booking-package-user_edit_pass" class="input hidden_panel" value="" size="20">';
 			$editUserPanel .= '         </div>';
 			$editUserPanel .= '     </div>';
@@ -362,7 +362,7 @@ $html .= <<< EOT
                 </div>
                 <div id="booking-package-edit_password_filed">
                     <label>{$text["Password"]}</label>
-                    <button id="booking-package-user_edit_change_password_button" class="change_user_password_button">{$text["Change password"]}</button>
+                    <button id="booking-package-user_edit_change_password_button" class="change_user_password_button">{$text["Change Password"]}</button>
                     <input type="password" name="booking-package-user_edit_pass" id="booking-package-user_edit_pass" class="input hidden_panel" value="" size="20">
                 </div>
             </div>
@@ -391,7 +391,7 @@ EOT;
             
             $text = array(
 			    'Booking Details' => $dictionary["Booking Details"],
-			    'Return to calendar' => __("Return to calendar", 'booking-package'),
+			    'Return to Calendar' => __("Return to Calendar", 'booking-package'),
 			    'Cancel Booking' => $dictionary["Cancel Booking"],
 		    );
             
@@ -403,7 +403,7 @@ $html = <<< EOT
         <div class="buttonPanel">
             <div id="myPersonalDetails" class="myPersonalDetails row" style="border-width: 0;"></div>
             <!--
-            <button class="returnButton">{$text["Return to calendar"]}</button>
+            <button class="returnButton">{$text["Return to Calendar"]}</button>
             <button class="cancelButton">{$text["Cancel Booking"]}</button>
             -->
         </div>
@@ -420,7 +420,7 @@ EOT;
             
             $text = array(
 			    'Booking History' => $dictionary['Booking History'],
-			    'Return to calendar' => __("Return to calendar", 'booking-package'),
+			    'Return to Calendar' => __("Return to Calendar", 'booking-package'),
 			    'Cancel Booking' => __("Cancel Booking", 'booking-package'),
 			    'ID' => __("ID", 'booking-package'),
 			    "Booking Date" => $dictionary['Booking Date'],
@@ -462,7 +462,7 @@ EOT;
             
             $text = array(
 			    'Booking History' => $dictionary["Booking History"],
-			    'Return to calendar' => __("Return to calendar", 'booking-package'),
+			    'Return to Calendar' => __("Return to Calendar", 'booking-package'),
 			    'Cancel Booking' => $dictionary["Cancel Booking"],
 			    'Booking Details' => $dictionary["Booking Details"],
 			    'ID' => __("ID", 'booking-package'),

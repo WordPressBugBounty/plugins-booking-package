@@ -290,8 +290,8 @@ window.addEventListener('error', function(event) {
 			subscription_statu: object._i18n.get('Subscription status'),
 			customer_id_for_subscriptions: object._i18n.get("ID"),
 			id_for_subscriptions: object._i18n.get("Subscription ID"),
-			customer_email_for_subscriptions: object._i18n.get("Email address"),
-			expiration_date: object._i18n.get("Expiration date"),
+			customer_email_for_subscriptions: object._i18n.get("Email Address"),
+			expiration_date: object._i18n.get("Expiration Date"),
 			
 		};
 		object._console.log(subscriptionData);
@@ -835,7 +835,7 @@ window.addEventListener('error', function(event) {
 					
 					object._console.log("CUSTOMIZE");
 					var tokenDate = list;
-					var tokenButton = object.createButton(null, null, 'w3tc-button-save button-primary tokenButton', {key: key}, this._i18n.get("Refresh token") );
+					var tokenButton = object.createButton(null, null, 'w3tc-button-save button-primary tokenButton', {key: key}, this._i18n.get("Refresh Token") );
 					var tokenValue = object.createInputElement('input', 'text', null, tokenDate.home + "?ical=" + tokenDate.value + '&site=' + object._siteToken, null, null, null, null, 'tokenValue', null);
 					tokenValue.setAttribute("readonly", "readonly");
 					tokenValue.style.width = "100%";

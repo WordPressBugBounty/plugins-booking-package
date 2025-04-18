@@ -431,9 +431,9 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
     object._console.log('formFieldsPanel');
     object._console.log(formFields);
     
-    var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+    var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
     addButton.disabled = false;
-    var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+    var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
     saveButton.disabled = true;
     var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
     

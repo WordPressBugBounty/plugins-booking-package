@@ -3660,12 +3660,12 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             var expressionsCheck = object._calendar.getExpressionsCheck(calendarData.account, false);
             
             var date = object._calendar.formatBookingDate(reservationData.date.checkIn_month, reservationData.date.checkIn_day, reservationData.date.checkIn_year, null, null, null, reservationData.date.checkIn_week, 'text');
-            var checkIn = object.createRowPanel(object._i18n.get('Check-In'), date, "checkIn", "false", null);
+            var checkIn = object.createRowPanel(object._i18n.get('Check-in'), date, "checkIn", "false", null);
             formPanel.appendChild(checkIn);
             document.getElementById("checkIn").setAttribute("data-id", reservationData.scheduleKey);
             
             date = object._calendar.formatBookingDate(reservationData.date.checkOut_month, reservationData.date.checkOut_day, reservationData.date.checkOut_year, null, null, null, reservationData.date.checkOut_week, 'text');
-            var checkOut = object.createRowPanel(object._i18n.get('Check-Out'), date, "checkOut", "false", null);
+            var checkOut = object.createRowPanel(object._i18n.get('Check-out'), date, "checkOut", "false", null);
             formPanel.appendChild(checkOut);
             
             var nightsValue = reservationData.accommodationDetails.nights + ' ' + object._i18n.get("nights");

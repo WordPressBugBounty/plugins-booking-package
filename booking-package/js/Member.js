@@ -1263,9 +1263,6 @@
             var expirationDate = document.createElement("div");
             expirationDate.textContent = object._i18n.get("Expiration date: %s", [product.period_end_date]);
             
-            //You can reserve 5 more times by the expiration date.
-            //You can make a reservation 5 times by the expiration date.
-            
             var itemPanel = document.createElement("div");
             itemPanel.textContent = product.name;
             
@@ -1447,7 +1444,7 @@
         const editCustomFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
         editCustomFormFieldPanel.textContent = null;
         editCustomFormFieldPanel.appendChild(table);
-        const change_password_button = object.create('button', object._i18n.get('Change password'), null, null, null, 'change_user_password_button', null);
+        const change_password_button = object.create('button', object._i18n.get('Change Password'), null, null, null, 'change_user_password_button', null);
         const inputPassword = document.getElementById('booking_package_edit_forminput_user_pass');
         inputPassword.classList.add('hidden_panel');
         inputPassword.insertAdjacentElement('afterend', change_password_button);

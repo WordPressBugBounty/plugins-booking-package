@@ -7640,7 +7640,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 if (paymentRadios[i].value == 'locally') {
                     
                     paymentSpans[i].classList.add("locally");
-                    paymentSpans[i].textContent = object._i18n.get("Local payment");
+                    paymentSpans[i].textContent = object._i18n.get("Local Payment");
                     
                 } else if (paymentRadios[i].value == 'stripe_konbini') {
                     

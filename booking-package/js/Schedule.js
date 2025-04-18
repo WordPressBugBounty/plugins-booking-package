@@ -480,7 +480,7 @@ window.addEventListener('error', function(event) {
             
             var selectButtonList = [dayButton, hotelButton, closeButton];
             var confirm = new Confirm(object._debug);
-            confirm.selectPanelShow(object._i18n.get("Select booking calendar type"), selectButtonList, 'both', false, function(calendarType){
+            confirm.selectPanelShow(object._i18n.get("Select Booking Calendar Type"), selectButtonList, 'both', false, function(calendarType){
                 
                 object._console.log(calendarType);
                 if (typeof calendarType == 'string') {
@@ -1093,7 +1093,7 @@ window.addEventListener('error', function(event) {
         var save_setting = null;
         if (document.getElementById("save_setting") == null) {
             
-            save_setting = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Weekly schedule templates"));
+            save_setting = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Weekly Schedule Templates"));
             actionButtonsPanelForSchedules.appendChild(save_setting);
             save_setting.onclick = function() {
                 
@@ -1101,7 +1101,7 @@ window.addEventListener('error', function(event) {
                 
             };
             
-            var selectMultipleDays = object.createButton(null, null, 'w3tc-button-save button-primary button_margin_left_10px', null, object._i18n.get("Select multiple days"));
+            var selectMultipleDays = object.createButton(null, null, 'w3tc-button-save button-primary button_margin_left_10px', null, object._i18n.get("Select Multiple Days"));
             actionButtonsPanelForSchedules.appendChild(selectMultipleDays);
             selectMultipleDays.onclick = function() {
                 
@@ -1323,11 +1323,11 @@ window.addEventListener('error', function(event) {
                                 
                             }
                             
-                            remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered from %s to %s.', [object._i18n.get('"%s" and "%s"', [object._i18n.get('Weekly schedule templates'), object._i18n.get('Public days from today')]), fromDate, toDate]) + "\n";
+                            remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered from %s to %s.', [object._i18n.get('"%s" and "%s"', [object._i18n.get('Weekly Schedule Templates'), object._i18n.get('Number of Available Days From Today')]), fromDate, toDate]) + "\n";
                             
                             if (post.period == 'period_within' && parseInt(selectedStart) == parseInt(selectedEnd)) {
                                 
-                                remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered on %s.', [object._i18n.get('"%s" and "%s"', [object._i18n.get('Weekly schedule templates'), object._i18n.get('Public days from today')]), fromDate]) + "\n";
+                                remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered on %s.', [object._i18n.get('"%s" and "%s"', [object._i18n.get('Weekly Schedule Templates'), object._i18n.get('Number of Available Days From Today')]), fromDate]) + "\n";
                                 
                             }
                             
@@ -1463,10 +1463,10 @@ window.addEventListener('error', function(event) {
                             object._console.log('fromDate = ' + fromDate);
                             object._console.log('toDate = ' + toDate);
                             
-                            remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered from %s to %s.', [object._i18n.get('"%s"', [object._i18n.get('Public days from today')]), fromDate, toDate]) + "\n";
+                            remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered from %s to %s.', [object._i18n.get('"%s"', [object._i18n.get('Number of Available Days From Today')]), fromDate, toDate]) + "\n";
                             if (fromDate == toDate) {
                                 
-                                remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered on %s.', [object._i18n.get('"%s"', [object._i18n.get('Public days from today')]), fromDate]) + "\n";
+                                remakeMessage = object._i18n.get('Based on the value of %s, schedules will be re-registered on %s.', [object._i18n.get('"%s"', [object._i18n.get('Number of Available Days From Today')]), fromDate]) + "\n";
                                 
                             }
                             
@@ -1862,7 +1862,7 @@ window.addEventListener('error', function(event) {
             object._console.log(selectStatus);
             
             var tdReceptionist = object.create('td', null, [selectStatus], null, null, null, null);
-            var publishingDatePanel = object.create('span', object._i18n.get('Book the publication date'), null, null, "cursor: pointer;", "material-icons noTime", {key: key});
+            var publishingDatePanel = object.create('span', object._i18n.get('Set the Publication Date'), null, null, "cursor: pointer;", "material-icons noTime", {key: key});
             if (parseInt(schedule.publishingDate) === 0) {
                 
                 publishingDatePanel.textContent = 'edit_calendar';
@@ -2389,7 +2389,7 @@ window.addEventListener('error', function(event) {
         
         object.buttonPanel.textContent = null;
         
-        var bookAndSaveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert', null, object._i18n.get("Book the publication date") );
+        var bookAndSaveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert', null, object._i18n.get("Set the Publication Date") );
         var saveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert button_margin_left_10px', null, object._i18n.get("Save") );
         object.buttonPanel.appendChild(bookAndSaveButton);
         object.buttonPanel.appendChild(saveButton);
@@ -2453,9 +2453,9 @@ window.addEventListener('error', function(event) {
         
         
         var deleteButton = object.createButton(null, 'margin-right: 10px;', 'button media-button button-primary button-large media-button-insert', null, object._i18n.get("Delete") );
-        var bookAndSaveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert', null, object._i18n.get("Book the publication date") );
+        var bookAndSaveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert', null, object._i18n.get("Set the Publication Date") );
         var saveButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert button_margin_left_10px', null, object._i18n.get("Save") );
-        var deleteSchedulesButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert deleteButton', null, object._i18n.get("Delete") );
+        var deleteSchedulesButton = object.createButton(null, null, 'button media-button button-primary button-large media-button-insert deleteButton', null, object._i18n.get("Delete Instance") );
         
         object.buttonPanel.textContent = null;
         if (hasIncompletelySchedules == 1) {
@@ -3056,8 +3056,8 @@ window.addEventListener('error', function(event) {
         var tdTime = object.create('td', object._i18n.get('Time'), null, null, null, null, null);
         var tdDeadlineTime = object.create('td', object._i18n.get('Booking Deadline'), null, 'deadlineTime', null, null, null);
         var tdTitle = object.create('td', object._i18n.get('Title'), null, null, null, null, null);
-        var tdCapacities = object.create('td', object._i18n.get('Available slots'), null, null, null, null, null);
-        var tdRemaining = object.create('td', object._i18n.get('Remaining slots'), null, 'remainder', null, null, null);
+        var tdCapacities = object.create('td', object._i18n.get('Available Slots'), null, null, null, null, null);
+        var tdRemaining = object.create('td', object._i18n.get('Remaining Slots'), null, 'remainder', null, null, null);
         var stopSlots = object.create('div', object._i18n.get('Paused'), null, null, null, 'deletePanel', null);
         var tdStop = object.create('td', null, [stopSlots], 'stop', null, null, null);
         var deleteSlots = object.create('div', object._i18n.get('Delete'), null, null, null, 'deletePanel', null);
@@ -4066,8 +4066,8 @@ window.addEventListener('error', function(event) {
         var editBool = true;
         var object = this;
         
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item"));
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order"));
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item"));
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order"));
         saveButton.disabled = true;
         
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton]);
@@ -4289,9 +4289,9 @@ window.addEventListener('error', function(event) {
         var editBool = true;
         var object = this;
         
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var coursePanel = document.getElementById("coursePanel");
@@ -4528,9 +4528,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var coursePanel = document.getElementById("coursePanel");
@@ -4792,9 +4792,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         
@@ -5074,9 +5074,9 @@ window.addEventListener('error', function(event) {
         var editBool = true;
         var object = this;
         object._console.log(account);
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         
@@ -5429,9 +5429,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var guestsPanel = document.getElementById("guestsPanel");
@@ -5658,9 +5658,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var guestsPanel = document.getElementById("guestsPanel");
@@ -5886,9 +5886,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var guestsPanel = document.getElementById("guestsPanel");
@@ -6113,9 +6113,9 @@ window.addEventListener('error', function(event) {
         
         var editBool = true;
         var object = this;
-        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add new item") );
+        var addButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Add New Item") );
         addButton.disabled = false;
-        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Save the changed order") );
+        var saveButton = object.createButton(null, 'float: right;', 'w3tc-button-save button-primary', null, object._i18n.get("Update Order") );
         saveButton.disabled = true;
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var mainPanel = document.getElementById("optionsForHotelPanel");
@@ -6354,18 +6354,18 @@ window.addEventListener('error', function(event) {
         table.appendChild(tr);
         var syncPastCustomersForIcalValue = {name: 'Active', value: parseInt(syncPastCustomersForIcal), inputLimit: 1, inputType: 'SELECT', valueList: 
             {
-                7: object._i18n.get("Last %s days", [7]), 
-                14: object._i18n.get("Last %s days", [14]), 
-                30: object._i18n.get("Last %s days", [30]), 
-                60: object._i18n.get("Last %s days", [60]), 
-                90: object._i18n.get("Last %s days", [90]), 
-                180: object._i18n.get("Last %s days", [180]), 
-                365: object._i18n.get("Last %s days", [365]), 
+                7: object._i18n.get("Last %s Days", [7]), 
+                14: object._i18n.get("Last %s Days", [14]), 
+                30: object._i18n.get("Last %s Days", [30]), 
+                60: object._i18n.get("Last %s Days", [60]), 
+                90: object._i18n.get("Last %s Days", [90]), 
+                180: object._i18n.get("Last %s Days", [180]), 
+                365: object._i18n.get("Last %s Days", [365]), 
             }
         };
         var syncPastCustomersForIcalPanel = object.createInput('syncPastCustomersForIcal', syncPastCustomersForIcalValue, inputData, account, false, null, 0);
         
-        var th = object.create('th', object._i18n.get("Period"), null, null, null, null, null);
+        var th = object.create('th', object._i18n.get("Data Range"), null, null, null, null, null);
         th.setAttribute("scope", "row");
         var td = object.create('td', null, [syncPastCustomersForIcalPanel], null, null, null, null);
         var tr = object.create('tr', null, [th, td], null, null, null, null);
@@ -6374,7 +6374,7 @@ window.addEventListener('error', function(event) {
         
         th = object.create('th', object._i18n.get("URL"), null, null, null, null, null);
         th.setAttribute("scope", "row");
-        var tokenButton = object.createButton(null, null, 'w3tc-button-save button-primary tokenButton', null, object._i18n.get("Refresh token"));
+        var tokenButton = object.createButton(null, null, 'w3tc-button-save button-primary tokenButton', null, object._i18n.get("Refresh Token"));
 		var tokenValue = document.createElement("input");
 		tokenValue.type = "text";
 		tokenValue.value = home + "?id=" + account.key + "&ical=" + icalToken + '&site=' + object._siteToken;
@@ -7013,7 +7013,7 @@ window.addEventListener('error', function(event) {
                 if (account.type === 'hotel') {
                     
                     const verifyItems = {
-                        maxAccountScheduleDay: object._i18n.get('Public days from today'), 
+                        maxAccountScheduleDay: object._i18n.get('Number of Available Days From Today'), 
                         hotelChargeOnDayBeforeNationalHoliday: object._i18n.get('Rates'), 
                         hotelChargeOnFriday: object._i18n.get('Rates'), 
                         hotelChargeOnMonday: object._i18n.get('Rates'), 
@@ -7063,7 +7063,7 @@ window.addEventListener('error', function(event) {
                     if (parseInt(account['maxAccountScheduleDay']) > parseInt(chagendValues['maxAccountScheduleDay'])) {
                         
                         response.status = true;
-                        response.items.push(object._i18n.get('Public days from today'));
+                        response.items.push(object._i18n.get('Number of Available Days From Today'));
                         
                     }
                     
@@ -9951,7 +9951,7 @@ window.addEventListener('error', function(event) {
                 mail_message_area_right_title.textContent = object._i18n.get("Help");
                 mail_message_area_right.appendChild(mail_message_area_right_title);
                 
-                var str = object._i18n.get("You can use following shortcodes in content editer.");
+                var str = object._i18n.get("You can use the following shortcodes in the content editor.");
                 var help_message_label = document.createElement("div");
                 help_message_label.setAttribute("class", "help_message_label");
                 help_message_label.textContent = str;
@@ -11678,7 +11678,7 @@ window.addEventListener('error', function(event) {
                 chooseAllTime.type = "checkbox";
                 chooseAllTime.checked = checkedChooseAllTime;
                 chooseAllTime.disabled = disabled;
-                var text = object.create('span', object._i18n.get('Select all time slots'), null, null, null, null, null);
+                var text = object.create('span', object._i18n.get('Select All Time Slots'), null, null, null, null, null);
                 var label = object.create('label', null, [chooseAllTime, text], null, null, 'chooseAllTime', null);
                 timeZone.appendChild(label);
                 

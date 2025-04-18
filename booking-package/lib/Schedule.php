@@ -116,8 +116,8 @@
 			} else {
 				
 				$multiNightLabels = array(
-					'Check-In' => __('Check-In', 'booking-package'),
-					'Check-Out' => __('Check-Out', 'booking-package'),
+					'Check-in' => __('Check-in', 'booking-package'),
+					'Check-out' => __('Check-out', 'booking-package'),
 					'Total Length of Stay' => __('Total Length of Stay', 'booking-package'),
 					'Options' => __('Options', 'booking-package'),
 					'Total Number of Options' => __('Total Number of Options', 'booking-package'),
@@ -2705,8 +2705,8 @@
 						
 					} else if (intval($calendarAccount['expressionsCheck']) === 2) {
 						
-						$defaultLabels['Check-in'] = __('Check-In', 'booking-package');
-						$defaultLabels['Check-out'] = __('Check-Out', 'booking-package');
+						$defaultLabels['Check-in'] = __('Check-in', 'booking-package');
+						$defaultLabels['Check-out'] = __('Check-out', 'booking-package');
 						
 					}
 					
@@ -10243,14 +10243,14 @@
 			if ($response['reflectService'] == 0) {
 				
 				$response['reflectService'] = 1;
-				$response['reflectServiceTitle'] = 1 . __('person', 'booking-package');
+				$response['reflectServiceTitle'] = 1 . __('guest', 'booking-package');
 			
 			}
 			
 			if ($response['reflectAdditional'] == 0) {
 				
 				$response['reflectAdditional'] = 1;
-				$response['reflectAdditionalTitle'] = 1 . __('person', 'booking-package');
+				$response['reflectAdditionalTitle'] = 1 . __('guest', 'booking-package');
 			
 			}
 			
