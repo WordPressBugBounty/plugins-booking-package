@@ -175,7 +175,7 @@
         var month = date.getMonth() + 1;
         var day = 10;
         var week = new Date(year, (month - 1), day).getDay();
-        var labels = {select_date_button: object._i18n.get('Select a date'), return_button: object._i18n.get('Return'), next_button: object._i18n.get('Next'), apply_button: object._i18n.get('Apply'), next_page_button: object._i18n.get('Next page'), booking_verification_button: object._i18n.get('Verify'), book_now_button: object._i18n.get('Book now'), previous_available_day_button: object._i18n.get('Previous available day'), next_available_day_button: object._i18n.get('Next available day'), return_form_button: object._i18n.get('Return from the form'), cancel_booking_button: object._i18n.get('Cancel booking'), login_button: object._i18n.get('Sign in'), register_button: object._i18n.get('Register'), left_arrow_button: object._i18n.get('Left arrow'), right_arrow_button: object._i18n.get('Right arrow'), cancel_user_booking_button: object._i18n.get('Cancel user booking'), change_user_password_button: object._i18n.get('Change password'), update_user_button: object._i18n.get('Update Profile'), delete_user_button: object._i18n.get('Delete')
+        var labels = {select_date_button: object._i18n.get('Select a Date'), return_button: object._i18n.get('Return'), next_button: object._i18n.get('Next'), apply_button: object._i18n.get('Apply'), next_page_button: object._i18n.get('Next Page'), booking_verification_button: object._i18n.get('Verify'), book_now_button: object._i18n.get('Book Now'), previous_available_day_button: object._i18n.get('Previous available day'), next_available_day_button: object._i18n.get('Next available day'), return_form_button: object._i18n.get('Return from the form'), cancel_booking_button: object._i18n.get('Cancel Booking'), login_button: object._i18n.get('Sign In'), register_button: object._i18n.get('Register'), left_arrow_button: object._i18n.get('Left arrow'), right_arrow_button: object._i18n.get('Right arrow'), cancel_user_booking_button: object._i18n.get('Cancel Booking'), change_user_password_button: object._i18n.get('Change Password'), update_user_button: object._i18n.get('Update Profile'), delete_user_button: object._i18n.get('Delete')
         };
         
         var setCustomizeCss = function(customizeButtons) {
@@ -258,7 +258,7 @@
                 
             } else if (key == 'cancel_user_booking_button') {
                 
-                previewButton.textContent = this._i18n.get('Cancel booking');
+                previewButton.textContent = this._i18n.get('Cancel Booking');
                 
             } else if (key === 'left_arrow_button') {
                 
@@ -816,7 +816,7 @@
                 
                 var time = object.create('span', object._calendar.getPrintTime(("0" + i).slice(-2), ("00")) + " ", null, null, null, 'timeSlot', null);
                 var title = object.create('span', null, null, null, null, 'subtitle hidden_panel', null);
-                var slot = object.create('span', object._i18n.get('%s slots left', [10]), null, null, null, 'remainingSlots', null);
+                var slot = object.create('span', object._i18n.get('%s Slots Left', [10]), null, null, null, 'remainingSlots', null);
                 var timeSlotPanel = object.create('div', null, [time, title, slot], null, null, 'selectable_time_slot', {id: 'timeSlot'} );
                 clickActions.push( {id: 'timeSlot', element: timeSlotPanel, classes: ['selectable_time_slot', 'selectable_time_slot:hover', 'timeSlot', 'subtitle', 'remainingSlots'] } );
                 scheduleMainPanel.appendChild(timeSlotPanel);
@@ -840,8 +840,8 @@
         var table = object.create('table', null, null, 'customizeLayoutPanel', null, 'form-table', null);
         customizePanel.appendChild(table);
         
-        var labels_name = { general: object._i18n.get("General"), calendar: object._i18n.get("Calendar"), serviceAndTimeSlot: object._i18n.get('Service and Time slot'), form: object._i18n.get('Form'), service: object._i18n.get('Service'), timeSlot: object._i18n.get('Time slot'), };
-        var general_names = { 'font-size': object._i18n.get('Font size'), color: object._i18n.get('Font color'), 'background-color': object._i18n.get('Background color'), 'border-color': object._i18n.get('Border color') };
+        var labels_name = { general: object._i18n.get("General"), calendar: object._i18n.get("Calendar"), serviceAndTimeSlot: object._i18n.get('Service and Time slot'), form: object._i18n.get('Form'), service: object._i18n.get('Service'), timeSlot: object._i18n.get('Time Slot'), };
+        var general_names = { 'font-size': object._i18n.get('Font Size'), color: object._i18n.get('Font Color'), 'background-color': object._i18n.get('Background Color'), 'border-color': object._i18n.get('Border Color') };
         var date = new Date();
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
@@ -1100,7 +1100,7 @@
                     
                     inputPanel.classList.add('calendarWidthForHotel_in_dashboard');
                     
-                    var bookingDetailsTitle = object.create('div', object._i18n.get('Booking details'), null, null, null, 'bookingDetailsTitle', null);
+                    var bookingDetailsTitle = object.create('div', object._i18n.get('Booking Details'), null, null, null, 'bookingDetailsTitle', null);
                     
                     var checkInWeek = new Date(year, (month - 1), 16).getDay();
                     var checkInDateFormat = object._calendar.formatBookingDate(month, 16, year, null, null, null, checkInWeek, 'text');

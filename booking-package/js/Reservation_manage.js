@@ -1446,7 +1446,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 object._console.log("enable = " + enable);
                 
-                confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
+                confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and admins?"), enable, 0, function(sendEmail) {
                     
                     if (reload == true) {
                         reload = 1;
@@ -3175,7 +3175,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         
                     }
                     
-                    confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
+                    confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and admins?"), enable, 0, function(sendEmail) {
                         
                         object._console.log(sendEmail);
                         
@@ -3297,11 +3297,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             object._console.log(reservationData.payName);
             object._console.log(reservationData.payToken);
-            //confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("This booking has been paid by credit card. Do you refund the price to the customer?"), refoundBool, 0, function(refoundValue){
-            confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("This booking was paid through %s. Will the payment be refunded to the customer?", [reservationData.payName]), refoundBool, 0, function(refoundValue) {
+            confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("This booking was paid via %s. Will the payment be refunded to the customer?", [reservationData.payName]), refoundBool, 0, function(refoundValue) {
                 
                 object._console.log("refoundValue = " + refoundValue);
-                confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
+                confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and admins?"), enable, 0, function(sendEmail) {
                     
                     object._console.log("sendEmail = " + sendEmail);
                     object._console.log("sendEmail = " + parseInt(sendEmail));
@@ -7236,7 +7235,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             object._console.log("enable = " + enable);
             
             var confirm = new Confirm(object._debug);
-            confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and administrators?"), enable, 0, function(sendEmail) {
+            confirm.dialogPanelShow(object._i18n.get("Attention"), object._i18n.get("Will emails be sent to both customers and admins?"), enable, 0, function(sendEmail) {
                 
                 var valueList = {};
                 var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, object._formData, formPanelList, inputData, valueList, object.getGuestsList());

@@ -2246,7 +2246,7 @@ window.addEventListener('error', function(event) {
             
         });
         
-        var addTimeSlotsButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get('Add time slots') );
+        var addTimeSlotsButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get('Add Time Slots') );
         addTimeSlotsButton.disabled = true;
         multipleDaysButtonPanelForSchedules.appendChild(addTimeSlotsButton);
         addTimeSlotsButton.onclick = function(event) {
@@ -2369,7 +2369,7 @@ window.addEventListener('error', function(event) {
         object._console.log(weekName);
         document.getElementById("media_frame_content_for_schedule").textContent = null;
         var edit_title = document.getElementById("edit_title_for_schedule");
-        edit_title.textContent = object._i18n.get('Multiple days');
+        edit_title.textContent = object._i18n.get('Multiple Days');
         
         document.getElementById("media_router_for_schedule").classList.remove("hidden_panel");
         document.getElementById("menu_panel_for_schedule").setAttribute("class", "media_frame_menu hidden_panel");

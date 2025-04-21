@@ -1885,7 +1885,7 @@ Member_manage.prototype.editUser = function(tr, user){
     
     var inputData = {};
     const formFields = JSON.parse(JSON.stringify(object._userFormFields));
-    const custom_title = object.create('div', object._i18n.get('Custom form fields'), null, null, '', 'custom_title', null);
+    const custom_title = object.create('div', object._i18n.get('Custom Fields'), null, null, '', 'custom_title', null);
     if (object._managementUsersV2 === 0) {
         
         custom_title.textContent = null;
@@ -2407,7 +2407,7 @@ Member_manage.prototype.userForm = function(){
         var inputData = {};
         const formFields = JSON.parse(JSON.stringify(object._userFormFields));
         object._console.log(formFields);
-        const custom_title = object.create('div', object._i18n.get('Custom form fields'), null, null, '', 'custom_title', null);
+        const custom_title = object.create('div', object._i18n.get('Custom Fields'), null, null, '', 'custom_title', null);
         if (object._managementUsersV2 === 0) {
             
             custom_title.textContent = null;

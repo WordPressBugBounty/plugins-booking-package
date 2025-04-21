@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.81
+Version:     1.6.82
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -2401,7 +2401,7 @@ Domain Path: /languages
 									<button id="clear_user_button" type="button" class="w3tc-button-save button-primary clear_user_button"><?php _e("Clear", 'booking-package'); ?></button>
 								</div>
 								<div class="actionButtonPanelRight">
-									<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add user", 'booking-package'); ?></button>
+									<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add New User", 'booking-package'); ?></button>
 									<?php
 									$this->upgradeButton($isExtensionsValid, true);
 									?>
@@ -2482,7 +2482,7 @@ Domain Path: /languages
 							<button id="clear_user_button" type="button" class="w3tc-button-save button-primary clear_user_button"><?php _e("Clear", 'booking-package'); ?></button>
 						</div>
 						<div class="actionButtonPanelRight">
-							<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add user", 'booking-package'); ?></button>
+							<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add New User", 'booking-package'); ?></button>
 							<?php
 							$this->upgradeButton($isExtensionsValid, true);
 							?>
@@ -2832,9 +2832,7 @@ Domain Path: /languages
 						</div>
 						<div id='incompletelyDeletedScheduleAlertPanel' class='hidden_panel'>
 							<?php 
-								#print __("This schedule has not been perfectly deleted.", 'booking-package') . ' ' . __('If you delete this schedule completely, the schedules will be re-registered based on the "Weekly schedule templates".', 'booking-package'); 
-								print __("This time slot has not been deleted completely.", 'booking-package') . ' '; 
-								printf( __('If you fully delete the time slots, they will be re-registered based on the "%s".', 'booking-package'), __('Weekly schedule templates', 'booking-package') );
+								printf( __('This time slot is currently blocked and will not be automatically recreated. To allow recreation based on the "%s", use the \'Delete Instance\' option instead.', 'booking-package'), __('Weekly schedule templates', 'booking-package') );
 							?> 
 						</div>
 						<div id="media_frame_content_for_schedule"></div>
@@ -2962,10 +2960,10 @@ Domain Path: /languages
 											<input id="period_all" name="period" type="radio" value="period_all"><?php echo __("All", 'booking-package'); ?>
 										</label>
 										<label>
-											<input id="period_after" name="period" type="radio" value="period_after" checked="checked"><?php echo __("After the specified date", 'booking-package'); ?>
+											<input id="period_after" name="period" type="radio" value="period_after" checked="checked"><?php echo __("From the Specified Date", 'booking-package'); ?>
 										</label>
 										<label>
-											<input id="period_within" name="period" type="radio" value="period_within"><?php echo __("Within the specified date", 'booking-package'); ?>
+											<input id="period_within" name="period" type="radio" value="period_within"><?php echo __("Within the Specified Date", 'booking-package'); ?>
 										</label>
 									</td>
 								</tr>
@@ -3099,14 +3097,14 @@ Domain Path: /languages
 			                		<th><label><?php echo __("Action", 'booking-package'); ?></label></th>
 			                		<td>
 			                			<label><input id="action_delete" type="radio" name="type" value="delete" checked="checked"><?php echo __("Delete", 'booking-package'); ?></label>
-			                			<label><input id="action_stop" type="radio" name="type" value="stop"><?php echo __("Paused", 'booking-package'); ?></label>
+			                			<label><input id="action_stop" type="radio" name="type" value="stop"><?php echo __("Pause", 'booking-package'); ?></label>
 			                		</td>
 			                	</tr>
 			                	<tr>
-			                		<th><label><?php echo __("Deletion type", 'booking-package'); ?></label></th>
+			                		<th><label><?php echo __("Deletion Type", 'booking-package'); ?></label></th>
 			                		<td>
-			                			<label><input id="delete_incomplete" type="radio" name="deletionType" value="incomplete" checked="checked"><?php echo __("Imperfect", 'booking-package'); ?></label>
-			                			<label><input id="delete_perfect" type="radio" name="deletionType" value="perfect"><?php echo __("Perfect", 'booking-package'); ?></label>
+			                			<label><input id="delete_incomplete" type="radio" name="deletionType" value="incomplete" checked="checked"><?php echo __("Delete and Block Slot", 'booking-package'); ?></label>
+			                			<label><input id="delete_perfect" type="radio" name="deletionType" value="perfect"><?php echo __("Delete Instance", 'booking-package'); ?></label>
 			                		</td>
 			                	</tr>
 			                </table>
@@ -3192,7 +3190,7 @@ Domain Path: /languages
 					<div>
 						
 						<div class="titlePanel">
-							<div class="title"><?php echo __("Set up time slots", 'booking-package'); ?></div>
+							<div class="title"><?php echo __("Set Up Time Slots", 'booking-package'); ?></div>
 							<div id="loadSchedulesPanel_return_button" class="material-icons closeButton" style="font-family: 'Material Icons' !important">close</div>
 						</div>
 						
@@ -6322,7 +6320,7 @@ Domain Path: /languages
 				'Username' => __('Username', 'booking-package'),
 				'Email' => __('Email', 'booking-package'),
 				'Password' => __('Password', 'booking-package'),
-				'Custom form fields' => __('Custom form fields', 'booking-package'),
+				'Custom Fields' => __('Custom Fields', 'booking-package'),
 				'Local Payment' => __('Local Payment', 'booking-package'),
 			);
 			
@@ -6334,10 +6332,8 @@ Domain Path: /languages
 				$dictionary['Booking'] = __("Booking", 'booking-package');
 				$dictionary['There are no time slots.'] = __('There are no time slots.', 'booking-package');
 				$dictionary['There are no customers.'] = __('There are no customers.', 'booking-package');
-				$dictionary['This booking was paid through %s. Will the payment be refunded to the customer?'] = __('This booking was paid through %s. Will the payment be refunded to the customer?', 'booking-package');
-				$dictionary['Will emails be sent to both customers and administrators?'] = __('Will emails be sent to both customers and administrators?', 'booking-package');
-				#$dictionary['This booking has been paid by credit card. Do you refund the price to the customer?'] = __('This booking has been paid by credit card. Do you refund the price to the customer?', 'booking-package');
-				#$dictionary['Do you send e-mail notifications to customers or administrators?'] = __('Do you send e-mail notifications to customers or administrators?', 'booking-package');
+				$dictionary['This booking was paid via %s. Will the payment be refunded to the customer?'] = __('This booking was paid via %s. Will the payment be refunded to the customer?', 'booking-package');
+				$dictionary['Will emails be sent to both customers and admins?'] = __('Will emails be sent to both customers and admins?', 'booking-package');
 				$dictionary['Are you sure you want to delete this booking?'] = __('Are you sure you want to delete this booking?', 'booking-package');
 				$dictionary['Please create a service.'] = __('Please create a service.', 'booking-package');
 				$dictionary['The user was not found.'] = __('The user was not found.', 'booking-package');
@@ -6428,8 +6424,8 @@ Domain Path: /languages
 				$doctionary['This calendar shares the schedules of the "%s".'] = __('This calendar shares the schedules of the "%s".', 'booking-package');
 				$dictionary['Weekly Schedule Templates'] = __('Weekly Schedule Templates', 'booking-package');
 				$dictionary['Select Multiple Days'] = __('Select Multiple Days', 'booking-package');
-				$dictionary['Multiple days'] = __('Multiple days', 'booking-package');
-				$dictionary['Add time slots'] = __('Add time slots', 'booking-package');
+				$dictionary['Multiple Days'] = __('Multiple Days', 'booking-package');
+				$dictionary['Add Time Slots'] = __('Add Time Slots', 'booking-package');
 				$dictionary['Coupon name'] = __('Coupon name', 'booking-package');
 				$dictionary['Add New Item'] = __('Add New Item', 'booking-package');
 				$dictionary['Select All Time Slots'] = __('Select All Time Slots', 'booking-package');
@@ -6493,10 +6489,9 @@ Domain Path: /languages
 				$dictionary['Pseudo-class'] = __("Pseudo-class", 'booking-package');
 				$dictionary['Left arrow'] = __('Left arrow', 'booking-package');
 				$dictionary['Right arrow'] = __('Right arrow', 'booking-package');
-				$dictionary['Cancel user booking'] = __('Cancel user booking', 'booking-package');
-				$dictionary['Font size'] = __('Font size', 'booking-package');
+				$dictionary['Font Size'] = __('Font Size', 'booking-package');
 				$dictionary['Font color'] = __('Font color', 'booking-package');
-				$dictionary['Background color'] = __('Background color', 'booking-package');
+				$dictionary['Background Color'] = __('Background Color', 'booking-package');
 				$dictionary['Border color'] = __('Border color', 'booking-package');
 				$dictionary['Cancel a booking by your customer'] = __("Cancel a booking by your customer", 'booking-package');
 				$dictionary['Booking reminder'] = __("Booking reminder", 'booking-package');
@@ -6511,10 +6506,8 @@ Domain Path: /languages
 			} else if ($mode == "setting_page") {
 				
 				$dictionary['My billing'] = __('My billing', 'booking-package');
-				$dictionary['Cancel my subscription'] = __('Cancel my subscription', 'booking-package');
-				$dictionary['Update my subscription'] = __("Update my subscription", 'booking-package');
-				$dictionary['Cancel subscription'] = __('Cancel subscription', 'booking-package');
-				$dictionary['Update subscription'] = __("Update subscription", 'booking-package');
+				$dictionary['Cancel My Subscription'] = __('Cancel My Subscription', 'booking-package');
+				$dictionary['Update My Subscription'] = __("Update My Subscription", 'booking-package');
 				$dictionary['Value'] = __('Value', 'booking-package');
 				$dictionary['Type'] = __('Type', 'booking-package');
 				$dictionary['Subscription status'] = __('Subscription status', 'booking-package');

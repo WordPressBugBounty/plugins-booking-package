@@ -327,9 +327,9 @@ window.addEventListener('error', function(event) {
 			
 		}
 		
-		var cancelSubscription = object.createButton(null, null, 'media-button button-primary button-large media-button-insert deleteButton', null, this._i18n.get("Cancel my subscription") );
+		var cancelSubscription = object.createButton(null, null, 'media-button button-primary button-large media-button-insert deleteButton', null, this._i18n.get("Cancel My Subscription") );
 		var updateSubscriptionPayments = object.createButton(null, 'margin-left: 10px;', 'w3tc-button-save button-primary', null, this._i18n.get("My billing") );
-		var updateSubscription = object.createButton(null, 'margin-left: 10px;', 'w3tc-button-save button-primary', null, this._i18n.get("Update my subscription") );
+		var updateSubscription = object.createButton(null, 'margin-left: 10px;', 'w3tc-button-save button-primary', null, this._i18n.get("Update My Subscription") );
 		
 		var getSubscription = null;
 		if (this._getSubscription != null) {

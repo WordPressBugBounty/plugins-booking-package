@@ -18,7 +18,7 @@
 
 #setting_stopService .stopServiceForDayOfTimes label {
     
-    display: initial;
+    display: block;
     margin-right: 0.5em;
     
 }

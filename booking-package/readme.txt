@@ -1,10 +1,10 @@
-=== Booking Package - Online Booking System ===
+=== Booking Package ===
 Contributors: masaakitanaka
 Donate link: https://saasproject.net/donate/
 Tags: Booking, reservation, appointment, Booking calendar, 予約システム
 Requires at least: 3.5
 Tested up to: 6.8
-Stable tag: 1.6.81
+Stable tag: 1.6.82
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -804,6 +804,12 @@ If you have some technical questions please post to the [support page](https://w
 
 = 1.6.81 =
 * Fixed a bug.
+
+= 1.6.82 =
+* Fixed a bug.
+* The translation issue has been resolved.
+
+
 
 == Upgrade notice ==
 -
