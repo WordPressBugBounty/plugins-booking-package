@@ -7446,9 +7446,17 @@
 			
 		}
 		
-		public function serachCourse($accountKey, $scheduleKey, $key = false, $bookingYMD = null, $time = false){
+		public function serachCourse($accountKey, $scheduleKey, $key = false, $servicesDetails = null, $bookingYMD = null, $time = false){
 			
 			global $wpdb;
+			
+			$table_name = $wpdb->prefix . "booking_package_schedules";
+			$sql = $wpdb->prepare(
+				"SELECT * FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
+				array(intval($scheduleKey))
+			);
+			$schedule = $wpdb->get_row($sql, ARRAY_A);
+			
 			$table_name = $wpdb->prefix . "booking_package_services";
 			if ($key !== false) {
 				
@@ -7488,7 +7496,7 @@
 					
 				}
 				
-				$invalidService = $this->invalidService($accountKey, $scheduleKey, $row, $bookingYMD);
+				$invalidService = $this->invalidService($accountKey, $scheduleKey, $schedule, $row, $servicesDetails, $bookingYMD);
 				if ($invalidService === false) {
 					
 					return array('status' => 'error', 'message' => sprintf(__('%s was not found', 'booking-package'), $row['name']) . " #2");
@@ -7501,11 +7509,12 @@
 			
 		}
 		
-		public function invalidService($accountKey, $scheduleKey, $requestService, $bookingYMD) {
+		public function invalidService($accountKey, $scheduleKey, $schedule, $requestService, $servicesDetails, $bookingYMD) {
 			
 			global $wpdb;
 			$response = true;
 			$hasServices = array();
+			$timeSlots = array();
 			$table_name = $wpdb->prefix . "booking_package_booked_customers";
 			$sql = $wpdb->prepare(
 				"SELECT `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
@@ -7529,6 +7538,53 @@
 					}
 					
 				}
+				
+			}
+			
+			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && $requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
+				
+				$selectedService = $servicesDetails['object'][0];
+				$start_unixTime = $schedule['unixTime'];
+				$end_unixTime = intval($start_unixTime) + ($servicesDetails['time'] * 60);
+				$sql = $wpdb->prepare(
+					"SELECT `accountKey`, `status`, `scheduleUnixTime`, `options` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d AND `status` != 'canceled' ORDER BY `scheduleUnixTime` ASC;", 
+					array(intval($accountKey), intval($start_unixTime), intval($end_unixTime) )
+				);
+				#var_dump($sql);
+				$rows = $wpdb->get_results($sql, ARRAY_A);
+				foreach ((array) $rows as $row) {
+					
+					$scheduleUnixTime = intval($row['scheduleUnixTime']);
+					#var_dump($scheduleUnixTime);
+					$services = json_decode($row['options'], true);
+					for ($i = 0; $i < count($services); $i++) {
+						
+						$serviceKey = intval($services[$i]['key']);
+						if (intval($selectedService['key']) === $serviceKey) {
+							
+							if (isset($timeSlots[$scheduleUnixTime])) {
+								
+								$timeSlots[$scheduleUnixTime]++;
+								
+							} else {
+								
+								$timeSlots[$scheduleUnixTime] = 1;
+								
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+				
+				#var_dump($timeSlots);
+				#var_dump($selectedService['key']);
+				
+			} else {
+				
+				
 				
 			}
 			
@@ -7564,11 +7620,24 @@
 				
 			} else if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes') {
 				
-				if ($requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
+				if ($requestService['stopServiceForDayOfTimes'] == 'startTimeSlot') {
 					
 					if (isset($hasServices[intval($requestService['key'])]) && $hasServices[intval($requestService['key'])] >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
 						
 						$response = false;
+						
+					}
+					
+				} else if ($requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
+					
+					foreach ($timeSlots as $time => $slot) {
+						
+						if ( intval($slot) >= intval($requestService['stopServiceForSpecifiedNumberOfTimes']) ) {
+							
+							$response = false;
+							break;
+							
+						}
 						
 					}
 					
@@ -7602,68 +7671,6 @@
 				
 			}
 			
-			/**
-			if ($requestService['stopServiceUnderFollowingConditions'] != 'doNotStop') {
-				
-				$hasServices = array();
-				$table_name = $wpdb->prefix . "booking_package_booked_customers";
-				$sql = $wpdb->prepare(
-					"SELECT `accountKey`, `status`, `options` FROM `".$table_name."` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
-					array(intval($scheduleKey))
-				);
-				$rows = $wpdb->get_results($sql, ARRAY_A);
-				#var_dump(count($rows));
-				foreach ((array) $rows as $row) {
-					
-					$services = json_decode($row['options'], true);
-					for ($i = 0; $i < count($services); $i++) {
-						
-						$serviceKey = intval($services[$i]['key']);
-						if (isset($hasServices[$serviceKey])) {
-							
-							$hasServices[$serviceKey]++;
-							
-						} else {
-							
-							$hasServices[$serviceKey] = 1;
-							
-						}
-						
-					}
-					
-				}
-				
-				#var_dump($hasServices);
-				if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual') {
-					
-					if (count($rows) != 0) {
-						
-						$response = false;
-						
-					}
-					
-					if ($requestService['doNotStopServiceAsException'] == 'sameServiceIsNotStopped') {
-						
-						if (isset($hasServices[intval($requestService['key'])])) {
-							
-							$response = true;
-							
-						}
-						
-					}
-					
-				} else if ($requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
-					
-					if (count($rows) == 0) {
-						
-						$response = false;
-						
-					}
-					
-				}
-				
-			}
-			**/
 			
 			return $response;
 			
@@ -9642,7 +9649,7 @@
 							$services = $servicesDetails['object'];
 							foreach ((array) $services as $key => $service) {
 								
-								$row = $this->serachCourse($accountKey, $_POST['timeKey'], $service['key'], $bookingYMD);
+								$row = $this->serachCourse($accountKey, $_POST['timeKey'], $service['key'], $servicesDetails, $bookingYMD);
 								if (isset($row['status']) && $row['status'] == 'error') {
 									
 									$this->cancelPayment();
@@ -11527,7 +11534,7 @@
 						
 						foreach ((array) $selectedServices as $service) {
 							
-							$rowCourse = $this->serachCourse($accountKey, $scheduleKey, $service['key'], $bookingYMD);
+							$rowCourse = $this->serachCourse($accountKey, $scheduleKey, $service['key'], $servicesDetails2, $bookingYMD);
 							if (isset($rowCourse['status']) && $rowCourse['status'] == 'error') {
 								
 								return array('status' => 'error', 'error' => '9020', 'servicesDetails2' => $servicesDetails2, 'rowCourse' => $rowCourse, 'accountKey' => $accountKey, 'message' => $rowCourse['message']);

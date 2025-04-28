@@ -287,7 +287,7 @@ window.addEventListener('error', function(event) {
 		};
 		
 		var nameList = {
-			subscription_statu: object._i18n.get('Subscription status'),
+			subscription_statu: object._i18n.get('Status'),
 			customer_id_for_subscriptions: object._i18n.get("ID"),
 			id_for_subscriptions: object._i18n.get("Subscription ID"),
 			customer_email_for_subscriptions: object._i18n.get("Email Address"),

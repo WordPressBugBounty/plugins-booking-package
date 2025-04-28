@@ -9549,6 +9549,7 @@ window.addEventListener('error', function(event) {
                     } else {
                         
                         alert(json["message"]);
+                        object.loadingPanel.setAttribute("class", "hidden_panel");
                         
                     }
                     			

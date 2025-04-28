@@ -95,7 +95,7 @@
             $booking_syn = array(
                 "iCal" => array(
                     'ical_active' => array('name' => __('Status', 'booking-package'), 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('1' => __('Enabled', 'booking-package'), '0' => __('Disabled', 'booking-package'))), 
-                    'syncPastCustomersForIcal' => array('name' => __('Period', 'booking-package'), 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
+                    'syncPastCustomersForIcal' => array('name' => __('Data Range', 'booking-package'), 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                         array(
                             '7' => sprintf(__('Last %s days', 'booking-package'), 7),
                             '14' => sprintf(__('Last %s days', 'booking-package'), 14),
@@ -599,15 +599,15 @@
                             '24hours' => '17:00'
                         )
                     ),
-                    'positionTimeDate' => array('key' => 'positionTimeDate', 'name' => __('Position of date and time', 'booking-package'), 'value' => 'dateTime', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => 
+                    'positionTimeDate' => array('key' => 'positionTimeDate', 'name' => __('Position of Date and Time', 'booking-package'), 'value' => 'dateTime', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => 
                         array(
                             'timeDate' => __('Time', 'booking-package') . ' - ' . __('Date', 'booking-package'), 
                             'dateTime' => __('Date', 'booking-package') . ' - ' . __('Time', 'booking-package'), 
                         )
                     ),
-                    'positionOfWeek' => array('name' => __('Position of the day of the week', 'booking-package'), 'value' => 'before', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('before' => __('Before the date', 'booking-package'), 'after' => __('After the date', 'booking-package'))),
-                    'automaticApprove' => array('name' => __('Automatically approve of booking', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))), 
-                    'dataRetentionPeriod' => array('name' => __('Data retention period of customer', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'SELECT', 'valueList' => 
+                    'positionOfWeek' => array('name' => __('Position of the Day of the Week', 'booking-package'), 'value' => 'before', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('before' => __('Before the date', 'booking-package'), 'after' => __('After the date', 'booking-package'))),
+                    'automaticApprove' => array('name' => __('Automatically Approve Bookings', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))), 
+                    'dataRetentionPeriod' => array('name' => __('Customer Data Retention Period', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'SELECT', 'valueList' => 
                         array(
                             '0' => __('Forever', 'booking-package'), 
                             '30' => sprintf(__('%d days', 'booking-package'), 30), 
@@ -620,24 +620,24 @@
                             '1825' => sprintf(__('%d years', 'booking-package'), 5), 
                         )
                     ), 
-                    'ajax_url' => array('name' => __('Select the URL for AJAX on the public page', 'booking-package'), 'value' => 'ajax', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
+                    'ajax_url' => array('name' => __('AJAX URL for Public Page', 'booking-package'), 'value' => 'ajax', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                     array(
                         'ajax' => plugins_url() . '/booking-package/ajax.php',
                         'top' => get_home_url(),
                         'admin-ajax' => admin_url('admin-ajax.php'),
                     )), 
-                    'ajax_nonce_function' => array('name' => __('Select a function to validate the value of a nonce with AJAX on the public page', 'booking-package'), 'value' => 'custom_nonce_validation', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('check_ajax_referer' => 'check_ajax_referer()', 'wp_verify_nonce' => 'wp_verify_nonce()', 'custom_nonce_validation' => __('Use custom plugin nonce validation', 'booking-package'))), 
+                    'ajax_nonce_function' => array('name' => __('AJAX Nonce Validation Function', 'booking-package'), 'value' => 'custom_nonce_validation', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('check_ajax_referer' => 'check_ajax_referer()', 'wp_verify_nonce' => 'wp_verify_nonce()', 'custom_nonce_validation' => __('Use custom plugin nonce validation', 'booking-package'))), 
                     
-                    'javascriptSyntaxErrorNotification' => array('name' => __('Javascript syntax error notification', 'booking-package'), 'deprecated' => false, 'value' => 1, 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Automatically notify developers', 'booking-package'))), 
+                    'javascriptSyntaxErrorNotification' => array('name' => __('Notify Developers on JavaScript Errors', 'booking-package'), 'deprecated' => false, 'value' => 1, 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Automatically notify developers', 'booking-package'))), 
                     
-                    'characterCodeOfDownloadFile' => array('name' => __('Character code of download file', 'booking-package'), 'value' => 'UTF-8', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('UTF-8' => 'UTF-8', 'EUC-JP' => 'EUC-JP', 'SJIS' => 'SJIS')),
-                    'lineBreakCodesInCsv' => array('name' => __('Line break codes in a CSV file', 'booking-package'), 'value' => 'LF', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('LF' => 'LF', 'CRLF' => 'CRLF')),
+                    'characterCodeOfDownloadFile' => array('name' => __('Download File Character Encoding', 'booking-package'), 'value' => 'UTF-8', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('UTF-8' => 'UTF-8', 'EUC-JP' => 'EUC-JP', 'SJIS' => 'SJIS')),
+                    'lineBreakCodesInCsv' => array('name' => __('CSV File Line Break Code', 'booking-package'), 'value' => 'LF', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'RADIO', 'valueList' => array('LF' => 'LF', 'CRLF' => 'CRLF')),
                     
-                    'googleAnalytics' => array('name' => __('Tracking ID for the Google analytics', 'booking-package'), 'deprecated' => true, 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
+                    'googleAnalytics' => array('name' => __('Tracking ID for Google Analytics', 'booking-package'), 'deprecated' => true, 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     
                     'customizeStatus' => array(
                         'key' => 'customizeStatus', 
-                        'name' => __('Color settings for booked customer status', 'booking-package'), 
+                        'name' => __('Color Settings for Booking Status', 'booking-package'), 
                         'disabled' => 0, 
                         'value' => '1', 
                         'inputLimit' => 2, 
@@ -691,29 +691,29 @@
                     
                 ),
                 "Design" => array(
-                    'autoWindowScroll' => array('name' => __('Automatic scroll to the top on the booking field', 'booking-package'), 'value' => '1', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))),
-                    'headingPosition' => array('name' => __('Define "position: sticky" for the css (style) in the calendar for visitors', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))),
+                    'autoWindowScroll' => array('name' => __('Automatic Scroll to Top of Booking Form', 'booking-package'), 'value' => '1', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))),
+                    'headingPosition' => array('name' => __('Use Sticky Positioning for Visitor Calendar', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => __('Enabled', 'booking-package'))),
                     'fontSize' => array('name' => __('Font Size', 'booking-package'), 'value' => '16px', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     #'fontColor' => array('name' => __('Font color', 'booking-package'), 'value' => '#969696', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
                     'backgroundColor' => array('name' => __('Background Color', 'booking-package'), 'value' => '#FFF', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'calendarBackgroundColorWithSchedule' => array('name' => __('Calendar background color with schedule', 'booking-package'), 'value' => '#FFF', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'calendarBackgroundColorWithNoSchedule' => array('name' => __('Calendar background color with no schedule', 'booking-package'), 'value' => '#EEE', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'backgroundColorOfRegularHolidays' => array('name' => __('Background color of closed days', 'booking-package'), 'value' => '#FFD5D5', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'calendarBackgroundColorWithSchedule' => array('name' => __('Calendar Background (With Schedule)', 'booking-package'), 'value' => '#FFF', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'calendarBackgroundColorWithNoSchedule' => array('name' => __('Calendar Background (No Schedule)', 'booking-package'), 'value' => '#EEE', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'backgroundColorOfRegularHolidays' => array('name' => __('Background Color of Closed Days', 'booking-package'), 'value' => '#FFD5D5', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
                     
-                    'scheduleAndServiceBackgroundColor' => array('name' => __('Schedule and service background color', 'booking-package'), 'value' => '#FFF', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'backgroundColorOfSelectedLabel' => array('name' => __('Background color of selected label', 'booking-package'), 'value' => '#EAEDF3', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'mouseHover' => array('name' => __('Background color when the pointer overlaps a link', 'booking-package'), 'value' => '#EAEDF3', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
-                    'borderColor' => array('name' => __('Border color', 'booking-package'), 'value' => '#ddd', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'scheduleAndServiceBackgroundColor' => array('name' => __('Schedule/Service Item Background', 'booking-package'), 'value' => '#FFF', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'backgroundColorOfSelectedLabel' => array('name' => __('Selection Background Color', 'booking-package'), 'value' => '#EAEDF3', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'mouseHover' => array('name' => __('Link Hover Background Color', 'booking-package'), 'value' => '#EAEDF3', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
+                    'borderColor' => array('name' => __('Border Color', 'booking-package'), 'value' => '#ddd', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT', 'js' => 'colorPicker'), 
                     
                 ),
                 "twilio" => array(
                     'twilio_active' => array('name' => __('Active', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('1' => __('Enabled', 'booking-package'), '0' => __('Disabled', 'booking-package'))), 
-                    'twilio_sendingMethod' => array('name' => __('Sending method', 'booking-package'), 'value' => 'phoneNumber', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('phoneNumber' => __('Phone number', 'booking-package'), 'senderID' => __('Alphanumeric Sender ID', 'booking-package'))), 
+                    'twilio_sendingMethod' => array('name' => __('Sending Method', 'booking-package'), 'value' => 'phoneNumber', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('phoneNumber' => __('Phone Number', 'booking-package'), 'senderID' => __('Alphanumeric Sender ID', 'booking-package'))), 
                     'twilio_sid' => array('name' => __('Account SID', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     'twilio_service_sid' => array('name' => __('Messaging Service SID', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
-                    'twilio_token' => array('name' => __('Auth token', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
-                    'twilio_countryCode' => array('name' => __('Country calling code', 'booking-package'), 'value' => '', 'placeholder' => '+1', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
-                    'twilio_number' => array('name' => __('Phone number', 'booking-package'), 'value' => '', 'placeholder' => '+11234567890', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
+                    'twilio_token' => array('name' => __('Auth Token', 'booking-package'), 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
+                    'twilio_countryCode' => array('name' => __('Country Calling Code', 'booking-package'), 'value' => '', 'placeholder' => '+1', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
+                    'twilio_number' => array('name' => __('Phone Number', 'booking-package'), 'value' => '', 'placeholder' => '+11234567890', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                 ),
                 "Messaging Services" => array(
                     'whatsApp' => array(
@@ -739,7 +739,7 @@
                             ),
                             1 => array(
                                 'key' => 'whatsApp_countryCode',
-                                'name' => __('Country calling code', 'booking-package') . ': ',
+                                'name' => __('Country Calling Code', 'booking-package') . ': ',
                                 'value' => null,
                                 'inputType' => 'TEXT',
                                 'inputLimit' => 0,
@@ -751,7 +751,7 @@
                             ),
                             2 => array(
                                 'key' => 'whatsApp_phoneId',
-                                'name' => __('Phone number ID', 'booking-package') . ': ',
+                                'name' => __('Phone Number ID', 'booking-package') . ': ',
                                 'value' => null,
                                 'inputType' => 'TEXT',
                                 'inputLimit' => 0,
@@ -790,8 +790,8 @@
                     'stripe_active' => array('name' => __('Active', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('1' => __('Enabled', 'booking-package'), '0' => __('Disabled', 'booking-package'))), 
                     'stripe_public_key' => array('name' => __('Public Key', 'booking-package'), 'value' => '', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
                     'stripe_secret_key' => array('name' => __('Secret Key', 'booking-package'), 'value' => '', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'TEXT'),
-                    'stripe_capture_method' => array('name' => __('Capture method for payment intent', 'booking-package'), 'value' => 'automatic', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('automatic' => __('Automatic', 'booking-package'), 'manual' => __('Manual', 'booking-package'))), 
-                    'stripe_konbini_expiration_date' => array('name' => __('Expiration date for convenience store payments', 'booking-package'), 'value' => '120', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
+                    'stripe_capture_method' => array('name' => __('Capture Method for Payment Intent', 'booking-package'), 'value' => 'automatic', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('automatic' => __('Automatic', 'booking-package'), 'manual' => __('Manual', 'booking-package'))), 
+                    'stripe_konbini_expiration_date' => array('name' => __('Expiration Time Limit for Convenience Store Payments', 'booking-package'), 'value' => '120', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                         array(
                             '60' => sprintf(__('%d minutes', 'booking-package'), 60), 
                             '120' => sprintf(__('%d minutes', 'booking-package'), 120), 
@@ -1186,43 +1186,7 @@
             $words = array(
                 __('Rates', 'booking-package'), 
                 __('Extra Charges & Taxes', 'booking-package'), 
-                __('Automatically Approve Bookings', 'booking-package'), 
-                __('Customer Data Retention Period', 'booking-package'), 
-                __('AJAX URL for Public Page', 'booking-package'), 
-                __('AJAX Nonce Validation Function', 'booking-package'), 
-                __('Notify Developers on JavaScript Errors', 'booking-package'), 
-                __('Download File Character Encoding', 'booking-package'), 
-                __('CSV File Line Break Code', 'booking-package'), 
-                __('Tracking ID for Google Analytics', 'booking-package'), 
-                __('Color Settings for Booking Status', 'booking-package'), 
-                __('Automatic Scroll to Top of Booking Form', 'booking-package'), 
-                __('Use Sticky Positioning for Visitor Calendar', 'booking-package'), 
-                __('Calendar Background (With Schedule)', 'booking-package'), 
-                __('Calendar Background (No Schedule)', 'booking-package'), 
-                __('Schedule/Service Item Background', 'booking-package'), 
-                __('Selection Background Color', 'booking-package'), 
-                __('Link Hover Background Color', 'booking-package'), 
-                __('Expiration Time Limit for Convenience Store Payments', 'booking-package'), 
-                __('Border Color', 'booking-package'), 
-                __('Sending Method', 'booking-package'), 
-                __('Auth Token', 'booking-package'), 
-                __('Country Calling Code', 'booking-package'), 
-                __('Phone Number', 'booking-package'), 
-                __('Sending Method', 'booking-package'), 
-                __('Phone Number', 'booking-package'), 
-                __('Auth Token', 'booking-package'), 
-                __('Country Calling Code', 'booking-package'), 
-                __('Capture Method for Payment Intent', 'booking-package'), 
                 __('Expiration Date for Convenience Store Payments', 'booking-package'), 
-                __('Return to Input Form', 'booking-package'), 
-                __('Left Arrow', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
-                __('Rates', 'booking-package'), 
                 
             );
             
@@ -2160,6 +2124,7 @@
                             'valueList' => array( 
                                 'day' => __('Total bookings per day', 'booking-package'), 
                                 'timeSlot' => __('Bookings per time slot', 'booking-package'), 
+                                'startTimeSlot' => __('Maximum bookings per start time slot', 'booking-package'),
                             ),
                             'className' => 'stopServiceForDayOfTimes',
                         ),
@@ -3586,6 +3551,40 @@
             
         }
         
+        public function checkDuplicateOptionNumbers($options, $uniqueKey = 'number') {
+            
+            $numbers = array();
+            foreach ($options as $option) {
+                
+                $number = null;
+                if (is_object($option) && isset($option[$uniqueKey])) {
+                    
+                    $number = $option[$uniqueKey];
+                    
+                } elseif (is_array($option) && isset($option[$uniqueKey])) {
+                    
+                    $number = $option[$uniqueKey];
+                    
+                }
+                
+                if ($number !== null) {
+                    
+                    if (in_array($number, $numbers, true)) {
+                        
+                        return true;
+                        
+                    }
+                    
+                    array_push($numbers, $number);
+                    
+                }
+                
+            }
+            
+            return false;
+            
+        }
+        
         public function updateGuests($accountKey = false){
             
             global $wpdb;
@@ -3637,17 +3636,15 @@
                                 
                             }
                             
-                            /**
-                            if ($key == 'number' || $key == 'price') {
-                                
-                                $value = $this->getOnlyNumbers($value);
-                                $object[sanitize_text_field($key)] = intval($value);
-                                
-                            }
-                            **/
                         }
                         
                         array_push($json, $object);
+                        
+                    }
+                    
+                    if ($this->checkDuplicateOptionNumbers($json, 'number') === true) {
+                        
+                        return array('status' => 'error', 'message' => sprintf(__('The value for \'%s\' in the options must be a unique number that does not duplicate values from other settings.', 'booking-package'), __('Number of Guests', 'booking-package') ) );
                         
                     }
                     
@@ -3784,6 +3781,12 @@
                         }
                         
                         array_push($json, $object);
+                        
+                    }
+                    
+                    if ($this->checkDuplicateOptionNumbers($json, 'number') === true) {
+                        
+                        return array('status' => 'error', 'message' => sprintf(__('The value for \'%s\' in the options must be a unique number that does not duplicate values from other settings.', 'booking-package'), __('Number of Guests', 'booking-package') ) );
                         
                     }
                     

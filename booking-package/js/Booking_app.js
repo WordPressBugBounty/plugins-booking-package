@@ -6169,7 +6169,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 }
                 
                 courseTime += totalTimeInOptions;
-                object._servicesControl.invalidService(calendarData['schedule'][calendarKey], calendarData['bookedServices'], selectedService, courseTime);
+                object._servicesControl.invalidService(calendarData['schedule'][calendarKey], calendarData['bookedServices'], selectedService, courseTime, day, month, year);
                 
             } else {
                 

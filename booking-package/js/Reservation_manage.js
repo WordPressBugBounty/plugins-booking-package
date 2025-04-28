@@ -4549,7 +4549,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             if (options != null) {
                 
-                updateSchedule[calendarKey] = object._servicesControl.invalidService(updateSchedule[calendarKey], calendarData['bookedServices'], selectedService, courseTime);
+                updateSchedule[calendarKey] = object._servicesControl.invalidService(updateSchedule[calendarKey], calendarData['bookedServices'], selectedService, courseTime, day, month, year);
                 
             }
             
@@ -6296,7 +6296,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 }
                 
                 courseTime += totalTimeInOptions;
-                object._servicesControl.invalidService(calendarData['schedule'][calendarKey], calendarData['bookedServices'], selectedService, courseTime);
+                object._servicesControl.invalidService(calendarData['schedule'][calendarKey], calendarData['bookedServices'], selectedService, courseTime, day, month, year);
                 
             } else {
                 

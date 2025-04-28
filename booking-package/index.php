@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.82
+Version:     1.6.83
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -6487,8 +6487,8 @@ Domain Path: /languages
 				$dictionary['Next available day'] = __("Next available day", 'booking-package');
 				$dictionary['Return from the form'] = __("Return from the form", 'booking-package');
 				$dictionary['Pseudo-class'] = __("Pseudo-class", 'booking-package');
-				$dictionary['Left arrow'] = __('Left arrow', 'booking-package');
-				$dictionary['Right arrow'] = __('Right arrow', 'booking-package');
+				$dictionary['Left Arrow'] = __('Left Arrow', 'booking-package');
+				$dictionary['Right Arrow'] = __('Right Arrow', 'booking-package');
 				$dictionary['Font Size'] = __('Font Size', 'booking-package');
 				$dictionary['Font color'] = __('Font color', 'booking-package');
 				$dictionary['Background Color'] = __('Background Color', 'booking-package');
@@ -6510,7 +6510,7 @@ Domain Path: /languages
 				$dictionary['Update My Subscription'] = __("Update My Subscription", 'booking-package');
 				$dictionary['Value'] = __('Value', 'booking-package');
 				$dictionary['Type'] = __('Type', 'booking-package');
-				$dictionary['Subscription status'] = __('Subscription status', 'booking-package');
+				$dictionary['Subscription Status'] = __('Subscription Status', 'booking-package');
 				$dictionary['Subscription ID'] = __('Subscription ID', 'booking-package');
 				$dictionary['Expiration Date'] = __('Expiration Date', 'booking-package');
 				$dictionary['Your email'] = __('Your email', 'booking-package');
