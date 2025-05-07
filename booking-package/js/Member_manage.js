@@ -441,11 +441,32 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
     mainPanel.textContent = null;
     mainPanel.appendChild(buttonPanel);
     
+    function areObjectKeyOrdersEqual(obj1, obj2) {
+        
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        
+        for (let i = 0; i < keys1.length; i++) {
+            
+            if (keys1[i] !== keys2[i]) {
+                
+                return false;
+                
+            }
+            
+        }
+        
+        return true;
+    }
+    
     var panel = object.create('div', null, null, 'formSort', null, 'dnd', null);
     var buttons = {};
     var columns = {};
+    var original_columns = {};
     var ranking_columns = {};
-    
     for (var key = 0; key < formFields.length; key++) {
         
         object._console.log(formFields[key]);
@@ -482,6 +503,7 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
         var optionPanel = object.create('div', null, [rank_down_button, editLabel, deleteLabel], null, null, 'content_block dnd_optionBox', null);
         var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
         columns[key] = column;
+        original_columns['key_' + key] = column;
         ranking_columns['key_' + key] = column;
         panel.appendChild(column);
         
@@ -498,6 +520,11 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
             ranking_columns = object.moveRankingUp(ranking_columns, key);
             panel.insertBefore(ranking_columns[key], target_column);
             saveButton.disabled = false;
+            if (areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                
+                saveButton.disabled = true;
+                
+            }
             
         };
         
@@ -514,6 +541,11 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
             ranking_columns = object.moveRankingDown(ranking_columns, key);
             panel.insertBefore(target_column, ranking_columns[key]);
             saveButton.disabled = false;
+            if (areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                
+                saveButton.disabled = true;
+                
+            }
             
         };
         
@@ -522,6 +554,7 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
             if (editBool === true) {
                 
                 addButton.disabled = true;
+                saveButton.disabled = true;
                 editBool = false;
                 var key = this.getAttribute("data-key");
                 for (var formKey in columns) {
@@ -579,6 +612,7 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
                     if (action == "close") {
                         
                         addButton.disabled = false;
+                        saveButton.disabled = false;
                         for (var formKey in columns) {
                             
                             columns[formKey].classList.remove("hidden_panel");
@@ -658,12 +692,14 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
             inputType.required.value = [object._i18n.get('Enabled')];
             panel.classList.add("hidden_panel");
             editBool = false;
+            saveButton.disabled = true;
             addButton.disabled = true;
             object.addItem(mainPanel, 'addUserInput', inputType, function(action){
                 
                 editBool = true;
                 if (action == "close") {
                     
+                    saveButton.disabled = false;
                     addButton.disabled = false;
                     
                 } else {

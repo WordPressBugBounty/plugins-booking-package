@@ -2761,6 +2761,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         if (point <= 0) {
                             
                             dayPanel.setAttribute('data-onclick', 0);
+                            dayPanel.classList.add('closingDay');
                             
                         }
                         
@@ -3442,11 +3443,16 @@ var error_hCaptcha_for_booking_package = function(response) {
                             
                         }
                         
+                    }
+                    
+                    for (var i = 0; i < calendarData['schedule'][calendarKey].length; i++) {
                         
-                    } else {
-                        
-                        //remainder = parseInt(element.remainder);
-                        
+                        var schedule = calendarData['schedule'][calendarKey][i];
+                        if (schedule['stop'] === 'true') {
+                            
+                            remainder -= parseInt(schedule.remainder);
+                            
+                        }
                     }
                     
                 }

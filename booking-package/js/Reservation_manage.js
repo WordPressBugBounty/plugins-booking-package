@@ -5478,8 +5478,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 if (object._courseList.length == 0) {
                     
-                    var errorMessage = object._i18n.get("Service is not registered. ");
-                    errorMessage += object._i18n.get("Please create a service.");
+                    //var errorMessage = object._i18n.get("Service is not registered. ");
+                    var errorMessage = object._i18n.get("Please create a service.");
                     var confirm = new Confirm(object._debug);
                     confirm.alertPanelShow(object._i18n.get("Error"), errorMessage, false, function(caalback){
                         

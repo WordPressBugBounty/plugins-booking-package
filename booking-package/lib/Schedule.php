@@ -7516,31 +7516,6 @@
 			$hasServices = array();
 			$timeSlots = array();
 			$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			$sql = $wpdb->prepare(
-				"SELECT `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
-				array(intval($scheduleKey))
-			);
-			$rows = $wpdb->get_results($sql, ARRAY_A);
-			foreach ((array) $rows as $row) {
-				
-				$services = json_decode($row['options'], true);
-				for ($i = 0; $i < count($services); $i++) {
-					
-					$serviceKey = intval($services[$i]['key']);
-					if (isset($hasServices[$serviceKey])) {
-						
-						$hasServices[$serviceKey]++;
-						
-					} else {
-						
-						$hasServices[$serviceKey] = 1;
-						
-					}
-					
-				}
-				
-			}
-			
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && $requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
 				
 				$selectedService = $servicesDetails['object'][0];
@@ -7550,7 +7525,6 @@
 					"SELECT `accountKey`, `status`, `scheduleUnixTime`, `options` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d AND `status` != 'canceled' ORDER BY `scheduleUnixTime` ASC;", 
 					array(intval($accountKey), intval($start_unixTime), intval($end_unixTime) )
 				);
-				#var_dump($sql);
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $rows as $row) {
 					
@@ -7576,15 +7550,34 @@
 						
 					}
 					
-					
 				}
-				
-				#var_dump($timeSlots);
-				#var_dump($selectedService['key']);
 				
 			} else {
 				
-				
+				$sql = $wpdb->prepare(
+				"SELECT `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
+				array(intval($scheduleKey))
+				);
+				$rows = $wpdb->get_results($sql, ARRAY_A);
+				foreach ((array) $rows as $row) {
+					
+					$services = json_decode($row['options'], true);
+					for ($i = 0; $i < count($services); $i++) {
+						
+						$serviceKey = intval($services[$i]['key']);
+						if (isset($hasServices[$serviceKey])) {
+							
+							$hasServices[$serviceKey]++;
+							
+						} else {
+							
+							$hasServices[$serviceKey] = 1;
+							
+						}
+						
+					}
+					
+				}
 				
 			}
 			

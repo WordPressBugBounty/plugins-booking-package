@@ -4323,6 +4323,7 @@ window.addEventListener('error', function(event) {
         var panel = object.create('div', null, null, 'guestsSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         for (var key in staffList) {
             
@@ -4352,6 +4353,7 @@ window.addEventListener('error', function(event) {
             var optionPanel = object.create('div', null, [rank_down_button, editLabel, deleteLabel], null, null, 'content_block dnd_optionBox', null);
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             if (staffObj["active"] != "true") {
     			
@@ -4375,8 +4377,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4395,6 +4401,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4402,6 +4413,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -4426,6 +4438,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -4535,7 +4548,7 @@ window.addEventListener('error', function(event) {
         var buttonPanel = object.createButtonPanel(null, 'padding-bottom: 10px;', null, [addButton, saveButton] );
         var coursePanel = document.getElementById("coursePanel");
         coursePanel.textContent = null;
-    	
+        
     	let enableFunction = false;
         var enableFunctionPanel = object.create('div', object._i18n.get('Despite having valid items, the functionality of "%s" is disabled.', [object._i18n.get('Guests')]), null, null, 'color: #ff3333;', 'hidden_panel', null);
     	var directlySwitchPanel = object.createSwitchPanel( account, 'guestsBool', 'directlySwitchForGuests', 'switch1', 'Enable This Item', enableFunctionPanel, 'updateAccountFunction', function(json) {
@@ -4577,6 +4590,7 @@ window.addEventListener('error', function(event) {
         var panel = object.create('div', null, null, 'guestsSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {name: 'Name', email: 'Email', zip: 'Zip', D: 'D'};
 
@@ -4614,6 +4628,7 @@ window.addEventListener('error', function(event) {
             var optionPanel = object.create('div', null, [rank_down_button, editLabel, deleteLabel], null, null, 'content_block dnd_optionBox', null);
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -4631,8 +4646,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4651,6 +4670,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4658,6 +4682,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -4683,6 +4708,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -4807,6 +4833,7 @@ window.addEventListener('error', function(event) {
         var panel = object.create('div', null, null, 'formSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {name: 'Name', email: 'Email', zip: 'Zip', D: 'D'};
         //for(var key in formDataList){
@@ -4840,6 +4867,7 @@ window.addEventListener('error', function(event) {
             var optionPanel = object.create('div', null, [rank_down_button, editLabel, deleteLabel], null, null, 'content_block dnd_optionBox', null);
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -4857,8 +4885,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4877,6 +4909,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -4884,6 +4921,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -4910,6 +4948,7 @@ window.addEventListener('error', function(event) {
                         }
                         
                         addButton.disabled = false;
+                        saveButton.disabled = false;
                         for (var formKey in columns) {
                             
                             columns[formKey].classList.remove("hidden_panel");
@@ -4955,12 +4994,14 @@ window.addEventListener('error', function(event) {
                 
                 panel.classList.add("hidden_panel");
                 editBool = false;
+                saveButton.disabled = true;
                 addButton.disabled = true;
                 object.addItem(mainPanel, 'addForm', account, object.schedule_data['formInputType'], null, function(action){
                     
                     editBool = true;
                     if (action == "close") {
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         
                     } else {
@@ -5121,6 +5162,7 @@ window.addEventListener('error', function(event) {
         var panel = object.create('div', null, null, 'courseSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {name: 'Name', email: 'Email', zip: 'Zip', D: 'D', Test: 'Test', planA: 'plan A', area: 'area', G: 'G'};
         list = {};
@@ -5199,6 +5241,7 @@ window.addEventListener('error', function(event) {
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             column.setAttribute("draggable", "true");
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -5216,8 +5259,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5236,6 +5283,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5244,6 +5296,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -5267,6 +5320,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -5439,9 +5493,11 @@ window.addEventListener('error', function(event) {
         var mainPanel = document.getElementById("taxesPanel");
         mainPanel.textContent = null;
         mainPanel.appendChild(buttonPanel);
+        
         var panel = object.create('div', null, null, 'taxesSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {};
         object._console.log(taxes);
@@ -5480,6 +5536,7 @@ window.addEventListener('error', function(event) {
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             column.setAttribute("draggable", "true");
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -5497,8 +5554,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5517,6 +5578,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5524,6 +5590,7 @@ window.addEventListener('error', function(event) {
     			
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -5549,6 +5616,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -5596,12 +5664,14 @@ window.addEventListener('error', function(event) {
                 
                 panel.classList.add("hidden_panel");
                 editBool = false;
+                saveButton.disabled = true;
                 addButton.disabled = true;
                 object.addItem(mainPanel, 'addTax', account, object.schedule_data['taxColumns'], null, function(action) {
                     
                     editBool = true;
                     if (action == "close") {
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         
                     } else {
@@ -5668,9 +5738,11 @@ window.addEventListener('error', function(event) {
         var mainPanel = document.getElementById("extraChargesPanel");
         mainPanel.textContent = null;
         mainPanel.appendChild(buttonPanel);
+        
         var panel = object.create('div', null, null, 'extraChargesSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {};
         object._console.log(extraCharges);
@@ -5709,6 +5781,7 @@ window.addEventListener('error', function(event) {
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             column.setAttribute("draggable", "true");
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -5726,8 +5799,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5746,6 +5823,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5753,6 +5835,7 @@ window.addEventListener('error', function(event) {
     			
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -5776,6 +5859,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -5824,12 +5908,14 @@ window.addEventListener('error', function(event) {
                 
                 panel.classList.add("hidden_panel");
                 editBool = false;
+                saveButton.disabled = true;
                 addButton.disabled = true;
                 object.addItem(mainPanel, 'addExtraCharge', account, object.schedule_data['extraChargeColumns'], null, function(action) {
                     
                     editBool = true;
                     if (action == "close") {
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         
                     } else {
@@ -5896,9 +5982,11 @@ window.addEventListener('error', function(event) {
         var mainPanel = document.getElementById("taxPanel");
         mainPanel.textContent = null;
         mainPanel.appendChild(buttonPanel);
+        
         var panel = object.create('div', null, null, 'taxSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {};
         object._console.log(taxes);
@@ -5936,6 +6024,7 @@ window.addEventListener('error', function(event) {
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             column.setAttribute("draggable", "true");
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             
@@ -5953,8 +6042,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5973,6 +6066,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -5980,6 +6078,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -6004,6 +6103,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -6051,12 +6151,14 @@ window.addEventListener('error', function(event) {
                 
                 panel.classList.add("hidden_panel");
                 editBool = false;
+                saveButton.disabled = true;
                 addButton.disabled = true;
                 object.addItem(mainPanel, 'addTaxes', account, object.schedule_data['taxesData'], null, function(action){
                 
                 editBool = true;
                 if (action == "close") {
                     
+                    saveButton.disabled = false;
                     addButton.disabled = false;
                     
                 } else {
@@ -6121,9 +6223,11 @@ window.addEventListener('error', function(event) {
         var mainPanel = document.getElementById("optionsForHotelPanel");
         mainPanel.textContent = null;
         mainPanel.appendChild(buttonPanel);
+        
         var panel = object.create('div', null, null, 'optionsForHotelSort', null, 'dnd', null);
         var buttons = {};
         var columns = {};
+        var original_columns = {};
         var ranking_columns = {};
         var list = {};
         object._console.log(options);
@@ -6161,6 +6265,7 @@ window.addEventListener('error', function(event) {
             var column = object.create('div', null, [contentPanel, optionPanel], null, null, 'dnd_column', {key: key} );
             column.setAttribute("draggable", "true");
             columns[key] = column;
+            original_columns['key_' + key] = column;
             ranking_columns['key_' + key] = column;
             panel.appendChild(column);
             rank_up_button.onclick = function() {
@@ -6177,8 +6282,12 @@ window.addEventListener('error', function(event) {
                 ranking_columns = object.moveRankingUp(ranking_columns, key);
                 console.log(ranking_columns);
                 panel.insertBefore(ranking_columns[key], target_column);
-                //panel.insertBefore(target_column, child3.ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -6197,6 +6306,11 @@ window.addEventListener('error', function(event) {
                 console.log(ranking_columns);
                 panel.insertBefore(target_column, ranking_columns[key]);
                 saveButton.disabled = false;
+                if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === true) {
+                    
+                    saveButton.disabled = true;
+                    
+                }
                 
             };
             
@@ -6204,6 +6318,7 @@ window.addEventListener('error', function(event) {
                 
                 if (editBool === true) {
                     
+                    saveButton.disabled = true;
                     addButton.disabled = true;
                     editBool = false;
                     var key = this.getAttribute("data-key");
@@ -6227,6 +6342,7 @@ window.addEventListener('error', function(event) {
                             
                         }
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -6274,12 +6390,14 @@ window.addEventListener('error', function(event) {
                 
                 panel.classList.add("hidden_panel");
                 editBool = false;
+                saveButton.disabled = true;
                 addButton.disabled = true;
                 object.addItem(mainPanel, 'addOptionsForHotel', account, object.schedule_data['optionsForHotelData'], null, function(action){
                     
                     editBool = true;
                     if (action == "close") {
                         
+                        saveButton.disabled = false;
                         addButton.disabled = false;
                         
                     } else {
@@ -12104,6 +12222,29 @@ window.addEventListener('error', function(event) {
         
     };
     
+    SCHEDULE.prototype.areObjectKeyOrdersEqual = function(obj1, obj2) {
+        
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) {
+            
+            return false;
+            
+        }
+        
+        for (let i = 0; i < keys1.length; i++) {
+            
+            if (keys1[i] !== keys2[i]) {
+                
+                return false;
+                
+            }
+            
+        }
+        
+        return true;
+        
+    };
 
     SCHEDULE.prototype.editPanelShow = function(showBool){
         
