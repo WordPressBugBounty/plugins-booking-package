@@ -2962,7 +2962,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                 for (var key in guests) {
                                     
                                     guests[key].selected = 0;
-                                    if (parseInt(guests[key].number) == parseInt(valueGuest.number)) {
+                                    if (parseInt(guests[key].number) === parseInt(valueGuest.number) && guests[key].name === valueGuest.name) {
                                         
                                         guests[key].selected = 1;
                                         

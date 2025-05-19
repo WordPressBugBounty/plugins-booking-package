@@ -8419,10 +8419,21 @@
 									
 								} else if ($tax['method'] == 'multiplication') {
 									
-									$taxValue =  ($value / 100) * ($accommodationDetails['additionalFee'] / $nightsForTax);
+									#$taxValue =  ($value / 100) * ($accommodationDetails['additionalFee'] / $nightsForTax);
+									$taxValue =  ($value / 100) * $accommodationDetails['additionalFee'];
+	                                if ($personAmount > 0) {
+	                                    
+	                                    $taxValue =  ($value / 100) * $personAmount;
+	                                    
+	                                }
 									if ($tax['type'] == 'tax' && $tax['tax'] == 'tax_inclusive') {
 										
 										$taxValue = $accommodationDetails['additionalFee'] * ($value / (100 + $value));
+										if ($personAmount > 0) {
+	                                        
+	                                        $taxValue = $personAmount * ($value / (100 + $value));
+	                                        
+	                                    }
 										$taxValue = floor($taxValue);
 										
 									}

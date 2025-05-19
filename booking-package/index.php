@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.84
+Version:     1.6.85
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -2183,6 +2183,9 @@ Domain Path: /languages
 			}
 			
 			$update_class = "";
+			
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			print $subscriptionRenewalFailedText;
 			?>
 			
 			<style id="booking_pacage_booked_customers_style"></style>
@@ -2359,6 +2362,9 @@ Domain Path: /languages
 				$swich_authority_by_hidden = " hidden_panel";
 				
 			}
+			
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			print $subscriptionRenewalFailedText;
 			
 			$dictionary = $this->getDictionary("user_management", $this->plugin_name);
 			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js'.$p_v);
@@ -2686,6 +2692,9 @@ Domain Path: /languages
 				$localize_script['isExtensionsValid'] = 0;
 				
 			}
+			
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			print $subscriptionRenewalFailedText;
 			
 			$p_v = "?p_v=" . $this->plugin_version;
 			#wp_print_scripts(array('jquery-ui-sortable'.$p_v));
@@ -3591,6 +3600,9 @@ Domain Path: /languages
 			$front_end_javascript = "";
 			$front_end_javascript = $setting->getJavaScript("front_end.js", plugin_dir_path( __FILE__ ));
 			$localize_script['javascriptForUser'] = 1;
+			
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			print $subscriptionRenewalFailedText;
 			
 			#wp_enqueue_script( array( 'jquery-ui-sortable' ));
 			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js' . $p_v, array(), $this->plugin_version);

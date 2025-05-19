@@ -3874,6 +3874,12 @@
     
 }
 
+#addCoursePanel .form-table tr:last-child, #customizePanel .form-table tr:last-child, #userSettingPanel .form-table tr:last-child {
+    
+    border-bottom: none;
+    
+}
+
 #addCoursePanel td, #customizePanel tr, #userSettingPanel tr {
     
     padding-bottom: 10px;
@@ -6404,7 +6410,7 @@
     background: #78bd78;
 }
 
-#booking_package_databaseUpdateErrors {
+#booking_package_databaseUpdateErrors, #booking_package_subscriptionRenewalFailed {
     
     background-color: #ffe5e5;
     border: 1px solid #ccd0d4;

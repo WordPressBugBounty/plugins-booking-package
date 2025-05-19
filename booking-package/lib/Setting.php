@@ -6142,6 +6142,33 @@
 			
 		}
 		
+		public function subscriptionRenewalFailed($type = 'html') {
+		    
+			$status = $this->getSubscriptionStatus();
+			$text = '';
+			if ($status === 'Inactive') {
+				
+				$text .= '<div id="booking_package_subscriptionRenewalFailed">';
+				$text .= '<p><b>' . __('Paid Subscription Renewal Failed.', 'booking-package') . '</b><br>' . "\n";
+				$text .= '<div>' . sprintf(__('Please check the status in the WordPress dashboard under %s > %s > %s to find the reason and proceed with renewal.', 'booking-package'), 'Booking Package', __('General Settings', 'booking-package'), __('Paid Subscription', 'booking-package')) . "</div><br>\n";
+				$text .= '<div>' . __('If the status shows an issue, payment for your subscription may have failed. ', 'booking-package') . "<br>\n";
+				$text .= sprintf(__('Please check your payment status on the "%s" page and complete the payment if necessary. ', 'booking-package'), __('My billing', 'booking-package')) . "</div><br>\n";
+				$text .= '<div>' . sprintf(__('After completing the payment, or if the status is not updated even without a payment issue, click the "%s" button to manually update your subscription.', 'booking-package'), __('Update My Subscription', 'booking-package')) . "</div>\n";
+				$text .= '</p>';
+				$text .= '</div>';
+				
+			}
+			
+			if ($type === 'text') {
+			    
+			    $text = strip_tags($text);
+			    
+			}
+			
+			return $text;
+		    
+		}
+		
 		public function setSubscribeSite($scheme = false) {
             
             $unique = get_site_url();
