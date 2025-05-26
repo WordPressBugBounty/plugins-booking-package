@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.85
+Version:     1.6.86
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -115,6 +115,8 @@ Domain Path: /languages
 		public $maxBookingSlotsPerDay = 0;
 		
 		public $managementUsersV2 = 0;
+		
+		public $notificationsForUser = 0;
 		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
@@ -382,9 +384,9 @@ Domain Path: /languages
             $isExtensionsValid = $this->getExtensionsValid(false, true);
             if ($isExtensionsValid === true) {
 				
-				#$this->update_database();
 				$calendarAccounts = $schedule->booking_notification();
 				$schedule->deleteCustomers();
+				#$setting->checkLatestInvoice();
 				
             }
 			
@@ -1105,6 +1107,7 @@ Domain Path: /languages
             	
             }
             
+            
 			$deleteKeys = array("googleCalendarID", "idForGoogleWebhook", "expirationForGoogleWebhook", "ical", "icalToken", "email_from", "email_from_title", "email_to", "email_to_title");
 			for ($i = 0; $i < count($deleteKeys); $i++) {
 				
@@ -1722,7 +1725,7 @@ Domain Path: /languages
 			}
 			$html .= '<div class="userTopButtonPanel">';
 			$html .= '<label class="displayName">' . $howdy . '</label>';
-			$html .= '<div id="booking-package-register" class="register">' . $dictionary['Create Account'] . '</div>';
+			$html .= '<div id="booking-package-register" class="register">' . $dictionary['Sign Up'] . '</div>';
 			$html .= '<div id="booking-package-login" class="login">' . $dictionary['Sign In'] . '</div>';
 			$html .= '<div id="booking-package-logout" class="logout hidden_panel">' . $dictionary['Sign Out'] . '</div>';
 			$html .= '<div id="booking-package-edit" class="edit">' . $dictionary['Edit My Profile'] . '</div>';
@@ -2184,7 +2187,7 @@ Domain Path: /languages
 			
 			$update_class = "";
 			
-			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			?>
 			
@@ -2363,7 +2366,7 @@ Domain Path: /languages
 				
 			}
 			
-			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			
 			$dictionary = $this->getDictionary("user_management", $this->plugin_name);
@@ -2393,6 +2396,7 @@ Domain Path: /languages
 						<div id="menuList" class="menuList" style="grid-template-columns: auto;">
 							<div id="usersLink" class="menuItem active hidden_panel" style="grid-column-start: 1;"><?php _e("Users", 'booking-package'); ?></div>
 							<div id="formFieldsLink" class="menuItem hidden_panel" style="grid-column-start: 2;"><?php _e("Form Fields", 'booking-package'); ?></div>
+							<div id="emailLink" class="menuItem hidden_panel"><?php _e("Notifications", 'booking-package'); ?></div>
 							<div id="settingLink" class="menuItem hidden_panel" style="grid-column-start: 3;"><?php _e("Settings", 'booking-package'); ?></div>
 						</div>
 					</div>
@@ -2471,10 +2475,121 @@ Domain Path: /languages
 						<div id="formFieldsPanel" class="hidden_panel">
 							
 						</div>
+						
+						<div id="emailPanel" class="hidden_panel">
+							<div id="mailSettingPanel">
+								<div id="mailSettingButtonPanel"></div>
+								<div id="content_area"></div>
+							</div>
+						</div>
+						
 						<div id="userSettingPanel" class="hidden_panel">
 							
 						</div>
 					</div>
+					<!--
+					<div id="editPanelForSchedule" class="edit_modal hidden_panel">
+						<button type="button" id="media_modal_close_for_schedule" class="media_modal_close">
+							<span class="media_modal_icon">
+								<span class="screen_reader_text">Close</span>
+							</span>
+						</button>
+						<div class="edit_modal_content">
+							<div id="menu_panel_for_schedule" class="media_frame_menu">
+								<div id="media_menu_for_schedule" class="media_menu"></div>
+							</div>
+							<div id="media_title_for_schedule" class="media_frame_title">
+								<h1 id="edit_title_for_schedule"></h1>
+							</div>
+							<div id="media_router_for_schedule" class="media_frame_router">
+								
+							</div>
+							
+							<div id="email_edit_panel" class="media_left_zero hidden_panel">
+								
+								<div id="edit_email_message" class="mail_message_area_left">
+									<div class="enablePanel">
+										<div class="enableLabel"><?php _e("Notifications", 'booking-package'); ?></div>
+										<div class="enableValuePanel">
+											<label style="margin-right: 10px;"><input type="checkbox" id="mailEnable"/><?php _e("Email", 'booking-package'); ?></label>
+											<label><input type="checkbox" id="smsEnable"/>
+											<?php 
+												$messaging = __("Messaging Services", 'booking-package'); 
+												if ($this->messagingApp === 0) {
+													
+													$messaging = __("SMS", 'booking-package'); 
+													
+												}
+												print $messaging;
+												
+											?>
+											</label>
+											
+										</div>
+									</div>
+									<div class="emailFormatPanel">
+										<div class="emailFormatLabel"><?php _e("Format", 'booking-package'); ?></div>
+										<div class="emailFormatValuePanel">
+											<label style="margin-right: 10px;"><input type="radio" id="emailFormatHtml" name="emailFormat" /> HTML</label>
+											<label><input type="radio" id="emailFormatText" name="emailFormat" /> TEXT</label>
+										</div>
+									</div>
+									
+									<div class="enablePanel" id="field_notifyAdministrator">
+										<div class="enableLabel"><?php _e("Notify the Administrator", 'booking-package'); ?></div>
+										<div class="enableValuePanel">
+											<label style="margin-right: 10px;"><input type="checkbox" id="notifyAdministrator"/><?php _e("Enabled", 'booking-package'); ?></label>
+										</div>
+									</div>
+									
+									<div class="enablePanel">
+										<div class="enableLabel"><?php _e("Attach an iCalendar File in the Email", 'booking-package'); ?></div>
+										<div class="enableValuePanel">
+											<label style="margin-right: 10px;"><input type="checkbox" id="attachICalendar"/><?php _e("Enabled", 'booking-package'); ?></label>
+										</div>
+									</div>
+									
+									<div>
+										<div class="menuTags">
+											<div id="menuList" class="menuList">
+												<div id="for_visitor" class="menuItem active"><?php _e("For Customer", 'booking-package'); ?></div>
+												<div id="for_administrator" class="menuItem"><?php _e("For Administrator", 'booking-package'); ?></div>
+											</div>
+											
+										</div>
+										<div class="content">
+											
+											<div id="edit_visitor_message">
+												<input type="text" id="subject" class="mail_subject" placeholder="Subject">
+												<textarea name="emailContent" id="emailContent" class="message_body" placeholder="Message body"></textarea>
+											</div>
+											<div id="edit_administrator_message" class="hidden_panel">
+												<input type="text" id="subjectForAdmin" class="mail_subject" placeholder="Subject">
+												<textarea name="emailContent" id="emailContentForAdmin" class="message_body" placeholder="Message body"></textarea>
+											</div>
+											
+										</div>
+									</div>
+									
+									
+								</div>
+								<div id="mail_message_area_right" class="mail_message_area_right"></div>
+								
+							</div>
+							
+							<div id="frame_toolbar_for_schedule" class="media_frame_toolbar">
+								<div class="media_toolbar">
+									<div id="buttonPanel_for_schedule" class="media_toolbar_primary">
+										
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						
+					</div>
+					-->
+					
 				</div>
 				
 				<!--
@@ -2561,54 +2676,125 @@ Domain Path: /languages
 							<div id="media_menu" class="media_menu"></div>
 						</div>
 						<div id="media_title" class="media_left_zero"><h1 id="edit_title"></h1></div>
-						<div id="media_router" class="media_left_zero">
-							<div class="reservation_table_row">
-								<div id="booked_list" class="media_menu_item active"><?php _e("Booking History", 'booking-package'); ?></div>
-								<div id="edit_user" class="media_menu_item"><?php _e("User", 'booking-package'); ?></div>
-							</div>
-						</div>
-						<div id="media_frame_reservation_content" class="media_left_zero">
-							<div id="reservation_usersPanel" class="hidden_panel"></div>
-							<div id="user_detail_panel" class="hidden_panel">
-								<table class="wp-list-table widefat fixed">
-									<tbody>
-										<tr>
-											<th><?php _e("Username", 'booking-package'); ?></th>
-											<td><div id="user_edit_login"></div></td>
-										</tr>
-										<tr id='profile_tr_input_field_user_email'>
-											<th><?php _e("Email", 'booking-package'); ?></th>
-											<td><input type="text" name="user_edit_email" id="user_edit_email" class="input"></td>
-										</tr>
-										<tr>
-											<th><?php _e("Status", 'booking-package'); ?></th>
-											<td>
-												<label>
-													<input type="checkbox" name="user_edit_status" id="user_edit_status" class="" value="1">
-													<?php _e("Approved", 'booking-package'); ?>
-												</label>
-											</td>
-										</tr>
-										<tr id='profile_tr_input_field_user_pass'>
-											<th><?php _e("Password", 'booking-package'); ?></th>
-											<td>
-												<div>
-													<button id="user_edit_change_password_button" class="w3tc-button-save button-primary"><?php _e("Change Password", 'booking-package'); ?></button>
-                    								<input type="text" name="user_edit_pass" id="user_edit_pass" class="input hidden_panel"　autocomplete="new-password">
-												</div>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-								<div id='editCustomFormFieldPanel'>
-									
+						<div id='userDetails' class="hidden_panel">
+							
+							<div id="media_router" class="media_left_zero">
+								<div class="reservation_table_row">
+									<div id="booked_list" class="media_menu_item active"><?php _e("Booking History", 'booking-package'); ?></div>
+									<div id="edit_user" class="media_menu_item"><?php _e("User", 'booking-package'); ?></div>
 								</div>
 							</div>
+							<div id="media_frame_reservation_content" class="media_left_zero">
+								<div id="reservation_usersPanel" class="hidden_panel"></div>
+								<div id="user_detail_panel" class="hidden_panel">
+									<table class="wp-list-table widefat fixed">
+										<tbody>
+											<tr>
+												<th><?php _e("Username", 'booking-package'); ?></th>
+												<td><div id="user_edit_login"></div></td>
+											</tr>
+											<tr id='profile_tr_input_field_user_email'>
+												<th><?php _e("Email", 'booking-package'); ?></th>
+												<td><input type="text" name="user_edit_email" id="user_edit_email" class="input"></td>
+											</tr>
+											<tr>
+												<th><?php _e("Status", 'booking-package'); ?></th>
+												<td>
+													<label>
+														<input type="checkbox" name="user_edit_status" id="user_edit_status" class="" value="1">
+														<?php _e("Approved", 'booking-package'); ?>
+													</label>
+												</td>
+											</tr>
+											<tr id='profile_tr_input_field_user_pass'>
+												<th><?php _e("Password", 'booking-package'); ?></th>
+												<td>
+													<div>
+														<button id="user_edit_change_password_button" class="w3tc-button-save button-primary"><?php _e("Change Password", 'booking-package'); ?></button>
+	                    								<input type="text" name="user_edit_pass" id="user_edit_pass" class="input hidden_panel"　autocomplete="new-password">
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									<div id='editCustomFormFieldPanel'>
+										
+									</div>
+								</div>
+								
+							</div>
+							
 							
 						</div>
+						<div id="email_edit_panel" class="media_left_zero hidden_panel">
+							
+							<div id="edit_email_message" class="mail_message_area_left">
+								<div class="enablePanel">
+									<div class="enableLabel"><?php _e("Notifications", 'booking-package'); ?></div>
+									<div class="enableValuePanel">
+										<label style="margin-right: 10px;"><input type="checkbox" id="mailEnable"/><?php _e("Email", 'booking-package'); ?></label>
+										<label><input type="checkbox" id="smsEnable"/>
+										<?php 
+											$messaging = __("Messaging Services", 'booking-package'); 
+											if ($this->messagingApp === 0) {
+												
+												$messaging = __("SMS", 'booking-package'); 
+												
+											}
+											print $messaging;
+											
+										?>
+										</label>
+										
+									</div>
+								</div>
+								<div class="emailFormatPanel">
+									<div class="emailFormatLabel"><?php _e("Format", 'booking-package'); ?></div>
+									<div class="emailFormatValuePanel">
+										<label style="margin-right: 10px;"><input type="radio" id="emailFormatHtml" name="emailFormat" /> HTML</label>
+										<label><input type="radio" id="emailFormatText" name="emailFormat" /> TEXT</label>
+									</div>
+								</div>
+								
+								<div class="enablePanel" id="field_notifyAdministrator">
+									<div class="enableLabel"><?php _e("Notify the Administrator", 'booking-package'); ?></div>
+									<div class="enableValuePanel">
+										<label style="margin-right: 10px;"><input type="checkbox" id="notifyAdministrator"/><?php _e("Enabled", 'booking-package'); ?></label>
+									</div>
+								</div>
+								
+								<div>
+									<div class="menuTags">
+										<div id="menuList" class="menuList">
+											<div id="for_visitor" class="menuItem active"><?php _e("For Customer", 'booking-package'); ?></div>
+											<div id="for_administrator" class="menuItem"><?php _e("For Administrator", 'booking-package'); ?></div>
+										</div>
+										
+									</div>
+									<div class="content" style="top: 147px;">
+										
+										<div id="edit_visitor_message">
+											<input type="text" id="subject" class="mail_subject" placeholder="Subject">
+											<textarea name="emailContent" id="emailContent" class="message_body" placeholder="Message body"></textarea>
+										</div>
+										<div id="edit_administrator_message" class="hidden_panel">
+											<input type="text" id="subjectForAdmin" class="mail_subject" placeholder="Subject">
+											<textarea name="emailContent" id="emailContentForAdmin" class="message_body" placeholder="Message body"></textarea>
+										</div>
+										
+									</div>
+								</div>
+								
+								
+							</div>
+							<div id="mail_message_area_right" class="mail_message_area_right"></div>
+							
+							
+						</div>
+						
 						<div id="frame_toolbar" class="media_frame_toolbar media_left_zero">
 							<div class="media_toolbar">
-								<div id="buttonPanel" class="media_toolbar_primary" style="float: initial;">
+								<div id="buttonPanel" class="media_toolbar_primary hidden_panel" style="float: initial;">
 									
 									<div id="leftButtonPanel">
 										<button id="beforButton" class="material-icons button media-button button-primary button-large media-button-insert">navigate_before</button>
@@ -2619,6 +2805,13 @@ Domain Path: /languages
 										<button id="edit_user_button" class="w3tc-button-save button-primary"><?php _e("Update Profile", 'booking-package'); ?></button>
                 						<button id="edit_user_delete_button"  class="w3tc-button-save button-primary deleteButton"><?php _e("Delete", 'booking-package'); ?></button>
 									</div>
+									
+								</div>
+								<div id="notificationButton" class="hidden_panel">
+									
+									<div style="float: right;">
+										<button id="notification_save_button" class="w3tc-button-save button-primary"><?php _e("Save", 'booking-package'); ?></button>
+									</dvi>
 									
 								</div>
 							</div>
@@ -2641,25 +2834,22 @@ Domain Path: /languages
 					</div>
 				</div>
 				
-				<div id="blockPanel" class="edit_modal_backdrop hidden_panel">
-					<?php
-						print $this->member_form();
-					?>
-				</div>
-				
-				<div id="loadingPanel">
-					<div class="loader">
-						<svg viewBox="0 0 64 64" width="64" height="64">
-							<circle id="spinner" cx="32" cy="32" r="28" fill="none"></circle>
-						</svg>
-					</div>
-				</div>
-				
 				
 				
 			</div>
 			
-			
+			<div id="blockPanel" class="edit_modal_backdrop hidden_panel">
+				<?php
+					print $this->member_form();
+				?>
+			</div>
+			<div id="loadingPanel">
+				<div class="loader">
+					<svg viewBox="0 0 64 64" width="64" height="64">
+						<circle id="spinner" cx="32" cy="32" r="28" fill="none"></circle>
+					</svg>
+				</div>
+			</div>
 		
 			<?php
 			wp_localize_script('Member_js', 'users_data', $users_data);
@@ -2693,7 +2883,7 @@ Domain Path: /languages
 				
 			}
 			
-			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			
 			$p_v = "?p_v=" . $this->plugin_version;
@@ -3601,7 +3791,7 @@ Domain Path: /languages
 			$front_end_javascript = $setting->getJavaScript("front_end.js", plugin_dir_path( __FILE__ ));
 			$localize_script['javascriptForUser'] = 1;
 			
-			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html');
+			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			
 			#wp_enqueue_script( array( 'jquery-ui-sortable' ));
@@ -4390,6 +4580,12 @@ Domain Path: /languages
 				
 			}
 			
+			if ($_POST['mode'] == 'updataEmailMessageForUser') {
+				
+				$response = $setting->updataEmailMessageForUser();
+				
+			}
+			
 			if ($_POST['mode'] == 'updataEmailMessageForCalendarAccount') {
 				
 				$response = $setting->updataEmailMessageForCalendarAccount();
@@ -4405,6 +4601,12 @@ Domain Path: /languages
 			if ($_POST['mode'] == 'resetSubscription') {
 				
 				$response = $setting->resetSubscription();
+				
+			}
+			
+			if ($_POST['mode'] == 'getEmailForUser') {
+				
+				$response = $setting->getEmailForUser();
 				
 			}
 			
@@ -5563,6 +5765,7 @@ Domain Path: /languages
 					'managementUsersV2' => intval($this->managementUsersV2),
 					'inputType' => $setting->getFormInputTypeForUser(),
 					'userFormFields' => $setting->getUserInputFields(),
+					'notificationsForUser' => $this->notificationsForUser,
 				);
 				
 				

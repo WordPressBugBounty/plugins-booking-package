@@ -70,9 +70,16 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
     this._inputType = setting_data.inputType;
     this._userFunctions = setting_data.userFunctions;
     this._userFormFields = setting_data.userFormFields;
+    this._notificationsForUser = 0;
     if (parseInt(setting_data.numberFormatter) === 1) {
         
         this._numberFormatter = true;
+        
+    }
+    
+    if (parseInt(setting_data.notificationsForUser) === 1) {
+        
+        this._notificationsForUser = 1;
         
     }
     
@@ -97,7 +104,6 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
     this._booking_manage = new Booking_manage(setting_data, booking_package_dictionary);
     this._defaultName = {'user_login': object._i18n.get('Username'), 'user_email': object._i18n.get('Email'), 'user_pass': object._i18n.get('Password')};
     this._contentPanel = document.getElementById("media_frame_reservation_content");
-    
     for (var key in setting_data.calendarAccountList) {
         
         var account = setting_data.calendarAccountList[key];
@@ -139,6 +145,7 @@ function Member_manage(setting_data, users_data, booking_package_dictionary){
         object._console.log(tr);
         
     }
+    
     
     user_form_close.onclick = function(){
         
@@ -353,7 +360,7 @@ Member_manage.prototype.getSelectedKey = function(){
 Member_manage.prototype.loadTabFrame = function() {
     
     var object = this;
-	var menuList = {usersLink: 'member_list', formFieldsLink: 'formFieldsPanel', settingLink: 'userSettingPanel'};
+	var menuList = {usersLink: 'member_list', formFieldsLink: 'formFieldsPanel', emailLink: 'emailPanel', settingLink: 'userSettingPanel'};
 	object._console.log('_managementUsersV2 = ' + object._managementUsersV2);
 	
 	if (object._managementUsersV2 === 0) {
@@ -365,10 +372,19 @@ Member_manage.prototype.loadTabFrame = function() {
 	    
 	}
 	
+	if (object._notificationsForUser === 0) {
+	    
+	    delete(menuList['emailLink']);
+	    
+	}
+	
 	object.start();
+	let coloumns = 0;
 	for (var key in menuList) {
 		
+		coloumns++;
 		var button = document.getElementById(key);
+		button.setAttribute('style', 'grid-column-start: ' + coloumns + ';');
 		button.classList.remove("hidden_panel");
 		button.setAttribute("data-key", key);
 		button.onclick = function(event) {
@@ -379,7 +395,6 @@ Member_manage.prototype.loadTabFrame = function() {
 				
 				var link = document.getElementById(key);
 				var panel = document.getElementById(menuList[key]);
-				console.log(panel);
 				if (clickKey == key) {
 					
 					link.setAttribute("class", "menuItem active");
@@ -391,16 +406,27 @@ Member_manage.prototype.loadTabFrame = function() {
 						
 					} else if (clickKey == 'formFieldsLink') {
 					    
-					    var loadingPanel = document.getElementById("loadingPanel");
-						loadingPanel.classList.remove("hidden_panel");
+					    object.loadingPanel(1);
 						var postData = {mode: "getUserInputFields", nonce: object._nonce, action: object._action};
 						var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
 							
 							object._console.log(json);
 							object.formFieldsPanel(json);
-							loadingPanel.classList.add("hidden_panel");
+							object.loadingPanel(0);
 							
 						});
+						
+					} else if (clickKey == 'emailLink') {
+						
+						object.loadingPanel(1);
+                        var postData = {mode: "getEmailForUser", nonce: object._nonce, action: object._action};
+                        object.xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
+                            
+                            object._console.log(json);
+                            object.emailSettingPanel(json.emailMessageList, json.formData);
+                            object.loadingPanel(0);
+                            
+                        });
 						
 					} else if (clickKey == 'settingLink') {
 						
@@ -1264,6 +1290,304 @@ Member_manage.prototype.createInputRowPanel = function (name, value, id, require
     
 }
 
+Member_manage.prototype.editPanelShow = function(showBool){
+    
+    var body = document.getElementsByTagName("body")[0];
+    if (showBool == true) {
+        
+        body.classList.add("modal-open");
+        document.getElementById("editPanelForSchedule").setAttribute("class", "edit_modal");
+        this.blockPanel.setAttribute("class", "edit_modal_backdrop");
+        
+    } else {
+        
+        body.classList.remove("modal-open");
+        document.getElementById("editPanelForSchedule").setAttribute("class", "hidden_panel");
+        this.blockPanel.setAttribute("class", "hidden_panel");
+        
+    }
+    
+};
+
+Member_manage.prototype.emailSettingPanel = function(emailMessageList, formData) {
+    
+    const object = this;
+    object._console.log('emailSettingPanel');
+    object._console.log(formData);
+    object._console.log(emailMessageList);
+    var mailSettingPanel = document.getElementById("mailSettingPanel");
+    var content_area = document.getElementById("content_area");
+    content_area.textContent = null;
+    
+    var table = document.createElement("table");
+    table.setAttribute("class", "emails_table table_option wp-list-table widefat fixed striped")
+    content_area.appendChild(table);
+    
+    var editPanel = document.getElementById('editPanel');
+    var userDetails = document.getElementById('userDetails');
+    var buttonPanel = document.getElementById('buttonPanel');
+    var email_edit_panel = document.getElementById('email_edit_panel');
+    var notificationButton = document.getElementById('notificationButton');
+    
+    userDetails.classList.add('hidden_panel');
+    buttonPanel.classList.add('hidden_panel');
+    email_edit_panel.classList.remove('hidden_panel');
+    notificationButton.classList.remove('hidden_panel');
+    
+    var valueTdList = {};
+    for (var id in emailMessageList) {
+        
+        var mailMessageData = emailMessageList[id];
+        var nameTh = document.createElement("th");
+        nameTh.textContent = object._i18n.get(mailMessageData.title);
+        if (parseInt(mailMessageData.enable) === 0 && parseInt(mailMessageData.enableSMS) === 0) {
+            
+            nameTh.classList.add("disableTh");
+            
+        }
+        
+        
+        var subjectLabel = object.create('div', null, null, null, null, 'subjectLabel', null);
+        subjectLabel.innerHTML = "<strong>" + object._i18n.get("Subject") + "</strong><br>" + mailMessageData.subject.replace(/\\/g, "");
+        var content = mailMessageData.content.replace(/\\/g, "");
+        var contentLabel = document.createElement("div");
+        contentLabel.innerHTML = "<strong>" + object._i18n.get("Content") + "</strong><br>" + content.replace(/\\/g, "");
+        var valueTd = object.create('td', null, [subjectLabel, contentLabel], null, null, null, null);
+        var tr = object.create('tr', null, [nameTh], id, null, null, null);
+        table.appendChild(tr);
+        valueTdList[id] = valueTd;
+        tr.onclick = function(){
+            
+            const id = this.id;
+            var editer_id = "textarea";
+            var mailMessageData = emailMessageList[id];
+            var textarea = document.getElementById("emailContent");
+            object._console.log("id = " + id);
+            object._console.log(mailMessageData);
+            
+            var for_visitor = document.getElementById('for_visitor');
+            var for_administrator = document.getElementById('for_administrator');
+            var edit_visitor_message = document.getElementById('edit_visitor_message');
+            var edit_administrator_message = document.getElementById('edit_administrator_message');
+            
+            for_visitor.classList.add('active');
+            for_administrator.classList.remove('active');
+            edit_visitor_message.classList.remove('hidden_panel');
+            edit_administrator_message.classList.add('hidden_panel');
+            for_visitor.onclick = function() {
+                
+                for_visitor.classList.add('active');
+                for_administrator.classList.remove('active');
+                edit_visitor_message.classList.remove('hidden_panel');
+                edit_administrator_message.classList.add('hidden_panel');
+                
+            };
+            
+            for_administrator.onclick = function() {
+                
+                for_visitor.classList.remove('active');
+                for_administrator.classList.add('active');
+                edit_visitor_message.classList.add('hidden_panel');
+                edit_administrator_message.classList.remove('hidden_panel');
+                
+            };
+            
+            
+            document.getElementById("edit_title").textContent = object._i18n.get(mailMessageData.title);
+            var enableEmailCheck = document.getElementById("mailEnable");
+            enableEmailCheck.checked = false;
+            if (parseInt(mailMessageData.enable) === 1) {
+                
+                enableEmailCheck.checked = true;
+                
+            }
+            
+            var enableSmsCheck = document.getElementById("smsEnable");
+            enableSmsCheck.checked = false;
+            if (parseInt(mailMessageData.enableSMS) === 1) {
+                
+                enableSmsCheck.checked = true;
+                
+            }
+            
+            document.getElementById("emailFormatHtml").checked = true;
+            if (mailMessageData.format == "text") {
+                
+                document.getElementById("emailFormatText").checked = true;
+                
+            }
+            
+            var notifyAdministratorCheck = document.getElementById('notifyAdministrator');
+            notifyAdministratorCheck.checked = false;
+            if (parseInt(mailMessageData.notifyAdministrator) === 1) {
+                
+                notifyAdministratorCheck.checked = true;
+                
+            }
+            
+            var subject_filed = document.getElementById("subject");
+            subject_filed.value = mailMessageData.subject.replace(/\\/g, "");
+            
+            var mail_message_area_left = document.getElementById("mail_message_area_left");
+            
+            var contentId = "emailContent";
+            document.getElementById(contentId).value = mailMessageData.content.replace(/\\/g, "");
+            object._console.log(mailMessageData.content);
+            
+            var subject_filed_for_admin = document.getElementById("subjectForAdmin");
+            if (mailMessageData.subjectForAdmin != null) {
+                
+                subject_filed_for_admin.value = mailMessageData.subjectForAdmin.replace(/\\/g, "");
+                
+            } else {
+                
+                subject_filed_for_admin.value = "";
+                
+            }
+            
+            var contentIdForAdmin = "emailContentForAdmin";
+            if (mailMessageData.contentForAdmin != null) {
+                
+                document.getElementById(contentIdForAdmin).value = mailMessageData.contentForAdmin.replace(/\\/g, "");
+                
+            } else {
+                
+                document.getElementById(contentIdForAdmin).value = "";
+                
+            }
+            object._console.log(mailMessageData.contentForAdmin);
+            
+            if (textarea != null) {
+                
+                textarea.textContent = mailMessageData.content;
+                
+            }
+            
+            var mail_message_area_right = document.getElementById("mail_message_area_right");
+            mail_message_area_right.textContent = null;
+            
+            var mail_message_area_right_title = document.createElement("div");
+            mail_message_area_right_title.setAttribute("class", "mail_message_area_right_title");
+            mail_message_area_right_title.textContent = object._i18n.get("Help");
+            mail_message_area_right.appendChild(mail_message_area_right_title);
+            
+            var str = object._i18n.get("You can use the following shortcodes in the content editor.");
+            var help_message_label = document.createElement("div");
+            help_message_label.setAttribute("class", "help_message_label");
+            help_message_label.textContent = str;
+            mail_message_area_right.appendChild(help_message_label);
+            
+            var shortcodes = {
+                id: object._i18n.get("ID"), 
+                /** date: object._i18n.get("Booking date"), **/
+                bookingDateAndTime: object._i18n.get("Booking date and time"),
+                bookingDate: object._i18n.get("Booking date"),
+                bookingTime: object._i18n.get("Booking time"),
+                bookingTitle: object._i18n.get("Booking title"),
+                services: object._i18n.get("Services"), 
+                servicesExcludedGuests: object._i18n.get("Services excluded guests"), 
+                servicesExcludedGuestsAndCosts: object._i18n.get("Services excluded guests and costs"), 
+                guests: object._i18n.get("Guests"), 
+                paymentMethod: object._i18n.get('Payment Method'),
+                
+            };
+            
+            if (object._servicesExcludedGuestsInEmail == 0) {
+                
+                delete shortcodes.servicesExcludedGuests;
+                delete shortcodes.servicesExcludedGuestsAndCosts;
+                
+            }
+            
+            
+            for (var key in shortcodes) {
+                
+                
+                var codeLabel = object.create('div', object._i18n.get("[%s] is inserting \"%s\"", [key, shortcodes[key]]), null, null, null, null, null);
+                var formFiledPanel = object.create('div', null, [codeLabel], null, null, 'formFiledPanel', null);
+                mail_message_area_right.appendChild(formFiledPanel);
+                
+            }
+            
+            for (var i = 0; i < formData.length; i++) {
+                
+                var filedData = formData[i];
+                if (filedData.active != 'true') {
+                    
+                    continue;
+                    
+                }
+                
+                var codeLabel = object.create('div', object._i18n.get("[%s] is inserting \"%s\"", [filedData.id, filedData.name]), null, null, null, null, null);
+                var formFiledPanel = object.create('div', null, [codeLabel], null, null, 'formFiledPanel', null);
+                mail_message_area_right.appendChild(formFiledPanel);
+                
+            }
+            
+            
+            var mail_message_save_button = document.getElementById('notification_save_button');
+            var buttonPanel = document.getElementById("notificationButton");
+            buttonPanel.classList.remove('hidden_panel');
+            editPanel.classList.remove('hidden_panel');
+            //object.editPanelShow(true);
+            
+            mail_message_save_button.onclick = function() {
+                
+                var value = document.getElementById(contentId).value;
+                object._console.log(value);
+                var valueForAdmin = document.getElementById(contentIdForAdmin).value;
+                object._console.log(valueForAdmin);
+                
+                var enableEmail = 0;
+                if (enableEmailCheck.checked === true) {
+                    
+                    enableEmail = 1;
+                    
+                }
+                
+                var enableSms = 0;
+                if (enableSmsCheck.checked === true) {
+                    
+                    enableSms = 1;
+                    
+                }
+                
+                var format = "html";
+                if (document.getElementById("emailFormatText").checked === true) {
+                    
+                    format = "text";
+                    
+                }
+                
+                var notifyAdministrator = 0;
+                if (notifyAdministratorCheck.checked === true) {
+                    
+                    notifyAdministrator = 1;
+                    
+                }
+                
+                var post = {mode: "updataEmailMessageForUser", nonce: object._nonce, action: object._action, id: id, subject: subject_filed.value, content: value, subjectForAdmin: subject_filed_for_admin.value, contentForAdmin: valueForAdmin, enableEmail: enableEmail, enableSms: enableSms, format: format, notifyAdministrator: notifyAdministrator};
+                object.loadingPanel(1);
+                object._console.log(post);
+                object.xmlHttp = new Booking_App_XMLHttp(object._url, post, object._webApp, function(json) {
+                    
+                    object.emailSettingPanel(json.emailMessageList, json.formData);
+                    object.loadingPanel(0);
+                    
+                    
+                });
+                
+                
+            }
+            
+        };
+        
+        
+        
+    }
+    
+}
+
 Member_manage.prototype.userSettingPanel = function () {
     
     var object = this;
@@ -1351,6 +1675,7 @@ Member_manage.prototype.start = function(){
     var user_form = document.getElementById("booking-package-user-form");
     var user_edit_form = document.getElementById("booking-package-user-edit-form");
     var users = object.getUsers();
+    object._console.log(users);
     for (var key in users) {
         
         var user = users[key];
@@ -1463,6 +1788,7 @@ Member_manage.prototype.movePage = function(page, number, keywords){
                 userList["user_id_" + user.ID] = tr;
                 tr.onclick = function(){
                     
+                    object._console.log(this);
                     var id = this.id;
                     var userInfo = object.serachUser(id);
                     object._console.log(userInfo);
@@ -1477,8 +1803,24 @@ Member_manage.prototype.movePage = function(page, number, keywords){
                         }
                         object.bookedList(this, userInfo, 0);
                         
+                        
                     }
                     
+                    /**
+                    var id = this.id;
+                    var userInfo = object.serachUser(id);
+                    object._console.log(userInfo);
+                    if (userInfo != 0) {
+                        
+                        object.editForm(this, userInfo);
+                        object._blockPanel.classList.remove("hidden_panel");
+                        if (object._contentPanel != null && document.getElementById("showUserInfo_blockPanel") != null) {
+                            
+                            object._contentPanel.removeChild(document.getElementById("showUserInfo_blockPanel"));
+                            
+                        }
+                    }
+                    **/
                 };
                 
             }
@@ -1504,6 +1846,7 @@ Member_manage.prototype.bookedList = function(tr, userAccount, offset) {
     object._console.log(object._calendarAccountList);
     object._calendar = new Booking_App_Calendar(object._weekName, object._dateFormat, object._positionOfWeek, object._positionTimeDate, 0, object._i18n, object._debug);
     object._calendar.setClock(object._clock);
+    object._blockPanel.classList.add("hidden_panel");
     object._editPanel.classList.remove("hidden_panel");
     var edit_title = document.getElementById("edit_title");
     edit_title.textContent = userAccount.user_login;
@@ -2103,7 +2446,15 @@ Member_manage.prototype.editForm = function(tr, user){
     var delete_button = document.getElementById("booking-package-edit_user_delete_button");
     var user_form_close = document.getElementById("booking-package-edit_user_return_button");
     var user_edit_form_close = document.getElementById("booking-package-edit_user_delete_button");
+    var userDetails = document.getElementById('userDetails');
+    var buttonPanel = document.getElementById('buttonPanel');
+    var email_edit_panel = document.getElementById('email_edit_panel');
+    var notificationButton = document.getElementById('notificationButton');
     
+    userDetails.classList.remove('hidden_panel');
+    buttonPanel.classList.remove('hidden_panel');
+    email_edit_panel.classList.add('hidden_panel');
+    notificationButton.classList.add('hidden_panel');
     tabFrame.classList.remove("hidden_panel");
     user_profile_tab.classList.add("active");
     user_subscribed_tab.classList.remove("active");

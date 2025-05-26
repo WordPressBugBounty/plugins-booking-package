@@ -357,7 +357,7 @@
                 if (input.type == "submit") {
                     
                     login_button = input;
-                    input.value = object._i18n.get("Sign in");
+                    input.value = object._i18n.get("Sign In");
                     object._console.log(input);
                     object._console.log(object._booking_package_dictionary);
                     break;

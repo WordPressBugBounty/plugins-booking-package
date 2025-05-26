@@ -2400,14 +2400,14 @@
     
 }
 
-#booking-package_schedulePage .selectable_time_slot > div {
+#booking-package_schedulePage .selectable_time_slot {
     
     display: flex;
     justify-content: left;
     
 }
 
-#booking-package_schedulePage .service_details, #booking-package_schedulePage .service_details, #booking-package_schedulePage .service_details, #booking-package_servicePage .service_details {
+#booking-package_schedulePage .selectable_service_slot, #booking-package_servicePage .service_details {
     
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -3087,7 +3087,7 @@
 
 @media only screen and (max-width: 480px) {
     
-    #booking-package_schedulePage .service_details, #booking-package_servicePage .service_details {
+    #booking-package_schedulePage .selectable_service_slot, #booking-package_servicePage .selectable_service_slot {
         
         display: block;
         

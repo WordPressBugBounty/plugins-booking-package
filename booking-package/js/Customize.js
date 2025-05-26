@@ -712,14 +712,13 @@
                 var courseNamePanel = object.create('span', services[serviceKey], null, null, null, null, null);
                 var checkBox = object.createInputElement('input', 'checkbox', null, "", null, null, null, null, 'hidden_panel', null);
                 var label = object.create('span', null, [checkBox, courseNamePanel], null, null, null, null);
-                var coursePanel = object.create('div', null, [label], null, null, 'service_details', {status: '1'} );
+                var table_row = object.create('div', null, [label], null, null, 'selectable_service_slot', {id: 'service', option: '0', name: services[serviceKey]} );
                 if (parseInt(serviceKey) != 0) {
                     
                     var courseCostPanel = object.create('div', object._format.formatCost(parseInt(serviceKey), object._currency), null, null, null, 'serviceCost maximumAndMinimum', null);
-                    coursePanel.appendChild(courseCostPanel);
+                    table_row.appendChild(courseCostPanel);
                     
                 }
-                var table_row = object.create('div', null, [coursePanel], null, null, 'selectable_service_slot', {id: 'service', option: '0', name: services[serviceKey]} );
                 servicePanels.appendChild(table_row);
                 if (options != null && serviceKey == optionIndex) {
                     

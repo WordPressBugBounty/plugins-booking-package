@@ -1021,6 +1021,68 @@
             
         }
         
+        public function getEmailForUser() {
+            
+            $list = array(
+                '_' . $this->prefix . 'user_email_registered' => array(
+                    'enable' => 0,
+                    'enableSMS' => 0,
+                    'notifyAdministrator' => 1,
+                    'format' => 'text',
+                    'title' => __('Registered', 'booking-package'),
+                    'subject' => __('Registration Complete', 'booking-package'), 
+                    'content' => __('Your registration is complete.', 'booking-package'),
+                    'subjectForAdmin' => __('Registration Complete', 'booking-package'), 
+                    'contentForAdmin' => __('Your registration is complete.', 'booking-package'),
+                ), 
+                '_' . $this->prefix . 'user_email_updated' => array(
+                    'enable' => 0,
+                    'enableSMS' => 0,
+                    'notifyAdministrator' => 1,
+                    'format' => 'text',
+                    'title' => __('Updated', 'booking-package'),
+                    'subject' => __('User Information Updated', 'booking-package'), 
+                    'content' => __('Your user information has been updated.', 'booking-package'),
+                    'subjectForAdmin' => __('User Information Updated', 'booking-package'), 
+                    'contentForAdmin' => __('Your user information has been updated.', 'booking-package'),
+                ), 
+                '_' . $this->prefix . 'user_email_deleted' => array(
+                    'enable' => 0,
+                    'enableSMS' => 0,
+                    'notifyAdministrator' => 1,
+                    'format' => 'text',
+                    'title' => __('Deleted', 'booking-package'),
+                    'subject' => __('Account Deletion Notification', 'booking-package'), 
+                    'content' => __('Your account has been deleted.', 'booking-package'),
+                    'subjectForAdmin' => __('Account Deletion Notification', 'booking-package'), 
+                    'contentForAdmin' => __('Your account has been deleted.', 'booking-package'),
+                ),
+            );
+            
+            $emailMessageList = array();
+            foreach ($list as $uniqueKey => $object) {
+                
+                $json = get_option($uniqueKey, null);
+                if (is_null($json) === true) {
+                    
+                    add_option($uniqueKey, json_encode($object));
+                    
+                    
+                } else {
+                    
+                    $object = json_decode($json, true);
+                    
+                }
+                $emailMessageList[$uniqueKey] = $object;
+                
+            }
+            
+            $formData = $this->getUserInputFields();
+            
+            return array('emailMessageList' => $emailMessageList, 'formData' => $formData);
+            
+        }
+        
         public function getEmailMessageList($accountKey = 1, $calendarName = null, $calendarAccount = null) {
             
             if (empty($calendarName)) {
@@ -5832,6 +5894,29 @@
             
         }
         
+        public function updataEmailMessageForUser() {
+            
+            $id = sanitize_text_field($_POST['id']);
+            $object = get_option($id, null);
+            if (is_null($object) === false) {
+                
+                $object = json_decode($object, true);
+                $object['subject'] = sanitize_text_field($_POST['subject']);
+                $object['content'] = sanitize_textarea_field(htmlspecialchars($_POST['content'], ENT_QUOTES|ENT_HTML5));
+                $object['subjectForAdmin'] = sanitize_text_field($_POST['subjectForAdmin']);
+                $object['contentForAdmin'] = sanitize_textarea_field(htmlspecialchars($_POST['contentForAdmin'], ENT_QUOTES|ENT_HTML5));
+                $object['enable'] = intval($_POST['enableEmail']);
+                $object['enableSMS'] = 0;
+                $object['format'] = sanitize_text_field($_POST['format']);
+                $object['notifyAdministrator'] = intval($_POST['notifyAdministrator']);
+                update_option($id, json_encode($object));
+                
+            }
+            
+            return $this->getEmailForUser();
+            
+        }
+        
         public function updataEmailMessageForCalendarAccount(){
             
             $accountKey = intval($_POST['accountKey']);
@@ -5955,6 +6040,7 @@
                 }
                 $this->updateSubscriptionStatus('Active');
                 
+                /**
                 $numberOfVerificationAttemptsForExpiration = get_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', null);
                 if ( is_null($numberOfVerificationAttemptsForExpiration) ) {
                     
@@ -5965,6 +6051,7 @@
                     update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0);
                     
                 }
+                **/
                 
             } else {
                 
@@ -6039,6 +6126,7 @@
                             
                             update_option('_' . $this->prefix . 'expiration_date_for_subscriptions', 0);
                              $this->updateSubscriptionStatus('Inactive');
+                             $this->notificationSubscriptionRenewalFailed(true);
                             
                         }
                         
@@ -6142,18 +6230,117 @@
 			
 		}
 		
-		public function subscriptionRenewalFailed($type = 'html') {
+		public function checkLatestInvoice() {
+            
+            $url = BOOKING_PACKAGE_EXTENSION_URL;
+            $latestInvoiceDate = get_option('_' . $this->prefix . 'latestInvoiceDate', null);
+            if ( is_null($latestInvoiceDate) ) {
+                
+                $current_timestamp = time();
+                $last_month_timestamp = strtotime('last month', $current_timestamp);
+                $latestInvoiceDate = intval(date('Y', $last_month_timestamp) . date('m', $last_month_timestamp));
+                add_option('_' . $this->prefix . 'latestInvoiceDate', $latestInvoiceDate);
+                
+            }
+            
+            $currentDate = intval(date('Y') . date('m'));
+            $subscriptions = $this->upgradePlan('get');
+            $expiration_date = $subscriptions['expiration_date_for_subscriptions'] - (4 * 3600);
+            if ($this->getSubscriptionStatus() === 'Active' && $expiration_date < date('U') && $currentDate > intval($latestInvoiceDate)) {
+                
+                $params = array(
+                    "subscription_mode" => "checkLatestInvoice",
+                    "subscriptions_id" => $subscriptions['id_for_subscriptions'],
+                );
+                
+                $args = array(
+                    'method' => 'POST',
+                    'body' => $params
+                );
+                $response = wp_remote_request($url . "checkLatestInvoice/", $args);
+                $statusCode = wp_remote_retrieve_response_code($response);
+                $response = json_decode(wp_remote_retrieve_body($response));
+                if ($response->subscription_status === 'active' && $response->invoice_status === 'open') {
+                    
+                    $this->notificationSubscriptionRenewalFailed(false, __('Your paid subscription payment failed.', 'booking-package'));
+                    update_option('_' . $this->prefix . 'latestInvoiceDate', $currentDate);
+                    #var_dump($response);
+                    
+                }
+                
+            }
+            
+        }
+		
+		public function notificationSubscriptionRenewalFailed($checkStatusText = true, $subject = null) {
+		    
+		    $to = get_option($this->prefix . "email_to", null);
+		    if (empty($to)) {
+				
+				$to = get_bloginfo('admin_email');
+				
+			}
+			
+			$sender = trim( get_option($this->prefix . "email_from", null) );
+			$sender_name = trim( get_option($this->prefix . "email_title_from", null) );
+			if (empty($sender)) {
+				
+				$sender = trim( get_bloginfo('admin_email') );
+				$sender_name = trim( get_bloginfo('name') );
+				
+			}
+			
+			$from = $sender;
+			if (!empty($sender_name) && strlen($sender_name) != 0) {
+				
+				$from = sprintf("%s <%s>", $sender_name, $sender);
+				
+			}
+            $headers = array("From: ".$from."\r\n", "Return-Path: ".$from."\r\n", "Reply-To: ".$from."\r\n");
+            $text = $this->subscriptionRenewalFailed('text', $checkStatusText);
+            if (empty($text)) {
+                
+                return false;
+                
+            }
+            $text .= "\nURL: " . admin_url();
+            if ( is_null($subject) ) {
+		        
+		        $subject = __('Paid Subscription Renewal Failed.', 'booking-package');
+		        
+		    }
+            wp_mail(trim( $to ), '[Booking Packgae] ' . $subject, $text, $headers);
+            
+		}
+		
+		public function subscriptionRenewalFailed($type = 'html', $checkStatusText = true) {
 		    
 			$status = $this->getSubscriptionStatus();
 			$text = '';
-			if ($status === 'Inactive') {
+			if ($status === 'Inactive' || $checkStatusText === false) {
 				
 				$text .= '<div id="booking_package_subscriptionRenewalFailed">';
-				$text .= '<p><b>' . __('Paid Subscription Renewal Failed.', 'booking-package') . '</b><br>' . "\n";
+				if ($checkStatusText === true) {
+				    
+				    $text .= '<p><b>' . __('Paid Subscription Renewal Failed.', 'booking-package') . '</b><br>' . "\n";
+				    
+				} else {
+				    
+				    $text .= '<p><b>' . __('Your paid subscription payment failed.', 'booking-package') . '</b><br>' . "\n";
+				    
+				}
 				$text .= '<div>' . sprintf(__('Please check the status in the WordPress dashboard under %s > %s > %s to find the reason and proceed with renewal.', 'booking-package'), 'Booking Package', __('General Settings', 'booking-package'), __('Paid Subscription', 'booking-package')) . "</div><br>\n";
-				$text .= '<div>' . __('If the status shows an issue, payment for your subscription may have failed. ', 'booking-package') . "<br>\n";
+				if ($checkStatusText === true) {
+				    
+				    $text .= '<div>' . __('If the status shows an issue, payment for your subscription may have failed. ', 'booking-package') . "<br>\n";
+				    
+				}
 				$text .= sprintf(__('Please check your payment status on the "%s" page and complete the payment if necessary. ', 'booking-package'), __('My billing', 'booking-package')) . "</div><br>\n";
-				$text .= '<div>' . sprintf(__('After completing the payment, or if the status is not updated even without a payment issue, click the "%s" button to manually update your subscription.', 'booking-package'), __('Update My Subscription', 'booking-package')) . "</div>\n";
+				if ($checkStatusText === true) {
+				    
+				    $text .= '<div>' . sprintf(__('After completing the payment, or if the status is not updated even without a payment issue, click the "%s" button to manually update your subscription.', 'booking-package'), __('Update My Subscription', 'booking-package')) . "</div>\n";
+				    
+				}
 				$text .= '</p>';
 				$text .= '</div>';
 				
@@ -6334,6 +6521,8 @@
             
         }
         
+        
+        
         public function getSiteStatus($countExpiration = false) {
             
             $url = BOOKING_PACKAGE_EXTENSION_URL;
@@ -6352,7 +6541,7 @@
                 return false;
                 
             }
-            
+            /**
             $numberOfVerificationAttemptsForExpiration = get_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', null);
             if ( is_null($numberOfVerificationAttemptsForExpiration) ) {
                 
@@ -6384,6 +6573,7 @@
                 return false;
                 
             }
+            **/
             
             if ($expiration_date < date('U')) {
                 
@@ -6429,12 +6619,20 @@
                         
                         $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
                         $this->updateSubscriptionStatus('Inactive');
+                        $this->notificationSubscriptionRenewalFailed(true);
+                        /**
                         if ($countExpiration === true) {
                             
+                            if ($numberOfVerificationAttemptsForExpiration === 3) {
+                                
+                                $this->notificationSubscriptionRenewalFailed();
+                                
+                            }
                             $numberOfVerificationAttemptsForExpiration++;
                             update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', $numberOfVerificationAttemptsForExpiration);
                             
                         }
+                        **/
                         
                         return false;
                         

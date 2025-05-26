@@ -56,7 +56,7 @@
 				'Sign In' => __('Sign In', 'booking-package'),
 				'Sign Out' => __('Sign Out', 'booking-package'),
 				'Hello, %s' => __('Hello, %s', 'booking-package'),
-				'Create Account' => __('Create Account', 'booking-package'),
+				/** 'Create Account' => __('Create Account', 'booking-package'), **/
 				'Register' => __('Register', 'booking-package'),
 				'Edit My Profile' => __('Edit My Profile', 'booking-package'),
 				'Booking History' => __('Booking History', 'booking-package'),

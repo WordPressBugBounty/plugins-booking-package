@@ -5409,6 +5409,91 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             course["status"] = true;
             
+            
+            var table_row = document.createElement("div");
+            table_row.setAttribute("data-key", i);
+            table_row.setAttribute("data-status", 1);
+            table_row.setAttribute("data-service", course.key);
+            table_row.classList.add("selectable_service_slot");
+            
+            var courseNamePanel = document.createElement("span");
+            if(typeof course["name"] == "string"){
+                
+                course["name"] = course["name"].replace(/\\/g, "");
+                
+            }
+            courseNamePanel.textContent = course["name"];
+            
+            var checkBox = document.createElement("input");
+            checkBox.id = 'service_checkBox_' + i;
+            checkBox.setAttribute("data-key", i);
+            checkBox.type = "checkbox";
+            checkBox.value = "";
+            //checkBox.disabled = true;
+            
+            checkBox.onclick = function() {
+                
+                if (this.checked == true) {
+                    
+                    this.checked = false;
+                    
+                } else {
+                    
+                    this.checked = true;
+                    
+                }
+                
+            };
+            
+            checkBoxList[i] = checkBox;
+            
+            var label = document.createElement("span");
+            label.classList.add('service_name_cost');
+            label.appendChild(checkBox);
+            label.appendChild(courseNamePanel);
+            if(parseInt(object._calendarAccount.hasMultipleServices) == 0){
+                
+                checkBox.classList.add("hidden_panel");
+                
+            }
+            table_row.appendChild(label);
+            
+            object._console.log(course);
+            object._console.log(isNaN(parseInt(course.cost_1)));
+            var responseCosts = object._servicesControl.getCostsInService(course, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+            object._console.log(responseCosts);
+            if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
+                
+                var courseCostPanel = document.createElement("span");
+                courseCostPanel.classList.add("serviceCost");
+                courseCostPanel.classList.add('maximumAndMinimum');
+                table_row.appendChild(courseCostPanel);
+                var cost = object._format.formatCost(responseCosts.max, object._currency);
+                if (responseCosts.hasMultipleCosts === true) {
+                    
+                    cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
+                    object.createmMximumAndMinimumElements(responseCosts, courseCostPanel);
+                    
+                } else {
+                    
+                    courseCostPanel.textContent = cost;
+                    
+                }
+                
+            }
+            
+            if (course.description != null && course.description.length > 0) {
+                
+                var description = document.createElement("div");
+                description.classList.add("descriptionOfService");
+                description.textContent = course.description.replace(/\\/g, "");
+                table_row.appendChild(description);
+                object._console.log(course.description);
+                
+            }
+            
+            
+            /**
             var coursePanel = document.createElement("div");
             coursePanel.classList.add('service_details')
             coursePanel.setAttribute("data-key", i);
@@ -5497,6 +5582,8 @@ var error_hCaptcha_for_booking_package = function(response) {
             table_row.setAttribute("data-service", course.key);
             table_row.classList.add("selectable_service_slot");
             table_row.appendChild(coursePanel);
+            **/
+            
             if (course.closed != null && course.closed == 1) {
                 
                 table_row.classList.add("hidden_panel");
@@ -5617,6 +5704,37 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             }
             
+            
+            var table_row = document.createElement("div");
+            table_row.setAttribute("data-key", i);
+            table_row.setAttribute("data-status", 1);
+            table_row.setAttribute("class", "selectable_service_slot");
+            table_row.appendChild(label);
+            
+            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+            object._console.log(responseCosts);
+            if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
+                
+                var optionCostPanel = document.createElement("span");
+                optionCostPanel.classList.add("serviceCost");
+                optionCostPanel.classList.add('maximumAndMinimum');
+                table_row.appendChild(optionCostPanel);
+                var cost = object._format.formatCost(responseCosts.max, object._currency);
+                if (responseCosts.hasMultipleCosts === true) {
+                    
+                    object.createmMximumAndMinimumElements(responseCosts, optionCostPanel);
+                    
+                } else {
+                    
+                    optionCostPanel.textContent = cost;
+                    
+                }
+                
+            }
+            
+            optionPanelList.push(table_row);
+            
+            /**
             var optionPanel = document.createElement("div");
             optionPanel.setAttribute("data-key", i);
             optionPanel.appendChild(label);
@@ -5650,6 +5768,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             table_row.setAttribute("data-status", 1);
             table_row.setAttribute("class", "selectable_service_slot");
+            **/
             table_row.onclick = function() {
                 
                 var key = parseInt(this.getAttribute("data-key"));
@@ -6274,20 +6393,27 @@ var error_hCaptcha_for_booking_package = function(response) {
             schedulePanel.appendChild(timeLabel);
             schedulePanel.appendChild(titleLabel);
             
+            table_row = document.createElement("div");
+            table_row.setAttribute("data-key", i);
+            table_row.setAttribute("data-month", schedule.month);
+            table_row.setAttribute("data-day", schedule.day);
+            table_row.setAttribute("data-year", schedule.year);
+            table_row.appendChild(timeLabel);
+            table_row.appendChild(titleLabel);
+            //table_row.appendChild(schedulePanel);
+            scheduleListPanel.push(table_row);
+            titleLabelList.push(titleLabel);
+            
             if(parseInt(object._calendarAccount.displayRemainingCapacity) == 1){
                 
                 var displayRemainingCapacityLabel = document.createElement("span");
                 displayRemainingCapacityLabel.classList.add("remainingSlots");
                 displayRemainingCapacityLabel.textContent = object._i18n.get("%s Slots Left", [schedule.remainder]);
-                schedulePanel.appendChild(displayRemainingCapacityLabel);
+                table_row.appendChild(displayRemainingCapacityLabel);
                 
             }
             
-            table_row = document.createElement("div");
-            table_row.setAttribute("data-key", i);
-            table_row.appendChild(schedulePanel);
-            scheduleListPanel.push(table_row);
-            titleLabelList.push(titleLabel);
+            
             
             if(schedule["select"] === true){
                 
