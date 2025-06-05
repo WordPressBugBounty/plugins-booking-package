@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.86
+Version:     1.6.87
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -386,7 +386,7 @@ Domain Path: /languages
 				
 				$calendarAccounts = $schedule->booking_notification();
 				$schedule->deleteCustomers();
-				#$setting->checkLatestInvoice();
+				$setting->checkLatestInvoice();
 				
             }
 			
@@ -2732,20 +2732,8 @@ Domain Path: /languages
 								<div class="enablePanel">
 									<div class="enableLabel"><?php _e("Notifications", 'booking-package'); ?></div>
 									<div class="enableValuePanel">
-										<label style="margin-right: 10px;"><input type="checkbox" id="mailEnable"/><?php _e("Email", 'booking-package'); ?></label>
-										<label><input type="checkbox" id="smsEnable"/>
-										<?php 
-											$messaging = __("Messaging Services", 'booking-package'); 
-											if ($this->messagingApp === 0) {
-												
-												$messaging = __("SMS", 'booking-package'); 
-												
-											}
-											print $messaging;
-											
-										?>
-										</label>
-										
+										<label style="margin-right: 10px;"><input type="checkbox" id="mailEnable"/><?php _e("Enabled", 'booking-package'); ?></label>
+										<!-- <label><input type="checkbox" id="smsEnable"/> -->
 									</div>
 								</div>
 								<div class="emailFormatPanel">

@@ -1402,14 +1402,6 @@ Member_manage.prototype.emailSettingPanel = function(emailMessageList, formData)
                 
             }
             
-            var enableSmsCheck = document.getElementById("smsEnable");
-            enableSmsCheck.checked = false;
-            if (parseInt(mailMessageData.enableSMS) === 1) {
-                
-                enableSmsCheck.checked = true;
-                
-            }
-            
             document.getElementById("emailFormatHtml").checked = true;
             if (mailMessageData.format == "text") {
                 
@@ -1545,13 +1537,6 @@ Member_manage.prototype.emailSettingPanel = function(emailMessageList, formData)
                     
                 }
                 
-                var enableSms = 0;
-                if (enableSmsCheck.checked === true) {
-                    
-                    enableSms = 1;
-                    
-                }
-                
                 var format = "html";
                 if (document.getElementById("emailFormatText").checked === true) {
                     
@@ -1566,7 +1551,7 @@ Member_manage.prototype.emailSettingPanel = function(emailMessageList, formData)
                     
                 }
                 
-                var post = {mode: "updataEmailMessageForUser", nonce: object._nonce, action: object._action, id: id, subject: subject_filed.value, content: value, subjectForAdmin: subject_filed_for_admin.value, contentForAdmin: valueForAdmin, enableEmail: enableEmail, enableSms: enableSms, format: format, notifyAdministrator: notifyAdministrator};
+                var post = {mode: "updataEmailMessageForUser", nonce: object._nonce, action: object._action, id: id, subject: subject_filed.value, content: value, subjectForAdmin: subject_filed_for_admin.value, contentForAdmin: valueForAdmin, enableEmail: enableEmail, format: format, notifyAdministrator: notifyAdministrator};
                 object.loadingPanel(1);
                 object._console.log(post);
                 object.xmlHttp = new Booking_App_XMLHttp(object._url, post, object._webApp, function(json) {

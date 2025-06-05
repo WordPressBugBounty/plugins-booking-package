@@ -8293,6 +8293,22 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
         }
         
+        const getSelectedName = function(guest) {
+            
+            const options = guest.json;
+            const number = parseInt(guest.number);
+            for (let i = 0; i < options.length; i++) {
+                
+                if (parseInt(options[i].number) === number) {
+                    
+                    return options[i].name;
+                    
+                }
+                
+            }
+            
+        };
+        
         if (services.length > 0) {
             
             for (var key in services) {
@@ -8345,7 +8361,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     
                                     if (guest.selectedName == null) {
                                         
-                                        guest.selectedName = guest.json[parseInt(guest.number)].name;
+                                        guest.selectedName = getSelectedName(guest);
                                         
                                     }
                                     //hasReflectService = true;
@@ -8371,7 +8387,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                         
                                         if (guest.selectedName == null) {
                                             
-                                            guest.selectedName = guest.json[parseInt(guest.number)].name;
+                                            guest.selectedName = getSelectedName(guest);
                                             
                                         }
                                         
@@ -8552,7 +8568,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                         
                                                     }
                                                     
-                                                    guest.selectedName = guest.json[parseInt(guest.number)].name;
+                                                    guest.selectedName = getSelectedName(guest);
                                                     
                                                 }
                                                 
@@ -8577,7 +8593,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                     
                                                     if (guest.selectedName == null) {
                                                         
-                                                        guest.selectedName = guest.json[parseInt(guest.number)].name;
+                                                        guest.selectedName = getSelectedName(guest);
                                                         
                                                     }
                                                     

@@ -6245,7 +6245,7 @@
             
             $currentDate = intval(date('Y') . date('m'));
             $subscriptions = $this->upgradePlan('get');
-            $expiration_date = $subscriptions['expiration_date_for_subscriptions'] - (4 * 3600);
+            $expiration_date = $subscriptions['expiration_date_for_subscriptions'] - (3 * 3600);
             if ($this->getSubscriptionStatus() === 'Active' && $expiration_date < date('U') && $currentDate > intval($latestInvoiceDate)) {
                 
                 $params = array(
@@ -6263,10 +6263,9 @@
                 if ($response->subscription_status === 'active' && $response->invoice_status === 'open') {
                     
                     $this->notificationSubscriptionRenewalFailed(false, __('Your paid subscription payment failed.', 'booking-package'));
-                    update_option('_' . $this->prefix . 'latestInvoiceDate', $currentDate);
-                    #var_dump($response);
                     
                 }
+                update_option('_' . $this->prefix . 'latestInvoiceDate', $currentDate);
                 
             }
             
