@@ -8296,7 +8296,9 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         const getSelectedName = function(guest) {
             
             const options = guest.json;
-            const number = parseInt(guest.number);
+            const index = parseInt(guest.index);
+            return options[index].name;
+            /**
             for (let i = 0; i < options.length; i++) {
                 
                 if (parseInt(options[i].number) === number) {
@@ -8306,7 +8308,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 }
                 
             }
-            
+            **/
         };
         
         if (services.length > 0) {

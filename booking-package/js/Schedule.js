@@ -1790,7 +1790,6 @@ window.addEventListener('error', function(event) {
         editSchedulePanel.classList.remove("hidden_panel");
         var media_frame_content = document.getElementById("media_frame_content_for_schedule");
         media_frame_content.classList.add('hidden_panel');
-        media_frame_content.textContent = null;
         document.getElementById("media_title_for_schedule").classList.add("media_left_zero");
         document.getElementById("media_router_for_schedule").classList.add("hidden_panel");
         document.getElementById("menu_panel_for_schedule").classList.add("hidden_panel");
@@ -3051,6 +3050,10 @@ window.addEventListener('error', function(event) {
             };
             
         }
+        /**
+        const tdRemaining = document.getElementById('remainder_slots');
+        tdRemaining.classList.add('hidden_panel');
+         * **/
         
         var th = object.create('td', 'No', null, null, null, null, null);
         var tdTime = object.create('td', object._i18n.get('Time'), null, null, null, null, null);
@@ -3064,18 +3067,27 @@ window.addEventListener('error', function(event) {
         var tdDelete = object.create('td', null, [deleteSlots], 'allScheduleDelete', null, null, null);
         
         var thead = object.create('thead', null, [th, tdTime, tdDeadlineTime, tdTitle, tdCapacities], null, 'width: 100%; background: #fff; position: sticky; top: 0; left: 0; z-index: 1;', null, null);
+        
+        
         if (mode == 'getPublishedTimeSlots') {
             
             thead.appendChild(tdRemaining);
+            //tdRemaining.classList.remove('hidden_panel');
             
         }
         thead.appendChild(tdStop);
         thead.appendChild(tdDelete);
         
         var tbody = document.createElement('tbody');
+        /**
+        const table = document.getElementById('time_slots_table');
+        table.appendChild(tbody);
+        **/
         
         var table = object.create('table', null, [thead, tbody], 'time_slots_table', 'border: 0;', 'wp-list-table widefat fixed striped', null);
         media_frame_content.appendChild(table);
+        
+        
         for(var i = 0; i < 300; i++){
             
             var th = object.create('th', (i + 1), null, null, null, null, null);

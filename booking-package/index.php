@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.87
+Version:     1.6.88
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -3022,7 +3022,26 @@ Domain Path: /languages
 								printf( __('This time slot is currently blocked and will not be automatically recreated. To allow recreation based on the "%s", use the \'Delete Instance\' option instead.', 'booking-package'), __('Weekly schedule templates', 'booking-package') );
 							?> 
 						</div>
-						<div id="media_frame_content_for_schedule"></div>
+						<div id="media_frame_content_for_schedule">
+							<!--
+							<table id="time_slots_table" class="wp-list-table widefat fixed striped" style="border: 0;">
+								<thead style="width: 100%; background: #fff; position: sticky; top: 0; left: 0; z-index: 1;">
+									<tr>
+										<td>No</td>
+										<td><?php _e("Time", 'booking-package'); ?></td>
+										<td id="deadlineTime"><?php _e("Booking Deadline", 'booking-package'); ?></td>
+										<td><?php _e("Display Text", 'booking-package'); ?></td>
+										<td><?php _e("Available Slots", 'booking-package'); ?></td>
+										<td id="remainder_slots"><?php _e("Remaining Slots", 'booking-package'); ?></td>
+										<td id="stop"><?php _e("Paused", 'booking-package'); ?></td>
+										<td id="allScheduleDelete"><?php _e("Delete", 'booking-package'); ?></td>
+									</tr>
+								</thead>
+								
+								
+							</table>
+							-->
+						</div>
 						
 						<div id="edit_schedule_for_hotel" class="media_left_zero hidden_panel">
 							
