@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.88
+Version:     1.6.89
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -3037,7 +3037,34 @@ Domain Path: /languages
 										<td id="allScheduleDelete"><?php _e("Delete", 'booking-package'); ?></td>
 									</tr>
 								</thead>
-								
+								<tbody class='material-icons' style="width: 100%;">
+									
+									<?php
+									
+										for ($i = 0; $i < 300; $i++) {
+											
+											print '<tr id="time_slots_' . $i . '">';
+											print	'<th>' . $i + 1 . '</th>';
+											print	'<td id="time_slot_id_' . $i . '" class="timeTd">';
+											print		'<div id="access_time_' . $i . '" class="noTime" data-select="' . $i . '">access_time</div>';
+											print		'<div id="access_hour_' . $i . '" class="hidden_panel" data-select="' . $i . '"></div>';
+											print		'<span id="access_colon_' . $i . '" class="hidden_panel"> : </span>';
+											print		'<div id="access_min_' . $i . '" class="hidden_panel" data-select="' . $i . '"></div>';
+											print	'</td>';
+											print	'<td class="td_width_100_px"><div id="access_deadline_time_' . $i . '" class="noTime" data-select="' . $i . '">access_time</div></td>';
+											print	'<td><input id="access_display_text_' . $i . '" class="regular-text title_text_box" type="text"></td>';
+											print	'<td class="td_width_50_px"><div id="access_available_' . $i . '" class="noPerson" data-select="' . $i . '">person_add</div></td>';
+											print	'<td class="td_width_50_px"><div id="access_remainder_' . $i . '" class="noPerson" data-select="' . $i . '">person_add</div></td>';
+											print	'<td class="td_width_50_px"><input id="access_stop_' . $i . '" data-key="' . $i . '" name="check_' . $i . '" type="checkbox" value="true"></td>';
+											print	'<td class="td_width_50_px"><input id="access_delete_' . $i . '" name="check_' . $i . '" type="checkbox" value="true"></td>';
+											print '</tr>';
+											
+										}
+									
+									?>
+									
+									
+								</tbody>
 								
 							</table>
 							-->

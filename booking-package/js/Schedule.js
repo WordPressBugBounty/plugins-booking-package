@@ -3088,7 +3088,7 @@ window.addEventListener('error', function(event) {
         media_frame_content.appendChild(table);
         
         
-        for(var i = 0; i < 300; i++){
+        for (var i = 0; i < 300; i++) {
             
             var th = object.create('th', (i + 1), null, null, null, null, null);
             var hourBlock = object.create('div', '', null, null, null, 'hour', {select: i} );
@@ -9963,8 +9963,11 @@ window.addEventListener('error', function(event) {
                 var emailEdit = document.getElementById("email_edit_panel");
                 emailEdit.classList.remove("hidden_panel");
                 var media_frame_content = document.getElementById("media_frame_content_for_schedule");
+                media_frame_content.classList.add('hidden_panel');
+                /**
                 media_frame_content.classList.remove('hidden_panel');
                 media_frame_content.textContent = null;
+                **/
                 document.getElementById("media_title_for_schedule").classList.add("media_left_zero");
                 document.getElementById("media_router_for_schedule").classList.add("hidden_panel");
                 document.getElementById("menu_panel_for_schedule").classList.add("hidden_panel");

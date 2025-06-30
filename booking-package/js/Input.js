@@ -229,16 +229,36 @@
 					optionBox.selected = true;
 					
 				}
-				
+				/**
 				if (input.index != null && input.index == key) {
 					
 					optionBox.selected = true;
 					
 				}
+				**/
 				
 				if (userValue == list[key]) {
 					
 					optionBox.selected = true;
+					
+					selectBox.classList.add("hidden_panel");
+					valuePanel.setAttribute("data-edit", "1");
+					userValuePanel.classList.remove("hidden_panel");
+					userValuePanel.textContent = userValue;
+					if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
+						
+						selectBox.classList.remove("hidden_panel");
+						userValuePanel.classList.add("hidden_panel");
+						valuePanel.removeAttribute("data-edit");
+						
+					}
+					
+					selectBox.onchange = function() {
+						
+						var index = selectBox.selectedIndex;
+						userValuePanel.textContent = selectBox.options[index].value;
+						
+					};
 					
 				}
 				
@@ -247,7 +267,7 @@
 				
 			}
 			
-			if (userValue != null && inputData[inputName] != null && inputData[inputName].selectBox != null) {
+			if (userValue == null && inputData[inputName] != null && inputData[inputName].selectBox != null) {
 				
 				selectBox = inputData[inputName].selectBox;
 				
@@ -257,29 +277,6 @@
 				    
 		    	selectBox.onchange = eventAction;
 			    
-			}
-			
-			if (optionBox.selected === true && userValue != null && userValue.length != 0) {
-				
-				selectBox.classList.add("hidden_panel");
-				valuePanel.setAttribute("data-edit", "1");
-				userValuePanel.classList.remove("hidden_panel");
-				userValuePanel.textContent = userValue;
-				if (input.isTerms != null && input.isTerms == 'true' && object.getAdmin() === false) {
-					
-					selectBox.classList.remove("hidden_panel");
-					userValuePanel.classList.add("hidden_panel");
-					valuePanel.removeAttribute("data-edit");
-					
-				}
-				
-				selectBox.onchange = function() {
-					
-					var index = selectBox.selectedIndex;
-					userValuePanel.textContent = selectBox.options[index].value;
-					
-				};
-				
 			}
 			
 			valuePanel.appendChild(selectBox);
@@ -514,7 +511,6 @@
 				inputData[inputName][i] = radioBox;
 				
 			}
-			
 			
 			if (userValue != null && userValue.length != 0) {
 				

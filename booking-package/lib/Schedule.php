@@ -1161,12 +1161,28 @@
         }
         
         public function margeProfile($bookedValues, $userProfile) {
-        	
+			
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$userInputFields = $setting->initialUserInputFields();
         	foreach ($userProfile as $type => $uniques) {
 				
 				if (array_key_exists($type, $bookedValues)) {
 					
 					foreach ($uniques as $key => $unique) {
+						
+						if (array_key_exists($key, $userInputFields) === false) {
+							
+							continue;
+							
+						} else {
+							
+							if ($userInputFields[$key]['active'] === 'false') {
+								
+								continue;
+								
+							}
+							
+						}
 						
 						if (array_key_exists($key, $bookedValues[$type])) {
 							
@@ -1189,7 +1205,7 @@
 			}
 			
 			return $bookedValues;
-        	
+			
         }
         
         public function login($userId, $statusCheck = true) {
