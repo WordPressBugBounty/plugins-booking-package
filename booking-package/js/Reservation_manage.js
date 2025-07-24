@@ -3168,9 +3168,9 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 if (post !== false) {
                     
                     var enable = true;
-                    if (parseInt(object._emailEnableList.mail_updated.enable) == 1) {
+                    if (parseInt(object._emailEnableList.booking_updated_notification.enable) == 1) {
                         
-                        object._console.log("mail_pending = " + Boolean(parseInt(object._emailEnableList.mail_updated.enable)));
+                        object._console.log("mail_pending = " + Boolean(parseInt(object._emailEnableList.booking_updated_notification.enable)));
                         enable = false;
                         
                     }
