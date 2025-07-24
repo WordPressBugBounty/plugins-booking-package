@@ -8399,8 +8399,22 @@ window.addEventListener('error', function(event) {
                 
                 response = object.getInputData(inputTypeList, inputData);
                 object._console.log(response);
-                if ((response.type == 'CHECK' || response.type == 'SELECT' || response.type == 'RADIO') && response.options.length == 0) {
+                let nullNum = 0;
+                let options = JSON.parse(response.options);
+                for (let i = 0; i < options.length; i++) {
                     
+                    if (options[i] === null) {
+                        
+                        nullNum++;
+                        
+                    }
+                    
+                }
+                
+                if ((response.type == 'CHECK' || response.type == 'SELECT' || response.type == 'RADIO') && options.length == nullNum) {
+                    
+                    window.alert(object._i18n.get("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", [object._i18n.get('Type'), object._i18n.get('Options')]));
+                    return false;
                     response.options = false;
                     
                 }
@@ -9545,8 +9559,24 @@ window.addEventListener('error', function(event) {
                 response = object.getInputData(inputTypeList, inputData);
                 response.id = itemData.id;
                 object._console.log(response);
-                if ((response.type == 'CHECK' || response.type == 'SELECT' || response.type == 'RADIO') && response.options.length == 0) {
+                
+                let nullNum = 0;
+                let options = JSON.parse(response.options);
+                for (let i = 0; i < options.length; i++) {
                     
+                    if (options[i] === null) {
+                        
+                        nullNum++;
+                        
+                    }
+                    
+                    
+                }
+                
+                if ((response.type == 'CHECK' || response.type == 'SELECT' || response.type == 'RADIO') && options.length == nullNum) {
+                    
+                    window.alert(object._i18n.get("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", [object._i18n.get('Type'), object._i18n.get('Options')]));
+                    return false;
                     response.options = false;
                     
                 }
@@ -9845,14 +9875,13 @@ window.addEventListener('error', function(event) {
         content_area.appendChild(table);
         
         var mail_message = {
-            mailAdmin: "mail_new_admin",
-            /**mailVisitor: "mail_new_visitor",**/ 
-            mailApproved: "mail_approved", 
-            mailPending: "mail_pending", 
-            mailUpdated: "mail_updated", 
-            mailReminder: "mail_reminder", 
-            mailCanceled: "mail_canceled_by_visitor_user",
-            mailDeleted: "mail_deleted",
+            mailAdmin: "new_booking_notification",
+            mailApproved: "booking_approved_notification", 
+            mailPending: "booking_pending_notification", 
+            mailUpdated: "booking_updated_notification", 
+            mailReminder: "booking_reminder_notification", 
+            mailCanceled: "booking_cancellation_notification",
+            mailDeleted: "booking_deleted_notification",
         };
         
         var valueTdList = {};

@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.89
+Version:     1.6.90
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -28,7 +28,7 @@ Domain Path: /languages
 	
 	class BOOKING_PACKAGE {
 		
-		public $db_version = "1.1.9";
+		public $db_version = "1.2.0";
 		
 		public $plugin_version = 0;
 		
@@ -443,12 +443,14 @@ Domain Path: /languages
 			$setting->setOpensslAlgo('AES-128-ECB');
 			$setting->setSubscribeSite(false);
 			$setting->setSubscribeSite(true);
+			$setting->updateEmailId();
 			$installed_ver = get_option($this->prefix . "db_version");
 			if (version_compare($this->db_version, $installed_ver, '>')) {
 			#if ($installed_ver != $this->db_version) {
 				
 				$database = new booking_package_database($this->prefix, $this->db_version);
 				$queries = $database->create();
+				
 				if (count($queries['tables']) === 0 && count($queries['columns']) === 0) {
 					
 					update_option($this->prefix."db_version", $this->db_version);
@@ -1098,16 +1100,15 @@ Domain Path: /languages
             $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
             $isExtensionsValid = $this->getExtensionsValid(false, false);
             $calendarAccount = $schedule->getCalendarAccount($accountKey, $isExtensionsValid);
-            if ($calendarAccount === false) {
-            	
-            	echo '<div class="calendarNotFound">';
-            	echo 'The booking calendar was not found.';
-            	echo '</div>';
-            	return null;
-            	
-            }
-            
-            
+			if ($calendarAccount === false) {
+				
+				echo '<div class="calendarNotFound">';
+				echo 'The booking calendar was not found.';
+				echo '</div>';
+				return null;
+				
+			}
+			
 			$deleteKeys = array("googleCalendarID", "idForGoogleWebhook", "expirationForGoogleWebhook", "ical", "icalToken", "email_from", "email_from_title", "email_to", "email_to_title");
 			for ($i = 0; $i < count($deleteKeys); $i++) {
 				
@@ -1276,7 +1277,15 @@ Domain Path: /languages
 			$wq_login_form = ob_get_contents();
 			ob_get_clean();
 			
+			#var_dump(get_locale());
 			$formData = $setting->getForm($accountKey, true);
+			foreach ($formData as $key => $field) {
+				
+				$formData[$key] = $schedule->getTranslateFormField($field, $accountKey);
+				
+			}
+			
+			
 			$guestsList = $setting->getGuestsList($accountKey, true);
 			$courseList = $setting->getCourseList($accountKey);
 			$target_users = 'users';
@@ -1388,6 +1397,8 @@ Domain Path: /languages
 					}
 					
 				}
+				
+				$courseList[$key] = $setting->getTranslateService($service, $accountKey);
 				
 			}
 			
@@ -4848,17 +4859,41 @@ Domain Path: /languages
 					$expire = date('U') + (30 * 24 * 3600);
 					setcookie($this->prefix.'accountKey', $_POST['accountKey'], $expire);
 					$response = $schedule->getReservationData($_POST['month'], $_POST['day'], $_POST['year']);
-					$response['formData'] = $setting->getForm($_POST['accountKey'], true);
-					$response['courseList'] = $setting->getCourseList($_POST['accountKey']);
+					$form_fields = $setting->getForm($_POST['accountKey'], true);
+					for ($i = 0; $i < count($form_fields); $i++) {
+						
+						$form_fields[$i] = $schedule->getTranslateFormField($form_fields[$i], intval($_POST['accountKey']));
+						
+						
+					}
+					$response['formData'] = $form_fields;
+					#$response['formData'] = $setting->getForm($_POST['accountKey'], true);
+					
+					$services = $setting->getCourseList($_POST['accountKey']);
+					for ($i = 0; $i < count($services); $i++) {
+						
+						if ($services[$i]['active'] === 'true') {
+							
+							$services[$i] = $setting->getTranslateService($services[$i], intval($_POST['accountKey']));
+							
+						}
+						
+					}
+					$response['courseList'] = $services;
+					#$response['courseList'] = $setting->getCourseList($_POST['accountKey']);
+					$response['locale'] = get_locale();
 					$response['account'] = $schedule->getCalendarAccount($_POST['accountKey']);
 					if (($response['account']['type'] == 'day' && intval($response['account']['guestsBool']) == 1) || $response['account']['type'] == 'hotel') {
 						
-						$response['guestsList'] = $setting->getGuestsList($_POST['accountKey'], true);
-						if (count($response['guestsList']) == 0) {
+						#$response['guestsList'] = $setting->getGuestsList($_POST['accountKey'], true);
+						$guests = $setting->getGuestsList($_POST['accountKey'], true);
+						if (count($guests) === 0) {
 							
 							$response['account']['guestsBool'] = 0;
 							
 						}
+						
+						$response['guestsList'] = $guests;
 						
 					} else {
 						
@@ -6571,6 +6606,8 @@ Domain Path: /languages
 				'Password' => __('Password', 'booking-package'),
 				'Custom Fields' => __('Custom Fields', 'booking-package'),
 				'Local Payment' => __('Local Payment', 'booking-package'),
+				'Type' => __('Type', 'booking-package'),
+				'Options' => __('Options', 'booking-package'),
 			);
 			
 			
@@ -6751,6 +6788,7 @@ Domain Path: /languages
 				$dictionary['The cancellation URL shortcode has been inserted into the text area.'] = __("The cancellation URL shortcode has been inserted into the text area.", 'booking-package');
 				$dictionary['Please enable the "%s" item in the "Settings" tab.'] = __('Please enable the "%s" item in the "Settings" tab.', 'booking-package');
 				$dictionary['Despite having valid items, the functionality of "%s" is disabled.'] = __('Despite having valid items, the functionality of "%s" is disabled.', 'booking-package');
+				$dictionary["If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field."] = __("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", 'booking-package');
 				
 			} else if ($mode == "setting_page") {
 				
@@ -6829,6 +6867,7 @@ Domain Path: /languages
 				$dictionary['Username'] = __('Username', 'booking-package');
 				$dictionary['Email'] = __('Email', 'booking-package');
 				$dictionary['Password'] = __('Password', 'booking-package');
+				$dictionary['If you select Select, Check, or Radio in %s, you need to add a value to %s.'] = __('If you select Select, Check, or Radio in %s, you need to add a value to %s.', 'booking-package');
 				
 			}
 			

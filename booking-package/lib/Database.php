@@ -340,6 +340,7 @@
 					"couponKey"						=> "`couponKey`						VARCHAR(255) DEFAULT NULL",
 					"coupon"						=> "`coupon`						TEXT DEFAULT NULL",
 					"bookingReminder"				=> "`bookingReminder`				INT(11) DEFAULT 0",
+					"locale"						=> "`locale`						VARCHAR(10) DEFAULT '" . get_locale() . "'",
 				),
 			);
 			

@@ -7449,6 +7449,15 @@
 					
 				}
                 
+                $string_array = array('name' => $coupon['name'], 'description' => $coupon['description'], 'options' => array() );
+				$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'coupon', intval($coupon['key']), intval($accountKey), get_locale() );
+				if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) ) {
+					
+					$coupon['name'] = $translated_texts['name'];
+					$coupon['description'] = $translated_texts['description'];
+					
+				}
+                
                 $response['status'] = 1;
                 $response['coupon'] = $coupon;
                 
@@ -8138,6 +8147,7 @@
 								array(intval($key), intval($originCalendarKey))
 							);
 							$options = $wpdb->get_row($optionSql, ARRAY_A);
+							$options = $setting->getTranslateOption($options, intval($originCalendarKey) );
 							$optionsArray = json_decode($options['json'], true);
 							
 						} else if ($type == 'update') {
@@ -9633,7 +9643,7 @@
 						
 						if (isset($_POST['guests']) && intval($calendarAccount['guestsBool']) == 1) {
 							
-							$responseGuests = $this->getSelectedGuests($calendarAccount, $_POST['guests'], 'add');
+							$responseGuests = $this->getSelectedGuests($calendarAccount, $_POST['guests'] );
 							if ($responseGuests['isGuests'] === true) {
 								
 								$guests = $responseGuests['guests'];
@@ -9945,8 +9955,7 @@
 			
 			if (intval($_POST['sendEmail']) == 1) {
 				
-				#$email = $this->createEmailMessage($accountKey, array('mail_new_admin'), $form, $accommodationDetails, $selectedOptions, $lastID, $scheduleUnixTime, $sendDate, $cancellationUri, $currency, $services, $payName, $payId, $scheduleTitle, $responseGuests, $coupon);
-				$email = $this->createEmailMessage($accountKey, array('mail_new_admin'), intval($lastID));
+				$email = $this->createEmailMessage($accountKey, 'new_booking_notification', intval($lastID));
 				
 			}
 			
@@ -10116,8 +10125,9 @@
     		
     	}
     	
-		public function getSelectedGuests($calendarAccount, $selectedGuestsString, $mode) {
+		public function getSelectedGuests($calendarAccount, $selectedGuestsString, $mode = 'add') {
 			
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$limitNumberOfGuests = $calendarAccount['limitNumberOfGuests'];
 			if (is_array($limitNumberOfGuests) === false) {
 				
@@ -10172,13 +10182,9 @@
 					
 				} else {
 					
+					$row = $setting->getTranslateGuest($row, intval($calendarAccount['key']) );
 					$list = json_decode($row['json'], true);
-					if ($mode == 'add') {
-						
-						array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select")));
-						
-					}
-					
+					array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select")));
 					$selected = 0;
 					for ($listKey = 0; $listKey < count($list); $listKey++) {
 						
@@ -10774,6 +10780,7 @@
 				'couponKey' => sanitize_text_field($couponKey),
 				'coupon' => sanitize_text_field($coupon),
 				'emails' => sanitize_text_field( json_encode($emails )),
+				'locale' => sanitize_text_field( get_locale() ),
 			);
 			
 			$bool = $wpdb->insert(
@@ -10783,7 +10790,7 @@
 					'%d', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%s', '%d', 
 					'%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', 
 					'%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', 
-					'%s', '%d', '%s', '%s', '%s', '%s', 
+					'%s', '%d', '%s', '%s', '%s', '%s', '%s', 
 				)
 			);
 			#$ressponse['insert'] = $bool;
@@ -11167,8 +11174,7 @@
 					
 					if (intval($sendEmail) == 1) {
 						
-						#$email = $this->createEmailMessage($accountKey, array('mail_deleted'), $form, $accommodationDetails, $options, $deleteKey, intval($unixTimeStart), intval($timestampForUnixTime), null, $currency, $services, $payName, $payId, $scheduleTitle, $responseGuests, $coupon);
-						$email = $this->createEmailMessage($accountKey, array('mail_deleted'), intval($deleteKey));
+						$email = $this->createEmailMessage($accountKey, 'booking_deleted_notification', intval($deleteKey));
 						
 					}
 					
@@ -11756,7 +11762,7 @@
             
             if ($sendEmail === 1) {
 				
-				$email = $this->createEmailMessage($accountKey, array('mail_updated'), intval($_POST['updateKey']));
+				$email = $this->createEmailMessage($accountKey, 'booking_updated_notification', intval($_POST['updateKey']));
 				
 			}
 			
@@ -11881,22 +11887,21 @@
             $email_id = null;
             if ($status == "pending") {
             	
-            	$email_id = 'mail_pending';
+            	$email_id = 'booking_pending_notification';
             	
             } else if ($status == "approved") {
             	
-            	$email_id = 'mail_approved';
+            	$email_id = 'booking_approved_notification';
             	
             } else if ($status == "canceled") {
             	
-            	$email_id = 'mail_canceled_by_visitor_user';
+            	$email_id = 'booking_cancellation_notification';
             	
             }
 			
 			if (intval($sendEmail) == 1) {
 				
-				#$email = $this->createEmailMessage($accountKey, array($email_id), $form, $accommodationDetails, $options, intval($bookedKey), intval($unixTimeStart), intval($timestampForUnixTime), $cancellationUri, $currency, $services, $payName, $payId, $scheduleTitle, $responseGuests, $coupon);
-				$email = $this->createEmailMessage($accountKey, array($email_id), intval($bookedKey));
+				$email = $this->createEmailMessage($accountKey, $email_id, intval($bookedKey));
 				
 			}
 			
@@ -12277,6 +12282,8 @@
 					$value['active'] = '';
 					
 				}
+				
+				$value = $this->getTranslateFormField($value, $accountKey);
 				
 				array_push($form, $value);
 				
@@ -13346,6 +13353,48 @@
 			
 		}
 		
+		public static function isIndexedArray($array) {
+			
+			if (!is_array($array)) {
+				return false;
+			}
+			
+			if ($array === []) {
+				return true;
+			}
+			
+			return array_keys($array) === range(0, count($array) - 1);
+			
+		}
+		
+		public function getTranslateFormField($field, $calendar_account_id) {
+			
+			if (array_key_exists('placeholder', $field) === false) {
+				
+				$field['placeholder'] = '';
+				
+			}
+			
+			$string_array = array('name' => $field['name'], 'url' => $field['uri'], 'placeholder' => $field['placeholder'], 'description' => $field['description'], 'options' => $field['options']);
+			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'form_field', $field['id'], intval($calendar_account_id), get_locale() );
+			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('url', $translated_texts) && array_key_exists('placeholder', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$field['name'] = $translated_texts['name'];
+				$field['uri'] = $translated_texts['url'];
+				$field['placeholder'] = $translated_texts['placeholder'];
+				$field['description'] = $translated_texts['description'];
+				if ($this->isIndexedArray($translated_texts['options']) === true && count($field['options']) === count($translated_texts['options'])) {
+					
+					$field['options'] = $translated_texts['options'];
+					
+				}
+				
+			}
+			
+			return $field;
+			
+		}
+		
 		public function getNotificationContents($calendarAccount, $customer, $email_id, $emailKey, $notificationContents, $emailFormat) {
 			
 			$accountKey = $calendarAccount['key'];
@@ -13948,7 +13997,8 @@
 					
 				}
 				
-				if ($contentsKey == 'body' && $emailKey == 'admin' && $email_id != 'mail_deleted') {
+				//if ($contentsKey == 'body' && $emailKey == 'admin' && $email_id != 'booking_deleted_notification') {
+				if ($contentsKey == 'body' && $emailKey == 'admin') {
 					
 					$contents = str_replace('[customerDetailsUrl]', $customerDetailsUrl, $contents);
 					
@@ -13976,7 +14026,6 @@
 			
 		}
 		
-    	#private function createEmailMessage($accountKey, $email_id, $form, $accommodationDetails, $options, $bookingID, $unixTime, $timestampForUnixTime, $cancellationUri, $currency = 'usd', $services = null, $payName = null, $payId = null, $scheduleTitle = null, $guests = null, $coupon = null){
     	private function createEmailMessage($accountKey, $email_id, $bookingID) {
 			
 			global $wpdb;
@@ -14027,7 +14076,63 @@
 				
 			}
 			
+			$customer = $this->getCustomer($bookingID, null);
+			$local = $customer['locale'];
 			$table_name = $wpdb->prefix . "booking_package_email_settings";
+			$sql = $wpdb->prepare(
+				"SELECT * FROM " . $table_name . " WHERE `accountKey` = %d AND `mail_id` = %s;", 
+				array(intval($accountKey), $email_id)
+			);
+			$row = $wpdb->get_row($sql, ARRAY_A);
+			$event_data = array('ical_subject' => '', 'ical_location' => '', 'ical_description' => '');
+			$string_array = array('customer_email_subject' => $row['subject'], 'customer_email_body' => $row['content'], 'admin_email_subject' => $row['subjectForAdmin'], 'admin_email_body' => $row['contentForAdmin'], 'ical_subject' => $row['subjectForIcalendar'], 'ical_location' => $row['locationForIcalendar'], 'ical_description' => $row['contentForIcalendar'],  'options' => array() );
+			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'notification', $row['mail_id'], intval($accountKey), $local);
+            if (is_array($translated_texts) && array_key_exists('customer_email_subject', $translated_texts) && array_key_exists('customer_email_body', $translated_texts) && array_key_exists('admin_email_subject', $translated_texts) && array_key_exists('admin_email_body', $translated_texts) && array_key_exists('ical_subject', $translated_texts) && array_key_exists('ical_location', $translated_texts) && array_key_exists('ical_description', $translated_texts) ) {
+				
+				$row['subject'] = $translated_texts['customer_email_subject'];
+				$row['content'] = $translated_texts['customer_email_body'];
+				$row['subjectForAdmin'] = $translated_texts['admin_email_subject'];
+				$row['contentForAdmin'] = $translated_texts['admin_email_body'];
+				
+				$event_data['ical_subject'] = $translated_texts['ical_subject'];
+				$event_data['ical_location'] = $translated_texts['ical_location'];
+				$event_data['ical_description'] = $translated_texts['ical_description'];
+				
+            }
+            
+            
+			$emailSubject = $row['subject'];
+			$emailBody = $row['content'];
+			$emailFormat = $row['format'];
+			$enableEmail = intval($row['enable']);
+			$enableSMS = intval($row['enableSMS']);
+			$attachICalendarInEmail = intval($row['attachICalendar']);
+			$notifyAdministrator = intval($row['notifyAdministrator']);
+			if (empty($row['subjectForAdmin'])) {
+				
+				$row['subjectForAdmin'] = $row['subject'];
+				
+			}
+			
+			if (empty($row['contentForAdmin'])) {
+				
+				$row['contentForAdmin'] = $row['content'];
+				
+			}
+			
+			$sendEamilList = array(
+				'visitor' => array("subject" => $row['subject'], 'content' => $row['content']),
+				'admin' => array("subject" => $row['subjectForAdmin'], 'content' => $row['contentForAdmin']),
+			);
+			
+			if ($enableEmail == 0 && $enableSMS == 0) {
+				
+				return null;
+				
+			}
+			
+			
+			/**
 			for ($i = 0; $i < count($email_id); $i++) {
 				
 				$sql = $wpdb->prepare(
@@ -14036,6 +14141,18 @@
 				);
 				$row = $wpdb->get_row($sql, ARRAY_A);
 				
+				$string_array = array('customer_email_subject' => $row['subject'], 'customer_email_body' => $row['content'], 'admin_email_subject' => $row['subjectForAdmin'], 'admin_email_body' => $row['contentForAdmin'], 'options' => array() );
+				$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'notification', $row['mail_id'], intval($accountKey), get_locale() );
+	            if (is_array($translated_texts) && array_key_exists('customer_email_subject', $translated_texts) && array_key_exists('customer_email_body', $translated_texts) && array_key_exists('admin_email_subject', $translated_texts) && array_key_exists('admin_email_body', $translated_texts) ) {
+					
+					$row['subject'] = $translated_texts['customer_email_subject'];
+					$row['content'] = $translated_texts['customer_email_body'];
+					$row['subjectForAdmin'] = $translated_texts['admin_email_subject'];
+					$row['contentForAdmin'] = $translated_texts['admin_email_body'];
+					
+	            }
+	            
+	            
 				$emailSubject = $row['subject'];
 				$emailBody = $row['content'];
 				$emailFormat = $row['format'];
@@ -14067,6 +14184,7 @@
 				}
 				
 			}
+			**/
 			
 			if ($notifyAdministrator === 0) {
 				
@@ -14094,7 +14212,7 @@
 				}
 				
 				$emailData = array('subject' => $emailSubject, 'body' => $emailBody);
-				$customer = $this->getCustomer($bookingID, null);
+				
 				$notificationContents = $this->getNotificationContents($calendarAccount, $customer, $email_id, $emailKey, $emailData, $emailFormat);
 				$emailSubject = $notificationContents['emailSubject'];
 				$emailBody = $notificationContents['emailBody'];
@@ -14110,7 +14228,7 @@
 					
 					#array_push($headers, 'Content-Disposition: attachment; filename=' . $attachICalendar['temp_file_name']);
 					$ical = new booking_package_iCal($this->prefix, $this->pluginName, $this->currencies);
-					$attachICalendar = $ical->attachICalendar($calendarAccount, $email_id, $bookingID, null, 'attach');
+					$attachICalendar = $ical->attachICalendar($calendarAccount, $event_data, $email_id, $bookingID, null, 'attach');
 					if ($attachICalendar['status'] === true) {
 						
 						array_push($attachments, $attachICalendar['temp_file']);
@@ -14457,7 +14575,6 @@
 				
 			}
 			
-			//$emailFormat = get_option($this->prefix."mail_approved_format", null);
 			$mailgun_active = intval(get_option($this->prefix."mailgun_active", 0));
 			if ($mailgun_active == 1) {
 				
@@ -14660,7 +14777,7 @@
 				$table_name = $wpdb->prefix . "booking_package_email_settings";
 				$sql = $wpdb->prepare(
 					"SELECT * FROM ".$table_name." WHERE `accountKey` = %d AND `mail_id` = %s;", 
-					array(intval($calendarAccount['key']), 'mail_reminder')
+					array(intval($calendarAccount['key']), 'booking_reminder_notification')
 				);
 				$row = $wpdb->get_row($sql, ARRAY_A);
 				if (!empty($row) && intval($row['enable']) == 0 && intval($row['enableSMS']) == 0) {
@@ -14694,8 +14811,7 @@
 						$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount']);
 						$services = $servicesDetails['object'];
 						
-						#$email = $this->createEmailMessage($calendarAccount['key'], array('mail_reminder'), $form, $accommodationDetails, $options, intval($row['key']), intval($row['scheduleUnixTime']), intval($row['reserveTime']), $cancellationUri, $row['currency'], $services, $row['payName'], $row['payId'], $row['scheduleTitle'], $responseGuests, $coupon);
-						$email = $this->createEmailMessage($calendarAccount['key'], array('mail_reminder'), intval($row['key']));
+						$email = $this->createEmailMessage($calendarAccount['key'], 'booking_reminder_notification', intval($row['key']));
 						
 						$wpdb->query("START TRANSACTION");
 						#$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");

@@ -1115,7 +1115,9 @@ Member_manage.prototype.addItem = function (mainPanel, mode, inputType, callback
         const optionsPanel = document.getElementById('booking-package_input_options');
         if ((jsonObj.type == 'CHECK' || jsonObj.type == 'SELECT' || jsonObj.type == 'RADIO') && jsonObj.options.length === 0 && optionsPanel != null) {
             
+            window.alert(object._i18n.get('If you select Select, Check, or Radio in %s, you need to add a value to %s.', [object._i18n.get('Type'), object._i18n.get('Options')]));
             optionsPanel.classList.add('errorPanel');
+            return false;
             
         }
         

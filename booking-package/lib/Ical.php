@@ -389,13 +389,14 @@
             
         }
         
-        public function attachICalendar($calendarAccount, $email_id, $id, $token = null, $type = 'attach') {
+        public function attachICalendar($calendarAccount, $event_data, $email_id, $id, $token = null, $type = 'attach') {
             
             global $wpdb;
             $locationForIcalendar = '';
             $emailData = array('subject' => null, 'body' => null);
-            $table_name = $wpdb->prefix . "booking_package_email_settings";
             
+            /**
+            $table_name = $wpdb->prefix . "booking_package_email_settings";
             for ($i = 0; $i < count($email_id); $i++) {
 				
 				$sql = $wpdb->prepare(
@@ -409,6 +410,11 @@
 				break;
 				
 			}
+			**/
+			
+			$locationForIcalendar = $event_data['ical_location'];
+			$emailData['subject'] = $event_data['ical_subject'];
+			$emailData['body'] = $event_data['ical_description'];
 			
 			if (empty($emailData['subject']) === true) {
 			    

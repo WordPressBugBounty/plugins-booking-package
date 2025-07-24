@@ -1427,19 +1427,19 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             if (newStatus != false) {
                 
                 enable = true;
-                if (newStatus.toUpperCase() == "APPROVED" && parseInt(object._emailEnableList.mail_approved.enable) == 1) {
+                if (newStatus.toUpperCase() == "APPROVED" && parseInt(object._emailEnableList.booking_approved_notification.enable) == 1) {
                     
-                    object._console.log("mail_pending = " + Boolean(parseInt(object._emailEnableList.mail_approved.enable)));
+                    object._console.log("APPROVED = " + Boolean(parseInt(object._emailEnableList.booking_approved_notification.enable)));
                     enable = false;
                     
-                } else if (newStatus.toUpperCase() == "PENDING" && parseInt(object._emailEnableList.mail_pending.enable) == 1) {
+                } else if (newStatus.toUpperCase() == "PENDING" && parseInt(object._emailEnableList.booking_pending_notification.enable) == 1) {
                     
-                    object._console.log("mail_approved = " + Boolean(parseInt(object._emailEnableList.mail_pending.enable)));
+                    object._console.log("PENDING = " + Boolean(parseInt(object._emailEnableList.booking_pending_notification.enable)));
                     enable = false;
                     
-                } else if (newStatus.toUpperCase() == "CANCELED" && parseInt(object._emailEnableList.mail_canceled_by_visitor_user.enable) == 1) {
+                } else if (newStatus.toUpperCase() == "CANCELED" && parseInt(object._emailEnableList.booking_cancellation_notification.enable) == 1) {
                     
-                    object._console.log("mail_approved = " + Boolean(parseInt(object._emailEnableList.mail_canceled_by_visitor_user.enable)));
+                    object._console.log("CANCELED = " + Boolean(parseInt(object._emailEnableList.booking_cancellation_notification.enable)));
                     enable = false;
                     
                 }
@@ -1756,7 +1756,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     statusClick = true;
                     
                     object._console.log(object._emailEnableList);
-                    object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.mail_new_admin.enable)));
+                    object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.new_booking_notification.enable)));
                     
                     object.changeStatus(accountKey, reservationList[key], statusClick, true, function(response){
                         
@@ -3278,10 +3278,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         deleteButton.onclick = function(){
             
             object._console.log(object._emailEnableList);
-            object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.mail_deleted.enable)));
+            object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.booking_deleted_notification.enable)));
             
             var enable = false;
-            if (Boolean(parseInt(object._emailEnableList.mail_deleted.enable)) === false) {
+            if (Boolean(parseInt(object._emailEnableList.booking_deleted_notification.enable)) === false) {
                 
                 enable = true;
                 
@@ -7224,10 +7224,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         bookingButton.onclick = function(){
             
             object._console.log(object._emailEnableList);
-            object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.mail_new_admin.enable)));
+            object._console.log("enable = " + Boolean(parseInt(object._emailEnableList.new_booking_notification.enable)));
             
             var enable = false;
-            if (Boolean(parseInt(object._emailEnableList.mail_new_admin.enable)) === false) {
+            if (Boolean(parseInt(object._emailEnableList.new_booking_notification.enable)) === false) {
                 
                 enable = true;
                 

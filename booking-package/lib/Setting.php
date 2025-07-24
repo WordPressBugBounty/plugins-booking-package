@@ -32,15 +32,13 @@
         );
 		
         public $email_message = array(
-            "mail_new_admin" => array("key" => "mail_new_admin", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'New', 'message' => ''), 
-            /** "mail_new_visitor" => array("key" => "mail_new_visitor", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => ''), **/
-            "mail_approved" => array("key" => "mail_approved", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Approved', 'message' => ''),
-            "mail_pending" => array("key" => "mail_pending", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Pending', 'message' => ''),
-            "mail_updated" => array("key" => "mail_updated", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Updated', 'message' => ''),
-            "mail_reminder" => array("key" => "mail_reminder", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Reminder', 'message' => ''),
-            /**"mail_cancel" => array("key" => "mail_cancel", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Cancellation of booking', 'message' => ''),**/
-            "mail_canceled_by_visitor_user" => array("key" => "mail_canceled_by_visitor_user", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Canceled', 'message' => ''),
-            "mail_deleted" => array("key" => "mail_deleted", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Deleted', 'message' => ''),
+            "new_booking_notification" => array("key" => "new_booking_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'New', 'message' => ''), 
+            "booking_approved_notification" => array("key" => "booking_approved_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Approved', 'message' => ''),
+            "booking_pending_notification" => array("key" => "booking_pending_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Pending', 'message' => ''),
+            "booking_updated_notification" => array("key" => "booking_updated_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Updated', 'message' => ''),
+            "booking_reminder_notification" => array("key" => "booking_reminder_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Reminder', 'message' => ''),
+            "booking_cancellation_notification" => array("key" => "booking_cancellation_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Canceled', 'message' => ''),
+            "booking_deleted_notification" => array("key" => "booking_deleted_notification", "subject" => "", "content" => "", 'enable' => '0', 'format' => 'text', 'title' => 'Deleted', 'message' => ''),
         );
         
         public function __construct($prefix, $pluginName, $userRoleName = 'booking_package_user') {
@@ -1093,19 +1091,19 @@
             
             $enable = 1;
             $messages = array(
-                'mail_new_admin' => array(
+                'new_booking_notification' => array(
                     'enable' => 1, 
                     'subject' => "Booking notification for your visitors [Booking Package]", 
                     'content' => sprintf("Hello,\n\nID: [id] \nFirst Name: [first_name] \nLast Name: [last_name] \nEmail: [email] \nPhone: [phone] \nAddress: [address] \n\nYou can edit this message anytime in the \"Notifications\" tab on the %s.\n\nThank you for trying Booking Package.", $calendarName), 
                     'subjectForAdmin' => 'Booking notification for you [Booking Package]', 
                     'contentForAdmin' => '',
                 ),
-                'mail_approved' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
-                'mail_canceled_by_visitor_user' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
-                'mail_deleted' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
-                'mail_pending' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
-                'mail_updated' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
-                'mail_reminder' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_approved_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_cancellation_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_deleted_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_pending_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_updated_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
+                'booking_reminder_notification' => array('enable' => 0, 'subject' => "", 'content' => "", 'subjectForAdmin' => '', 'contentForAdmin' => '',),
             );
             
             global $wpdb;
@@ -2828,8 +2826,8 @@
                 'user_login' => array('id' => 'user_login', 'active' => 'true', 'name' => 'Username', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
                 'user_email' => array('id' => 'user_email', 'active' => 'true', 'name' => 'Email', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
                 'user_pass' => array('id' => 'user_pass', 'active' => 'true', 'name' => 'Password', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'PASSWORD'),
-                'first_name' => array('id' => 'first_name', 'active' => 'false', 'name' => 'First name', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
-                'last_name' => array('id' => 'last_name', 'active' => 'false', 'name' => 'Last name', 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+                'first_name' => array('id' => 'first_name', 'active' => 'false', 'name' => __('First name', 'Booking-Package'), 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
+                'last_name' => array('id' => 'last_name', 'active' => 'false', 'name' => __('Last name', 'booking-package'), 'value' => '', 'isName' => 'true', 'options' => array(), 'description' => '', 'placeholder' => '', 'uri' => '', 'required' => 'true', 'type' => 'TEXT'),
             );
             $userInputFields = get_option("_" . $this->prefix . "getUserInputFields", null);
             if (empty($userInputFields) === true) {
@@ -3087,6 +3085,120 @@
             
         }
         **/
+        
+        public static function isIndexedArray($array) {
+			
+			if (!is_array($array)) {
+				return false;
+			}
+			
+			if ($array === []) {
+				return true;
+			}
+			
+			return array_keys($array) === range(0, count($array) - 1);
+			
+		}
+		
+		public function getTranslateService($service, $calendar_account_id) {
+			
+			$optionNames = array();
+			$options = json_decode($service['options'], true);
+			for ($i = 0; $i < count($options); $i++) {
+		        
+		        array_push($optionNames, $options[$i]['name']);
+		        
+		    }
+			
+			$string_array = array('name' => $service['name'], 'description' => $service['description'], 'options' => $optionNames);
+			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'service', intval($service['key']), intval($calendar_account_id), get_locale());
+			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$service['name'] = $translated_texts['name'];
+				$service['description'] = $translated_texts['description'];
+				if ($this->isIndexedArray($translated_texts['options']) === true && count($optionNames) === count($translated_texts['options'])) {
+                    
+                    for ($i = 0; $i < count($translated_texts['options']); $i++) {
+                        
+                        $options[$i]['name'] = $translated_texts['options'][$i];
+                        
+                    }
+					$service['options'] = json_encode($options);
+					
+				}
+				
+			}
+			
+			return $service;
+			
+		}
+		
+        public function getTranslateGuest($guest, $calendar_account_id) {
+            
+            $optionNames = array();
+            $options = json_decode($guest['json'], true);
+            for ($i = 0; $i < count($options); $i++) {
+                
+                array_push($optionNames, $options[$i]['name']);
+                
+            }
+            
+            $string_array = array('name' => $guest['name'], 'description' => $guest['description'], 'options' => $optionNames);
+            $translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'guest', intval($guest['key']), intval($calendar_account_id), get_locale());
+            if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$guest['name'] = $translated_texts['name'];
+				$guest['description'] = $translated_texts['description'];
+			    if ($this->isIndexedArray($translated_texts['options']) === true && count($optionNames) === count($translated_texts['options'])) {
+                    
+                    for ($i = 0; $i < count($translated_texts['options']); $i++) {
+                        
+                        #$index = $i + 1;
+                        $options[$i]['name'] = $translated_texts['options'][$i];
+                        
+                    }
+					$guest['json'] = json_encode($options);
+					
+				}
+				
+			}
+            
+            return $guest;
+            
+        }
+        
+        public function getTranslateOption($option, $calendar_account_id) {
+            
+            $optionNames = array();
+            $choices = json_decode($option['json'], true);
+            for ($i = 0; $i < count($choices); $i++) {
+                
+                array_push($optionNames, $choices[$i]['name']);
+                
+            }
+            
+            $string_array = array('name' => $option['name'], 'description' => $option['description'], 'options' => $optionNames);
+            $translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'option', intval($option['key']), intval($calendar_account_id), get_locale());
+            if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$option['name'] = $translated_texts['name'];
+				$option['description'] = $translated_texts['description'];
+			    if ($this->isIndexedArray($translated_texts['options']) === true && count($optionNames) === count($translated_texts['options'])) {
+                    
+                    for ($i = 0; $i < count($translated_texts['options']); $i++) {
+                        
+                        $choices[$i]['name'] = $translated_texts['options'][$i];
+                        
+                    }
+					$option['json'] = json_encode($choices);
+					
+				}
+				
+			}
+            
+            return $option;
+            
+        }
         
         public function getCourseList($accountKey = 1) {
             
@@ -3524,43 +3636,15 @@
                 
             }
             $rows = $wpdb->get_results($sql, ARRAY_A);
-            /**
-            if ($booking == true) {
-                
-                foreach ((array) $rows as $key => $value) {
-                    
-                    $list = json_decode($value['json'], true);
-                    array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select", 'booking-package')));
-                    $value['json'] = json_encode($list);
-                    #$value['json'] = $list;
-                    if ($isExtensionsValid !== true) {
-                        
-                        $value['costInServices'] = 'cost_1';
-                        $value['reflectService'] = '0';
-                        $value['reflectAdditional'] = '0';
-                        
-                    }
-                    $rows[$key] = $value;
-                    
-                }
-                
-            }
-            **/
-            
             foreach ((array) $rows as $key => $value) {
                 
                 $updatePrices = false;
-                $list = json_decode($value['json'], true);
+                $list = array();
                 
-                /**
-                if (isset($list[0]) && isset($numberKeys[0]) && isset($list[0][$numberKeys[0]]) === false) {
-                    
-                    $updatePrices = true;
-                    
-                }
-                **/
                 if ($booking === true) {
                     
+                    $value = $this->getTranslateGuest($value, intval($accountKey) );
+                    $list = json_decode($value['json'], true);
                     array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select", 'booking-package')));
                     if ($isExtensionsValid !== true) {
                         
@@ -3569,6 +3653,10 @@
                         $value['reflectAdditional'] = '0';
                         
                     }
+                    
+                } else {
+                    
+                    $list = json_decode($value['json'], true);
                     
                 }
                 
@@ -5016,6 +5104,7 @@
                     
                     foreach ((array) $rows as $key => $value) {
                         
+                        $value = $this->getTranslateOption($value, intval($accountKey));
                         $list = json_decode($value['json'], true);
                         array_unshift($list, array("adult" => 0, "child" => 0, "room" => 0, "name" => __("Select", 'booking-package')));
                         for ($i = 0; $i < count($list); $i++) {
@@ -5332,7 +5421,7 @@
             } else {
                 
                 $id = strtolower($_POST['id']);
-                $id = preg_replace('/[^0-9a-zA-Z]/', '', $id);
+                $id = preg_replace('/[^0-9a-zA-Z_-]/', '', $id);
                 $id  = preg_replace("/^( )|(　)$/", "", $id );
                 #$options = str_replace("\\\"", "\"", sanitize_text_field($_POST['options']));
                 #$options = str_replace("\'", "'", $options);
@@ -5362,7 +5451,7 @@
                     
                     if ($value['id'] == $id) {
                         
-                        return array("status" => "error", "message" => "An ID with the same name already exists in the form.");
+                        return array("status" => "error", "message" => "An ID with the same name already exists in the form.", 'id' => $id);
                         
                     }
                     
@@ -5461,7 +5550,7 @@
             } else {
                 
                 $id = strtolower($_POST['id']);
-                $id = preg_replace('/[^0-9a-zA-Z]/', '', $id);
+                $id = preg_replace('/[^0-9a-zA-Z_-]/', '', $id);
                 $id  = preg_replace("/^( )|(　)$/", "", $id );
                 $input = array();
                 #$options = str_replace("\\\"", "\"", sanitize_text_field($_POST['options']));
@@ -5914,6 +6003,69 @@
             }
             
             return $this->getEmailForUser();
+            
+        }
+        
+        public function updateEmailId() {
+            
+            $update_completed = get_option('_' . $this->prefix . 'updated_email_id', 0);
+            if (intval($update_completed) === 1) {
+                
+                return false;
+                
+            }
+            
+            $ids = array(
+                'mail_new_admin' => 'new_booking_notification', 
+                'mail_approved' => 'booking_approved_notification', 
+                'mail_pending' => 'booking_pending_notification', 
+                'mail_reminder' => 'booking_reminder_notification', 
+                'mail_updated' => 'booking_updated_notification', 
+                'mail_canceled' => 'booking_cancellation_notification', 
+                'mail_deleted' => 'booking_deleted_notification', 
+            );
+            
+            global $wpdb;
+            $table_name = $wpdb->prefix . "booking_package_email_settings";
+            $wpdb->query("START TRANSACTION");
+
+            try {
+                
+                $params = [];
+                
+                $case_sql = "UPDATE `{$table_name}` SET `mail_id` = CASE `mail_id` ";
+                foreach ($ids as $old_id => $new_id) {
+                    $case_sql .= "WHEN %s THEN %s ";
+                    $params[] = $old_id;
+                    $params[] = $new_id;
+                }
+                $case_sql .= "END";
+                
+                $where_in_placeholders = implode(', ', array_fill(0, count($ids), '%s'));
+                $sql_template = $case_sql . " WHERE `mail_id` IN (" . $where_in_placeholders . ")";
+                
+                $final_params = array_merge($params, array_keys($ids));
+                $final_sql = $wpdb->prepare($sql_template, $final_params);
+                $result = $wpdb->query($final_sql);
+                
+                if (false === $result) {
+                    throw new Exception('Database update failed.');
+                }
+                
+                $wpdb->query("COMMIT");
+                update_option('_' . $this->prefix . 'updated_email_id', 1);
+                return true;
+
+            } catch (Exception $e) {
+                
+                $wpdb->query("ROLLBACK");
+                error_log($e->getMessage());
+                
+            } /** finally {
+				
+				$wpdb->query('UNLOCK TABLES');
+				
+			}**/
             
         }
         
