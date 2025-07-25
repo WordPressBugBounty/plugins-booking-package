@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Booking_Package"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-24 16:28+0000\n"
+"POT-Creation-Date: 2025-07-25 05:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: MASAAKI_TANAKA"
@@ -1533,8 +1533,8 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13015
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13108
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13128
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13637
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13670
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13649
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13682
 msgid "Unselected"
 msgstr ""
 
@@ -1641,14 +1641,14 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6570
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6846
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:89
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13413
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13425
 msgid "Pay with Credit Card"
 msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6571
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6847
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:90
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13413
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13425
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1532
 msgid "Pay with PayPal"
 msgstr ""
@@ -1657,7 +1657,7 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6573
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6848
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:91
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13413
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13425
 msgid "Pay at Convenience Store"
 msgstr ""
 
@@ -1808,7 +1808,7 @@ msgstr ""
 
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/index.php:6608
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:88
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13413
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13425
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Setting.php:1532
 msgid "Local Payment"
 msgstr ""
@@ -2758,15 +2758,15 @@ msgstr ""
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:12992
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13084
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13085
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13617
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13618
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13629
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13630
 #: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Ical.php:367
 msgid "Room"
 msgstr ""
 
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13552
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13562
-#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13579
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13564
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13574
+#: /home/ec2-user/environment/wp/wp-content/plugins/booking-package/lib/Schedule.php:13591
 msgid "None"
 msgstr ""
 

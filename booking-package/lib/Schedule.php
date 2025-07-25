@@ -13369,12 +13369,24 @@
 		
 		public function getTranslateFormField($field, $calendar_account_id) {
 			
+			$keys = ['uri', 'placeholder', 'description'];
+			for ($i = 0; $i < count($keys); $i++) {
+				
+				$key = $keys[$i];
+				if (array_key_exists($key, $field) === false) {
+					
+					$field[$key] = '';
+					
+				}
+				
+			}
+			/**
 			if (array_key_exists('placeholder', $field) === false) {
 				
 				$field['placeholder'] = '';
 				
 			}
-			
+			**/
 			$string_array = array('name' => $field['name'], 'url' => $field['uri'], 'placeholder' => $field['placeholder'], 'description' => $field['description'], 'options' => $field['options']);
 			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'form_field', $field['id'], intval($calendar_account_id), get_locale() );
 			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('url', $translated_texts) && array_key_exists('placeholder', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
