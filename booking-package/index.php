@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.92
+Version:     1.6.93
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1096,6 +1096,11 @@ Domain Path: /languages
             
             $this->update_database();
             
+            /**
+            $database = new booking_package_database($this->prefix, $this->db_version);
+			$database->new_create();
+            **/
+            
             $setting = $this->setting;
             $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
             $isExtensionsValid = $this->getExtensionsValid(false, false);
@@ -1353,6 +1358,7 @@ Domain Path: /languages
 			$countServices = 0;
 			foreach ((array) $courseList as $key => $service) {
 				
+				$courseList[$key] = $setting->getTranslateService($service, $accountKey);
 				$courseList[$key]['directlySelected'] = 0;
 				$courseList[$key]['directlyOptions'] = array();
 				if ($service['target'] == $target_users) {
@@ -1392,13 +1398,11 @@ Domain Path: /languages
 						
 					} else {
 						
-						$service['stopServiceUnderFollowingConditions'] = 'doNotStop';
+						$courseList[$key]['stopServiceUnderFollowingConditions'] = 'doNotStop';
 						
 					}
 					
 				}
-				
-				$courseList[$key] = $setting->getTranslateService($service, $accountKey);
 				
 			}
 			

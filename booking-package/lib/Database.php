@@ -340,7 +340,7 @@
 					"couponKey"						=> "`couponKey`						VARCHAR(255) DEFAULT NULL",
 					"coupon"						=> "`coupon`						TEXT DEFAULT NULL",
 					"bookingReminder"				=> "`bookingReminder`				INT(11) DEFAULT 0",
-					"locale"						=> "`locale`						VARCHAR(10) DEFAULT '" . get_locale() . "'",
+					"locale"						=> "`locale`						VARCHAR(10) DEFAULT 'en_US'",
 				),
 			);
 			
@@ -519,12 +519,129 @@
 				),
 			);
 			
+			/**
+			$table_name = $wpdb->prefix . 'booking_package_test1';
+			$this->db_object[$table_name] = array(
+				"table" => $table_name,
+				"old_table_name" => $wpdb->prefix . 'booking_package_test',
+				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
+				"uniqueKey" => "UNIQUE KEY id (`key`)",
+				"columns" => array(
+					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"file"					=> "`file` VARCHAR(255) DEFAULT NULL",
+					"url"					=> "`url` VARCHAR(255) NOT NULL",
+					"line"					=> "`line` INT(11) NOT NULL",
+					"col"					=> "`col` INT(11) NOT NULL",
+					"message"				=> "`message` TEXT NOT NULL",
+					"date2"					=> "`date2` INT(111) DEFAULT NULL",
+				),
+			);
+			**/
 			
         }
         
 		public function getTableList() {
 			
 			return $this->db_object;
+			
+		}
+		
+		public function new_create() {
+			
+			global $wpdb;
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+			
+			$queries = array('tables' => array(), 'columns' => array(), 'lastUpdate' => date('r'));
+			update_option('_' . $this->prefix . 'databaseUpdateErrors', json_encode($queries));
+			
+			/**
+			if (is_null(get_option('_' . $this->prefix . 'databaseUpdateErrors', null))) {
+				add_option('_' . $this->prefix . 'databaseUpdateErrors', json_encode($queries));
+			}
+			**/
+			
+			$all_existing_tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "booking_package_%'");
+			
+			$table_columns_map = [];
+			foreach ($all_existing_tables as $table_name) {
+				
+				$table_columns_map[$table_name] = $wpdb->get_col("DESCRIBE `" . $table_name . "`");
+				
+			}
+			
+			$sql_to_execute = [];
+			
+			foreach ((array) $this->db_object as $new_table_name => $table_object) {
+				
+				if (isset($table_object['old_table_name'])) {
+					
+					$old_table_name = $table_object['old_table_name'];
+					if (in_array($old_table_name, $all_existing_tables) && !in_array($new_table_name, $all_existing_tables)) {
+						
+						$rename_query = sprintf('RENAME TABLE `%s` TO `%s`;', $old_table_name, $new_table_name);
+						$wpdb->query($rename_query);
+						
+						$table_columns_map[$new_table_name] = $table_columns_map[$old_table_name];
+						unset($table_columns_map[$old_table_name]);
+						
+						$key = array_search($old_table_name, $all_existing_tables, true);
+						if ($key !== false) {
+							
+							unset($all_existing_tables[$key]);
+							
+						}
+						$all_existing_tables[] = $new_table_name;
+						
+					}
+					
+				}
+				
+			}
+			
+			foreach ((array) $this->db_object as $table_name => $table_object) {
+				
+				if (!in_array($table_name, $all_existing_tables)) {
+					
+					$columns = implode(", ", array_values($table_object['columns']));
+					$create_sql = sprintf($table_object['sql'], $columns);
+					dbDelta($create_sql);
+					
+				} else {
+					
+					$defined_columns = $table_object['columns'];
+					$existing_columns = isset($table_columns_map[$table_name]) ? $table_columns_map[$table_name] : [];
+					$columns_to_add = [];
+					foreach ($defined_columns as $column_key => $column_sql) {
+						
+						
+						if (!in_array($column_key, $existing_columns)) {
+							
+							$columns_to_add[] = 'ADD COLUMN ' . str_replace("\t", " ", $column_sql);
+							
+						}
+						
+					}
+					
+					
+					if (!empty($columns_to_add)) {
+						
+						$alter_sql = sprintf('ALTER TABLE `%s` %s;', $table_name, implode(', ', $columns_to_add));
+						$result = $wpdb->query($alter_sql);
+						if ($result === false) {
+							
+							var_dump($wpdb->last_error);
+							$queries['columns'][$table_name] = 'Table: ' . $table_name . ', ' . $wpdb->last_error;
+							update_option('_' . $this->prefix . 'databaseUpdateErrors', json_encode($queries));
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			return $queries;
 			
 		}
         
