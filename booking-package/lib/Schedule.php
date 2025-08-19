@@ -1164,12 +1164,51 @@
 			
 			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$userInputFields = $setting->initialUserInputFields();
+			for ($i = 0; $i < count($userInputFields); $i++) {
+				
+				$filed = $userInputFields[$i];
+				if ($filed['type'] === 'SELECT') {
+					
+					$options = $filed['options'];
+					if ($userProfile[ $filed['type'] ] != null && $userProfile[ $filed['type'] ][ $filed['id'] ] != null) {
+		                
+		                $userProfile[ $filed['type'] ][ $filed['id'] ]['value'] = $options[intval($userProfile[ $filed['type'] ][ $filed['id'] ]['value'])];
+		                
+		            }
+					
+				} else if ($filed['type'] === 'CHECK' || $filed['type'] === 'RADIO') {
+					
+					if ($userProfile[ $filed['type'] ] != null && $userProfile[ $filed['type'] ][ $filed['id'] ] != null) {
+						
+						$userProfile[ $filed['type'] ][ $filed['id'] ]['value'] = (function($options, $value) {
+							
+							$values = array();
+							for ($i = 0; $i < count($value); $i++) {
+								
+								array_push($values, $options[ intval($value[$i]) ]);
+								
+							}
+							
+							return $values;
+							
+						})($filed['options'], $userProfile[ $filed['type'] ][ $filed['id'] ]['value']);
+						
+						
+					}
+					
+				}
+				
+				
+			}
+			
+			
+			
         	foreach ($userProfile as $type => $uniques) {
 				
 				if (array_key_exists($type, $bookedValues)) {
 					
 					foreach ($uniques as $key => $unique) {
-						
+						/**
 						if (array_key_exists($key, $userInputFields) === false) {
 							
 							continue;
@@ -1183,9 +1222,10 @@
 							}
 							
 						}
-						
+						**/
 						if (array_key_exists($key, $bookedValues[$type])) {
 							
+							#var_dump($unique['value']);
 							$bookedValues[$type][$key]['value'] = $unique['value'];
 							
 						} else {
@@ -8296,6 +8336,7 @@
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $rows as $key => $extraCharge) {
 					
+					$extraCharge = $setting->getTranslateTax($extraCharge, $originCalendarKey);
 					$applicantCountForTax = $applicantCount;
 					$nightsForTax = $nights;
 					$value = intval($extraCharge['value']);
@@ -8335,6 +8376,7 @@
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $rows as $key => $tax) {
 					
+					$tax = $setting->getTranslateTax($tax, $originCalendarKey);
 					$applicantCountForTax = $applicantCount;
 					$nightsForTax = $nights;
 					$value = intval($tax['value']);
@@ -8564,6 +8606,7 @@
 		public function createTaxesDetails($accountKey, $calendarType, $totalCost, $bookingYMD = 0, $applicantCount = null, $taxes = null) {
 			
 			global $wpdb;
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$extraChargeAmount = 0;
 			$taxesDetails = array();
 			$isExtensionsValid = $this->getExtensionsValid();
@@ -8572,6 +8615,11 @@
 				$table_name = $wpdb->prefix . "booking_package_taxes";
 				$sql = $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE `accountKey` = %d AND `active` = %s ORDER BY (type = 'surcharge') DESC, (type = 'tax') DESC, ranking ASC;", array(intval($accountKey), 'true'));
 				$taxes = $wpdb->get_results($sql, ARRAY_A);
+				foreach ((array) $taxes as $key => $tax) {
+					
+					$taxes[$key] = $setting->getTranslateTax($tax, $accountKey);
+					
+				}
 				
 			}
     		
@@ -12247,6 +12295,7 @@
 		private function getUserValues($accountKey, $type, $administrator, $personalInformation = null, $user_id = null) {
 			
 			global $wpdb;
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$strlen = 0;
 			$visitorName = array();
 			$emails = array();
@@ -12283,7 +12332,7 @@
 					
 				}
 				
-				$value = $this->getTranslateFormField($value, $accountKey);
+				$value = $setting->getTranslateFormField($value, $accountKey, 'form_field');
 				
 				array_push($form, $value);
 				
@@ -13364,46 +13413,6 @@
 			}
 			
 			return array_keys($array) === range(0, count($array) - 1);
-			
-		}
-		
-		public function getTranslateFormField($field, $calendar_account_id) {
-			
-			$keys = ['uri', 'placeholder', 'description'];
-			for ($i = 0; $i < count($keys); $i++) {
-				
-				$key = $keys[$i];
-				if (array_key_exists($key, $field) === false) {
-					
-					$field[$key] = '';
-					
-				}
-				
-			}
-			/**
-			if (array_key_exists('placeholder', $field) === false) {
-				
-				$field['placeholder'] = '';
-				
-			}
-			**/
-			$string_array = array('name' => $field['name'], 'url' => $field['uri'], 'placeholder' => $field['placeholder'], 'description' => $field['description'], 'options' => $field['options']);
-			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'form_field', $field['id'], intval($calendar_account_id), get_locale() );
-			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('url', $translated_texts) && array_key_exists('placeholder', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
-				
-				$field['name'] = $translated_texts['name'];
-				$field['uri'] = $translated_texts['url'];
-				$field['placeholder'] = $translated_texts['placeholder'];
-				$field['description'] = $translated_texts['description'];
-				if ($this->isIndexedArray($translated_texts['options']) === true && count($field['options']) === count($translated_texts['options'])) {
-					
-					$field['options'] = $translated_texts['options'];
-					
-				}
-				
-			}
-			
-			return $field;
 			
 		}
 		

@@ -2217,9 +2217,7 @@ Member_manage.prototype.lookingForUsers = function(number) {
 Member_manage.prototype.editUser = function(tr, user){
     
     var object = this;
-    const userProfile = user.profile;
     object._console.log(user);
-    object._console.log(userProfile);
     object._console.log(tr);
     object._console.log(object._userFormFields);
     const input = new Booking_Package_Input(object._debug);
@@ -2250,14 +2248,17 @@ Member_manage.prototype.editUser = function(tr, user){
     }
     
     var inputData = {};
-    const formFields = JSON.parse(JSON.stringify(object._userFormFields));
     const custom_title = object.create('div', object._i18n.get('Custom Fields'), null, null, '', 'custom_title', null);
     if (object._managementUsersV2 === 0) {
         
         custom_title.textContent = null;
         
     }
-    const table = input.createUserFieldPanel(formFields, userProfile, inputData, 'table', object._defaultName);
+    
+    const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+    const userProfile = input.changeValueForUserFormFields(formFields, JSON.parse(JSON.stringify(user.profile)));
+    object._console.log(userProfile);
+    const table = input.createUserProfiledPanel(formFields, userProfile, inputData, 'table', object._defaultName);
     table.classList.add('fixed');
     const customFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
     customFormFieldPanel.textContent = null;
@@ -2787,7 +2788,7 @@ Member_manage.prototype.userForm = function(){
             custom_title.textContent = null;
             
         }
-        const table = input.createUserFieldPanel(formFields, {}, inputData, 'table', {});
+        const table = input.createUserProfiledPanel(formFields, {}, inputData, 'table', {});
         object._console.log(table);
         const addCustomFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
         addCustomFormFieldPanel.textContent = null;
@@ -2798,7 +2799,7 @@ Member_manage.prototype.userForm = function(){
         document.getElementById("input_user_pass").value = null;
         register_button.onclick = function() {
             
-            
+            object._console.log(inputData);
             const response = input.validateInputValues(formFields, inputData);
             let updata = response.updata;
             let customUserFields = response.customUserFields;

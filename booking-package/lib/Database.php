@@ -27,7 +27,6 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_calendarAccount',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"											=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"name"											=> "`name` VARCHAR(255) NOT NULL",
@@ -38,96 +37,96 @@
 					"hotelChargeOnSunday"							=> "`hotelChargeOnSunday` INT(11) DEFAULT 0",
 					"hotelChargeOnMonday"							=> "`hotelChargeOnMonday` INT(11) DEFAULT 0",
 					"hotelChargeOnTuesday"							=> "`hotelChargeOnTuesday` INT(11) DEFAULT 0",
-					"hotelChargeOnWednesday"						=> "`hotelChargeOnWednesday`				INT(11) DEFAULT 0",
-					"hotelChargeOnThursday"							=> "`hotelChargeOnThursday`					INT(11) DEFAULT 0",
-					"hotelChargeOnFriday"							=> "`hotelChargeOnFriday`					INT(11) DEFAULT 0",
-					"hotelChargeOnSaturday"							=> "`hotelChargeOnSaturday`					INT(11) DEFAULT 0",
-					"hotelChargeOnDayBeforeNationalHoliday"			=> "`hotelChargeOnDayBeforeNationalHoliday`	INT(11) DEFAULT 0",
-					"hotelChargeOnNationalHoliday"					=> "`hotelChargeOnNationalHoliday`			INT(11) DEFAULT 0",
-					"maximumNights"									=> "`maximumNights`							INT(11) DEFAULT 0",
-					"minimumNights"									=> "`minimumNights`							INT(11) DEFAULT 0",
-					"multipleRooms"									=> "`multipleRooms`							INT(11) DEFAULT 0",
-					"maxAccountScheduleDay" 						=> "`maxAccountScheduleDay`					INT(11) DEFAULT 30",
-					"unavailableDaysFromToday"						=> "`unavailableDaysFromToday`				INT(11) DEFAULT 1",
-					"autoPublish"									=> "`autoPublish`							INT(11) DEFAULT 0",
-					"numberOfRoomsAvailable"						=> "`numberOfRoomsAvailable`				INT(11) DEFAULT 1",
-					"numberOfPeopleInRoom"							=> "`numberOfPeopleInRoom`					INT(11) DEFAULT 2",
-					"includeChildrenInRoom" 						=> "`includeChildrenInRoom`					INT(1) DEFAULT 0",
-					"formatNightDay"								=> "`formatNightDay`						INT(1) DEFAULT 0",
-					"expressionsCheck"								=> "`expressionsCheck`						INT(1) DEFAULT 0",
-					"status"										=> "`status`								VARCHAR(50) DEFAULT NULL",
-					"courseTitle"									=> "`courseTitle`							VARCHAR(255) DEFAULT NULL",
-					"courseBool"									=> "`courseBool`							INT(1) DEFAULT 0",
-					"hasMultipleServices"							=> "`hasMultipleServices`					INT(1) DEFAULT 0",
-					"couponsBool"									=> "`couponsBool`							INT(1) DEFAULT 0",
-					"guestsBool"									=> "`guestsBool`							INT(1) DEFAULT 0",
+					"hotelChargeOnWednesday"						=> "`hotelChargeOnWednesday` INT(11) DEFAULT 0",
+					"hotelChargeOnThursday"							=> "`hotelChargeOnThursday` INT(11) DEFAULT 0",
+					"hotelChargeOnFriday"							=> "`hotelChargeOnFriday` INT(11) DEFAULT 0",
+					"hotelChargeOnSaturday"							=> "`hotelChargeOnSaturday` INT(11) DEFAULT 0",
+					"hotelChargeOnDayBeforeNationalHoliday"			=> "`hotelChargeOnDayBeforeNationalHoliday` INT(11) DEFAULT 0",
+					"hotelChargeOnNationalHoliday"					=> "`hotelChargeOnNationalHoliday` INT(11) DEFAULT 0",
+					"maximumNights"									=> "`maximumNights` INT(11) DEFAULT 0",
+					"minimumNights"									=> "`minimumNights` INT(11) DEFAULT 0",
+					"multipleRooms"									=> "`multipleRooms` INT(11) DEFAULT 0",
+					"maxAccountScheduleDay" 						=> "`maxAccountScheduleDay` INT(11) DEFAULT 30",
+					"unavailableDaysFromToday"						=> "`unavailableDaysFromToday` INT(11) DEFAULT 1",
+					"autoPublish"									=> "`autoPublish` INT(11) DEFAULT 0",
+					"numberOfRoomsAvailable"						=> "`numberOfRoomsAvailable` INT(11) DEFAULT 1",
+					"numberOfPeopleInRoom"							=> "`numberOfPeopleInRoom` INT(11) DEFAULT 2",
+					"includeChildrenInRoom" 						=> "`includeChildrenInRoom` INT(1) DEFAULT 0",
+					"formatNightDay"								=> "`formatNightDay` INT(1) DEFAULT 0",
+					"expressionsCheck"								=> "`expressionsCheck` INT(1) DEFAULT 0",
+					"status"										=> "`status` VARCHAR(50) DEFAULT NULL",
+					"courseTitle"									=> "`courseTitle` VARCHAR(255) DEFAULT NULL",
+					"courseBool"									=> "`courseBool` INT(1) DEFAULT 0",
+					"hasMultipleServices"							=> "`hasMultipleServices` INT(1) DEFAULT 0",
+					"couponsBool"									=> "`couponsBool` INT(1) DEFAULT 0",
+					"guestsBool"									=> "`guestsBool` INT(1) DEFAULT 0",
 					/**
-					"minimumGuests"									=> "`minimumGuests`							VARCHAR(255) DEFAULT '{}'",
-					"maximumGuests"									=> "`maximumGuests`							VARCHAR(255) DEFAULT '{}'",
+					"minimumGuests"									=> "`minimumGuests` VARCHAR(255) DEFAULT '{}'",
+					"maximumGuests"									=> "`maximumGuests` VARCHAR(255) DEFAULT '{}'",
 					**/
-					"limitNumberOfGuests"							=> "`limitNumberOfGuests`					VARCHAR(255) DEFAULT '{}'",
-					"created"										=> "`created`								INT(11) DEFAULT NULL",
-					"googleCalendarID"								=> "`googleCalendarID`						VARCHAR(255) DEFAULT NULL",
-					"idForGoogleWebhook"							=> "`idForGoogleWebhook`					VARCHAR(255) DEFAULT NULL",
-					"expirationForGoogleWebhook"					=> "`expirationForGoogleWebhook`			INT(1) DEFAULT 0",
-					"uploadDate"									=> "`uploadDate`							INT(11) DEFAULT NULL",
-					"enableFixCalendar" 							=> "`enableFixCalendar`						INT(11) DEFAULT 0",
-					"yearForFixCalendar"							=> "`yearForFixCalendar`					INT(11) DEFAULT 0",
-					"monthForFixCalendar"							=> "`monthForFixCalendar`					INT(11) DEFAULT 0",
-					"displayRemainingCapacity"						=> "`displayRemainingCapacity`				INT(11) DEFAULT 0",
-					"subscriptionIdForStripe"						=> "`subscriptionIdForStripe`				VARCHAR(255) DEFAULT ''",
-					"enableSubscriptionForStripe"					=> "`enableSubscriptionForStripe`			INT(11) DEFAULT 0",
-					"termsOfServiceForSubscription" 				=> "`termsOfServiceForSubscription`			VARCHAR(255) DEFAULT ''",
-					"enableTermsOfServiceForSubscription"			=> "`enableTermsOfServiceForSubscription`	INT(11) DEFAULT 0",
-					"privacyPolicyForSubscription"					=> "`privacyPolicyForSubscription`			VARCHAR(255) DEFAULT ''",
-					"enablePrivacyPolicyForSubscription"			=> "`enablePrivacyPolicyForSubscription`	INT(11) DEFAULT 0",
-					"displayRemainingCapacityInCalendar"			=> "`displayRemainingCapacityInCalendar`	INT(1) DEFAULT 0",
-					"displayThresholdOfRemainingCapacity"			=> "`displayThresholdOfRemainingCapacity`	INT(3) DEFAULT 50",
+					"limitNumberOfGuests"							=> "`limitNumberOfGuests` VARCHAR(255) DEFAULT '{}'",
+					"created"										=> "`created` INT(11) DEFAULT NULL",
+					"googleCalendarID"								=> "`googleCalendarID` VARCHAR(255) DEFAULT NULL",
+					"idForGoogleWebhook"							=> "`idForGoogleWebhook` VARCHAR(255) DEFAULT NULL",
+					"expirationForGoogleWebhook"					=> "`expirationForGoogleWebhook` INT(1) DEFAULT 0",
+					"uploadDate"									=> "`uploadDate` INT(11) DEFAULT NULL",
+					"enableFixCalendar" 							=> "`enableFixCalendar` INT(11) DEFAULT 0",
+					"yearForFixCalendar"							=> "`yearForFixCalendar` INT(11) DEFAULT 0",
+					"monthForFixCalendar"							=> "`monthForFixCalendar` INT(11) DEFAULT 0",
+					"displayRemainingCapacity"						=> "`displayRemainingCapacity` INT(11) DEFAULT 0",
+					"subscriptionIdForStripe"						=> "`subscriptionIdForStripe` VARCHAR(255) DEFAULT ''",
+					"enableSubscriptionForStripe"					=> "`enableSubscriptionForStripe` INT(11) DEFAULT 0",
+					"termsOfServiceForSubscription" 				=> "`termsOfServiceForSubscription` VARCHAR(255) DEFAULT ''",
+					"enableTermsOfServiceForSubscription"			=> "`enableTermsOfServiceForSubscription` INT(11) DEFAULT 0",
+					"privacyPolicyForSubscription"					=> "`privacyPolicyForSubscription` VARCHAR(255) DEFAULT ''",
+					"enablePrivacyPolicyForSubscription"			=> "`enablePrivacyPolicyForSubscription` INT(11) DEFAULT 0",
+					"displayRemainingCapacityInCalendar"			=> "`displayRemainingCapacityInCalendar` INT(1) DEFAULT 0",
+					"displayThresholdOfRemainingCapacity"			=> "`displayThresholdOfRemainingCapacity` INT(3) DEFAULT 50",
 					"displayRemainingCapacityInCalendarAsNumber"	=> "`displayRemainingCapacityInCalendarAsNumber` INT(1) DEFAULT 0",
-					"displayRemainingCapacityHasMoreThenThreshold"	=> "`displayRemainingCapacityHasMoreThenThreshold`	VARCHAR(255) DEFAULT ''",
-					"displayRemainingCapacityHasLessThenThreshold"	=> "`displayRemainingCapacityHasLessThenThreshold`	VARCHAR(255) DEFAULT ''",
-					"displayRemainingCapacityHas0"					=> "`displayRemainingCapacityHas0`			VARCHAR(255) DEFAULT ''",
-					"startOfWeek"									=> "`startOfWeek`							INT(1) DEFAULT 0",
-					"ical"											=> "`ical`									INT(1) DEFAULT 0",
-					"icalToken"										=> "`icalToken`								VARCHAR(255) DEFAULT '0'",
-					"syncPastCustomersForIcal"						=> "`syncPastCustomersForIcal`				INT(10) DEFAULT 7",
-					"cancellationOfBooking"							=> "`cancellationOfBooking`					INT(1) DEFAULT 0",
-					"displayDetailsOfCanceled"						=> "`displayDetailsOfCanceled`				INT(1) DEFAULT 1",
-					"allowCancellationVisitor"						=> "`allowCancellationVisitor`				INT(1) DEFAULT 0",
-					"allowCancellationUser"							=> "`allowCancellationUser`					INT(1) DEFAULT 0",
-					"refuseCancellationOfBooking"					=> "`refuseCancellationOfBooking`			VARCHAR(20) DEFAULT 'not_refuse'",
-					"preparationTime"								=> "`preparationTime`						INT(1) DEFAULT 0",
-					"positionPreparationTime"						=> "`positionPreparationTime`				VARCHAR(20) DEFAULT 'before_after'",
-					"timezone"										=> "`timezone`								VARCHAR(100) DEFAULT 'none'",
-					"flowOfBooking"									=> "`flowOfBooking`							VARCHAR(100) DEFAULT 'calendar'",
-					"paymentMethod"									=> "`paymentMethod`							TEXT DEFAULT NULL",
-					"email_from"									=> "`email_from`							VARCHAR(255) DEFAULT NULL",
-					"email_to"										=> "`email_to`								VARCHAR(255) DEFAULT NULL",
-					"email_from_title"								=> "`email_from_title`						VARCHAR(255) DEFAULT NULL",
-					"email_to_title"								=> "`email_to_title`						VARCHAR(255) DEFAULT NULL",
-					"servicesPage"									=> "`servicesPage`							INT(11) DEFAULT NULL",
-					"calenarPage"									=> "`calenarPage`							INT(11) DEFAULT NULL",
-					"schedulesPage"									=> "`schedulesPage`							INT(11) DEFAULT NULL",
-					"visitorDetailsPage"							=> "`visitorDetailsPage`					INT(11) DEFAULT NULL",
-					"confirmDetailsPage"							=> "`confirmDetailsPage`					INT(11) DEFAULT NULL",
-					"thanksPage"									=> "`thanksPage`							INT(11) DEFAULT NULL",
-					"redirectPage"									=> "`redirectPage`							INT(11) DEFAULT NULL",
-					"redirectURL"									=> "`redirectURL`							VARCHAR(255) DEFAULT NULL",
-					"redirectMode"									=> "`redirectMode`							VARCHAR(255) DEFAULT 'page'",
-					"blockSameTimeBookingByUser"					=> "`blockSameTimeBookingByUser`			INT(1) DEFAULT 0",
-					"bookingVerificationCode"						=> "`bookingVerificationCode`				VARCHAR(20) DEFAULT 'false'",
-					"bookingVerificationCodeToUser"					=> "`bookingVerificationCodeToUser`			VARCHAR(20) DEFAULT 'false'",
-					"bookingReminder"								=> "`bookingReminder`						INT(11) DEFAULT 60",
-					"insertConfirmedPage"							=> "`insertConfirmedPage`					INT(1) DEFAULT 0",
-					"attachICalendar"								=> "`attachICalendar`						INT(1) DEFAULT 0",
-					"messagingService"								=> "`messagingService`						VARCHAR(255) DEFAULT NULL",
-					"customizeLabelsBool"							=> "`customizeLabelsBool`					INT(1) DEFAULT 0",
-					"customizeLabels"								=> "`customizeLabels`						TEXT DEFAULT NULL",
-					"customizeButtonsBool"							=> "`customizeButtonsBool`					INT(1) DEFAULT 0",
-					"customizeButtons"								=> "`customizeButtons`						TEXT DEFAULT NULL",
-					"customizeLayoutsBool"							=> "`customizeLayoutsBool`					INT(1) DEFAULT 0",
-					"customizeLayouts"								=> "`customizeLayouts`						TEXT DEFAULT NULL",
-					"maxBookingSlotsPerDay"							=> "`maxBookingSlotsPerDay`					TEXT DEFAULT NULL",
+					"displayRemainingCapacityHasMoreThenThreshold"	=> "`displayRemainingCapacityHasMoreThenThreshold` VARCHAR(255) DEFAULT ''",
+					"displayRemainingCapacityHasLessThenThreshold"	=> "`displayRemainingCapacityHasLessThenThreshold` VARCHAR(255) DEFAULT ''",
+					"displayRemainingCapacityHas0"					=> "`displayRemainingCapacityHas0` VARCHAR(255) DEFAULT ''",
+					"startOfWeek"									=> "`startOfWeek` INT(1) DEFAULT 0",
+					"ical"											=> "`ical` INT(1) DEFAULT 0",
+					"icalToken"										=> "`icalToken` VARCHAR(255) DEFAULT '0'",
+					"syncPastCustomersForIcal"						=> "`syncPastCustomersForIcal` INT(10) DEFAULT 7",
+					"cancellationOfBooking"							=> "`cancellationOfBooking` INT(1) DEFAULT 0",
+					"displayDetailsOfCanceled"						=> "`displayDetailsOfCanceled` INT(1) DEFAULT 1",
+					"allowCancellationVisitor"						=> "`allowCancellationVisitor` INT(1) DEFAULT 0",
+					"allowCancellationUser"							=> "`allowCancellationUser` INT(1) DEFAULT 0",
+					"refuseCancellationOfBooking"					=> "`refuseCancellationOfBooking` VARCHAR(20) DEFAULT 'not_refuse'",
+					"preparationTime"								=> "`preparationTime` INT(1) DEFAULT 0",
+					"positionPreparationTime"						=> "`positionPreparationTime` VARCHAR(20) DEFAULT 'before_after'",
+					"timezone"										=> "`timezone` VARCHAR(100) DEFAULT 'none'",
+					"flowOfBooking"									=> "`flowOfBooking` VARCHAR(100) DEFAULT 'calendar'",
+					"paymentMethod"									=> "`paymentMethod` TEXT DEFAULT NULL",
+					"email_from"									=> "`email_from` VARCHAR(255) DEFAULT NULL",
+					"email_to"										=> "`email_to` VARCHAR(255) DEFAULT NULL",
+					"email_from_title"								=> "`email_from_title` VARCHAR(255) DEFAULT NULL",
+					"email_to_title"								=> "`email_to_title` VARCHAR(255) DEFAULT NULL",
+					"servicesPage"									=> "`servicesPage` INT(11) DEFAULT NULL",
+					"calenarPage"									=> "`calenarPage` INT(11) DEFAULT NULL",
+					"schedulesPage"									=> "`schedulesPage` INT(11) DEFAULT NULL",
+					"visitorDetailsPage"							=> "`visitorDetailsPage` INT(11) DEFAULT NULL",
+					"confirmDetailsPage"							=> "`confirmDetailsPage` INT(11) DEFAULT NULL",
+					"thanksPage"									=> "`thanksPage` INT(11) DEFAULT NULL",
+					"redirectPage"									=> "`redirectPage` INT(11) DEFAULT NULL",
+					"redirectURL"									=> "`redirectURL` VARCHAR(255) DEFAULT NULL",
+					"redirectMode"									=> "`redirectMode` VARCHAR(255) DEFAULT 'page'",
+					"blockSameTimeBookingByUser"					=> "`blockSameTimeBookingByUser` INT(1) DEFAULT 0",
+					"bookingVerificationCode"						=> "`bookingVerificationCode` VARCHAR(20) DEFAULT 'false'",
+					"bookingVerificationCodeToUser"					=> "`bookingVerificationCodeToUser` VARCHAR(20) DEFAULT 'false'",
+					"bookingReminder"								=> "`bookingReminder` INT(11) DEFAULT 60",
+					"insertConfirmedPage"							=> "`insertConfirmedPage` INT(1) DEFAULT 0",
+					"attachICalendar"								=> "`attachICalendar` INT(1) DEFAULT 0",
+					"messagingService"								=> "`messagingService` VARCHAR(255) DEFAULT NULL",
+					"customizeLabelsBool"							=> "`customizeLabelsBool` INT(1) DEFAULT 0",
+					"customizeLabels"								=> "`customizeLabels` TEXT DEFAULT NULL",
+					"customizeButtonsBool"							=> "`customizeButtonsBool` INT(1) DEFAULT 0",
+					"customizeButtons"								=> "`customizeButtons` TEXT DEFAULT NULL",
+					"customizeLayoutsBool"							=> "`customizeLayoutsBool` INT(1) DEFAULT 0",
+					"customizeLayouts"								=> "`customizeLayouts` TEXT DEFAULT NULL",
+					"maxBookingSlotsPerDay"							=> "`maxBookingSlotsPerDay` TEXT DEFAULT NULL",
 				),
 			);
 			
@@ -136,20 +135,19 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_templateSchedule',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
-					"key"			=> "`key`			INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
-					"accountKey"	=> "`accountKey`	INT(11) NOT NULL",
-					"weekKey"		=> "`weekKey`		INT(11) NOT NULL",
-					"hour"			=> "`hour`			INT(11) NOT NULL",
-					"min"			=> "`min`			INT(11) NOT NULL",
-					"title" 		=> "`title`			VARCHAR(255) DEFAULT NULL",
-					"cost"			=> "`cost`			INT DEFAULT NULL",
-					"capacity"		=> "`capacity`		INT(11) NOT NULL",
-					"deadlineTime"	=> "`deadlineTime`	INT(11) NOT NULL DEFAULT 0",
-					"stop"			=> "`stop`			VARCHAR(255) DEFAULT NULL",
-					"holiday"		=> "`holiday`		VARCHAR(255) DEFAULT NULL",
-					"uploadDate"	=> "`uploadDate`	INT(11) DEFAULT NULL",
+					"key"			=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"accountKey"	=> "`accountKey` INT(11) NOT NULL",
+					"weekKey"		=> "`weekKey` INT(11) NOT NULL",
+					"hour"			=> "`hour` INT(11) NOT NULL",
+					"min"			=> "`min` INT(11) NOT NULL",
+					"title" 		=> "`title` VARCHAR(255) DEFAULT NULL",
+					"cost"			=> "`cost` INT DEFAULT NULL",
+					"capacity"		=> "`capacity` INT(11) NOT NULL",
+					"deadlineTime"	=> "`deadlineTime` INT(11) NOT NULL DEFAULT 0",
+					"stop"			=> "`stop` VARCHAR(255) DEFAULT NULL",
+					"holiday"		=> "`holiday` VARCHAR(255) DEFAULT NULL",
+					"uploadDate"	=> "`uploadDate` INT(11) DEFAULT NULL",
 				),
 			);
 			
@@ -159,33 +157,32 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_schedule',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
-					"key"					=> "`key`					INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
-					"accountKey"			=> "`accountKey`			INT(11) NOT NULL",
-					"unixTime"				=> "`unixTime`	    		INT(11) NOT NULL",
-					"year"					=> "`year`		        	INT(11) NOT NULL",
-					"month" 				=> "`month`		        	INT(11) NOT NULL",
-					"day"					=> "`day`		        	INT(11) NOT NULL",
-					"weekKey"				=> "`weekKey`		    	INT(11) NOT NULL",
-					"hour"					=> "`hour`			    	INT(11) NOT NULL",
-					"min"					=> "`min`			    	INT(11) NOT NULL",
-					"title" 				=> "`title`			    	VARCHAR(255) DEFAULT NULL",
-					"status" 				=> "`status`				VARCHAR(255) DEFAULT 'open'",
-					"cost"					=> "`cost`			    	FLOAT DEFAULT NULL",
-					"bookingCount"			=> "`bookingCount`			INT(11) DEFAULT 0",
-					"capacity"				=> "`capacity`		    	INT(11) NOT NULL",
-					"remainder" 			=> "`remainder`		    	INT(11) NOT NULL",
-					"deadlineTime"			=> "`deadlineTime`			INT(11) NOT NULL DEFAULT 0",
-					"waitingRemainder"		=> "`waitingRemainder`		INT(11) NOT NULL DEFAULT 0",
-					"stop"					=> "`stop`			    	VARCHAR(255) DEFAULT 'false'",
-					"holiday"				=> "`holiday`		    	VARCHAR(255) DEFAULT NULL",
-					"uploadDate"			=> "`uploadDate`	    	INT(11) DEFAULT NULL",
+					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"accountKey"			=> "`accountKey` INT(11) NOT NULL",
+					"unixTime"				=> "`unixTime` INT(11) NOT NULL",
+					"year"					=> "`year` INT(11) NOT NULL",
+					"month" 				=> "`month` INT(11) NOT NULL",
+					"day"					=> "`day` INT(11) NOT NULL",
+					"weekKey"				=> "`weekKey` INT(11) NOT NULL",
+					"hour"					=> "`hour` INT(11) NOT NULL",
+					"min"					=> "`min` INT(11) NOT NULL",
+					"title" 				=> "`title` VARCHAR(255) DEFAULT NULL",
+					"status" 				=> "`status` VARCHAR(255) DEFAULT 'open'",
+					"cost"					=> "`cost` FLOAT DEFAULT NULL",
+					"bookingCount"			=> "`bookingCount` INT(11) DEFAULT 0",
+					"capacity"				=> "`capacity` INT(11) NOT NULL",
+					"remainder" 			=> "`remainder` INT(11) NOT NULL",
+					"deadlineTime"			=> "`deadlineTime` INT(11) NOT NULL DEFAULT 0",
+					"waitingRemainder"		=> "`waitingRemainder` INT(11) NOT NULL DEFAULT 0",
+					"stop"					=> "`stop` VARCHAR(255) DEFAULT 'false'",
+					"holiday"				=> "`holiday` VARCHAR(255) DEFAULT NULL",
+					"uploadDate"			=> "`uploadDate` INT(11) DEFAULT NULL",
 					"expirationDateTrigger"	=> "`expirationDateTrigger` VARCHAR(255) DEFAULT 'dateBooked'",
-					"expirationDateStatus"	=> "`expirationDateStatus`	INT(11) DEFAULT 0",
-					"expirationDateFrom"	=> "`expirationDateFrom`	INT(11) DEFAULT 0",
-					"expirationDateTo"		=> "`expirationDateTo`		INT(11) DEFAULT 0",
-					"publishingDate"		=> "`publishingDate`		INT(11) DEFAULT 0",
+					"expirationDateStatus"	=> "`expirationDateStatus` INT(11) DEFAULT 0",
+					"expirationDateFrom"	=> "`expirationDateFrom` INT(11) DEFAULT 0",
+					"expirationDateTo"		=> "`expirationDateTo` INT(11) DEFAULT 0",
+					"publishingDate"		=> "`publishingDate` INT(11) DEFAULT 0",
 				),
 			);
 		                		        	
@@ -194,7 +191,6 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_courseData',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"									=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"							=> "`accountKey` INT(11) NOT NULL",
@@ -229,7 +225,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"				=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"		=> "`accountKey` INT(11) NOT NULL",
@@ -251,7 +246,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"				=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"		=> "`accountKey` INT(11) NOT NULL",
@@ -264,24 +258,23 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_emailSetting',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
-					"key"					=> "`key`					INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
-					"accountKey"			=> "`accountKey`			INT(11) NOT NULL",
-					"mail_id"				=> "`mail_id`				VARCHAR(255) NOT NULL",
-					"enable"				=> "`enable`				INT(1) DEFAULT 1",
-					"enableSMS"				=> "`enableSMS`				INT(1) DEFAULT 0",
-					"format"				=> "`format`				VARCHAR(255) DEFAULT 'text'",
-					"notifyAdministrator"	=> "`notifyAdministrator`	INT(1) DEFAULT 1",
-					"attachICalendar"		=> "`attachICalendar`		INT(1) DEFAULT 0",
-					"subject"				=> "`subject`				VARCHAR(255) DEFAULT NULL",
-					"content"				=> "`content`				TEXT DEFAULT NULL",
-					"subjectForAdmin"		=> "`subjectForAdmin`		VARCHAR(255) DEFAULT NULL",
-					"contentForAdmin"		=> "`contentForAdmin`		TEXT DEFAULT NULL",
-					"subjectForIcalendar"	=> "`subjectForIcalendar`	TEXT DEFAULT NULL",
-					"locationForIcalendar"	=> "`locationForIcalendar`	TEXT DEFAULT NULL",
-					"contentForIcalendar"	=> "`contentForIcalendar`	TEXT DEFAULT NULL",
-					"data"					=> "`data`			    	TEXT DEFAULT NULL",
+					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"accountKey"			=> "`accountKey` INT(11) NOT NULL",
+					"mail_id"				=> "`mail_id` VARCHAR(255) NOT NULL",
+					"enable"				=> "`enable` INT(1) DEFAULT 1",
+					"enableSMS"				=> "`enableSMS` INT(1) DEFAULT 0",
+					"format"				=> "`format` VARCHAR(255) DEFAULT 'text'",
+					"notifyAdministrator"	=> "`notifyAdministrator` INT(1) DEFAULT 1",
+					"attachICalendar"		=> "`attachICalendar` INT(1) DEFAULT 0",
+					"subject"				=> "`subject` VARCHAR(255) DEFAULT NULL",
+					"content"				=> "`content` TEXT DEFAULT NULL",
+					"subjectForAdmin"		=> "`subjectForAdmin` VARCHAR(255) DEFAULT NULL",
+					"contentForAdmin"		=> "`contentForAdmin` TEXT DEFAULT NULL",
+					"subjectForIcalendar"	=> "`subjectForIcalendar` TEXT DEFAULT NULL",
+					"locationForIcalendar"	=> "`locationForIcalendar` TEXT DEFAULT NULL",
+					"contentForIcalendar"	=> "`contentForIcalendar` TEXT DEFAULT NULL",
+					"data"					=> "`data` TEXT DEFAULT NULL",
 				),
 			);
 			     	
@@ -290,57 +283,56 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_userPraivateData',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
-					"key"							=> "`key`				INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
-					"reserveTime"					=> "`reserveTime`					INT(11) NOT NULL",
-					"remainderTime" 				=> "`remainderTime`					INT(11) NULL",
-					"remainderBool" 				=> "`remainderBool`					VARCHAR(255) DEFAULT 'false'",
-					"maintenanceTime"				=> "`maintenanceTime`				INT(11) DEFAULT 0",
-					"permission"					=> "`permission`					VARCHAR(255) DEFAULT 'private'",
-					"status"						=> "`status`						VARCHAR(255) DEFAULT NULL",
-					"type"							=> "`type`							VARCHAR(255) DEFAULT 'day'",
-					"accountKey"					=> "`accountKey`					INT(11) NOT NULL",
-					"accountName"					=> "`accountName`					VARCHAR(255) DEFAULT NULL",
-					"accountCost"					=> "`accountCost`					INT(11) DEFAULT NULL",
-					"checkIn"						=> "`checkIn`						INT(11) DEFAULT 0",
-					"checkOut"						=> "`checkOut`						INT(11) DEFAULT 0",
-					"scheduleUnixTime"				=> "`scheduleUnixTime`				INT(11) DEFAULT 0",
-					"scheduleWeek"					=> "`scheduleWeek`					INT(11) DEFAULT 0",
-					"scheduleTitle" 				=> "`scheduleTitle`					VARCHAR(255) DEFAULT NULL",
-					"scheduleCost"					=> "`scheduleCost`					INT(11) DEFAULT NULL",
-					"scheduleKey"					=> "`scheduleKey`					INT(11) DEFAULT NULL",
-					"applicantCount"				=> "`applicantCount`				INT(11) DEFAULT 1",
-					"courseKey" 					=> "`courseKey`						VARCHAR(255) DEFAULT NULL",
-					"courseTitle"					=> "`courseTitle`					VARCHAR(255) DEFAULT NULL",
-					"courseName"					=> "`courseName`					VARCHAR(255) DEFAULT NULL",
-					"courseTime"					=> "`courseTime`					INT(11) DEFAULT NULL",
-					"courseCost"					=> "`courseCost`					INT(11) DEFAULT NULL",
-					"options"						=> "`options`						TEXT DEFAULT NULL",
-					"tax"							=> "`tax`							INT(11) DEFAULT 0",
-					"payMode"						=> "`payMode`						VARCHAR(255) DEFAULT NULL",
-					"payId" 						=> "`payId`							VARCHAR(255) DEFAULT NULL",
-					"payName"						=> "`payName`						VARCHAR(255) DEFAULT NULL",
-					"payToken"						=> "`payToken`						VARCHAR(255) DEFAULT NULL",
-					"currency"						=> "`currency`						VARCHAR(3) DEFAULT 'usd'",
-					"praivateData"					=> "`praivateData`					TEXT DEFAULT NULL",
-					"emails"						=> "`emails`						TEXT DEFAULT NULL",
-					"accommodationDetails"			=> "`accommodationDetails`			TEXT DEFAULT NULL",
-					"guests"						=> "`guests`						TEXT DEFAULT NULL",
-					"iCalUIDforGoogleCalendar"		=> "`iCalUIDforGoogleCalendar`		VARCHAR(60) DEFAULT NULL",
-					"iCalIDforGoogleCalendar"		=> "`iCalIDforGoogleCalendar`		VARCHAR(60) DEFAULT NULL",
-					"resultOfGoogleCalendar"		=> "`resultOfGoogleCalendar`		INT(1) DEFAULT NULL",
-					"resultModeOfGoogleCalendar"	=> "`resultModeOfGoogleCalendar`	VARCHAR(60) DEFAULT NULL",
-					"cancellationToken"				=> "`cancellationToken`				VARCHAR(255) DEFAULT NULL",
-					"permalink"						=> "`permalink`						TEXT DEFAULT NULL",
-					"preparation"					=> "`preparation`					VARCHAR(255) DEFAULT NULL",
-					"taxes"							=> "`taxes`							TEXT DEFAULT NULL",
-					"user_id"						=> "`user_id`						INT(11) NULL",
-					"user_login"					=> "`user_login`					VARCHAR(100) NULL",
-					"couponKey"						=> "`couponKey`						VARCHAR(255) DEFAULT NULL",
-					"coupon"						=> "`coupon`						TEXT DEFAULT NULL",
-					"bookingReminder"				=> "`bookingReminder`				INT(11) DEFAULT 0",
-					"locale"						=> "`locale`						VARCHAR(10) DEFAULT 'en_US'",
+					"key"							=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"reserveTime"					=> "`reserveTime` INT(11) NOT NULL",
+					"remainderTime" 				=> "`remainderTime` INT(11) NULL",
+					"remainderBool" 				=> "`remainderBool` VARCHAR(255) DEFAULT 'false'",
+					"maintenanceTime"				=> "`maintenanceTime` INT(11) DEFAULT 0",
+					"permission"					=> "`permission` VARCHAR(255) DEFAULT 'private'",
+					"status"						=> "`status` VARCHAR(255) DEFAULT NULL",
+					"type"							=> "`type` VARCHAR(255) DEFAULT 'day'",
+					"accountKey"					=> "`accountKey` INT(11) NOT NULL",
+					"accountName"					=> "`accountName` VARCHAR(255) DEFAULT NULL",
+					"accountCost"					=> "`accountCost` INT(11) DEFAULT NULL",
+					"checkIn"						=> "`checkIn` INT(11) DEFAULT 0",
+					"checkOut"						=> "`checkOut` INT(11) DEFAULT 0",
+					"scheduleUnixTime"				=> "`scheduleUnixTime` INT(11) DEFAULT 0",
+					"scheduleWeek"					=> "`scheduleWeek` INT(11) DEFAULT 0",
+					"scheduleTitle" 				=> "`scheduleTitle` VARCHAR(255) DEFAULT NULL",
+					"scheduleCost"					=> "`scheduleCost` INT(11) DEFAULT NULL",
+					"scheduleKey"					=> "`scheduleKey` INT(11) DEFAULT NULL",
+					"applicantCount"				=> "`applicantCount` INT(11) DEFAULT 1",
+					"courseKey" 					=> "`courseKey` VARCHAR(255) DEFAULT NULL",
+					"courseTitle"					=> "`courseTitle` VARCHAR(255) DEFAULT NULL",
+					"courseName"					=> "`courseName` VARCHAR(255) DEFAULT NULL",
+					"courseTime"					=> "`courseTime` INT(11) DEFAULT NULL",
+					"courseCost"					=> "`courseCost` INT(11) DEFAULT NULL",
+					"options"						=> "`options` TEXT DEFAULT NULL",
+					"tax"							=> "`tax` INT(11) DEFAULT 0",
+					"payMode"						=> "`payMode` VARCHAR(255) DEFAULT NULL",
+					"payId" 						=> "`payId` VARCHAR(255) DEFAULT NULL",
+					"payName"						=> "`payName` VARCHAR(255) DEFAULT NULL",
+					"payToken"						=> "`payToken` VARCHAR(255) DEFAULT NULL",
+					"currency"						=> "`currency` VARCHAR(3) DEFAULT 'usd'",
+					"praivateData"					=> "`praivateData` TEXT DEFAULT NULL",
+					"emails"						=> "`emails` TEXT DEFAULT NULL",
+					"accommodationDetails"			=> "`accommodationDetails` TEXT DEFAULT NULL",
+					"guests"						=> "`guests` TEXT DEFAULT NULL",
+					"iCalUIDforGoogleCalendar"		=> "`iCalUIDforGoogleCalendar` VARCHAR(60) DEFAULT NULL",
+					"iCalIDforGoogleCalendar"		=> "`iCalIDforGoogleCalendar` VARCHAR(60) DEFAULT NULL",
+					"resultOfGoogleCalendar"		=> "`resultOfGoogleCalendar` INT(1) DEFAULT NULL",
+					"resultModeOfGoogleCalendar"	=> "`resultModeOfGoogleCalendar` VARCHAR(60) DEFAULT NULL",
+					"cancellationToken"				=> "`cancellationToken` VARCHAR(255) DEFAULT NULL",
+					"permalink"						=> "`permalink` TEXT DEFAULT NULL",
+					"preparation"					=> "`preparation` VARCHAR(255) DEFAULT NULL",
+					"taxes"							=> "`taxes` TEXT DEFAULT NULL",
+					"user_id"						=> "`user_id` INT(11) NULL",
+					"user_login"					=> "`user_login` VARCHAR(100) NULL",
+					"couponKey"						=> "`couponKey` VARCHAR(255) DEFAULT NULL",
+					"coupon"						=> "`coupon` TEXT DEFAULT NULL",
+					"bookingReminder"				=> "`bookingReminder` INT(11) DEFAULT 0",
+					"locale"						=> "`locale` VARCHAR(10) DEFAULT 'en_US'",
 				),
 			);
 			
@@ -349,7 +341,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "",
 				"columns" => array(
 					"key"		=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"target"	=> "`target` VARCHAR(20) DEFAULT NULL",
@@ -364,7 +355,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "",
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY",
 					"user_login"			=> "`user_login` VARCHAR(100) NOT NULL",
@@ -375,7 +365,7 @@
 					"profile" 				=> "`profile` longtext DEFAULT NULL",
 					"value" 				=> "`value` longtext DEFAULT NULL",
 					"user_activation_key"	=> "`user_activation_key` VARCHAR(100) DEFAULT ''",
-					"subscription_list" 	=> "`subscription_list` longtext DEFAULT ''",
+					"subscription_list" 	=> "`subscription_list` longtext NULL",
 					"user_registered"		=> "`user_registered` VARCHAR(100) DEFAULT 0",
 				),
 			);
@@ -384,7 +374,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "",
 				"columns" => array(
 					"key"			=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"	=> "`accountKey` VARCHAR(100) NOT NULL",
@@ -401,7 +390,6 @@
             $this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "",
 				"columns" => array(
 					"key"			=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"	=> "`accountKey` VARCHAR(100) NOT NULL",
@@ -419,7 +407,6 @@
             $this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE ".$table_name." (%s) ".$charset_collate.";",
-				"uniqueKey" => "",
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"			=> "`accountKey` VARCHAR(100) NOT NULL",
@@ -445,7 +432,7 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_optionsForHotel',
 				"sql" => "CREATE TABLE ".$table_name." (%s) ".$charset_collate.";",
-				"uniqueKey" => "",
+				/** "uniqueKey" => "", **/
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"accountKey"			=> "`accountKey` VARCHAR(100) NOT NULL",
@@ -456,7 +443,7 @@
 					"target" 				=> "`target` VARCHAR(20) DEFAULT 'guests'",
 					"range" 				=> "`range` VARCHAR(20) DEFAULT 'allDays'",
 					"chargeForAdults"		=> "`chargeForAdults` FLOAT DEFAULT 0",
-					"chargeForChildren"		=> "`chargeForChildren`	FLOAT DEFAULT 0",
+					"chargeForChildren"		=> "`chargeForChildren` FLOAT DEFAULT 0",
 					"chargeForRoom"			=> "`chargeForRoom` FLOAT DEFAULT 0",
 					"json"					=> "`json` TEXT DEFAULT NULL",
 					"ranking"				=> "`ranking` INT(11) NOT NULL",
@@ -467,7 +454,7 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE ".$table_name." (%s) ".$charset_collate.";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
+				/** "uniqueKey" => "UNIQUE KEY id (`key`)", **/
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"id"					=> "`id` VARCHAR(255) DEFAULT NULL",
@@ -491,7 +478,6 @@
 				"table" => $table_name,
 				"old_table_name" => $wpdb->prefix . 'booking_package_blockList',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"type"					=> "`type` VARCHAR(255) DEFAULT 'email'",
@@ -504,7 +490,6 @@
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
 					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
 					"file"					=> "`file` VARCHAR(255) DEFAULT NULL",
@@ -520,20 +505,15 @@
 			);
 			
 			/**
-			$table_name = $wpdb->prefix . 'booking_package_test1';
+			$table_name = $wpdb->prefix . 'booking_package_test';
 			$this->db_object[$table_name] = array(
 				"table" => $table_name,
-				"old_table_name" => $wpdb->prefix . 'booking_package_test',
+				"old_table_name" => $wpdb->prefix . 'booking_package_test1',
 				"sql" => "CREATE TABLE " . $table_name . " (%s) " . $charset_collate . ";",
-				"uniqueKey" => "UNIQUE KEY id (`key`)",
 				"columns" => array(
-					"key"					=> "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
-					"file"					=> "`file` VARCHAR(255) DEFAULT NULL",
-					"url"					=> "`url` VARCHAR(255) NOT NULL",
-					"line"					=> "`line` INT(11) NOT NULL",
-					"col"					=> "`col` INT(11) NOT NULL",
-					"message"				=> "`message` TEXT NOT NULL",
-					"date2"					=> "`date2` INT(111) DEFAULT NULL",
+					"key" => "`key` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+					"message" => "`message` text NOT NULL",
+					"date" => "`date` int(11) DEFAULT NULL",
 				),
 			);
 			**/
@@ -560,8 +540,90 @@
 			}
 			**/
 			
-			$all_existing_tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "booking_package_%'");
 			
+			/**
+			$all_existing_tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "booking_package_%'");
+			foreach ((array) $this->db_object as $new_table_name => $table_object) {
+				
+				if (isset($table_object['old_table_name'])) {
+					$old_table_name = $table_object['old_table_name'];
+					
+					if (in_array($old_table_name, $all_existing_tables) && in_array($new_table_name, $all_existing_tables) === false) {
+						
+						$rename_query = sprintf('RENAME TABLE `%s` TO `%s`;', $old_table_name, $new_table_name);
+						$wpdb->query($rename_query);
+						
+					}
+				}
+				
+			}
+			
+			foreach ((array) $this->db_object as $table_name => $table_object) {
+				
+				$table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) === $table_name;
+				
+				if (!$table_exists) {
+					
+					$columns = array_values($table_object['columns']);
+					if (!empty($table_object['uniqueKey'])) {
+						#$columns[] = $table_object['uniqueKey'];
+					}
+					
+					$columns_sql = implode(",\n", $columns);
+					$create_sql = sprintf($table_object['sql'], $columns_sql);
+					$wpdb->query($create_sql);
+					
+				} else {
+					
+					$defined_column_names = array_keys($table_object['columns']);
+					$existing_columns = $wpdb->get_col("DESCRIBE `" . $table_name . "`;");
+					
+					$columns_to_add = array_diff($defined_column_names, $existing_columns);
+					if (!empty($columns_to_add)) {
+						$add_clauses = [];
+						foreach ($columns_to_add as $column_name) {
+							
+							$column_sql = $table_object['columns'][$column_name];
+							$add_clauses[] = "ADD COLUMN " . $column_sql;
+							
+						}
+						$alter_sql = "ALTER TABLE `" . $table_name . "` " . implode(', ', $add_clauses);
+						$wpdb->query($alter_sql);
+					}
+					
+					$columns_to_delete = array_diff($existing_columns, $defined_column_names);
+					if (!empty($columns_to_delete)) {
+						$drop_clauses = [];
+						foreach ($columns_to_delete as $column_name) {
+							$drop_clauses[] = "DROP COLUMN `{$column_name}`";
+						}
+						
+						$alter_sql = "ALTER TABLE `" . $table_name . "` " . implode(', ', $drop_clauses);
+						$wpdb->query($alter_sql);
+					}
+					
+					$columns_to_modify = array_intersect($defined_column_names, $existing_columns);
+					if (!empty($columns_to_modify)) {
+						foreach ($columns_to_modify as $column_name) {
+							
+							if ($column_name === 'key') {
+								continue;
+							}
+							
+							$column_sql = $table_object['columns'][$column_name];
+							$alter_sql = "ALTER TABLE `" . $table_name . "` MODIFY COLUMN " . $column_sql;
+							$wpdb->query($alter_sql);
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			**/
+			
+			$all_existing_tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "booking_package_%'");
 			$table_columns_map = [];
 			foreach ($all_existing_tables as $table_name) {
 				
@@ -621,7 +683,6 @@
 						}
 						
 					}
-					
 					
 					if (!empty($columns_to_add)) {
 						

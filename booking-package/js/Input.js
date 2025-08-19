@@ -269,7 +269,7 @@
 			
 			if (userValue == null && inputData[inputName] != null && inputData[inputName].selectBox != null) {
 				
-				selectBox = inputData[inputName].selectBox;
+				//selectBox = inputData[inputName].selectBox;
 				
 			}
 			
@@ -909,6 +909,49 @@
 		
 	}
 	
+	Booking_Package_Input.prototype.changeValueForUserFormFields = function(formFields, userProfile) {
+		
+		for (let i = 0; i < formFields.length; i++) {
+	        
+	        const filed = formFields[i];
+	        if (filed.type === 'SELECT') {
+	            
+	            const options = filed.options;
+	            if (userProfile[filed.type] != null && userProfile[filed.type][filed.id] != null) {
+	                
+	                userProfile[filed.type][filed.id].value = options[parseInt(userProfile[filed.type][filed.id].value)];
+	                
+	            }
+	            
+	            
+	        } else if (filed.type === 'CHECK' || filed.type === 'RADIO') {
+	            
+	            if (userProfile[filed.type] != null && userProfile[filed.type][filed.id] != null) {
+	                
+	                userProfile[filed.type][filed.id].value = (function(options, value) {
+	                    
+	                    let values = [];
+	                    for (let i = 0; i < value.length; i++) {
+	                        
+	                        values.push(options[parseInt(value[i])]);
+	                        
+	                        
+	                    }
+	                    
+	                    return values;
+	                    
+	                })(filed.options, userProfile[filed.type][filed.id].value);
+	                
+	            }
+	            
+	        }
+	        
+	        
+	    }
+	    
+    	return userProfile;
+		
+	}
 	
     Booking_Package_Input.prototype.validateInputValues = function(formFields, inputData) {
     	
@@ -918,11 +961,53 @@
         for (var i = 0; i < formFields.length; i++) {
             
             const field = formFields[i];
-            const elements = inputData['customFormFiel_' + field.id];
+            const elements = inputData['customFormField_' + field.id];
             if (typeof elements === 'object') {
-                
+            	
+                object._console.log(field.id);
+                object._console.log(elements);
                 const tr = document.getElementById('tr_input_field_' + field.id);
                 tr.classList.remove('error_empty_value');
+                
+                let values = null;
+                if (field.type === 'PASSWORD') {
+                	
+                	continue;
+                	
+                } else if (field.type === 'TEXT' || field.type === 'TEXTAREA') {
+                	
+                	values = elements.textBox.value;
+                	response.customUserFields[field.type][field.id] = {id: field.id, value: values};
+                	
+                } else if (field.type === 'SELECT') {
+                	
+                	const inputObject = elements['selectBox'];
+					values = inputObject.selectedIndex;
+					response.customUserFields[field.type][field.id] = {id: field.id, value: values};
+                	
+                } else if (field.type === 'CHECK' || field.type === 'RADIO') {
+					
+					values = (function(elements) {
+						
+						let values = [];
+						for (let i in elements) {
+							
+							if (elements[i].checked === true) {
+								
+								values.push(parseInt(i));
+								
+							}
+							
+						}
+						
+						return values;
+						
+					})(elements);
+					response.customUserFields[field.type][field.id] = {id: field.id, value: values};
+
+                }
+                
+                /**
                 let values = object.getUserFieldValue(field, elements);
                 if (field.type !== 'PASSWORD') {
                 	
@@ -945,6 +1030,7 @@
                     response.customUserFields[field.type][field.id] = {id: field.id, value: values};
                 	
                 }
+                **/
                 
                 if (field.required === 'true' && values.length === 0) {
                     
@@ -960,15 +1046,19 @@
                     
                 }
                 
+                
+                
             }
             
         }
+        
+        //console.log(response.customUserFields);
         
         return response;
     	
     };
     
-    Booking_Package_Input.prototype.createUserFieldPanel = function(formFields, userProfile, inputData, elementName, defaultName) {
+    Booking_Package_Input.prototype.createUserProfiledPanel = function(formFields, userProfile, inputData, elementName, defaultName) {
 		
 		let parentElementName = 'table';
 		let trElementName = 'tr';
@@ -1031,7 +1121,7 @@
 					
 				}
 				
-				const inputElement = object.createInput('customFormFiel_' + field.id, field, inputData, null);
+				const inputElement = object.createInput('customFormField_' + field.id, field, inputData, null);
 				object._console.log(inputElement);
 				var th = document.createElement(thElementName);
 				th.textContent = field.name;

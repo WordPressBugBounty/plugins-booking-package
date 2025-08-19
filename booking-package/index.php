@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.93
+Version:     1.6.94
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1096,6 +1096,7 @@ Domain Path: /languages
             
             $this->update_database();
             
+            
             /**
             $database = new booking_package_database($this->prefix, $this->db_version);
 			$database->new_create();
@@ -1286,7 +1287,7 @@ Domain Path: /languages
 			$formData = $setting->getForm($accountKey, true);
 			foreach ($formData as $key => $field) {
 				
-				$formData[$key] = $schedule->getTranslateFormField($field, $accountKey);
+				$formData[$key] = $setting->getTranslateFormField($field, $accountKey, 'form_field');
 				
 			}
 			
@@ -1469,6 +1470,14 @@ Domain Path: /languages
 			$localize_script['cancellationOfBooking'] = $cancellationOfBooking;
 			$localize_script['permalink'] = $permalink;
 			#$localize_script['isExtensionsValid'] = $isExtensionsValid;
+			
+			for ($i = 0; $i < count($localize_script['userFormFields']); $i++) {
+				
+				$localize_script['userFormFields'][$i] =  $setting->getTranslateFormField($localize_script['userFormFields'][$i], $accountKey, 'user_profile');
+				
+			}
+			
+			
 			if ($isExtensionsValid === true) {
 				
 				$localize_script['isExtensionsValid'] = 1;
@@ -1549,7 +1558,15 @@ Domain Path: /languages
 			
 			if ($isExtensionsValid === true) {
 				
-				$localize_script['taxes'] = $setting->getTaxes($accountKey, 'yes');
+				#$localize_script['taxes'] = $setting->getTaxes($accountKey, 'yes');
+				$taxes = $setting->getTaxes($accountKey, 'yes');
+				for ($i = 0; $i < count($taxes); $i++) {
+					
+					$localize_script['taxes'][$i] = $setting->getTranslateTax($taxes[$i], $calendarAccount['key']);
+					
+				}
+				
+				
 				$userSubscriptions = $setting->upgradePlan('get');
 				if (is_string($userSubscriptions['customer_id_for_subscriptions'])) {
 					
@@ -4866,7 +4883,7 @@ Domain Path: /languages
 					$form_fields = $setting->getForm($_POST['accountKey'], true);
 					for ($i = 0; $i < count($form_fields); $i++) {
 						
-						$form_fields[$i] = $schedule->getTranslateFormField($form_fields[$i], intval($_POST['accountKey']));
+						$form_fields[$i] = $setting->getTranslateFormField($form_fields[$i], intval($_POST['accountKey']), 'form_field');
 						
 						
 					}
@@ -4911,7 +4928,13 @@ Domain Path: /languages
 						
 					}
 					
-					$response['taxes'] = $setting->getTaxes($_POST['accountKey'], 'yes');
+					#$response['taxes'] = $setting->getTaxes($_POST['accountKey'], 'yes');
+					$taxes = $setting->getTaxes($_POST['accountKey'], 'yes');
+					for ($i = 0; $i < count($taxes); $i++) {
+						
+						$response['taxes'][$i] = $setting->getTranslateTax($taxes[$i], $calendarAccount['key']);
+						
+					}
 					$emailEnableList = $setting->getEmailMessageList($_POST['accountKey']);
 					$response['emailEnableList'] = $emailEnableList['emailMessageList'];
 					

@@ -2865,6 +2865,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                 
                                 object._console.log(key);
                                 var options = hotelOptions[key];
+                                options.id = 'booking_package_option_' + options.key;
                                 options.description = null;
                                 hotelOptions[key].json = (function(options, selectedOption){
                                     
@@ -2950,6 +2951,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             
                             object._console.log(key);
                             var guests = guestsList[key];
+                            guests.id = 'booking_package_guest_' + guests.key;
                             guests.description = null;
                             guestsList[key].json = (function(guests, valueGuest){
                                 

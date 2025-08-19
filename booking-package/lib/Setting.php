@@ -3100,6 +3100,67 @@
 			
 		}
 		
+		public function getTranslateUserInputField($field, $calendar_account_id) {
+		    
+		    
+		    
+		}
+		
+		public function getTranslateFormField($field, $calendar_account_id, $type = 'form_field') {
+			
+			$keys = ['uri', 'placeholder', 'description'];
+			for ($i = 0; $i < count($keys); $i++) {
+				
+				$key = $keys[$i];
+				if (array_key_exists($key, $field) === false) {
+					
+					$field[$key] = '';
+					
+				}
+				
+			}
+			
+			$string_array = array('name' => $field['name'], 'url' => $field['uri'], 'placeholder' => $field['placeholder'], 'description' => $field['description'], 'options' => $field['options']);
+			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, $type, $field['id'], intval($calendar_account_id), get_locale() );
+			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('url', $translated_texts) && array_key_exists('placeholder', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$field['name'] = $translated_texts['name'];
+				$field['uri'] = $translated_texts['url'];
+				$field['placeholder'] = $translated_texts['placeholder'];
+				$field['description'] = $translated_texts['description'];
+				if ($this->isIndexedArray($translated_texts['options']) === true && count($field['options']) === count($translated_texts['options'])) {
+					
+					$field['options'] = $translated_texts['options'];
+					
+				}
+				
+			}
+			
+			return $field;
+			
+		}
+		
+		public function getTranslateTax($tax, $calendar_account_id) {
+		    
+		    $type = 'tax';
+		    if ($tax['type'] === 'surcharge') {
+		        
+		        $type = 'extra_charge';
+		        
+		    }
+		    $optionNames = array();
+		    $string_array = array('name' => $tax['name'], 'description' => '', 'options' => $optionNames);
+		    $translated_texts = apply_filters('booking_package_get_translate_text', $string_array, $type, intval($tax['key']), intval($calendar_account_id), get_locale());
+		    if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
+				
+				$tax['name'] = $translated_texts['name'];
+				
+		    }
+		    
+		    return $tax;
+		    
+		}
+		
 		public function getTranslateService($service, $calendar_account_id) {
 			
 			$optionNames = array();
