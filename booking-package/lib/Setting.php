@@ -3106,7 +3106,7 @@
 		    
 		}
 		
-		public function getTranslateFormField($field, $calendar_account_id, $type = 'form_field') {
+		public function getTranslateFormField($field, $calendar_account_id, $local, $type = 'form_field') {
 			
 			$keys = ['uri', 'placeholder', 'description'];
 			for ($i = 0; $i < count($keys); $i++) {
@@ -3121,7 +3121,7 @@
 			}
 			
 			$string_array = array('name' => $field['name'], 'url' => $field['uri'], 'placeholder' => $field['placeholder'], 'description' => $field['description'], 'options' => $field['options']);
-			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, $type, $field['id'], intval($calendar_account_id), get_locale() );
+			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, $type, $field['id'], intval($calendar_account_id), $local);
 			if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('url', $translated_texts) && array_key_exists('placeholder', $translated_texts) && array_key_exists('description', $translated_texts) && array_key_exists('options', $translated_texts) ) {
 				
 				$field['name'] = $translated_texts['name'];
@@ -6068,65 +6068,125 @@
         }
         
         public function updateEmailId() {
-            
+            global $wpdb;
+            $table_name = $wpdb->prefix . "booking_package_email_settings";
             $update_completed = get_option('_' . $this->prefix . 'updated_email_id', 0);
-            if (intval($update_completed) === 1) {
+            if (intval($update_completed) === 0) {
+                    
+                    $ids = array(
+                    'mail_new_admin' => 'new_booking_notification', 
+                    'mail_approved' => 'booking_approved_notification', 
+                    'mail_pending' => 'booking_pending_notification', 
+                    'mail_reminder' => 'booking_reminder_notification', 
+                    'mail_updated' => 'booking_updated_notification', 
+                    'mail_canceled_by_visitor_user' => 'booking_cancellation_notification', 
+                    'mail_deleted' => 'booking_deleted_notification', 
+                );
                 
-                return false;
+                
+                $wpdb->query("START TRANSACTION");
+    
+                try {
+                    
+                    $params = [];
+                    
+                    $case_sql = "UPDATE `{$table_name}` SET `mail_id` = CASE `mail_id` ";
+                    foreach ($ids as $old_id => $new_id) {
+                        $case_sql .= "WHEN %s THEN %s ";
+                        $params[] = $old_id;
+                        $params[] = $new_id;
+                    }
+                    $case_sql .= "END";
+                    
+                    $where_in_placeholders = implode(', ', array_fill(0, count($ids), '%s'));
+                    $sql_template = $case_sql . " WHERE `mail_id` IN (" . $where_in_placeholders . ")";
+                    
+                    $final_params = array_merge($params, array_keys($ids));
+                    $final_sql = $wpdb->prepare($sql_template, $final_params);
+                    #var_dump($final_sql);
+                    $result = $wpdb->query($final_sql);
+                    
+                    if (false === $result) {
+                        throw new Exception('Database update failed.');
+                    }
+                    
+                    $wpdb->query("COMMIT");
+                    update_option('_' . $this->prefix . 'updated_email_id', 1);
+                    return true;
+    
+                } catch (Exception $e) {
+                    
+                    $wpdb->query("ROLLBACK");
+                    error_log($e->getMessage());
+                    
+                } /** finally {
+    				
+    				$wpdb->query('UNLOCK TABLES');
+    				
+    			}**/
+                
+            } else {
+                
+                $update_completed = get_option('_' . $this->prefix . 'updated_email_cancellation_id', 0);
+                if (intval($update_completed) === 0) {
+                    
+                    $sql = $wpdb->prepare(
+                        "SELECT * FROM `" . $table_name . "` WHERE `mail_id` = %s AND `enable` = %d AND `enableSMS` = %d ORDER BY `accountKey` ASC;", 
+                        array('booking_cancellation_notification', 0, 0)
+                    );
+                    $rows = $wpdb->get_results($sql, ARRAY_A);
+                    $booking_cancellation_notifications = array();
+                    foreach ($rows as $key => $data) {
+                        
+                        $booking_cancellation_notifications[$data['accountKey']] = $data;
+                        
+                    }
+                    
+                    $sql = $wpdb->prepare(
+                        "SELECT * FROM `" . $table_name . "` WHERE `mail_id` = %s AND (`enable` = %d OR `enableSMS` = %d) ORDER BY `accountKey` ASC;", 
+                        array('mail_canceled_by_visitor_user', 1, 1)
+                    );
+                    $rows = $wpdb->get_results($sql, ARRAY_A);
+                    foreach ($rows as $key => $mail_canceled) {
+                        
+                        if (isset($booking_cancellation_notifications[ $mail_canceled['accountKey'] ])) {
+                            
+                            #$sql = $wpdb->prepare("DELETE FROM `" . $table_name . "` WHERE `key` = %d;", array( intval($booking_cancellation_notifications[ $mail_canceled['accountKey'] ]['key']) ) );
+                            #echo $sql . "<br>\n";
+                            #$wpdb->query($sql);
+                            
+                            $key_to_delete = intval($booking_cancellation_notifications[$mail_canceled['accountKey']]['key']);
+                            $wpdb->delete($table_name, array('key' => $key_to_delete), array('%d'));
+                            
+                        }
+                        
+                        $sql = $wpdb->prepare("SELECT * FROM `" . $table_name . "` WHERE `mail_id` = %s AND `accountKey` = %d;", array('booking_cancellation_notification', intval($mail_canceled['accountKey']) ) );
+                        $row = $wpdb->get_var($sql);
+                        if (empty($row)) {
+                            
+                            #$sql = $wpdb->prepare("UPDATE `" . $table_name . "` SET `mail_id` = 'booking_cancellation_notification' WHERE `key` = %d;", array(intval($mail_canceled['key'])));
+                            #echo $sql . "<br>\n";
+                            #$wpdb->query($sql);
+                            
+                            $wpdb->update(
+                                $table_name,
+                                array('mail_id' => 'booking_cancellation_notification'), 
+                                array('key' => intval($mail_canceled['key'])), 
+                                array('%s'), 
+                                array('%d')  
+                            );
+                            
+                        }
+                        
+                    }
+                    
+                    update_option('_' . $this->prefix . 'updated_email_cancellation_id', 1);
+                    return true;
+                    
+                }
                 
             }
             
-            $ids = array(
-                'mail_new_admin' => 'new_booking_notification', 
-                'mail_approved' => 'booking_approved_notification', 
-                'mail_pending' => 'booking_pending_notification', 
-                'mail_reminder' => 'booking_reminder_notification', 
-                'mail_updated' => 'booking_updated_notification', 
-                'mail_canceled' => 'booking_cancellation_notification', 
-                'mail_deleted' => 'booking_deleted_notification', 
-            );
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix . "booking_package_email_settings";
-            $wpdb->query("START TRANSACTION");
-
-            try {
-                
-                $params = [];
-                
-                $case_sql = "UPDATE `{$table_name}` SET `mail_id` = CASE `mail_id` ";
-                foreach ($ids as $old_id => $new_id) {
-                    $case_sql .= "WHEN %s THEN %s ";
-                    $params[] = $old_id;
-                    $params[] = $new_id;
-                }
-                $case_sql .= "END";
-                
-                $where_in_placeholders = implode(', ', array_fill(0, count($ids), '%s'));
-                $sql_template = $case_sql . " WHERE `mail_id` IN (" . $where_in_placeholders . ")";
-                
-                $final_params = array_merge($params, array_keys($ids));
-                $final_sql = $wpdb->prepare($sql_template, $final_params);
-                $result = $wpdb->query($final_sql);
-                
-                if (false === $result) {
-                    throw new Exception('Database update failed.');
-                }
-                
-                $wpdb->query("COMMIT");
-                update_option('_' . $this->prefix . 'updated_email_id', 1);
-                return true;
-
-            } catch (Exception $e) {
-                
-                $wpdb->query("ROLLBACK");
-                error_log($e->getMessage());
-                
-            } /** finally {
-				
-				$wpdb->query('UNLOCK TABLES');
-				
-			}**/
             
         }
         

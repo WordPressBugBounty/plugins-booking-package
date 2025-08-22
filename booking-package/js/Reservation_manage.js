@@ -2906,7 +2906,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                 })(room.options[key]);
                                 
                                 object._console.log(hotelOptions[key]);
-                                var value = input.createInput(key, hotelOptions[key], inputData, function(event) {
+                                var value = input.createInput('booking_package_option_' + key, hotelOptions[key], {}, function(event) {
                                     
                                     var key = this.parentElement.getAttribute("data-option");
                                     var roomKey = this.parentElement.getAttribute('data-room');
@@ -2992,7 +2992,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             })(room.guests[key]);
                             
                             object._console.log(guestsList[key]);
-                            var value = input.createInput(key, guestsList[key], inputData, function(event) {
+                            var value = input.createInput('booking_package_guest_' + key, guestsList[key], {}, function(event) {
                                 
                                 var key = this.parentElement.getAttribute("data-guset");
                                 var roomKey = this.parentElement.getAttribute('data-room');

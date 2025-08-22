@@ -269,7 +269,7 @@
 			
 			if (userValue == null && inputData[inputName] != null && inputData[inputName].selectBox != null) {
 				
-				//selectBox = inputData[inputName].selectBox;
+				selectBox = inputData[inputName].selectBox;
 				
 			}
 			

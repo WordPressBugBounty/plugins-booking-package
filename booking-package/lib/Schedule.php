@@ -1023,9 +1023,10 @@
 				foreach ((array) $users as $key => $user) {
 					
 					$sql = $wpdb->prepare(
-						"SELECT `key`, `status`, `user_login`, `subscription_list`, `profile`, `user_registered` FROM `".$table_name."` WHERE `email` = %s;", 
+						"SELECT `key`, `status`, `user_login`, `subscription_list`, `profile`, `user_registered`, `locale` FROM `".$table_name."` WHERE `email` = %s;", 
 						array(sanitize_text_field($user->user_email))
 					);
+					
 					$row = $wpdb->get_row($sql, ARRAY_A);
 					if (empty($row)) {
 						
@@ -1037,6 +1038,7 @@
 					} else {
 						
 						$user->status = $row['status'];
+						$user->locale = $row['locale'];
 						if (empty($row['profile']) === true) {
 							
 							$user->profile = array();
@@ -1127,14 +1129,14 @@
 				
 				$table_name = $wpdb->prefix."booking_package_users";
 				$sql = $wpdb->prepare(
-					"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
+					"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile`, `locale` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
 					$valueList
 				);
 				
 				if (isset($_POST['meta']) && intval($_POST['meta']) == 1) {
 					
 					$sql = $wpdb->prepare(
-						"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
+						"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile`, `locale` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
 						$valueList
 					);
 					
@@ -1260,7 +1262,7 @@
 			global $wpdb;
 			$table_name = $wpdb->prefix."booking_package_users";
 			$sql = $wpdb->prepare(
-				"SELECT `value`,`status`,`profile` FROM `" . $table_name . "` WHERE `key` = %d;", 
+				"SELECT `value`,`status`,`profile`, `locale` FROM `" . $table_name . "` WHERE `key` = %d;", 
 				array(intval($userId))
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);
@@ -1277,7 +1279,7 @@
 				$value = json_decode($row['value'], true);
 				$profile = json_decode($row['profile'], true);
 				$value = $this->margeProfile($value, $profile);
-				$response = array('value' => $value, 'profile' => $profile);
+				$response = array('value' => $value, 'profile' => $profile, 'locale' => $row['locale']);
 				
 			} else {
 				
@@ -1293,7 +1295,7 @@
 					$value = json_decode($row['value'], true);
 					$profile = json_decode($row['profile'], true);
 					$value = $this->margeProfile($value, $profile);
-					$response = array('value' => $value, 'profile' => $profile);
+					$response = array('value' => $value, 'profile' => $profile, 'locale' => $row['locale']);
 					
 				}
 				
@@ -1488,6 +1490,7 @@
 				$memberSetting['user_email'] = $user->user_email;
 				$memberSetting['value'] = $value['value'];
 				$memberSetting['profile'] = $value['profile'];
+				$memberSetting['locale'] = $value['locale'];
 				$memberSetting['current_member_id'] = intval($userId);
 				$memberSetting['login'] = 1;
 				$memberSetting['subscription_list'] = $this->get_subscription_list_of_user($userId);
@@ -6869,8 +6872,15 @@
 				$next = 0;
 				
 			}
+			
+			$formFields = $setting->getUserInputFields();
+			for ($i = 0; $i < count($formFields); $i++) {
+				
+				$formFields[$i] = $setting->getTranslateFormField($formFields[$i], null, get_locale(), 'user_profile');
+				
+			}
     		
-    		return array('status' => 'success', 'bookedList' => $rows, 'limit' => intval($limit), 'offset' => intval($offset), 'size' => intval($size), 'next' => $next);
+    		return array('status' => 'success', 'bookedList' => $rows, 'limit' => intval($limit), 'offset' => intval($offset), 'size' => intval($size), 'next' => $next, 'formFields' => $formFields);
     		
     	}
     	
@@ -12332,7 +12342,7 @@
 					
 				}
 				
-				$value = $setting->getTranslateFormField($value, $accountKey, 'form_field');
+				$value = $setting->getTranslateFormField($value, $accountKey, get_locale(), 'form_field');
 				
 				array_push($form, $value);
 				

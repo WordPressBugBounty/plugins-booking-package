@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.94
+Version:     1.6.95
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -28,7 +28,7 @@ Domain Path: /languages
 	
 	class BOOKING_PACKAGE {
 		
-		public $db_version = "1.2.0";
+		public $db_version = "1.2.1";
 		
 		public $plugin_version = 0;
 		
@@ -1287,7 +1287,7 @@ Domain Path: /languages
 			$formData = $setting->getForm($accountKey, true);
 			foreach ($formData as $key => $field) {
 				
-				$formData[$key] = $setting->getTranslateFormField($field, $accountKey, 'form_field');
+				$formData[$key] = $setting->getTranslateFormField($field, $accountKey, get_locale(), 'form_field');
 				
 			}
 			
@@ -1473,7 +1473,7 @@ Domain Path: /languages
 			
 			for ($i = 0; $i < count($localize_script['userFormFields']); $i++) {
 				
-				$localize_script['userFormFields'][$i] =  $setting->getTranslateFormField($localize_script['userFormFields'][$i], $accountKey, 'user_profile');
+				$localize_script['userFormFields'][$i] =  $setting->getTranslateFormField($localize_script['userFormFields'][$i], $accountKey, get_locale(), 'user_profile');
 				
 			}
 			
@@ -4883,7 +4883,7 @@ Domain Path: /languages
 					$form_fields = $setting->getForm($_POST['accountKey'], true);
 					for ($i = 0; $i < count($form_fields); $i++) {
 						
-						$form_fields[$i] = $setting->getTranslateFormField($form_fields[$i], intval($_POST['accountKey']), 'form_field');
+						$form_fields[$i] = $setting->getTranslateFormField($form_fields[$i], intval($_POST['accountKey']), get_locale(), 'form_field');
 						
 						
 					}

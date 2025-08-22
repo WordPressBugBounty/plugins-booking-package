@@ -367,6 +367,7 @@
 					"user_activation_key"	=> "`user_activation_key` VARCHAR(100) DEFAULT ''",
 					"subscription_list" 	=> "`subscription_list` longtext NULL",
 					"user_registered"		=> "`user_registered` VARCHAR(100) DEFAULT 0",
+					"locale"				=> "`locale` VARCHAR(100) DEFAULT '". get_locale() . "'",
 				),
 			);
 			
