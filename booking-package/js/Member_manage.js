@@ -1827,6 +1827,7 @@ Member_manage.prototype.movePage = function(page, number, keywords){
 Member_manage.prototype.bookedList = function(tr, userAccount, offset) {
     
     var object = this;
+    var formFields = null;
     object._console.log(userAccount);
     object._console.log("offset = " + offset);
     object._console.log(object._weekName);
@@ -1885,7 +1886,7 @@ Member_manage.prototype.bookedList = function(tr, userAccount, offset) {
             edit_user_tab.classList.add("active");
             reservation_usersPanel.classList.add("hidden_panel");
             user_detail_panel.classList.remove("hidden_panel");
-            object.editUser(tr, userAccount);
+            object.editUser(tr, userAccount, formFields);
             leftButtonPanel.classList.add("hidden_panel");
             rightButtonPanel.classList.remove("hidden_panel");
             
@@ -1902,7 +1903,7 @@ Member_manage.prototype.bookedList = function(tr, userAccount, offset) {
     var body = document.getElementsByTagName("body")[0];
     body.classList.add("modal-open");
     
-    var post = {mode: 'getUsersBookedList', nonce: object._nonce, action: object._action, user_id: userAccount.ID, offset: offset, authority: object._authority};
+    var post = {mode: 'getUsersBookedList', nonce: object._nonce, action: object._action, user_id: userAccount.ID, offset: offset, authority: object._authority, locale: userAccount.locale};
     object.loadingPanel(1);
     new Booking_App_XMLHttp(object._url, post, false, function(response){
         
@@ -1915,6 +1916,7 @@ Member_manage.prototype.bookedList = function(tr, userAccount, offset) {
         if (response.status == 'success') {
             
             var bookedList = response.bookedList;
+            formFields = response.formFields;
             responseOffset = parseInt(response.offset);
             responseLimit = parseInt(response.limit);
             nextClick = parseInt(response.next);
@@ -2214,7 +2216,7 @@ Member_manage.prototype.lookingForUsers = function(number) {
     
 };
 
-Member_manage.prototype.editUser = function(tr, user){
+Member_manage.prototype.editUser = function(tr, user, formFields){
     
     var object = this;
     object._console.log(user);
@@ -2255,7 +2257,7 @@ Member_manage.prototype.editUser = function(tr, user){
         
     }
     
-    const formFields = JSON.parse(JSON.stringify(object._userFormFields));
+    //const formFields = JSON.parse(JSON.stringify(object._userFormFields));
     const userProfile = input.changeValueForUserFormFields(formFields, JSON.parse(JSON.stringify(user.profile)));
     object._console.log(userProfile);
     const table = input.createUserProfiledPanel(formFields, userProfile, inputData, 'table', object._defaultName);

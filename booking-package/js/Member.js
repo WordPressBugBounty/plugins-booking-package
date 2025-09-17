@@ -908,7 +908,7 @@
         
         
         
-        var post = {mode: 'getUsersBookedList', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, offset: offset, user_id: setting.current_member_id};
+        var post = {mode: 'getUsersBookedList', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, offset: offset, user_id: setting.current_member_id, locale: object._locale};
         var bookingBlockPanel = document.getElementById("bookingBlockPanel");
         bookingBlockPanel.classList.remove("hidden_panel");
         new Booking_App_XMLHttp(object._url, post, false, function(response) {

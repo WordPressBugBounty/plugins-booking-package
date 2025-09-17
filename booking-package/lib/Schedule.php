@@ -1038,7 +1038,8 @@
 					} else {
 						
 						$user->status = $row['status'];
-						$user->locale = $row['locale'];
+						#$user->locale = $row['locale'];
+						$user->locale = get_user_locale($user->ID);
 						if (empty($row['profile']) === true) {
 							
 							$user->profile = array();
@@ -1267,7 +1268,7 @@
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);
 			$response = 0;
-			
+			$locale = get_user_locale($userId);
 			if (!empty($row) && intval($row['status']) == 1) {
 				
 				if (empty($row['profile'])) {
@@ -1279,7 +1280,7 @@
 				$value = json_decode($row['value'], true);
 				$profile = json_decode($row['profile'], true);
 				$value = $this->margeProfile($value, $profile);
-				$response = array('value' => $value, 'profile' => $profile, 'locale' => $row['locale']);
+				$response = array('value' => $value, 'profile' => $profile, 'locale' => $locale);
 				
 			} else {
 				
@@ -1295,7 +1296,7 @@
 					$value = json_decode($row['value'], true);
 					$profile = json_decode($row['profile'], true);
 					$value = $this->margeProfile($value, $profile);
-					$response = array('value' => $value, 'profile' => $profile, 'locale' => $row['locale']);
+					$response = array('value' => $value, 'profile' => $profile, 'locale' => $locale);
 					
 				}
 				
@@ -1490,7 +1491,8 @@
 				$memberSetting['user_email'] = $user->user_email;
 				$memberSetting['value'] = $value['value'];
 				$memberSetting['profile'] = $value['profile'];
-				$memberSetting['locale'] = $value['locale'];
+				#$memberSetting['locale'] = $value['locale'];
+				$memberSetting['locale'] = get_user_locale($user->ID);
 				$memberSetting['current_member_id'] = intval($userId);
 				$memberSetting['login'] = 1;
 				$memberSetting['subscription_list'] = $this->get_subscription_list_of_user($userId);
@@ -6827,7 +6829,7 @@
 		}
 		
 		
-		public function getUsersBookedList($user_id, $offset = 0, $cancel = false) {
+		public function getUsersBookedList($user_id, $locale = 'en_US', $offset = 0, $cancel = false) {
 			
 			global $wpdb;
 			
@@ -6876,7 +6878,7 @@
 			$formFields = $setting->getUserInputFields();
 			for ($i = 0; $i < count($formFields); $i++) {
 				
-				$formFields[$i] = $setting->getTranslateFormField($formFields[$i], null, get_locale(), 'user_profile');
+				$formFields[$i] = $setting->getTranslateFormField($formFields[$i], null, $locale, 'user_profile');
 				
 			}
     		
@@ -15067,7 +15069,7 @@
 				$user = $this->get_user();
 				if (intval($user['status']) == 1 && intval($user['user']['current_member_id']) == intval($_POST['user_id'])) {
 					
-					$response = $this->getUsersBookedList($_POST['user_id'], intval($_POST['offset']), true);
+					$response = $this->getUsersBookedList($_POST['user_id'], $_POST['locale'], intval($_POST['offset']), true);
 					$response['reload'] = 0;
 					
 				} else {

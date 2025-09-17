@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.95
+Version:     1.6.96
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -4355,7 +4355,7 @@ Domain Path: /languages
         	
         	if ($_POST['mode'] == 'getUsersBookedList') {
         		
-        		$response = $schedule->getUsersBookedList($_POST['user_id'], $_POST['offset'], false);
+        		$response = $schedule->getUsersBookedList($_POST['user_id'], $_POST['locale'], $_POST['offset'], false);
         		
         	}
 			

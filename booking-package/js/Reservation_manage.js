@@ -4363,6 +4363,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             object._console.log("mode = " + mode);
             object._console.log("buttonAction = " + object._buttonAction);
+            object._console.log("changeAction = " + changeAction);
             if(object._buttonAction != 'updateSchedule'){
                 
                 return null;
@@ -5035,6 +5036,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
 		object._console.log("courseTime = " + courseTime);
 		object._console.log(preparation);
 		object._console.log(typeof preparation);
+		
+        if (isNaN(courseTime) === true) {
+            
+            courseTime = 0;
+            
+        }
+		
 		if (preparation == null) {
 		    
 		    preparation = {position: "before_after", time: 0};
