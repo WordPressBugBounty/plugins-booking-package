@@ -248,6 +248,12 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._currencies = reservation_info.currencies;
         this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
         this._format = new FORMAT_COST(this._i18n, this._debug, this._numberFormatter, this._currency_info);
+        this._stripe_paypay = false;
+        if (reservation_info.stripe_paypay != null) {
+            
+            this._stripe_paypay = reservation_info.stripe_paypay;
+            
+        }
         
         if (parseInt(reservation_info.errorNumberOfCustomers) == 1) {
             
@@ -809,6 +815,30 @@ var error_hCaptcha_for_booking_package = function(response) {
     Booking_Package.prototype.getReservationData = function(month, day, year, accountKey, update, request, startCalendar, calendarData){
         
         var object = this;
+        
+        if (object._stripe_paypay !== false) {
+            
+            const url = new URL(window.location.href);
+            url.searchParams.delete('stripe_paypay');
+            url.searchParams.delete('payment_intent');
+            url.searchParams.delete('payment_intent_client_secret');
+            url.searchParams.delete('redirect_status');
+            window.history.replaceState(null, '', url.href);
+            if (object._stripe_paypay.redirect_status === 'succeeded') {
+                
+                object.savedBookingCompletedPanel();
+                return null;
+                
+            }
+            
+            object._stripe_paypay = false;
+            const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
+            storeage.removeItem('booking_data');
+            storeage.removeItem('post_data');
+            storeage.removeItem('saved_booking_completed_panel');
+            object._console.log(object._stripe_paypay);
+        }
+        
         object._console.log('startCalendar = ' + startCalendar);
         try {
             
@@ -7724,7 +7754,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 object._selectedPaymentMethod = paymentMethod[key];
                 object._console.log(paymentMethod[key]);
                 
-                var idList = ["booking-package_pay_locally", "booking-package_pay_with_paypal", "booking-package_pay_with_stripe", "booking-package_pay_with_stripe_konbini"];
+                var idList = ["booking-package_pay_locally", "booking-package_pay_with_paypal", "booking-package_pay_with_stripe", "booking-package_pay_with_stripe_konbini", "booking-package_pay_with_stripe_paypay"];
                 for (var i = 0; i < idList.length; i++) {
                     
                     var id = idList[i];
@@ -7743,6 +7773,10 @@ var error_hCaptcha_for_booking_package = function(response) {
                 } else if (paymentMethod[key] == 'stripe_konbini' && document.getElementById("booking-package_pay_with_stripe_konbini") != null) {
                     
                     document.getElementById("booking-package_pay_with_stripe_konbini").classList.remove("hidden_panel");
+                    
+                } else if (paymentMethod[key] == 'stripe_paypay' && document.getElementById("booking-package_pay_with_stripe_paypay") != null) {
+                    
+                    document.getElementById("booking-package_pay_with_stripe_paypay").classList.remove("hidden_panel");
                     
                 } else if (paymentMethod[key] == 'stripe' && document.getElementById("booking-package_pay_with_stripe") != null) {
                     
@@ -7778,6 +7812,11 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     paymentSpans[i].classList.add("locally");
                     paymentSpans[i].textContent = object._i18n.get("Pay at Convenience Store (via Stripe)");
+                    
+                } else if (paymentRadios[i].value == 'stripe_paypay') {
+                    
+                    paymentSpans[i].classList.add("locally");
+                    paymentSpans[i].textContent = object._i18n.get("Pay with %s", ['PayPay']);
                     
                 } else if (paymentRadios[i].value == 'stripe') {
                     
@@ -7933,7 +7972,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                         }
                         
                         
-                        
                         formPanel.removeChild(cartPanel);
                         bookingCompleted(response, accountKey);
                         
@@ -8073,6 +8111,10 @@ var error_hCaptcha_for_booking_package = function(response) {
         } else if (paymentMethod[0] == 'stripe_konbini' && document.getElementById("booking-package_pay_with_stripe_konbini") != null) {
             
             document.getElementById("booking-package_pay_with_stripe_konbini").classList.remove("hidden_panel");
+            
+        } else if (paymentMethod[0] == 'stripe_paypay' && document.getElementById("booking-package_pay_with_stripe_paypay") != null) {
+            
+            document.getElementById("booking-package_pay_with_stripe_paypay").classList.remove("hidden_panel");
             
         } else if (paymentMethod[0] == 'stripe' && document.getElementById("booking-package_pay_with_stripe") != null) {
             
@@ -8386,6 +8428,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         var selectPaymentsPanel = document.getElementById('booking-package_paymentMethod');
         var locallyPanel = document.getElementById('booking-package_pay_locally');
         var stripeKonbiniPanel = document.getElementById('booking-package_pay_with_stripe_konbini');
+        var stripePayPayiPanel = document.getElementById('booking-package_pay_with_stripe_paypay');
         var stripePanel = document.getElementById('booking-package_pay_with_stripe');
         var payPalPanel = document.getElementById('booking-package_pay_with_paypal');
         if (totalCost <= 0) {
@@ -8400,6 +8443,12 @@ var error_hCaptcha_for_booking_package = function(response) {
             if (stripeKonbiniPanel != null) {
                 
                 stripeKonbiniPanel.classList.add('hidden_panel');
+                
+            }
+            
+            if (stripePayPayiPanel != null) {
+                
+                stripePayPayiPanel.classList.add('hidden_panel');
                 
             }
             
@@ -8433,6 +8482,12 @@ var error_hCaptcha_for_booking_package = function(response) {
             if (stripeKonbiniPanel != null && object._selectedPaymentMethod == 'stripe_konbini') {
                 
                 stripeKonbiniPanel.classList.remove('hidden_panel');
+                
+            }
+            
+            if (stripePayPayiPanel != null && object._selectedPaymentMethod == 'stripe_paypay') {
+                
+                stripePayPayiPanel.classList.remove('hidden_panel');
                 
             }
             
@@ -8578,11 +8633,71 @@ var error_hCaptcha_for_booking_package = function(response) {
         
     }
     
+    Booking_Package.prototype.savedBookingCompletedPanel = function() {
+        
+        var object = this;
+        const calendarAccount = object._calendarAccount;
+        const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
+        const booking_data = storeage.getObject('booking_data');
+        const post_data = storeage.getObject('post_data');
+        const saved_booking_completed_panel = storeage.getHTML('saved_booking_completed_panel');
+        post_data.payToken = object._stripe_paypay.payment_intent;
+        
+        object._console.log(calendarAccount);
+        object._console.log(object._stripe_paypay);
+        object._console.log(booking_data);
+        object._console.log(post_data);
+        object._console.log(saved_booking_completed_panel);
+        
+        
+        const loadingPanel = document.createElement('div');
+        loadingPanel.textContent = object._i18n.get('Loading...');
+        loadingPanel.classList.add('processing-text');
+        
+        const inputFormPanel = document.getElementById('booking-package_inputFormPanel');
+        inputFormPanel.classList.remove('hidden_panel');
+        inputFormPanel.appendChild(loadingPanel);
+        
+        const bookingBlockPanel = document.getElementById("bookingBlockPanel");
+        bookingBlockPanel.classList.remove("hidden_panel");
+        object.submitBookingData(post_data, null, null, function(response) {
+            
+            object._console.log(response);
+            if (response === false) {
+                
+                const errorPanel = document.createElement('div');
+                errorPanel.classList.add('bookingErrorMessage');
+                errorPanel.textContent = object._i18n.get('Booking failed. Please try again.');
+                inputFormPanel.textContent = null;
+                inputFormPanel.appendChild(errorPanel);
+                
+            } else {
+                
+                bookingBlockPanel.classList.add("hidden_panel");
+                inputFormPanel.replaceChildren(...saved_booking_completed_panel.childNodes);
+                document.getElementById('returnToSchedules').onclick = function() {
+                    
+                    window.location.reload();
+                    
+                };
+                object.sendBookingPackageUserFunction('displayed_booking_complete', null);
+                
+            }
+            
+        });
+        
+        storeage.removeItem('booking_data');
+        storeage.removeItem('post_data');
+        storeage.removeItem('saved_booking_completed_panel');
+        
+    }
+    
     Booking_Package.prototype.sendBooking = function(url, nonce, action, mode, sendBool, payType, payToken, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, accountKey, callback){
         
         var object = this;
         var calendarAccount = object._calendarAccount;
         var valueList = {};
+        const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
         object._console.log('sendBooking');
         object._console.log(object._selectedPaymentMethod);
         var stripe_konbini = 0;
@@ -8592,7 +8707,14 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         
-        if (object._bookingVerificationCode !== false) {
+        var stripe_paypay = 0;
+        if (object._selectedPaymentMethod === 'stripe_paypay') {
+            
+            stripe_paypay = 1;
+            
+        }
+        
+        if (object._bookingVerificationCode !== false && stripe_paypay === 0) {
             
             object._console.error('_bookingVerificationCode = ' + this._bookingVerificationCode);
             var post = object.verifyForm(object._prefix + 'sendVerificationCode', nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
@@ -8605,7 +8727,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     if (response === true) {
                         
-                        isReCAPTCHA();
+                        //isReCAPTCHA();
+                        object.isReCAPTCHA_v3(function() {
+                            
+                            sendToServer();
+                            
+                        });
                         
                     } else {
                         
@@ -8626,7 +8753,12 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         } else {
             
-            isReCAPTCHA();
+            //isReCAPTCHA();
+            object.isReCAPTCHA_v3(function() {
+                
+                sendToServer();
+                
+            });
             
         }
         
@@ -8667,6 +8799,8 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                     }
                     
+                    
+                    
                     post.sendEmail = 1;
                     if (payType != null && payToken != null) {
                         
@@ -8697,8 +8831,37 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     post.public = 1;
                     post.permalink = object._permalink;
+                    
+                    if (stripe_paypay === 1) {
+                        
+                        post.stripe_paypay = stripe_paypay;
+                        storeage.setObject('post_data', post);
+                        callback({status: 'success', mode: 'completed'});
+                        object.hiddenInputAndShowLabelForCustomer(formPanelList, valueList);
+                        if (document.getElementById("booking-package_paymentMethod")) {
+                            
+                            var paymentMethod = document.getElementById("booking-package_paymentMethod");
+                            paymentMethod.parentNode.removeChild(paymentMethod);
+                            
+                        }
+                        
+                        let booking_completed_panel = document.getElementById('booking-package_inputFormPanel');
+                        booking_completed_panel.classList.add('hidden_panel');
+                        storeage.setHTML('saved_booking_completed_panel', booking_completed_panel);
+                        return null;
+                        
+                    }
+                    
                     object._console.log(post);
                     
+                    object.submitBookingData(post, formPanelList, valueList, function(response) {
+                        
+                        callback(response);
+                        bookingBlockPanel.classList.add("hidden_panel");
+                        
+                    });
+                    
+                    /**
                     var bookingBlockPanel = document.getElementById("bookingBlockPanel");
                     bookingBlockPanel.classList.remove("hidden_panel");
                     xmlHttp = new Booking_App_XMLHttp(url, post, false, function(response){
@@ -8790,6 +8953,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         object.setResponseText(responseText);
                         
                     });
+                    **/
                     
                 } else {
                     
@@ -8805,6 +8969,129 @@ var error_hCaptcha_for_booking_package = function(response) {
         }
         
         
+        
+    }
+    
+    Booking_Package.prototype.submitBookingData = function(post, formPanelList, valueList, callback) {
+        
+        const object = this;
+        var bookingBlockPanel = document.getElementById("bookingBlockPanel");
+        bookingBlockPanel.classList.remove("hidden_panel");
+        var xmlHttp = new Booking_App_XMLHttp(object._url, post, false, function(response){
+            
+            object._console.log(response);
+            object.setNewNonce(response);
+            if (response.status == "success") {
+                
+                response.mode = "completed";
+                callback(response);
+                object.setUserInformation(response.userInformationValues);
+                
+                if (formPanelList !== null && valueList !== null) {
+                    
+                    object.hiddenInputAndShowLabelForCustomer(formPanelList, valueList);
+                    
+                }
+                
+                if (document.getElementById(object._prefix + 'reCAPTCHA')) {
+                    
+                    var reCAPTCHA = document.getElementById(object._prefix + 'reCAPTCHA');
+                    reCAPTCHA.classList.add('hidden_panel');
+                    
+                }
+                
+                if (document.getElementById(object._prefix + 'hCaptcha')) {
+                    
+                    var hCaptcha = document.getElementById(object._prefix + 'hCaptcha');
+                    hCaptcha.classList.add('hidden_panel');
+                    
+                }
+                
+                if (document.getElementById("booking-package_paymentMethod")) {
+                    
+                    var paymentMethod = document.getElementById("booking-package_paymentMethod");
+                    paymentMethod.parentNode.removeChild(paymentMethod);
+                    
+                }
+                
+            } else {
+                
+                var message = "";
+                if (response.message != null) {
+                    
+                    message = response.message;
+                    
+                }
+                
+                if (response.calendar != null && response.schedule != null) {
+                    
+                    callback(response);
+                    
+                } else {
+                    
+                    callback(false);
+                    
+                }
+                
+                var timer = setInterval(function(){
+                    
+                    clearInterval(timer);
+                    alert(message);
+                    
+                }, 500);
+                
+                if (response.reload != null && parseInt(response.reload) == 1) {
+                    
+                    window.location.reload(true);
+                    
+                }
+                
+                if (object._hCaptcha.status === true) {
+                    
+                    object.lockBooking(true, null, 'hCaptcha');
+                    hcaptcha.reset(object._hCaptcha.hcaptchaID);
+                    
+                }
+                
+                if (object._googleReCAPTCHA.status === true && object._googleReCAPTCHA.v == 'v2') {
+                    
+                    object.lockBooking(true, null, 'ReCAPTCHA');
+                    grecaptcha.reset(object._googleReCAPTCHA.reCaptcha);
+                    object.setGoogleReCAPTCHA(object._prefix + 'reCAPTCHA', 'paymentPanel');
+                    
+                }
+                
+            }
+            
+            bookingBlockPanel.classList.add("hidden_panel");
+            
+        }, function(responseText){
+            
+            object.setResponseText(responseText);
+            
+        });
+        
+    }
+    
+    Booking_Package.prototype.isReCAPTCHA_v3 = function(callback) {
+        
+        var object = this;
+        if (object._googleReCAPTCHA.key != null && object._googleReCAPTCHA.key.length > 0 && object._googleReCAPTCHA.v == 'v3') {
+            
+            grecaptcha.ready(function() {
+                grecaptcha.execute(object._googleReCAPTCHA.key, {action:'reCAPTCHA_v3'}).then(function(token) {
+                    
+                    object.lockBooking(false, token, 'ReCAPTCHA');
+                    callback();
+                    
+                });
+            });
+            
+        } else {
+            
+            callback();
+            
+        }
         
     }
     
@@ -8980,7 +9267,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                 if (object._paymentMethod[i] == 'stripe_konbini') {
                     
                     object.stripePanelForKonbini(stripe_public_key, country, currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, callback);
-                    break;
+                    //break;
+                    
+                } else if (object._paymentMethod[i] == 'stripe_paypay') {
+                    
+                    object.stripePanelForPayPay(stripe_public_key, country, currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, callback);
+                    //break;
                     
                 }
                 
@@ -9164,6 +9456,135 @@ var error_hCaptcha_for_booking_package = function(response) {
         return value;
         
     }
+    
+    Booking_Package.prototype.stripePanelForPayPay = function(stripe_public_key, country, currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, callback){
+        
+        var object = this;
+        object._console.log("country = " + country + " currency = " + currency);
+        object._console.log(goodsList);
+        object._console.log(selectedOptions);
+        const calendarAccount = object._calendarAccount;
+        const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
+        
+        var payPayButton = document.createElement('button');
+        //payPayButton.classList.add("returnButton");
+        payPayButton.classList.add("book_now_button");
+        payPayButton.textContent = object.i18n("Book Now");
+        
+        var stripePayPayPanel = document.createElement("div");
+        stripePayPayPanel.id = "booking-package_pay_with_stripe_paypay";
+        stripePayPayPanel.classList.add("hidden_panel");
+        stripePayPayPanel.classList.add('bottomBarPanel');
+        stripePayPayPanel.appendChild(payPayButton);
+        
+        cartPanel.appendChild(stripePayPayPanel);
+        
+        var stripe = Stripe(stripe_public_key);
+        
+        var total = 0;
+        for (var i = 0; i < goodsList.length; i++) {
+            
+            total += goodsList[i].amount;
+            
+        }
+        object._console.log('total = ' + total);
+        
+        payPayButton.onclick = function(event) {
+            
+            var valueList = {};
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            object._console.log(formData);
+            object._console.log(inputData);
+            const name = object.getName(formData, inputData);
+            const email = object.getEmail(formData, inputData);
+            if (name === false || email === false) {
+                
+                return null;
+                
+            }
+            
+            if (object._bookingVerificationCode !== false) {
+                
+                object._console.error('_bookingVerificationCode = ' + this._bookingVerificationCode);
+                if (post !== false) {
+                    
+                    post.accountKey = calendarAccount.key;
+                    post.plugin_name = object._plugin_name;
+                    object._console.log(post);
+                    object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, post, true, function(response){
+                        
+                        if (response === true) {
+                            
+                            object.isReCAPTCHA_v3(function() {
+                                
+                                paypay_via_stripe(post, stripe_public_key);
+                                
+                            });
+                            
+                        }
+                        
+                    });
+                    
+                }
+                
+            } else {
+                
+                object.isReCAPTCHA_v3(function() {
+                    
+                    paypay_via_stripe(post, stripe_public_key);
+                    
+                });
+                
+                
+            }
+            
+            function paypay_via_stripe(post, stripe_public_key) {
+                
+                const return_url = new URL(window.location.href);
+                return_url.searchParams.set('stripe_paypay', '1');
+                object.intentForStripe('intentForStripePayPay', post, formPanelList, function(client) {
+                    
+                    if (client === false) {
+                        
+                        return null;
+                        
+                    }
+                    
+                    object._console.log(client);
+                    event.preventDefault();
+                    // Set the clientSecret of the PaymentIntent
+                    const { error } = stripe.confirmPayment({
+                        clientSecret: client.client_secret,
+                        confirmParams: {
+                            payment_method_data: {
+                            type: 'paypay',
+                        },
+                        // Return URL where the customer should be redirected after the authorization
+                        return_url: return_url.toString(),
+                        },
+                    });
+                    
+                    if (error) {
+                        // Inform the customer that there was an error.
+                        const errorElement = document.getElementById('error-message');
+                        errorElement.textContent = result.error.message;
+                    }
+                    
+                    var result = {token: {id: client.id}, paymentName: 'stripe', stripePayPay: {stripe_public_key: stripe_public_key, client_secret: client.client_secret}};
+                    object._console.log(result);
+                    storeage.setObject('booking_data', result);
+                    callback(result);
+                    
+                });
+                
+                
+            }
+            
+            
+            
+        };
+        
+    };
     
     Booking_Package.prototype.stripePanelForKonbini = function(stripe_public_key, country, currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, callback){
         
@@ -9394,6 +9815,33 @@ var error_hCaptcha_for_booking_package = function(response) {
         orLabel.textContent = "OR";
         stripePanel.appendChild(orLabel);
         
+        
+        /**
+        const options = {
+            mode: 'payment',
+            amount: total,
+            currency: currency,
+        };
+        
+        // Set up Stripe.js and Elements to use in checkout form.
+        elements = stripe.elements(options);
+        const expressCheckoutDiv = document.createElement('div');
+        expressCheckoutDiv.id = 'express-checkout-element';
+        stripePanel.appendChild(expressCheckoutDiv);
+        const errorMessageDiv = document.createElement('div');
+        errorMessageDiv.id = 'error-message';
+        stripePanel.appendChild(errorMessageDiv);
+        
+        const expressCheckoutElement = elements.create('expressCheckout');
+        expressCheckoutElement.mount('#express-checkout-element');
+        console.log(expressCheckoutElement);
+        const handleError = (error) => {
+            const messageContainer = document.querySelector('#error-message');
+            messageContainer.textContent = error.message;
+        }
+        
+        **/
+        
         var payment_request_button = document.createElement("div");
         payment_request_button.id = "payment-request-button";
         stripePanel.appendChild(payment_request_button);
@@ -9422,7 +9870,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         // Check the availability of the Payment Request API first.
         paymentRequest.canMakePayment().then(function(result) {
-            
+            console.log(result);
             object._console.log(result);
             if (result) {
                 

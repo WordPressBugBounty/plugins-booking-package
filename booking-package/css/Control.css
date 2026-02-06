@@ -6475,3 +6475,25 @@
     
 }
 
+#booking_package_get_translate_text {
+	
+	
+	
+}
+.booking_package_get_translate_text_type {
+    
+    color: #60a673;
+    
+}
+
+#booking_package_get_translate_text code {
+	/**
+	background-color: #1e1e1e;
+	color: #d4d4d4;
+	padding: 15px;
+	border-radius: 5px;
+	font-family: Consolas, 'Courier New', monospace;
+	overflow-x: auto;
+	line-height: 1.5;
+	**/
+}

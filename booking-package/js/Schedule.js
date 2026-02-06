@@ -4627,7 +4627,8 @@ window.addEventListener('error', function(event) {
             
             var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
             var content_name = object.create('div', guestsList[key]['name'], null, null, null, 'content_name', null);
-            var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+            var content_id = object.create('label', ' - ID: ' + guestsList[key]['key'], null, null, null, '', null);
+            var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
             if(guestsList[key]["active"] != "true"){
                 
                 content_name.classList.add("dnd_content_unactive");
@@ -4860,7 +4861,8 @@ window.addEventListener('error', function(event) {
             
             var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
             var content_name = object.create('div', formDataList[key]['name'], null, null, null, 'content_name', null);
-            var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+            var content_id = object.create('label', ' - ID: ' + formDataList[key]['id'], null, null, null, '', null);
+            var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
             if (formDataList[key].required == 'true' || formDataList[key].required == 'true_frontEnd') {
                 
                 contentPanel.classList.add("dnd_required");
@@ -5215,7 +5217,8 @@ window.addEventListener('error', function(event) {
             
             var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
             var content_name = object.create('div', courseList[key]['name'], null, null, null, 'content_name', null);
-            var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+            var content_id = object.create('label', ' - ID: ' + courseList[key]['key'], null, null, null, '', null);
+            var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
             if(courseList[key]["active"] != "true"){
                 
                 content_name.classList.add("dnd_content_unactive");
@@ -6022,7 +6025,8 @@ window.addEventListener('error', function(event) {
             
             var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
             var content_name = object.create('div', taxes[key]['name'], null, null, null, 'content_name', null);
-            var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+            var content_id = object.create('label', ' - ID: ' + taxes[key]['key'], null, null, null, '', null);
+            var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
             if(taxes[key]["active"] != "true"){
                 
                 content_name.classList.add("dnd_content_unactive");
@@ -6263,7 +6267,8 @@ window.addEventListener('error', function(event) {
             
             var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
             var content_name = object.create('div', options[key]['name'], null, null, null, 'content_name', null);
-            var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+            var content_id = object.create('label', ' - ID: ' + options[key]['key'], null, null, null, '', null);
+            var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
             if(options[key]["active"] != "true"){
                 
                 content_name.classList.add("dnd_content_unactive");
@@ -9897,6 +9902,7 @@ window.addEventListener('error', function(event) {
             object._console.log(mailMessageData);
             var nameTh = document.createElement("th");
             nameTh.textContent = object._i18n.get(mailMessageData.title);
+            //nameTh.textContent = object._i18n.get(mailMessageData.title + ' - ID: ' + mailMessageData.key);
             if (parseInt(mailMessageData.enable) === 0 && parseInt(mailMessageData.enableSMS) === 0) {
                 
                 nameTh.classList.add("disableTh");

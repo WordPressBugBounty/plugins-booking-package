@@ -510,7 +510,8 @@ Member_manage.prototype.formFieldsPanel = function(formFields) {
         
         var rank_up_button = object.create('div', 'expand_less', null, null, null, 'material-icons rank_up_down_button', {key: key});
         var content_name = object.create('div', formFields[key]['name'], null, null, null, 'content_name', null);
-        var contentPanel = object.create('div', null, [rank_up_button, content_name], null, null, 'content_block', null);
+        var content_id = object.create('label', ' - ID: ' + formFields[key]['id'], null, null, null, 'content_name', null);
+        var contentPanel = object.create('div', null, [rank_up_button, content_name, content_id], null, null, 'content_block', null);
         if (formFields[key].required == 'true' || formFields[key].required == 'true_frontEnd') {
             
             contentPanel.classList.add("dnd_required");

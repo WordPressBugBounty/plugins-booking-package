@@ -325,19 +325,19 @@
             
 	    }
         
-        public function pay($payId, $stripe_konbini, $public_key, $secret, $token, $payment_live, $amont, $currency, $key, $name, $email, $bookingDate){
+        public function pay($payId, $stripe_konbini, $stripe_paypay, $public_key, $secret, $token, $payment_live, $amont, $currency, $key, $name, $email, $bookingDate){
             
             $response = array('error' => "8001");
 		    if ($payId == 'stripe') {
                 
                 $capture_method = get_option($this->prefix . 'stripe_capture_method', 'automatic');
-                if ($capture_method == 'automatic' && $stripe_konbini === 0) {
+                if ($capture_method == 'automatic' && $stripe_konbini === 0 && $stripe_paypay === 0) {
                     
                     $this->captureStripe($payId, $secret, $token);
                     
                 }
                 
-			    $response = $this->commitStripe($payId, $stripe_konbini, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate);
+			    $response = $this->commitStripe($payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate);
                 
 		    } else if ($payId == 'paypal') {
 		        
@@ -356,7 +356,7 @@
             
             #var_dump($payId);
             $response = array('error' => "8002");
-            if($payId == 'stripe'){
+            if($payId == 'stripe' || $payId == 'stripe_paypay'){
                 
                 $response = $this->cancelStripe($payId, $secret, $chargeId);
                 
@@ -397,6 +397,28 @@
                 'metadata' => array(
                     'integration_check' => 'accept_a_payment'
                 )
+            );
+            
+            $args = array(
+                'method' => 'POST',
+                'body' => $params,
+                'headers' => array(
+                    'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                )
+            );
+            $response = wp_remote_request("https://api.stripe.com/v1/payment_intents", $args);
+            $httpCode = wp_remote_retrieve_response_code($response);
+            $response = json_decode(wp_remote_retrieve_body($response), true);
+            return $response;
+            
+        }
+        
+        public function intentForStripePayPay($secret, $amont, $currency) {
+            
+            $params = array(
+                'amount' => $amont, 
+                'currency' => $currency, 
+                'payment_method_types' => array('paypay'),
             );
             
             $args = array(
@@ -497,7 +519,7 @@
             
         }
         
-        public function commitStripe($payId, $stripe_konbini, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate){
+        public function commitStripe($payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate){
             
             $message = array();
             #$params = array('source' => $token, 'amount' => $amont, 'currency' => $currency, 'description' => "Key: " . $key . " Name: " . $name);
@@ -537,7 +559,7 @@
             
             if ($httpCode < 400) {
                 
-                if (isset($id) && ($response['status'] == 'succeeded' || $response['status'] == 'requires_capture' || $stripe_konbini == 1)) {
+                if (isset($id) && ($response['status'] == 'succeeded' || $response['status'] == 'requires_capture' || $stripe_konbini == 1 || $stripe_paypay == 1)) {
                     
                     $message['cardToken'] = $id;
                     

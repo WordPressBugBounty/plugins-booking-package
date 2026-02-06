@@ -3292,7 +3292,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             var confirm = new Confirm(object._debug);
             var refoundBool = true;
-            if (reservationData.payToken != null && reservationData.payToken.length != 0 && reservationData.payMode == 'CreditCard') {
+            if (reservationData.payToken != null && reservationData.payToken.length != 0 && (reservationData.payMode == 'CreditCard' || reservationData.payMode == 'stripePayPay')) {
                 
                 refoundBool = false;
                 
@@ -4192,6 +4192,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             paymentMethodValue = object._i18n.get('Pay at Convenience Store (via Stripe)');
             
+        } else if (reservationData.payId == 'stripe_paypay') {
+            
+            paymentMethodValue = object._i18n.get('Pay with %s', ['PayPay']);
+            
         } else if (reservationData.payId == 'paypal') {
             
             paymentMethodValue = object._i18n.get('Pay with PayPal');
@@ -4202,7 +4206,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         paymentMethodPanel.classList.add('payment_method_row');
         formPanel.appendChild(paymentMethodPanel);
         
-        if (reservationData.payId == "stripe" || reservationData.payId == "stripe_konbini" || reservationData.payId == "paypal") {
+        if (reservationData.payId == "stripe" || reservationData.payId == "stripe_konbini" || reservationData.payId == "stripe_paypay" || reservationData.payId == "paypal") {
             
             //var rowPanel = object.createRowPanel("Charge ID of " + reservationData.payName, reservationData.payToken, "booking_cost", null, null);
             var paymentIdPanel = object.createRowPanel(object._i18n.get('Payment ID'), reservationData.payToken, "booking_cost", null, null);
@@ -4364,7 +4368,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             object._console.log("mode = " + mode);
             object._console.log("buttonAction = " + object._buttonAction);
             object._console.log("changeAction = " + changeAction);
-            if(object._buttonAction != 'updateSchedule'){
+            object._console.log(options);
+            if (object._buttonAction != 'updateSchedule') {
                 
                 return null;
                 
@@ -4413,11 +4418,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         var dateLabel = document.getElementById("booking_date");
         var courseLabel = document.getElementById("booking_course");
         var selectedService = [];
-        var courseTime = null;
+        var courseTime = 0;
         var courseKey = null;
-        if(courseLabel != null){
+        if (courseLabel != null) {
             
-            //courseTime = parseInt(courseLabel.getAttribute("data-time"));
             courseKey = parseInt(courseLabel.getAttribute("data-key"));
             
         }
@@ -4456,6 +4460,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     if (parseInt(service.selected) == 1) {
                         
                         selectedService = service;
+                        /**
                         if (courseTime == null) {
                             
                             courseTime = parseInt(service.time);
@@ -4465,6 +4470,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             courseTime += parseInt(service.time);
                             
                         }
+                        **/
+                        courseTime += parseInt(service.time);
                         
                         if(typeof service.options == 'string') {
                             
@@ -4477,7 +4484,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             var option = service.options[optionKey];
                             object._console.log(option);
                             if (parseInt(option.selected) == 1) {
-                                
+                                /**
                                 if (courseTime == null) {
                                     
                                     courseTime = parseInt(option.time);
@@ -4487,6 +4494,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     courseTime += parseInt(option.time);
                                     
                                 }
+                                **/
+                                courseTime += parseInt(option.time);
                                 
                             }
                             
@@ -4498,7 +4507,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     
                     var option = options[key];
                     if (parseInt(option.selected) == 1) {
-                        
+                        /**
                         if (courseTime == null) {
                             
                             courseTime = parseInt(option.time);
@@ -4508,6 +4517,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             courseTime += parseInt(option.time);
                             
                         }
+                        **/
+                        courseTime += parseInt(option.time);
                         
                     }
                     
@@ -4657,7 +4668,12 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             
         } else if (changeAction == 'course') {
-            
+            /**
+            updateSchedule[calendarKey] = object._servicesControl.invalidService(updateSchedule[calendarKey], calendarData['bookedServices'], selectedService, courseTime, day, month, year);
+            console.error(calendarData['bookedServices']);
+            console.error(selectedService);
+            console.error(updateSchedule[calendarKey]);
+            **/
             var courseLabel = document.getElementById("booking_course");
             var userCourseKey = courseLabel.getAttribute("data-key");
             var userScheduleKey = dateLabel.getAttribute("data-key");

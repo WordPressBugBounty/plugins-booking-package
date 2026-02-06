@@ -573,8 +573,9 @@
             var styles = {
                 'booking-package_calendarPage': {
                     calendarHeader: ['background-color', 'color'], 
-                    week_slot: ['background-color', 'color', 'border-color'], 
-                    day_slot: ['background-color', 'color', 'border-color']
+                    calendar: ['background-color', 'border-color'],
+                    week_slot: ['background-color', 'color'], 
+                    day_slot: ['background-color', 'color']
                 },
                 'booking-package_durationStay': {
                     bookingDetailsTitle: ['background-color', 'border-color', 'color'],
@@ -621,6 +622,12 @@
                                     var styleName = classes[key][i];
                                     var style = "\t" + styleName + ': ' + customizeLayout[styleName] + ";\n";
                                     className += style;
+                                    
+                                }
+                                
+                                if (id === 'booking-package_calendarPage' && key === 'calendar') {
+                                    
+                                    className += "\t" + 'background-color: ' + customizeLayout['border-color'] + ";\n";
                                     
                                 }
                                 

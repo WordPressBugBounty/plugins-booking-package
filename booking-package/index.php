@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.6.96
+Version:     1.7.02
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -114,9 +114,13 @@ Domain Path: /languages
 		
 		public $maxBookingSlotsPerDay = 0;
 		
+		public $payWithPayPay = 0;
+		
 		public $managementUsersV2 = 0;
 		
 		public $notificationsForUser = 0;
+		
+		public $guestLimitsPerTimeSlot = 0;
 		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
@@ -136,6 +140,7 @@ Domain Path: /languages
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->setting->setMessagingApp($this->messagingApp);
             $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);
+            $this->setting->setPayWithPayPay($this->payWithPayPay);
             $this->currencies = $this->setting->getCurrencies();
             $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name, $this->ajaxNonceFunction);
             $this->widget = $widget;
@@ -1115,6 +1120,8 @@ Domain Path: /languages
 				
 			}
 			
+			
+			
 			$deleteKeys = array("googleCalendarID", "idForGoogleWebhook", "expirationForGoogleWebhook", "ical", "icalToken", "email_from", "email_from_title", "email_to", "email_to_title");
 			for ($i = 0; $i < count($deleteKeys); $i++) {
 				
@@ -1471,6 +1478,21 @@ Domain Path: /languages
 			$localize_script['permalink'] = $permalink;
 			#$localize_script['isExtensionsValid'] = $isExtensionsValid;
 			
+			if (isset($_GET['stripe_paypay']) && isset($_GET['redirect_status']) && isset($_GET['payment_intent']) && isset($_GET['payment_intent_client_secret'])) {
+				
+				$redirect_status = sanitize_text_field( esc_html($_GET['redirect_status']) );
+				$payment_intent = sanitize_text_field( esc_html($_GET['payment_intent']) );
+				$payment_intent_client_secret = sanitize_text_field( esc_html($_GET['payment_intent_client_secret']) );
+				if (intval($_GET['stripe_paypay']) === 1) {
+					
+					$localize_script['stripe_paypay'] = array('redirect_status' => $redirect_status, 'payment_intent' => $payment_intent, 'payment_intent_client_secret' => $payment_intent_client_secret);
+					
+				}
+				
+			}
+			
+			
+			
 			for ($i = 0; $i < count($localize_script['userFormFields']); $i++) {
 				
 				$localize_script['userFormFields'][$i] =  $setting->getTranslateFormField($localize_script['userFormFields'][$i], $accountKey, get_locale(), 'user_profile');
@@ -1644,7 +1666,7 @@ Domain Path: /languages
 			$new_paymentMethod = array();
 			for ($i = 0; $i < count($paymentMethod); $i++) {
 				
-				if ($paymentMethod[$i] == 'stripe' || $paymentMethod[$i] == 'stripe_konbini') {
+				if ($paymentMethod[$i] == 'stripe' || $paymentMethod[$i] == 'stripe_konbini' || $paymentMethod[$i] == 'stripe_paypay') {
 					
 					$stripe_public_key = get_option($this->prefix."stripe_public_key", null);
 					if (!empty($stripe_public_key)) {
@@ -1902,8 +1924,9 @@ Domain Path: /languages
 					'booking-package-locale-' . $this->locale => array(),
 					'booking-package_calendarPage' => array(
 						'calendarHeader' => array('background-color', 'color'),
-						'week_slot' => array('background-color', 'color', 'border-color'),
-						'day_slot' => array('background-color', 'color', 'border-color'),
+						'calendar' => array('background-color', 'color', 'border-color'),
+						'week_slot' => array('background-color', 'color'),
+						'day_slot' => array('background-color', 'color'),
 					),
 					'booking-package_durationStay' => array(
 						'bookingDetailsTitle' => array('background-color', 'color', 'border-color'),
@@ -1980,6 +2003,13 @@ Domain Path: /languages
 										$className .= "\t" . $styleName . ': ' . $classNames[$styleName] . ";\n";
 										
 									}
+									
+									if ($id === 'booking-package_calendarPage' && $key === 'calendar') {
+										
+										$className .= "\t" . 'background-color: ' . $classNames['border-color'] . ";\n";
+										
+									}
+									
 									$className .= "}\n";
 									
 								}
@@ -2889,6 +2919,7 @@ Domain Path: /languages
 			
 			$setting = $this->setting;
 			$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
+			$schedule->setPayWithPayPay($this->payWithPayPay);
 			$schedule->deleteOldDaysInSchedules();
 			$dictionary = $this->getDictionary("schedule_page", $this->plugin_name);
 			$localize_script = $this->localizeScript('schedule_page');
@@ -5565,6 +5596,7 @@ Domain Path: /languages
 				if (strtolower($country) != 'jp') {
 					
 					unset($elementForCalendarAccount['paymentMethod']['valueList']['stripe_konbini']);
+					unset($elementForCalendarAccount['paymentMethod']['valueList']['stripe_paypay']);
 					
 				}
 				
@@ -5908,32 +5940,65 @@ Domain Path: /languages
 		
 		public function help_calendar_box() {
 			
+			require_once(plugin_dir_path( __FILE__ ) . 'lib/Documents.php');
+			$document = new booking_package_documents($this->prefix, $this->plugin_name);
+			
 			$screen = get_current_screen();
-			if ($this->locale == 'ja') {
-				
-				$content = '<ul>';
-				$content .= '<li><a href="https://manual-ja.saasproject.net/%e3%83%95%e3%83%ad%e3%83%b3%e3%83%88%e3%83%9a%e3%83%bc%e3%82%b8%e3%81%ab%e4%ba%88%e7%b4%84%e3%82%ab%e3%83%ac%e3%83%b3%e3%83%80%e3%83%bc%e3%82%92%e8%a1%a8%e7%a4%ba/" target="_blank">' . __('How do I show the booking calendar on the page?', 'booking-package') . '</a></li>';
-				$content .= '<li><a href="https://manual-ja.saasproject.net/%e3%83%97%e3%83%a9%e3%82%b0%e3%82%a4%e3%83%b3%e3%81%8b%e3%82%89%e9%80%81%e4%bf%a1%e3%81%95%e3%82%8c%e3%82%8b%e3%83%a1%e3%83%bc%e3%83%ab%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/" target="_blank">' . __('How do I send a booking email?', 'booking-package') . '</a></li>';
-				$content .= '<li><a href="https://manual-ja.saasproject.net/%e4%ba%88%e7%b4%84%e3%82%b9%e3%82%b1%e3%82%b8%e3%83%a5%e3%83%bc%e3%83%ab%e3%81%ae%e4%bd%9c%e6%88%90/" target="_blank">' . __('How do I create booking schedules?', 'booking-package') . '</a></li>';
-				$content .= '</ul>';
-				$screen->add_help_tab(array(
-					'id'    => $this->plugin_name . 'documents',
-					'title'   => __('Documents', 'booking-package'), 
-					'content' => $content,
-				));
-				
+			
+			if ( ! $screen ) {
+				return;
 			}
 			
-			$content = '<ul>';
-			$content .= '<li><a href="https://booking-package.saasproject.net/how-does-the-booking-calendar-show-on-the-page/" target="_blank">' . __('How do I show the booking calendar on the page?', 'booking-package') . '</a></li>';
-			$content .= '<li><a href="https://booking-package.saasproject.net/how-do-i-send-a-booking-email-with-a-plugin/" target="_blank">' . __('How do I send a booking email?', 'booking-package') . '</a></li>';
-			$content .= '<li><a href="https://booking-package.saasproject.net/how-do-i-create-booking-schedules/" target="_blank">' . __('How do I create booking schedules?', 'booking-package') . '</a></li>';
-			$content .= '</ul>';
+			$content = $document->displayBookingCalendar();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'displayBookingCalendar',
+				'title' => __('How to Display the Booking Calendar', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->weeklyScheduleTemplates();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'weeklyScheduleTemplates',
+				'title' => __('Weekly Schedule Templates', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->weeklyScheduleTemplates();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'weeklyScheduleTemplates',
+				'title' => __('Weekly Schedule Templates', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->bulkScheduleRegistration();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'bulkScheduleRegistration',
+				'title' => __('Bulk Schedule Registration', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->emailSendingSettings();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'emailSendingSettings',
+				'title' => __('Email Sending Settings', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->dynamicTextModification();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'dynamicTextModification',
+				'title' => __('Dynamic Text Modification', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->videos();
 			$screen->add_help_tab(array(
 				'id'    => $this->plugin_name . 'videos',
 				'title'   => __('Videos', 'booking-package'), 
 				'content' => $content,
 			));
+			
+			
 			
 		}
 		
@@ -6113,6 +6178,11 @@ Domain Path: /languages
 			$style .= "#booking-package_inputFormPanel { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_inputFormPanel .title_in_form { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
 			$style .= "#booking-package_myBookingDetails .selectedDate { background-color: ".$list['Design']['booking_package_backgroundColor']['value']."; }\n";
+			
+			$style .= "#booking-package_calendarPage .calendar { background-color: ".$list['Design']['booking_package_borderColor']['value']."; }\n";
+			$style .= "#booking-package_calendarPage .week_slot { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithSchedule']['value']."; }\n";
+			$style .= "#booking-package_calendarPage .day_slot { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithSchedule']['value']."; }\n";
+			
 			$style .= "#booking-package_calendarPage .closingDay { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithNoSchedule']['value']."; }\n";
 			$style .= "#booking-package_calendarPage .pastDay { background-color: ".$list['Design']['booking_package_calendarBackgroundColorWithNoSchedule']['value']."; }\n";
 			
@@ -6146,8 +6216,11 @@ Domain Path: /languages
 			$styleList = array(
 				"#booking-package .selectable_service_slot",
 				"#booking-package .selectable_time_slot",
+				"#booking-package_calendarPage .calendar", 
+				/**
 				"#booking-package_calendarPage .week_slot", 
 				"#booking-package_calendarPage .day_slot", 
+				**/
 				"#booking-package_schedulePage .courseListPanel",
 				"#booking-package_schedulePage .selectable_day_slot", 
 				"#booking-package_schedulePage .selectPanelError", 
@@ -6592,7 +6665,10 @@ Domain Path: /languages
 				'Discount' => __('Discount', 'booking-package'),
 				'Apply' => __('Apply', 'booking-package'),
 				' to ' => __(' to ', 'booking-package'),
+				'Booking failed. Please try again.' => __('Booking failed. Please try again.', 'booking-package'), 
+				'Processing...' => __('Processing...', 'booking-package'),
 				'Pay Locally' => __('Pay Locally', 'booking-package'),
+				'Pay with %s' => __('Pay with %s', 'booking-package'), 
 				'Pay with Credit Card' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
 				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
@@ -6614,6 +6690,7 @@ Domain Path: /languages
 				'Select Payment Method' => __('Select Payment Method', 'booking-package'),
 				'Payment Method' => __('Payment Method', 'booking-package'),
 				'Credit Card' => __('Credit Card', 'booking-package'),
+				'Convenience Store' => __('Convenience Store', 'booking-package'), 
 				'Sign In' => __('Sign In', 'booking-package'),
 				'Sign Out' => __('Sign Out', 'booking-package'),
 				'Create Account' => __('Create Account', 'booking-package'),

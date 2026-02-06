@@ -3705,3 +3705,74 @@
         return input;
         
     };
+    
+    function Booking_Package_sessionStorage (debug, prefix) {
+        
+        this._debug = new Booking_Package_Console(debug);
+        this._prefix = prefix;
+        this._console = {};
+        this._console.log = console.log;
+        if (debug != null && typeof debug.getConsoleLog == 'function') {
+            
+            this._console.log = debug.getConsoleLog();
+            
+        }
+
+	}
+	
+	
+    Booking_Package_sessionStorage.prototype.setObject = function(name, value) {
+        
+        sessionStorage.setItem(this._prefix + name, JSON.stringify(value));
+        
+    }
+    
+    Booking_Package_sessionStorage.prototype.getObject = function(name) {
+        
+        var value = sessionStorage.getItem(this._prefix + name);
+        if (value) {
+            
+            value = JSON.parse(value);
+            
+        }
+        return value;
+        
+    }
+    
+    Booking_Package_sessionStorage.prototype.removeItem = function(name) {
+        
+        sessionStorage.removeItem(this._prefix + name);
+        
+    }
+    
+    Booking_Package_sessionStorage.prototype.clear = function() {
+        
+        sessionStorage.clear();
+        
+    }
+    
+    Booking_Package_sessionStorage.prototype.setHTML = function(name, html) {
+        
+        sessionStorage.setItem(this._prefix + name, html.outerHTML);
+        
+    }
+    
+    Booking_Package_sessionStorage.prototype.getHTML = function(name) {
+        
+        this._console.log(name);
+        const savedHtml = sessionStorage.getItem(this._prefix + name);
+        this._console.log(savedHtml);
+        if (savedHtml) {
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(savedHtml, 'text/html');
+            const restoredElement = doc.body.firstChild;
+            this._console.log(doc);
+            this._console.log(restoredElement);
+            return restoredElement;
+            
+        }
+        
+        return null;
+        
+    }

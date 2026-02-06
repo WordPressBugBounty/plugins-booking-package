@@ -19,7 +19,7 @@
         
         public $maxBookingSlotsPerDay = 0;
         
-        
+        public $payWithPayPay = 0;
         
         public $form = array(
         	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -46,6 +46,12 @@
             $this->prefix = $prefix;
             $this->pluginName = $pluginName;
             $this->userRoleName = $userRoleName;
+            
+        }
+        
+        public function setPayWithPayPay($payWithPayPay) {
+            
+            $this->payWithPayPay = $payWithPayPay;
             
         }
         
@@ -1529,7 +1535,7 @@
                 
                 'messagingService' => array('key' => 'messagingService', 'name' => __('Messaging Services', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Disabled', 'booking-package'), /**'facebookMessenger' => 'Facebook Messenger',**/ 'whatsApp' => 'WhatsApp', /**'line' => 'LINE',**/ 'twilio' => 'twilio SMS')),
                 
-                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'))),
+                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'stripe_paypay' => sprintf( __('%s via Stripe'), 'PayPay' ), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'))),
                 'subscriptionIdForStripe' => array('key' => 'subscriptionIdForStripe', 'name' => 'Product ID of subscription for Stripe', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('subscriptionIdForStripe' => array('title' => 'Product ID', 'inputType' => 'TEXT'), 'enableSubscriptionForStripe' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableSubscriptionForStripe" => "")),
                 'termsOfServiceForSubscription' => array('key' => 'termsOfServiceForSubscription', 'name' => 'The terms of service for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('termsOfServiceForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enableTermsOfServiceForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableTermsOfServiceForSubscription" => "")),
                 'privacyPolicyForSubscription' => array('key' => 'privacyPolicyForSubscription', 'name' => 'The privacy policy for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('privacyPolicyForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enablePrivacyPolicyForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enablePrivacyPolicyForSubscription" => "")),
@@ -1876,6 +1882,10 @@
                         '2880' => sprintf(__('About %d hours before', 'booking-package'), 48), 
                         '3600' => sprintf(__('About %d hours before', 'booking-package'), 60), 
                         '4320' => sprintf(__('About %d hours before', 'booking-package'), 72), 
+                        '5760' => sprintf(__('About %d hours before', 'booking-package'), 96), 
+                        '7200' => sprintf(__('About %d hours before', 'booking-package'), 120), 
+                        '8640' => sprintf(__('About %d hours before', 'booking-package'), 144), 
+                        '10080' => sprintf(__('About %d hours before', 'booking-package'), 168), 
                     )
                 ),
                 'displayDetailsOfCanceled' => array('key' => 'displayDetailsOfCanceled', 'name' => __('Show Canceled Booking Details on "Booked Customers"', 'booking-package'), 'target' => 'both', 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
@@ -2090,6 +2100,12 @@
                 ),
                 
             );
+            
+            if ($this->payWithPayPay === 0) {
+                
+                unset($calendarAccount['paymentMethod']['valueList']['stripe_paypay']);
+                
+            }
             
             if ($this->maxBookingSlotsPerDay === 0) {
                 

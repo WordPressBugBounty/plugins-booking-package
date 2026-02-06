@@ -29,6 +29,8 @@
         
         private $locale = 'en_US';
         
+        public $payWithPayPay = 0;
+        
         public function __construct($prefix, $pluginName, $currencies, $userRoleName = 'booking_package_user'){
             
             global $wpdb;
@@ -45,6 +47,12 @@
             	$this->numberFormatter = true;
             	
             }
+            
+        }
+        
+        public function setPayWithPayPay($payWithPayPay) {
+            
+            $this->payWithPayPay = $payWithPayPay;
             
         }
         
@@ -87,10 +95,17 @@
 				'Payment Method' => __('Payment Method', 'booking-package'),
 				'Local Payment' => __('Local Payment', 'booking-package'),
 				'Pay with Stripe' => __('Pay with Credit Card', 'booking-package'),
-				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
+				'Pay with PayPay' => sprintf(__('Pay with %s', 'booking-package'), 'PayPay'),
 				'Pay at Convenience Store (via Stripe)' => __('Pay at Convenience Store', 'booking-package'),
 				'Credit Card' => __('Credit Card', 'booking-package'),
+				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
 			);
+			
+			if ($this->payWithPayPay === 0) {
+				
+				unset($formLabels['Pay with PayPay']);
+				
+			}
 			
 			if ($type === 'day') {
 				
@@ -197,7 +212,7 @@
 				'row' => array('padding' => '0', 'border-width' => '0', 'display' => 'grid', 'grid-template-columns' => '1fr 1fr'),
 				'error_empty_value' => array('background-color' => '#FFD5D5'),
 				'required:after' => array('position' => 'relative', 'top' => '3px', 'color' => '#ff1c1c', 'margin-left' => '2px', 'display' => 'inline'),
-				'name' => array('background-color' => '#EAEDF3', 'text-align' => 'right', 'padding' => '1em',  'grid-row-start' => '1', 'grid-row-end' => '3', 'word-wrap' => 'break-word', 'overflow' => 'hidden'),
+				'name' => array('background-color' => '#EAEDF3', 'text-align' => 'right', 'padding' => '1em',  /**'grid-row-start' => '1', 'grid-row-end' => '3',**/ 'word-wrap' => 'break-word', 'overflow' => 'hidden'),
 				'value' => array('padding' => '1em', 'word-wrap' => 'break-word', 'overflow' => 'hidden'),
 				'description' => array('padding' => '0', 'margin-top' => '0.5em'),
 				'form_text' => array('font-size' => '1em', 'color' => '#2c3338', 'background-color' => '#fff', 'border' => '1px solid #d6d6d6', 'border-radius' => '4px', 'padding' => '0.2em 0.5em', 'line-height' => '2', 'box-sizing' => 'border-box'),
@@ -272,7 +287,7 @@
 				$form = array_merge($form, 
 					array(
 						'row' => array('padding' => '0', 'border-width' => '0', 'display' => 'grid', 'grid-template-columns' => '1fr 1fr'),
-						'name' => array('background-color' => '#EBE3D5', 'text-align' => 'right', 'padding' => '1em',  'grid-row-start' => '1', 'grid-row-end' => '3'),
+						'name' => array('background-color' => '#EBE3D5', 'text-align' => 'right', 'padding' => '1em',  /**'grid-row-start' => '1', 'grid-row-end' => '3'**/ ),
 						'description' => array('padding' => '0.5em 1em 1em 1em', 'margin-top' => '-1em'),
 					)
 				);
@@ -405,7 +420,7 @@
 					array(
 						'row' => array('padding' => '0', 'border-width' => '0', 'display' => 'grid', 'grid-template-columns' => '1fr 1fr'),
 						'required:after' => array('position' => 'relative', 'top' => '3px', 'color' => '#fff', 'margin-left' => '2px', 'display' => 'inline'),
-						'name' => array('color' => '#FFF', 'background-color' => '#cd104d', 'text-align' => 'right', 'padding' => '1em',  'grid-row-start' => '1', 'grid-row-end' => '3'),
+						'name' => array('color' => '#FFF', 'background-color' => '#cd104d', 'text-align' => 'right', 'padding' => '1em',  /**'grid-row-start' => '1', 'grid-row-end' => '3'**/ ),
 						'value' => array('color' => '#3c434a', 'padding' => '1em', 'word-wrap' => 'break-word', 'overflow' => 'auto'),
 					)
 				);
@@ -7502,7 +7517,7 @@
 				}
                 
                 $string_array = array('name' => $coupon['name'], 'description' => $coupon['description'], 'options' => array() );
-				$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'coupon', intval($coupon['key']), intval($accountKey), get_locale() );
+				$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'coupon', $coupon['id'], intval($accountKey), get_locale() );
 				if (is_array($translated_texts) && array_key_exists('name', $translated_texts) && array_key_exists('description', $translated_texts) ) {
 					
 					$coupon['name'] = $translated_texts['name'];
@@ -7523,7 +7538,7 @@
 			
 		}
 		
-		public function serachCourse($accountKey, $scheduleKey, $key = false, $servicesDetails = null, $bookingYMD = null, $time = false){
+		public function serachCourse($accountKey, $scheduleKey, $key = false, $servicesDetails = null, $bookingYMD = null, $time = false, $bookingID = null){
 			
 			global $wpdb;
 			
@@ -7573,10 +7588,11 @@
 					
 				}
 				
-				$invalidService = $this->invalidService($accountKey, $scheduleKey, $schedule, $row, $servicesDetails, $bookingYMD);
-				if ($invalidService === false) {
+				$stopServiceUnderFollowingConditions = $this->stopServiceUnderFollowingConditions($accountKey, $scheduleKey, $schedule, $row, $servicesDetails, $bookingYMD, $bookingID);
+				if ($stopServiceUnderFollowingConditions['status'] === false) {
 					
-					return array('status' => 'error', 'message' => sprintf(__('%s was not found', 'booking-package'), $row['name']) . " #2");
+					#return array('status' => 'error', 'message' => sprintf(__('%s was not found', 'booking-package'), $row['name']) . " #2");
+					return array('status' => 'error', 'message' => __('Error', 'booking-package') .  "\n" . __('Service', 'booking-package') . ': ' . $row['name'] . "\n" . $stopServiceUnderFollowingConditions['message'] . ' #2');
 					
 				}
 				
@@ -7586,12 +7602,13 @@
 			
 		}
 		
-		public function invalidService($accountKey, $scheduleKey, $schedule, $requestService, $servicesDetails, $bookingYMD) {
+		public function stopServiceUnderFollowingConditions($accountKey, $scheduleKey, $schedule, $requestService, $servicesDetails, $bookingYMD, $bookingID) {
 			
 			global $wpdb;
-			$response = true;
+			$response = array('status' => true, 'message' => '');
 			$hasServices = array();
 			$timeSlots = array();
+			$bookingIDs = array();
 			$table_name = $wpdb->prefix . "booking_package_booked_customers";
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && $requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
 				
@@ -7602,6 +7619,16 @@
 					"SELECT `accountKey`, `status`, `scheduleUnixTime`, `options` FROM `" . $table_name . "` WHERE `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d AND `status` != 'canceled' ORDER BY `scheduleUnixTime` ASC;", 
 					array(intval($accountKey), intval($start_unixTime), intval($end_unixTime) )
 				);
+				
+				if (is_null($bookingID) === false) {
+					
+					$sql = $wpdb->prepare(
+						"SELECT `accountKey`, `status`, `scheduleUnixTime`, `options` FROM `" . $table_name . "` WHERE `key` != %d AND `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d AND `status` != 'canceled' ORDER BY `scheduleUnixTime` ASC;", 
+						array(intval($bookingID), intval($accountKey), intval($start_unixTime), intval($end_unixTime) )
+					);
+					
+				}
+				
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $rows as $row) {
 					
@@ -7631,13 +7658,25 @@
 				
 			} else {
 				
+				
 				$sql = $wpdb->prepare(
-				"SELECT `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
-				array(intval($scheduleKey))
+					"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
+					array(intval($scheduleKey))
 				);
+				
+				if (is_null($bookingID) === false) {
+					
+					$sql = $wpdb->prepare(
+						"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `key` != %d AND `scheduleKey` = %d AND `status` != 'canceled';", 
+						array(intval($bookingID), intval($scheduleKey))
+					);
+					
+				}
+				
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $rows as $row) {
 					
+					array_push($bookingIDs, intval($row['key']));
 					$services = json_decode($row['options'], true);
 					for ($i = 0; $i < count($services); $i++) {
 						
@@ -7658,13 +7697,21 @@
 				
 			}
 			
+			if (empty($bookingID) === false) {
+				
+				$bookingIDs = array_diff($bookingIDs, array($bookingID));
+				$bookingIDs = array_values($bookingIDs);
+				
+			}
+			
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual' || $requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
 				
 				if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual') {
 					
 					if (count($rows) != 0) {
 						
-						$response = false;
+						$response['status'] = false;
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
 						
 					}
 					
@@ -7672,7 +7719,8 @@
 						
 						if (isset($hasServices[intval($requestService['key'])])) {
 							
-							$response = true;
+							$response['status'] = true;
+							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Allow booking this service if its start time overlaps with the start time of an existing booking for the same service.', 'booking-package');
 							
 						}
 						
@@ -7682,7 +7730,8 @@
 					
 					if (count($rows) == 0) {
 						
-						$response = false;
+						$response['status'] = false;
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
 						
 					}
 					
@@ -7694,7 +7743,8 @@
 					
 					if (isset($hasServices[intval($requestService['key'])]) && $hasServices[intval($requestService['key'])] >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
 						
-						$response = false;
+						$response['status'] = false;
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Maximum bookings per start time slot', 'booking-package');
 						
 					}
 					
@@ -7704,7 +7754,8 @@
 						
 						if ( intval($slot) >= intval($requestService['stopServiceForSpecifiedNumberOfTimes']) ) {
 							
-							$response = false;
+							$response['status'] = false;
+							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Bookings per time slot', 'booking-package');
 							break;
 							
 						}
@@ -7724,7 +7775,9 @@
 					$schedule = $this->getAccountSchedule($scheduleKey);
 					if ($schedule === false) {
 						
-						return false;
+						$response['status'] = false;
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Total bookings per day', 'booking-package');
+						return $response;
 						
 					}
 					
@@ -7735,7 +7788,33 @@
 						$accountKey, 
 						$accountCalendarKey
 					);
-					#var_dump($bookedServices);
+					
+					$count = 0;
+					if (count($bookedServices) > 0) {
+						
+						foreach (reset($bookedServices) as $time => $services) {
+							
+							foreach ($services as $servceKey => $service) {
+								
+								if (intval($requestService['key']) === $servceKey) {
+									
+									$count++;
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+					if ($count >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
+						
+						$response['status'] = false;
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Total bookings per day', 'booking-package');
+						return $response;
+						
+					}
 					
 				}
 				
@@ -8860,6 +8939,17 @@
 			
 		}
 		
+		public function intentForStripePayPay() {
+			
+			global $wpdb;
+			$currency = get_option($this->prefix . "currency", 'jpy');
+			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+			$response = $creditCard->intentForStripePayPay($secret_key, $_POST['amount'], $currency);
+			return $response;
+			
+		}
+		
 		public function intentForStripeKonbini() {
 			
 			global $wpdb;
@@ -9511,6 +9601,7 @@
 			$payName = null;
 			$payId = null;
 			$stripe_konbini = 0;
+			$stripe_paypay = 0;
 			$payResponse = array();
 			
 			global $wpdb;
@@ -9913,12 +10004,18 @@
 							
 						}
 						
+						if (isset($_POST['stripe_paypay']) && intval($_POST['stripe_paypay']) === 1) {
+							
+							$stripe_paypay = intval($_POST['stripe_paypay']);
+							
+						}
+						
 						$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
 						$currency = get_option($this->prefix."currency", "usd");
 						$amount = $this->getAmount($lastID, $calendarAccount, $accommodationDetails, $services, $responseGuests, $coupon);
 						if (intval($payment_active) == 1 && !empty($secret_key)) {
 							
-							$payResponse = $creditCard->pay($_POST['payType'], $stripe_konbini, $public_key, $secret_key, $_POST['payToken'], $payment_live, $amount, $currency, $lastID, $visitorName, $visitorEmail, $visitorBookingDate);
+							$payResponse = $creditCard->pay($_POST['payType'], $stripe_konbini, $stripe_paypay, $public_key, $secret_key, $_POST['payToken'], $payment_live, $amount, $currency, $lastID, $visitorName, $visitorEmail, $visitorBookingDate);
 							if (isset($payResponse['error'])) {
 								
 								$wpdb->delete(
@@ -9955,6 +10052,13 @@
 										
 										$payId = "stripe_konbini";
 										$payMode = "stripeKonbini";
+										
+									}
+									
+									if($stripe_paypay == 1) {
+										
+										$payId = "stripe_paypay";
+										$payMode = "stripePayPay";
 										
 									}
 									
@@ -10416,6 +10520,8 @@
     			"selected" => "int",
     			"stopServiceUnderFollowingConditions" => "string", 
     			"doNotStopServiceAsException" => "string", 
+    			"stopServiceForDayOfTimes" => "string", 
+    			"stopServiceForSpecifiedNumberOfTimes" => "int", 
     		);
     		if (isset($selectedServices)) {
     			
@@ -11188,7 +11294,7 @@
 						$payment_live = 0;
 						$stripe_public_key = null;
 						$stripe_secret_key = null;
-						if ($payId == 'stripe' || $payId == 'stripe_konbini') {
+						if ($payId == 'stripe' || $payId == 'stripe_konbini' || $payId == 'stripe_paypay') {
 							
 							#$payment_active = get_option($this->prefix."stripe_active", "0");
 							$payment_active = 0;
@@ -11366,7 +11472,7 @@
 			
 			$oldScheduleKey = null;
 			$newScheduleKey = null;
-			
+			$bookingID = intval($_POST['updateKey']);
 			$response_user = array();
 			$selectedOptions = array();
 			$resultArray = array();
@@ -11620,7 +11726,7 @@
 						
 						foreach ((array) $selectedServices as $service) {
 							
-							$rowCourse = $this->serachCourse($accountKey, $scheduleKey, $service['key'], $servicesDetails2, $bookingYMD);
+							$rowCourse = $this->serachCourse($accountKey, $scheduleKey, $service['key'], $servicesDetails2, $bookingYMD, false, $bookingID);
 							if (isset($rowCourse['status']) && $rowCourse['status'] == 'error') {
 								
 								return array('status' => 'error', 'error' => '9020', 'servicesDetails2' => $servicesDetails2, 'rowCourse' => $rowCourse, 'accountKey' => $accountKey, 'message' => $rowCourse['message']);
@@ -12416,7 +12522,7 @@
 							
 						} else {
 							
-							if ($form[$i]['type'] == 'CHECK') {
+							if ($form[$i]['type'] === 'CHECK') {
 								
 								$value = stripslashes($_POST['form' . $i]);
 								$value = sanitize_text_field($value);
@@ -12429,7 +12535,13 @@
 								
 							}
 							
-							if ($form[$i]['isEmail'] == 'true') {
+							if ($form[$i]['isEmail'] === 'true') {
+								
+								if (is_array($value) === true) {
+									
+									return array('status' => 'error', "message" => __('The format of the email address is incorrect.', 'booking-package') . "\n" . $form[$i]['name'], 'form' => $form[$i]);
+									
+								}
 								
 								$value = sanitize_email($value);
 								if (!empty($value)) {
@@ -12453,7 +12565,7 @@
 							
 							if ($form[$i]['isName'] == 'true') {
 								
-								array_push($visitorName, sanitize_email($value));
+								array_push($visitorName, sanitize_text_field($value));
 								
 							}
 							
@@ -13443,12 +13555,12 @@
 			$coupon = null;
 			$positionTimeDate = get_option($this->prefix . "positionTimeDate", "dateTime");
 			
-			$paymentMethod = array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_konbini' => __('Pay at Convenience Store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
+			$paymentMethod = array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Credit Card', 'booking-package'), 'stripe_paypay' => sprintf(__('Pay with %s', 'booking-package'), 'PayPay'), 'stripe_konbini' => __('Pay at Convenience Store', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'));
 			
 			if (intval($calendarAccount['customizeLabelsBool']) === 1) {
 				
 				$customizeLabels = $calendarAccount['customizeLabels'];
-				$paymentMethod = array('locally' => $customizeLabels['Local Payment'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_konbini' => $customizeLabels['Pay at Convenience Store (via Stripe)'], 'paypal' => $customizeLabels['Pay with PayPal']);
+				$paymentMethod = array('locally' => $customizeLabels['Local Payment'], 'stripe' => $customizeLabels['Pay with Stripe'], 'stripe_paypay' => $customizeLabels['Pay with PayPay'], 'stripe_konbini' => $customizeLabels['Pay at Convenience Store (via Stripe)'], 'paypal' => $customizeLabels['Pay with PayPal']);
 				
 			}
 			
@@ -13810,6 +13922,10 @@
 				} else if ($payId == 'stripe_konbini') {
 					
 					$payName = $paymentMethod['stripe_konbini'];
+					
+				} else if ($payId == 'stripe_paypay') {
+					
+					$payName = $paymentMethod['stripe_paypay'];
 					
 				} else if ($payId == 'paypal') {
 					
@@ -14995,6 +15111,12 @@
         	if ($_POST['mode'] == 'intentForStripeKonbini') {
         		
         		$response = $this->intentForStripeKonbini();
+        		
+        	}
+        	
+        	if ($_POST['mode'] == 'intentForStripePayPay') {
+        		
+        		$response = $this->intentForStripePayPay();
         		
         	}
         	
