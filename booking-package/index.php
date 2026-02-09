@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.02
+Version:     1.7.03
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1478,14 +1478,14 @@ Domain Path: /languages
 			$localize_script['permalink'] = $permalink;
 			#$localize_script['isExtensionsValid'] = $isExtensionsValid;
 			
-			if (isset($_GET['stripe_paypay']) && isset($_GET['redirect_status']) && isset($_GET['payment_intent']) && isset($_GET['payment_intent_client_secret'])) {
+			if (isset($_GET['callback_stripe']) && isset($_GET['redirect_status']) && isset($_GET['payment_intent']) && isset($_GET['payment_intent_client_secret'])) {
 				
 				$redirect_status = sanitize_text_field( esc_html($_GET['redirect_status']) );
 				$payment_intent = sanitize_text_field( esc_html($_GET['payment_intent']) );
 				$payment_intent_client_secret = sanitize_text_field( esc_html($_GET['payment_intent_client_secret']) );
-				if (intval($_GET['stripe_paypay']) === 1) {
+				if (intval($_GET['callback_stripe']) === 1) {
 					
-					$localize_script['stripe_paypay'] = array('redirect_status' => $redirect_status, 'payment_intent' => $payment_intent, 'payment_intent_client_secret' => $payment_intent_client_secret);
+					$localize_script['callback_stripe'] = array('redirect_status' => $redirect_status, 'payment_intent' => $payment_intent, 'payment_intent_client_secret' => $payment_intent_client_secret);
 					
 				}
 				
@@ -2919,7 +2919,6 @@ Domain Path: /languages
 			
 			$setting = $this->setting;
 			$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
-			$schedule->setPayWithPayPay($this->payWithPayPay);
 			$schedule->deleteOldDaysInSchedules();
 			$dictionary = $this->getDictionary("schedule_page", $this->plugin_name);
 			$localize_script = $this->localizeScript('schedule_page');
@@ -4368,6 +4367,7 @@ Domain Path: /languages
 			$setting = $this->setting;
 			
 			$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
+			$schedule->setPayWithPayPay($this->payWithPayPay);
 			date_default_timezone_set($this->getTimeZone());
         	if (isset($_POST['accountKey'])) {
         		

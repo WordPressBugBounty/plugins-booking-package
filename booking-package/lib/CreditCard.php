@@ -413,6 +413,29 @@
             
         }
         
+        public function intentForStripeExpressCheckout($secret, $amont, $currency) {
+            
+            $params = array(
+                'amount' => $amont, 
+                'currency' => $currency, 
+                'capture_method' => 'manual', 
+                'automatic_payment_methods' => ['enabled' => 'true'],
+            );
+            
+            $args = array(
+                'method' => 'POST',
+                'body' => http_build_query($params),
+                'headers' => array(
+                    'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                )
+            );
+            $response = wp_remote_request("https://api.stripe.com/v1/payment_intents", $args);
+            $httpCode = wp_remote_retrieve_response_code($response);
+            $response = json_decode(wp_remote_retrieve_body($response), true);
+            return $response;
+            
+        }
+        
         public function intentForStripePayPay($secret, $amont, $currency) {
             
             $params = array(

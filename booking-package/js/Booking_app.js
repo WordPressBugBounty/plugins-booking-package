@@ -234,6 +234,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._selectedPaymentMethod = 'locally';
         this._totalAmount = null;
         this._paymentRequest = null;
+        this.__expressCheckoutRequest = null;
         this._guestForDayOfTheWeekRates = 0;
         this._clientForStripe = null;
         this._hotelOptions = [];
@@ -248,10 +249,10 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._currencies = reservation_info.currencies;
         this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
         this._format = new FORMAT_COST(this._i18n, this._debug, this._numberFormatter, this._currency_info);
-        this._stripe_paypay = false;
-        if (reservation_info.stripe_paypay != null) {
+        this._callback_stripe = false;
+        if (reservation_info.callback_stripe != null) {
             
-            this._stripe_paypay = reservation_info.stripe_paypay;
+            this._callback_stripe = reservation_info.callback_stripe;
             
         }
         
@@ -680,6 +681,18 @@ var error_hCaptcha_for_booking_package = function(response) {
         
     };
     
+    Booking_Package.prototype.setExpressCheckoutRequest = function(paymentRequest) {
+        
+        this._expressCheckoutRequest = paymentRequest;
+        
+    }
+    
+    Booking_Package.prototype.getExpressCheckoutRequest = function() {
+        
+        return this._expressCheckoutRequest;
+        
+    }
+    
     Booking_Package.prototype.setSelectedBoxOfGuests = function(selectedBoxOfGuests) {
         
         this._selectedBoxOfGuests = selectedBoxOfGuests;
@@ -816,27 +829,27 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         var object = this;
         
-        if (object._stripe_paypay !== false) {
+        if (object._callback_stripe !== false) {
             
             const url = new URL(window.location.href);
-            url.searchParams.delete('stripe_paypay');
+            url.searchParams.delete('callback_stripe');
             url.searchParams.delete('payment_intent');
             url.searchParams.delete('payment_intent_client_secret');
             url.searchParams.delete('redirect_status');
             window.history.replaceState(null, '', url.href);
-            if (object._stripe_paypay.redirect_status === 'succeeded') {
+            if (object._callback_stripe.redirect_status === 'succeeded') {
                 
                 object.savedBookingCompletedPanel();
                 return null;
                 
             }
             
-            object._stripe_paypay = false;
+            object._callback_stripe = false;
             const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
             storeage.removeItem('booking_data');
             storeage.removeItem('post_data');
             storeage.removeItem('saved_booking_completed_panel');
-            object._console.log(object._stripe_paypay);
+            object._console.log(object._callback_stripe);
         }
         
         object._console.log('startCalendar = ' + startCalendar);
@@ -1244,6 +1257,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             }
             
             object._console.log("totalCost = " + totalCost);
+            
             if (totalCost != 0) {
                 
                 var formatPrice = object._format.formatCost(totalCost, myBookingDetails.currency);
@@ -3928,7 +3942,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                 **/
                 
                 var totalAmount = object._hotel.getTotalAmount();
-                
                 object.setTotalAmount(totalAmount);
                 var additionalFee = object._format.formatCost(totalAmount, object._currency);
                 object._console.log('additionalFee = ' + additionalFee);
@@ -4079,6 +4092,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 object.setCoupon(null);
                 object.setTotalAmount(null);
                 object.setPaymentRequest(null);
+                object.setExpressCheckoutRequest(null);
                 object.createForm(month, day, year, null, null, calendarData, null, checkDate.checkIn, null, accountKey, function(response){
                     
                     object._console.log(response);
@@ -4448,7 +4462,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     
                     var totalAmount = object._hotel.getTotalAmount();
-                    
                     object.setTotalAmount(totalAmount);
                     document.getElementById("bookingPrice").textContent = object._format.formatCost(totalAmount, object._currency);
                     var verifyGuests = object._hotel.verifyGuestsInRooms(response.rooms);
@@ -6241,6 +6254,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             object.setCoupon(null);
             object.setTotalAmount(null);
             object.setPaymentRequest(null);
+            object.setExpressCheckoutRequest(null);
             object.createForm(month, day, year, courseMainPanel, scheduleMainPanel, calendarData, courseList, calendarData['schedule'][calendarKey][0], selectedOptions, accountKey, function(response){
                 
                 object._console.log(response);
@@ -6515,6 +6529,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     object.setCoupon(null);
                     object.setTotalAmount(null);
                     object.setPaymentRequest(null);
+                    object.setExpressCheckoutRequest(null);
                     object.createForm(month, day, year, courseMainPanel, scheduleMainPanel, calendarData, courseList, schedule, selectedOptions, accountKey, function(response){
                         
                         if (response.mode == "return") {
@@ -7896,7 +7911,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             /** Stripe and PayPal **/
             
-            object.paymentPanel(object._stripe_public_key, object._paypal_client_id, object._paypal_mode, object._country, object._currency, cartPanel, goodsList, calendarData, schedule, course, formData, formPanelList, inputData, selectedOptions, function(paymentResponse){
+            object.paymentPanel(object._stripe_public_key, object._paypal_client_id, object._paypal_mode, object._country, object._currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, function(paymentResponse){
                 
                 object._console.log("paymentResponse.paymentName = " + paymentResponse.paymentName);
                 object._console.log(paymentResponse);
@@ -8225,8 +8240,9 @@ var error_hCaptcha_for_booking_package = function(response) {
             object.getHeaderHeight(true);
             object.sendBookingPackageUserFunction('displayed_booking_complete', null);
             
-        }
+        };
         
+        /**
         if (document.getElementById("returnToSchedules") == null) {
             
             var returnButton = document.createElement("button");
@@ -8244,7 +8260,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             bookingButton.onclick = function(event){
                 
                 var valueList = {};
-                var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+                var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
                 //post.sendEmail = Number(sendEmail);
                 object._console.log(post);
                 if (post !== false) {
@@ -8279,6 +8295,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             }
             
         }
+        **/
         
         //formPanel.style.top = object._top + "px";
         var scrollPositionNew = window.pageYOffset + formPanel.getBoundingClientRect().top - object._top;
@@ -8578,7 +8595,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log('confirmedBooking');
         object._console.log(object._selectedPaymentMethod);
         var navigationPageForConfirm = document.getElementById(object._prefix + "confirmPostPage");
-        var post = object.verifyForm(object._prefix + 'sendVerificationCode', nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+        var post = object.verifyForm(object._prefix + 'sendVerificationCode', nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
         object._console.log(post);
         if (post !== false) {
             
@@ -8633,6 +8650,38 @@ var error_hCaptcha_for_booking_package = function(response) {
         
     }
     
+    Booking_Package.prototype.createdBookingCompletedPanel = function(post, payType, client, formPanelList, valueList, selectedOptions) {
+        
+        var object = this;
+        const calendarAccount = object._calendarAccount;
+        const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
+        
+        post.payType = payType;
+        post.payToken = client.id;
+        storeage.setObject('post_data', post);
+        //callback({status: 'success', mode: 'completed'});
+        object.hiddenInputAndShowLabelForCustomer(formPanelList, valueList);
+        if (document.getElementById("booking-package_paymentMethod")) {
+            
+            var paymentMethod = document.getElementById("booking-package_paymentMethod");
+            paymentMethod.parentNode.removeChild(paymentMethod);
+            
+        }
+        
+        if (document.getElementById("paymentPanel")) {
+            
+            var paymentMethod = document.getElementById("paymentPanel");
+            paymentMethod.parentNode.removeChild(paymentMethod);
+            
+        }
+        
+        let booking_completed_panel = document.getElementById('booking-package_inputFormPanel');
+        booking_completed_panel.classList.add('hidden_panel');
+        storeage.setHTML('saved_booking_completed_panel', booking_completed_panel);
+        
+        
+    }
+    
     Booking_Package.prototype.savedBookingCompletedPanel = function() {
         
         var object = this;
@@ -8641,13 +8690,13 @@ var error_hCaptcha_for_booking_package = function(response) {
         const booking_data = storeage.getObject('booking_data');
         const post_data = storeage.getObject('post_data');
         const saved_booking_completed_panel = storeage.getHTML('saved_booking_completed_panel');
-        post_data.payToken = object._stripe_paypay.payment_intent;
+        post_data.payToken = object._callback_stripe.payment_intent;
         
-        object._console.log(calendarAccount);
-        object._console.log(object._stripe_paypay);
-        object._console.log(booking_data);
-        object._console.log(post_data);
-        object._console.log(saved_booking_completed_panel);
+        console.log(calendarAccount);
+        console.log(object._callback_stripe);
+        console.log(booking_data);
+        console.log(post_data);
+        console.log(saved_booking_completed_panel);
         
         
         const loadingPanel = document.createElement('div');
@@ -8675,6 +8724,13 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
                 bookingBlockPanel.classList.add("hidden_panel");
                 inputFormPanel.replaceChildren(...saved_booking_completed_panel.childNodes);
+                
+                const topBarPanel = document.getElementById('reservationHeader');
+                topBarPanel.textContent = object.i18n("Booking Completed");
+                topBarPanel.classList.remove("booking_confirmed");
+                topBarPanel.classList.add("booking_completed");
+                object.setScrollY(inputFormPanel);
+                
                 document.getElementById('returnToSchedules').onclick = function() {
                     
                     window.location.reload();
@@ -8707,17 +8763,10 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         
-        var stripe_paypay = 0;
-        if (object._selectedPaymentMethod === 'stripe_paypay') {
-            
-            stripe_paypay = 1;
-            
-        }
-        
-        if (object._bookingVerificationCode !== false && stripe_paypay === 0) {
+        if (object._bookingVerificationCode !== false) {
             
             object._console.error('_bookingVerificationCode = ' + this._bookingVerificationCode);
-            var post = object.verifyForm(object._prefix + 'sendVerificationCode', nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm(object._prefix + 'sendVerificationCode', nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             if (post !== false) {
                 
                 post.accountKey = accountKey;
@@ -8786,13 +8835,13 @@ var error_hCaptcha_for_booking_package = function(response) {
         function sendToServer() {
             
             
-            var post = object.verifyForm(mode, nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm(mode, nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             
             if (post !== false) {
                 
                 if (sendBool === true) {
                     
-                    post.accountKey = accountKey;
+                    //post.accountKey = accountKey;
                     if (stripe_konbini === 1) {
                         
                         post.stripe_konbini = stripe_konbini;
@@ -8801,14 +8850,14 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     
                     
-                    post.sendEmail = 1;
+                    //post.sendEmail = 1;
                     if (payType != null && payToken != null) {
                         
                         post.payType = payType;
                         post.payToken = payToken;
                         
                     }
-                    
+                    /**
                     var coupon = object.getCoupon();
                     if (coupon != null) {
                         
@@ -8831,26 +8880,8 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     post.public = 1;
                     post.permalink = object._permalink;
+                    **/
                     
-                    if (stripe_paypay === 1) {
-                        
-                        post.stripe_paypay = stripe_paypay;
-                        storeage.setObject('post_data', post);
-                        callback({status: 'success', mode: 'completed'});
-                        object.hiddenInputAndShowLabelForCustomer(formPanelList, valueList);
-                        if (document.getElementById("booking-package_paymentMethod")) {
-                            
-                            var paymentMethod = document.getElementById("booking-package_paymentMethod");
-                            paymentMethod.parentNode.removeChild(paymentMethod);
-                            
-                        }
-                        
-                        let booking_completed_panel = document.getElementById('booking-package_inputFormPanel');
-                        booking_completed_panel.classList.add('hidden_panel');
-                        storeage.setHTML('saved_booking_completed_panel', booking_completed_panel);
-                        return null;
-                        
-                    }
                     
                     object._console.log(post);
                     
@@ -9371,7 +9402,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 }
                 object._console.log("total = " + total);
                 var valueList = {};
-                var post = object.verifyForm("paypal", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+                var post = object.verifyForm("paypal", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
                 object._console.log(post);
                 if (post != false) {
                     
@@ -9457,6 +9488,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
     }
     
+    
     Booking_Package.prototype.stripePanelForPayPay = function(stripe_public_key, country, currency, cartPanel, goodsList, calendarData, schedule, courseList, formData, formPanelList, inputData, selectedOptions, callback){
         
         var object = this;
@@ -9476,11 +9508,9 @@ var error_hCaptcha_for_booking_package = function(response) {
         stripePayPayPanel.classList.add("hidden_panel");
         stripePayPayPanel.classList.add('bottomBarPanel');
         stripePayPayPanel.appendChild(payPayButton);
-        
         cartPanel.appendChild(stripePayPayPanel);
         
-        var stripe = Stripe(stripe_public_key);
-        
+        const stripe = Stripe(stripe_public_key);
         var total = 0;
         for (var i = 0; i < goodsList.length; i++) {
             
@@ -9492,24 +9522,15 @@ var error_hCaptcha_for_booking_package = function(response) {
         payPayButton.onclick = function(event) {
             
             var valueList = {};
-            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             object._console.log(formData);
             object._console.log(inputData);
-            const name = object.getName(formData, inputData);
-            const email = object.getEmail(formData, inputData);
-            if (name === false || email === false) {
-                
-                return null;
-                
-            }
             
             if (object._bookingVerificationCode !== false) {
                 
                 object._console.error('_bookingVerificationCode = ' + this._bookingVerificationCode);
                 if (post !== false) {
                     
-                    post.accountKey = calendarAccount.key;
-                    post.plugin_name = object._plugin_name;
                     object._console.log(post);
                     object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, post, true, function(response){
                         
@@ -9541,7 +9562,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             function paypay_via_stripe(post, stripe_public_key) {
                 
                 const return_url = new URL(window.location.href);
-                return_url.searchParams.set('stripe_paypay', '1');
+                return_url.searchParams.set('callback_stripe', '1');
                 object.intentForStripe('intentForStripePayPay', post, formPanelList, function(client) {
                     
                     if (client === false) {
@@ -9573,16 +9594,16 @@ var error_hCaptcha_for_booking_package = function(response) {
                     var result = {token: {id: client.id}, paymentName: 'stripe', stripePayPay: {stripe_public_key: stripe_public_key, client_secret: client.client_secret}};
                     object._console.log(result);
                     storeage.setObject('booking_data', result);
-                    callback(result);
+                    var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
+                    post.stripe_paypay = 1;
+                    object.createdBookingCompletedPanel(post, 'stripe', client, formPanelList, valueList, selectedOptions);
                     
                 });
                 
-                
             }
             
-            
-            
         };
+        
         
     };
     
@@ -9617,7 +9638,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         konbiniButton.onclick = function(event) {
             
             var valueList = {};
-            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             object._console.log(formData);
             object._console.log(inputData);
             const name = object.getName(formData, inputData);
@@ -9669,6 +9690,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log("country = " + country + " currency = " + currency);
         object._console.log(goodsList);
         object._console.log(selectedOptions);
+        const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
         
         var stripePanel = document.createElement("div");
         stripePanel.id = "booking-package_pay_with_stripe";
@@ -9754,7 +9776,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             event.preventDefault();
             var valueList = {};
-            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             object.intentForStripe('intentForStripe', post, formPanelList, function(client) {
                 
                 if (client === false) {
@@ -9810,21 +9832,24 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         /** Apple pay AND Pay with Google **/
         
+        
         var orLabel = document.createElement("div");
         orLabel.setAttribute("class", "orLabel hidden_panel");
         orLabel.textContent = "OR";
         stripePanel.appendChild(orLabel);
-        
         
         /**
         const options = {
             mode: 'payment',
             amount: total,
             currency: currency,
+            captureMethod: 'manual',
         };
         
         // Set up Stripe.js and Elements to use in checkout form.
         elements = stripe.elements(options);
+        object.setExpressCheckoutRequest(elements);
+        
         const expressCheckoutDiv = document.createElement('div');
         expressCheckoutDiv.id = 'express-checkout-element';
         stripePanel.appendChild(expressCheckoutDiv);
@@ -9840,7 +9865,74 @@ var error_hCaptcha_for_booking_package = function(response) {
             messageContainer.textContent = error.message;
         }
         
+        expressCheckoutElement.on('click', (event) => {
+            
+            var valueList = {};
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
+            console.error(post);
+            if (post === false) {
+                
+                object.showUnfilled(formPanelList);
+                callback(false);
+                event.preventDefault();
+                handleError({ message: 'There are errors in your input.' });
+                return;
+            }
+            
+            event.resolve();
+            
+        });
+        
+        expressCheckoutElement.on('confirm', async (event) => {
+            
+            const {error: submitError} = await elements.submit();
+            if (submitError) {
+                handleError(submitError);
+                return;
+            }
+            
+            var valueList = {};
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
+            console.log(post);
+            var isBooking = object.intentForStripe('intentForStripeExpressCheckout', post, formPanelList, function(client) {
+                
+                if (client !== false) {
+                    
+                    console.log(client);
+                    var clientSecret = client.client_secret;
+                    console.log(clientSecret);
+                    const return_url = new URL(window.location.href);
+                    return_url.searchParams.set('callback_stripe', '1');
+                    console.log(return_url.toString());
+                    const {error} = stripe.confirmPayment({
+                        elements,
+                        clientSecret,
+                        confirmParams: {
+                          return_url: return_url.toString(),
+                        },
+                    });
+                    
+                    if (error) {
+                        // This point is only reached if there's an immediate error when
+                        // confirming the payment. Show the error to your customer (for example, payment details incomplete)
+                        handleError(error);
+                    } else {
+                        
+                        
+                        var result = {token: {id: client.id}, paymentName: 'stripe', stripePayPay: {stripe_public_key: stripe_public_key, client_secret: client.client_secret}};
+                        object._console.log(result);
+                        storeage.setObject('booking_data', result);
+                        callback(result);
+                        
+                    }
+                    
+                }
+                
+            });
+            
+        });
         **/
+        
         
         var payment_request_button = document.createElement("div");
         payment_request_button.id = "payment-request-button";
@@ -9853,7 +9945,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 label: 'Total Amount',
                 amount: total,
             },
-            /**displayItems: goodsList**/
+            
         });
         object.setPaymentRequest(paymentRequest);
         
@@ -9893,7 +9985,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             //ev.complete('success');
             ev.paymentName = "stripe";
             var valueList = {};
-            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
+            var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             var isBooking = object.intentForStripe('intentForStripe', post, formPanelList, function(client) {
                 
                 if (client === false) {
@@ -9902,7 +9994,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 } else {
                     
-                    var client_secret = client.client_secret
+                    var client_secret = client.client_secret;
                     stripe.confirmCardPayment(
                         client_secret,
                         {payment_method: ev.paymentMethod.id},
@@ -9970,11 +10062,56 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         
+        const elements = object.getExpressCheckoutRequest();
+        if (elements != null) {
+            
+            const options = {
+                mode: 'payment',
+                amount: totalCost,
+                currency: object._currency,
+            };
+            
+            // Set up Stripe.js and Elements to use in checkout form.
+            console.log(elements);
+            elements.update(options);
+            
+        }
+        
+    }
+    
+    Booking_Package.prototype.getTotalAmount = function() {
+        
+        const object = this;
+        const goodsList = object.getGoodsList();
+        let amount = 0;
+        let taxes = 0;
+        for (var i = 0; i < goodsList.length; i++) {
+            
+            if (goodsList[i].type == 'services' || goodsList[i].type == 'options') {
+                
+                amount += goodsList[i].amount;
+                
+            } else {
+                
+                taxes += goodsList[i].amount;
+                
+            }
+            
+        }
+        object._console.log(goodsList);
+        object._console.log('amount = ' + amount);
+        amount = object.getDiscountCostByCoupon(amount);
+        const totalAmount = amount + taxes;
+        console.error('Total Amount = ' + totalAmount);
+        
+        return totalAmount;
+        
     }
     
     Booking_Package.prototype.intentForStripe = function(mode, post, formPanelList, callback) {
         
         var object = this;
+        
         var goodsList = object.getGoodsList();
         var amount = 0;
         var taxes = 0;
@@ -9998,10 +10135,8 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log('amount = ' + amount);
         object._console.log('taxes = ' + taxes);
         object._console.log('total = ' + total);
-        //var valueList = {};
-        //var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList);
         object._console.log(post);
-        //return null;
+        
         if (post != false) {
             
             var bookingBlockPanel = document.getElementById("bookingBlockPanel");
@@ -10166,9 +10301,10 @@ var error_hCaptcha_for_booking_package = function(response) {
         
     }
     
-    Booking_Package.prototype.verifyForm = function(mode, nonce, action, date, schedule, courseList, formData, formPanelList, inputData, valueList){
+    Booking_Package.prototype.verifyForm = function(mode, nonce, action, date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions){
         
         var object = this;
+        const calendarAccount = object._calendarAccount;
         object._console.log(date);
         object._console.log(schedule);
         object._console.log(courseList);
@@ -10292,7 +10428,31 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         if (sendBool === true) {
             
-            var post = {booking_package_nonce: nonce, plugin_name: object._plugin_name, action: action, mode: mode, month: date.month, day: 1, year: date.year, applicantCount: '1', permission: 'public', timeKey: schedule.key, unixTime: schedule.unixTime, receivedUri: object._permalink};
+            var post = {booking_package_nonce: nonce, plugin_name: object._plugin_name, action: action, mode: mode, accountKey: calendarAccount.key, month: date.month, day: 1, year: date.year, applicantCount: '1', permission: 'public', timeKey: schedule.key, unixTime: schedule.unixTime, receivedUri: object._permalink, sendEmail: 1, public: 1, permalink: object._permalink};
+            
+            var coupon = object.getCoupon();
+            if (coupon != null) {
+                
+                post.couponID = coupon.id;
+                
+            }
+            
+            if (calendarAccount.type == "hotel") {
+                
+                post.json = JSON.stringify(object._hotel.verifySchedule(true));
+                
+            }
+            
+            post.selectedOptions = JSON.stringify([]);
+            if (selectedOptions != null) {
+                
+                post.selectedOptions = JSON.stringify(selectedOptions);
+                
+            }
+            
+            
+            
+            
             if (postGuests.length > 0) {
                 
                 post.guests = JSON.stringify(postGuests);

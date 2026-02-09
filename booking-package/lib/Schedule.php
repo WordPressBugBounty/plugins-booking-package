@@ -101,12 +101,6 @@
 				'Pay with PayPal' => __('Pay with PayPal', 'booking-package'),
 			);
 			
-			if ($this->payWithPayPay === 0) {
-				
-				unset($formLabels['Pay with PayPay']);
-				
-			}
-			
 			if ($type === 'day') {
 				
 				$timeSlotLabels = array(
@@ -2841,6 +2835,12 @@
 			if ($subDirectory === true) {
 				
 				$directoryLabels = $this->defaultLabels($calendarAccount['type'], $subDirectory);
+				if ($this->payWithPayPay === 0) {
+					
+					unset($directoryLabels['form_labels']['Pay with PayPay']);
+					
+				}
+				
 				foreach ($directoryLabels as $key => $subDirectoryLabels) {
 					
 					$directoryLabels[$key] = (function($subDirectoryLabels, $defaultLabels) {
@@ -8935,6 +8935,17 @@
 			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
 			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
 			$response = $creditCard->intentForStripe($secret_key, $_POST['amount'], $currency);
+			return $response;
+			
+		}
+		
+		public function intentForStripeExpressCheckout() {
+			
+			global $wpdb;
+			$currency = get_option($this->prefix . "currency", 'usd');
+			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+			$response = $creditCard->intentForStripeExpressCheckout($secret_key, $_POST['amount'], $currency);
 			return $response;
 			
 		}
@@ -15105,6 +15116,12 @@
         	if ($_POST['mode'] == 'intentForStripe') {
         		
         		$response = $this->intentForStripe();
+        		
+        	}
+        	
+        	if ($_POST['mode'] == 'intentForStripeExpressCheckout') {
+        		
+        		$response = $this->intentForStripeExpressCheckout();
         		
         	}
         	
