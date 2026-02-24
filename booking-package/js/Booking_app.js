@@ -849,6 +849,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             storeage.removeItem('booking_data');
             storeage.removeItem('post_data');
             storeage.removeItem('saved_booking_completed_panel');
+            storeage.removeItem('saved_durationStay_panel');
             object._console.log(object._callback_stripe);
         }
         
@@ -8656,6 +8657,16 @@ var error_hCaptcha_for_booking_package = function(response) {
         const calendarAccount = object._calendarAccount;
         const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
         
+        if (object._bookingVerificationCode !== false && post.stripe === 1) {
+            
+            storeage.setObject('confirmVerificationCode', 1);
+            
+        } else {
+            
+            storeage.setObject('confirmVerificationCode', 0);
+            
+        }
+        
         post.payType = payType;
         post.payToken = client.id;
         storeage.setObject('post_data', post);
@@ -8678,6 +8689,13 @@ var error_hCaptcha_for_booking_package = function(response) {
         let booking_completed_panel = document.getElementById('booking-package_inputFormPanel');
         booking_completed_panel.classList.add('hidden_panel');
         storeage.setHTML('saved_booking_completed_panel', booking_completed_panel);
+        if (calendarAccount.type === 'hotel') {
+            
+            let durationStay_panel = document.getElementById('booking-package_durationStay');
+            durationStay_panel.classList.add('hidden_panel');
+            storeage.setHTML('saved_durationStay_panel', durationStay_panel);
+            
+        }
         
         
     }
@@ -8685,19 +8703,36 @@ var error_hCaptcha_for_booking_package = function(response) {
     Booking_Package.prototype.savedBookingCompletedPanel = function() {
         
         var object = this;
+        let saved_durationStay_panel = null;
         const calendarAccount = object._calendarAccount;
         const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
         const booking_data = storeage.getObject('booking_data');
         const post_data = storeage.getObject('post_data');
+        const confirmVerificationCode = storeage.getObject('confirmVerificationCode');
         const saved_booking_completed_panel = storeage.getHTML('saved_booking_completed_panel');
         post_data.payToken = object._callback_stripe.payment_intent;
+        
+        let sendVerificationCode = false;
+        if (parseInt(confirmVerificationCode) === 1) {
+            
+            sendVerificationCode = true;
+            
+        }
+        
+        if (calendarAccount.type === 'hotel') {
+            
+            saved_durationStay_panel  = storeage.getHTML('saved_durationStay_panel');
+            storeage.removeItem('saved_durationStay_panel');
+            
+        }
         
         console.log(calendarAccount);
         console.log(object._callback_stripe);
         console.log(booking_data);
         console.log(post_data);
         console.log(saved_booking_completed_panel);
-        
+        console.log(saved_durationStay_panel);
+        console.log('sendVerificationCode = ' + sendVerificationCode);
         
         const loadingPanel = document.createElement('div');
         loadingPanel.textContent = object._i18n.get('Loading...');
@@ -8707,41 +8742,65 @@ var error_hCaptcha_for_booking_package = function(response) {
         inputFormPanel.classList.remove('hidden_panel');
         inputFormPanel.appendChild(loadingPanel);
         
-        const bookingBlockPanel = document.getElementById("bookingBlockPanel");
-        bookingBlockPanel.classList.remove("hidden_panel");
-        object.submitBookingData(post_data, null, null, function(response) {
+        object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, JSON.parse(JSON.stringify(post_data)), sendVerificationCode, function(response){
             
-            object._console.log(response);
-            if (response === false) {
+            if (response === true) {
                 
-                const errorPanel = document.createElement('div');
-                errorPanel.classList.add('bookingErrorMessage');
-                errorPanel.textContent = object._i18n.get('Booking failed. Please try again.');
-                inputFormPanel.textContent = null;
-                inputFormPanel.appendChild(errorPanel);
-                
-            } else {
-                
-                bookingBlockPanel.classList.add("hidden_panel");
-                inputFormPanel.replaceChildren(...saved_booking_completed_panel.childNodes);
-                
-                const topBarPanel = document.getElementById('reservationHeader');
-                topBarPanel.textContent = object.i18n("Booking Completed");
-                topBarPanel.classList.remove("booking_confirmed");
-                topBarPanel.classList.add("booking_completed");
-                object.setScrollY(inputFormPanel);
-                
-                document.getElementById('returnToSchedules').onclick = function() {
+                const durationStay_panel = document.getElementById('booking-package_durationStay');
+                const bookingBlockPanel = document.getElementById("bookingBlockPanel");
+                bookingBlockPanel.classList.remove("hidden_panel");
+                object.submitBookingData(post_data, null, null, function(response) {
                     
-                    window.location.reload();
+                    object._console.log(response);
+                    if (response === false) {
+                        
+                        const errorPanel = document.createElement('div');
+                        errorPanel.classList.add('bookingErrorMessage');
+                        errorPanel.textContent = object._i18n.get('Booking failed. Please try again.');
+                        inputFormPanel.textContent = null;
+                        inputFormPanel.appendChild(errorPanel);
+                        
+                    } else {
+                        
+                        bookingBlockPanel.classList.add("hidden_panel");
+                        inputFormPanel.replaceChildren(...saved_booking_completed_panel.childNodes);
+                        
+                        if (calendarAccount.type === 'hotel') {
+                            
+                            inputFormPanel.classList.add('nextPageVisitorDetails');
+                            durationStay_panel.setAttribute('class', 'nextPageBookingDetails position_sticky');
+                            //durationStay_panel.classList.remove('hidden_panel');
+                            durationStay_panel.replaceChildren(...saved_durationStay_panel.childNodes);
+                            
+                        }
+                        
+                        const topBarPanel = document.getElementById('reservationHeader');
+                        topBarPanel.textContent = object.i18n("Booking Completed");
+                        topBarPanel.classList.remove("booking_confirmed");
+                        topBarPanel.classList.add("booking_completed");
+                        object.setScrollY(inputFormPanel);
+                        
+                        document.getElementById('returnToSchedules').onclick = function() {
+                            
+                            window.location.reload();
+                            
+                        };
+                        object.sendBookingPackageUserFunction('displayed_booking_complete', null);
+                        
+                    }
                     
-                };
-                object.sendBookingPackageUserFunction('displayed_booking_complete', null);
+                });
                 
             }
             
         });
         
+        
+        
+        
+        
+        
+        storeage.setObject('confirmVerificationCode', 1);
         storeage.removeItem('booking_data');
         storeage.removeItem('post_data');
         storeage.removeItem('saved_booking_completed_panel');
@@ -9846,24 +9905,37 @@ var error_hCaptcha_for_booking_package = function(response) {
             captureMethod: 'manual',
         };
         
-        // Set up Stripe.js and Elements to use in checkout form.
         elements = stripe.elements(options);
         object.setExpressCheckoutRequest(elements);
         
         const expressCheckoutDiv = document.createElement('div');
         expressCheckoutDiv.id = 'express-checkout-element';
         stripePanel.appendChild(expressCheckoutDiv);
+        
         const errorMessageDiv = document.createElement('div');
         errorMessageDiv.id = 'error-message';
         stripePanel.appendChild(errorMessageDiv);
         
         const expressCheckoutElement = elements.create('expressCheckout');
         expressCheckoutElement.mount('#express-checkout-element');
-        console.log(expressCheckoutElement);
+        
         const handleError = (error) => {
+            
             const messageContainer = document.querySelector('#error-message');
             messageContainer.textContent = error.message;
+            
         }
+        
+        expressCheckoutElement.on('ready', (event) => {
+            
+            const availableMethods = event.availablePaymentMethods;
+            if (availableMethods.length !== 0) {
+                
+                orLabel.classList.remove("hidden_panel");
+                
+            }
+            
+        });
         
         expressCheckoutElement.on('click', (event) => {
             
@@ -9888,6 +9960,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             const {error: submitError} = await elements.submit();
             if (submitError) {
                 handleError(submitError);
+                console.error(submitError);
                 return;
             }
             
@@ -9898,33 +9971,37 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
                 if (client !== false) {
                     
-                    console.log(client);
-                    var clientSecret = client.client_secret;
-                    console.log(clientSecret);
-                    const return_url = new URL(window.location.href);
-                    return_url.searchParams.set('callback_stripe', '1');
-                    console.log(return_url.toString());
-                    const {error} = stripe.confirmPayment({
-                        elements,
-                        clientSecret,
-                        confirmParams: {
-                          return_url: return_url.toString(),
-                        },
+                    object.isReCAPTCHA_v3(function() {
+                        
+                        console.log(client);
+                        var clientSecret = client.client_secret;
+                        const return_url = new URL(window.location.href);
+                        return_url.searchParams.set('callback_stripe', '1');
+                        var valueList = {};
+                        
+                        const {error} = stripe.confirmPayment({
+                            elements,
+                            clientSecret,
+                            confirmParams: {
+                              return_url: return_url.toString(),
+                            },
+                        });
+                        
+                        if (error) {
+                            
+                            handleError(error);
+                            
+                        } else {
+                            
+                            var result = {token: {id: client.id}, paymentName: 'stripe', stripePayPay: {stripe_public_key: stripe_public_key, client_secret: client.client_secret}};
+                            storeage.setObject('booking_data', result);
+                            var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
+                            post.stripe = 1;
+                            object.createdBookingCompletedPanel(post, 'stripe', client, formPanelList, valueList, selectedOptions);
+                            
+                        }
+                        
                     });
-                    
-                    if (error) {
-                        // This point is only reached if there's an immediate error when
-                        // confirming the payment. Show the error to your customer (for example, payment details incomplete)
-                        handleError(error);
-                    } else {
-                        
-                        
-                        var result = {token: {id: client.id}, paymentName: 'stripe', stripePayPay: {stripe_public_key: stripe_public_key, client_secret: client.client_secret}};
-                        object._console.log(result);
-                        storeage.setObject('booking_data', result);
-                        callback(result);
-                        
-                    }
                     
                 }
                 
@@ -9932,6 +10009,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         });
         **/
+        
         
         
         var payment_request_button = document.createElement("div");
@@ -10041,6 +10119,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             });
             
         });
+        
         
         
     }
