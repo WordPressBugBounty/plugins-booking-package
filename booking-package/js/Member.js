@@ -65,7 +65,7 @@
         object._console.log(this._hCaptcha);
         this._weekName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         this._calendar = new Booking_App_Calendar(this._weekName, this._dateFormat, this._positionOfWeek, this._positionTimeDate, this._startOfWeek, this._i18n, this._debug);
-        this._servicesControl = new Booking_App_ObjectsControl(setting, booking_package_dictionary);
+        this._servicesControl = new Booking_App_ObjectsControl(reservation_info, booking_package_dictionary);
         this._calendar.setClock(reservation_info.clock);
         //this._hotel = new Hotel(this._currency, this._weekName, this._dateFormat, this._positionOfWeek, this._startOfWeek, booking_package_dictionary, this._debug);
         this._booking_manage = new Booking_manage(reservation_info, booking_package_dictionary);

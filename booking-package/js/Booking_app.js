@@ -7243,6 +7243,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         var selectBox = this;
                         object._console.log(selectBox);
+                        totalCost = 0;
                         selectedGuest = true;
                         
                         var selectedGuestObject = object._servicesControl.getSelectedBoxOfGuest(guestsList, selectBox);
@@ -7252,6 +7253,9 @@ var error_hCaptcha_for_booking_package = function(response) {
                         object.setSelectedBoxOfGuests(selectedBoxOfGuests);
                         
                         multipleApplicantCount = object._servicesControl.getSelectedGuest(guestsList, selectBox, multipleApplicantCountList);
+                        const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+                        
+                        
                         object._console.log(multipleApplicantCountList);
                         object._console.log(multipleApplicantCount);
                         
@@ -7299,7 +7303,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         goodsList = [];
                         object.setGoodsList(goodsList);
-                        totalCost = parseInt(schedule.cost);
+                        totalCost += parseInt(schedule.cost);
                         if (object._courseBool == true || object._calendarAccount.flowOfBooking == 'services') {
                             
                             var coursePanel = document.getElementById(object._prefix + 'selectedServicesPanel');
@@ -7310,6 +7314,9 @@ var error_hCaptcha_for_booking_package = function(response) {
                             totalCost += response.totalCost;
                             
                         }
+                        
+                        totalCost += totalAmountForGuests.totalAmount;
+                        
                         object._console.log(goodsList);
                         object._console.log("totalCost = " + totalCost);
                         var coupon = object.getCoupon();

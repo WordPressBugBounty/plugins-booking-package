@@ -21,6 +21,8 @@
         
         public $payWithPayPay = 0;
         
+        public $extraChargeForTimeSlotBooking = 0;
+        
         public $form = array(
         	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'last_name', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -70,6 +72,12 @@
         public function setGuestForDayOfTheWeekRates($guestForDayOfTheWeekRates) {
             
             $this->guestForDayOfTheWeekRates = $guestForDayOfTheWeekRates;
+            
+        }
+        
+        public function setExtraChargeForTimeSlotBooking($extraChargeForTimeSlotBooking) {
+            
+            $this->extraChargeForTimeSlotBooking = $extraChargeForTimeSlotBooking;
             
         }
         
@@ -154,7 +162,7 @@
                     "optionsType" => array(
                         "number" => array("type" => "TEXT", "value" => "", "target" => "both"), 
                         "name" => array("type" => "TEXT", "value" => "", "target" => "both"),
-                        "price" => array("type" => "TEXT", "value" => "", "target" => "hotel"), 
+                        "price" => array("type" => "TEXT", "value" => "", "target" => "both"), 
                         
                         "prices" => array(
                             "type" => "dayOfTheWeek", 
@@ -192,6 +200,12 @@
                 
                 unset($guestsInputTypeList['json']['optionsType']['price']);
                 unset($guestsInputTypeList['json']['titleList']['price']);
+                
+            }
+            
+            if ($this->extraChargeForTimeSlotBooking === 0) {
+                
+                $guestsInputTypeList['json']['optionsType']['price']['target'] = 'hotel';
                 
             }
             

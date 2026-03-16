@@ -11949,6 +11949,7 @@ window.addEventListener('error', function(event) {
         
         function create_tr(tr_index, table, input, account, valueList){
             
+            console.error(account);
             if (typeof valueList == "string") {
                 
                 valueList = [valueList];
@@ -12091,6 +12092,15 @@ window.addEventListener('error', function(event) {
                         
                     }
                     filedTd.appendChild(textBox);
+                    if (account.type === 'day' && key === 'price' && object._isExtensionsValid === 0) {
+                        
+                        textBox.value = object._i18n.get('Paid plan subscription required.');
+                        textBox.disabled = true;
+                        textBox.classList.add('extensionsValid');
+                        
+                    }
+                    
+                    
                     object._console.log("object._isExtensionsValid = " + object._isExtensionsValid);
                     if (object._isExtensionsValid == 0 && isExtensionsValid == 1) {
                         

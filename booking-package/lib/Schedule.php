@@ -9824,6 +9824,8 @@
 								
 							}
 							
+							$totalCost += $this->getSelectedGuestTotalAmount($calendarAccount, $responseGuests['guests'], true);
+							
 						}
 						
 						$verificationMaxBookingSlotsPerDay = $this->verificationMaxBookingSlotsPerDay($calendarAccount, $row, $applicantCount);
@@ -10636,6 +10638,40 @@
 			
 		}
 		
+		public function getSelectedGuestTotalAmount($calendarAccount, $guests, $onlyTotalAmount = true) {
+			
+			$totalAmount = 0;
+			if (is_array($guests) === false) {
+				
+				$guests = json_decode(stripslashes($guests), true);
+				
+			}
+			#var_dump($guests);
+			
+			if (intval($calendarAccount['guestsBool']) == 1 && is_array($guests)) {
+				
+				foreach ($guests as $key => $guest) {
+					
+					$index = intval($guest['index']);
+					if ($index > 0) {
+						
+						$totalAmount += intval($guest['json'][$index]['price']);
+						#var_dump($totalAmount);
+						
+					}
+					
+				}
+				
+			}
+			
+			if ($onlyTotalAmount === true) {
+				
+				return $totalAmount;
+				
+			}
+			
+		}
+		
 		public function getCostsInService($calendarAccount, $service, $guests) {
 			
 			$currency = get_option($this->prefix."currency", 'usd');
@@ -10778,7 +10814,7 @@
 			return $response;
 			
 		}
-    	
+		
     	public function getSelectedOptions($calendarAccount, $selectedOptions, $guests, $applicantCount = 1){
     		
     		$time = 0;
@@ -11718,6 +11754,7 @@
 							$totalCost = intval($servicesDetails1['cost']);
 						}
 						
+						$totalCost += $this->getSelectedGuestTotalAmount($calendarAccount, $responseGuests['guests'], true);
 						$taxes = $this->createTaxesDetails($accountKey, 'day', $totalCost, $bookingYMD, $applicantCount, null);
 						for ($i = 0; $i < count($taxes); $i++) {
 							
@@ -13485,9 +13522,12 @@
 						
 					}
 					
-					$amount = $this->getDiscountCostByCoupon($coupon, $amount);
+					#$amount = $this->getDiscountCostByCoupon($coupon, $amount);
 					
 				}
+				
+				$amount += $this->getSelectedGuestTotalAmount($calendarAccount, $guestsList, true);
+				$amount = $this->getDiscountCostByCoupon($coupon, $amount);
 				
 				$taxes = $this->getTaxesDetailsForVisitor($bookingID, $reflectAdditional, $amount);
 				for ($i = 0; $i < count($taxes); $i++) {
@@ -13871,7 +13911,14 @@
 						$index = intval($guest['index']);
 						if ($index > 0) {
 							
-							array_push($guestsDetails, $guest['name'].": ".$guest['json'][$index]['name']);
+							$label = $guest['name'] . ": " . $guest['json'][$index]['name'];
+							if (intval($guest['json'][$index]['price']) > 0) {
+								
+								$label .= ' ' . $this->formatCost(intval($guest['json'][$index]['price']), $currency);
+								
+							}
+							
+							array_push($guestsDetails, $label);
 							
 						}
 						

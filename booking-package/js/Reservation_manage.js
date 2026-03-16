@@ -84,7 +84,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
     this._i18n.setDictionary(booking_package_dictionary);
     this._format = new FORMAT_COST(this._i18n, this._debug, this._numberFormatter, this._currency_info);
     this._hotel = null;
-    this._servicesControl = new Booking_App_ObjectsControl(schedule_data, booking_package_dictionary);
+    this._servicesControl = new Booking_App_ObjectsControl(schedule_data, booking_package_dictionary, this._numberFormatter, this._currency_info);
     
     this._blockPanel = document.getElementById("blockPanel");
     this._loadingPanel = document.getElementById("loadingPanel");
@@ -4148,6 +4148,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
             }
             
+            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
+            
             var taxes = new TAXES(object._i18n, reservationData.currency, object._debug, object._numberFormatter, object._currency_info);
             var surchargePanel = taxes.createExtraChargesAndTaxesElement("surchargeTaxTitle");
             var taxePanel = object.createRowPanel("Tax", "", null, null, null);
@@ -7005,6 +7007,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         var selectBox = this;
                         object._console.log(selectBox);
                         multipleApplicantCount = object._servicesControl.getSelectedGuest(guestsList, selectBox, multipleApplicantCountList);
+                        const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList, selectBox, multipleApplicantCountList);
                         object._console.log(multipleApplicantCountList);
                         object._console.log(multipleApplicantCount);
                         
@@ -7053,6 +7056,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             totalCost += response.totalCost;
                             
                         }
+                        
+                        totalCost += totalAmountForGuests.totalAmount;
                         
                         var responseGuests = object._servicesControl.getValueReflectGuests(guestsList);
                         object._console.log(responseGuests);

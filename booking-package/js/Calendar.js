@@ -1160,7 +1160,7 @@
         
     };
 	
-    function Booking_App_ObjectsControl(data, booking_package_dictionary) {
+    function Booking_App_ObjectsControl(data, booking_package_dictionary, numberFormatter, currency_info) {
         
         this._data = data;
         this._prefix = data.prefix;
@@ -1177,6 +1177,18 @@
         this._expirationDate = 0;
         this._expirationDateForService = 0;
         this._element = new Booking_Package_Elements(0);
+        this._numberFormatter = false;
+        if (parseInt(data.numberFormatter) === 1) {
+            
+            this._numberFormatter = true;
+            
+        }
+        this._locale = data.locale;
+        this._currency = data.currency;
+        this._currencies = data.currencies;
+        this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
+        this._format = new FORMAT_COST(this._i18n, this._debug, this._numberFormatter, this._currency_info);
+        
         
     };
     
@@ -1846,6 +1858,49 @@
         var selectedGuestsKey = selectBox.parentElement.getAttribute("data-guset");
         var guests = guestsList[selectedGuestsKey];
         return guests;
+        
+    }
+    
+    Booking_App_ObjectsControl.prototype.getSelectedGuestTotalAmount = function(guestsList) {
+        
+        var object = this;
+        const response = {totalAmount: 0, labeles: []};
+        for (var i = 0; i < guestsList.length; i++) {
+            
+            const guest = guestsList[i];
+            const index = guest.index;
+            let list = guest.json;
+            if (typeof guest.json == 'string') {
+                
+                list = JSON.parse(guest.json);
+                
+            }
+            //console.log(list);
+            let label = guest.name + ': ' + list[index].name;
+            if (parseInt(list[index].price) > 0) {
+                
+                label += ' ' + object._format.formatCost( parseInt( list[index]. price ) , object._currency);
+                response.totalAmount += parseInt(list[index].price);
+                console.log('totalAmount = ' + response.totalAmount);
+                
+            }
+            
+            if (index > 0) {
+                
+                response.labeles.push(label);
+                
+            }
+            
+        }
+        
+        if (response.totalAmount > 0) {
+            
+            console.log(response);
+            
+        }
+        
+        
+        return response;
         
     }
     
