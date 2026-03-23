@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.05
+Version:     1.7.06
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -114,8 +114,6 @@ Domain Path: /languages
 		
 		public $maxBookingSlotsPerDay = 0;
 		
-		public $extraChargeForTimeSlotBooking = 0;
-		
 		public $payWithPayPay = 0;
 		
 		public $managementUsersV2 = 0;
@@ -123,6 +121,8 @@ Domain Path: /languages
 		public $notificationsForUser = 0;
 		
 		public $guestLimitsPerTimeSlot = 0;
+		
+		public $extraChargeForTimeSlotBooking = 0;
 		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
@@ -6896,6 +6896,7 @@ Domain Path: /languages
 				$dictionary['Please enable the "%s" item in the "Settings" tab.'] = __('Please enable the "%s" item in the "Settings" tab.', 'booking-package');
 				$dictionary['Despite having valid items, the functionality of "%s" is disabled.'] = __('Despite having valid items, the functionality of "%s" is disabled.', 'booking-package');
 				$dictionary["If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field."] = __("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", 'booking-package');
+				$dictionary['Count Total Guests Toward Availability'] = __("Count Total Guests Toward Availability", 'booking-package');
 				
 			} else if ($mode == "setting_page") {
 				

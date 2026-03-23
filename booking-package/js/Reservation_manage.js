@@ -4149,6 +4149,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             
             const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
+            cost += totalAmountForGuests.totalAmount;
             
             var taxes = new TAXES(object._i18n, reservationData.currency, object._debug, object._numberFormatter, object._currency_info);
             var surchargePanel = taxes.createExtraChargesAndTaxesElement("surchargeTaxTitle");
@@ -4298,8 +4299,62 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         object._console.log(responseGuests);
         if (responseGuests.totalNumberOfGuests > 0) {
             
+            
+            
             var totalNumberOfGuestsPanel = object.createRowPanel(object._i18n.get('Total Number of Guests'), responseGuests.totalNumberOfGuestsTitle, object._prefix + 'totalNumberOfGuests', null, null);
             formPanel.appendChild(totalNumberOfGuestsPanel);
+            
+            const totalNumberOfGuestsValuePanel = document.getElementById(object._prefix + 'totalNumberOfGuests');
+            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
+            const totalGuestsLabel = document.createElement('div');
+            totalGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+            totalNumberOfGuestsValuePanel.textContent = null;
+            totalNumberOfGuestsValuePanel.appendChild(totalGuestsLabel);
+            if (totalAmountForGuests.labeles.length > 0) {
+                
+                if (totalAmountForGuests.totalAmount > 0) {
+                    
+                    const totalNumberOfGuestsLabel = document.createElement('span');
+                    totalNumberOfGuestsLabel.classList.add('serviceName');
+                    totalNumberOfGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                    
+                    const totalAmountGuestsLabel = document.createElement('span');
+                    totalAmountGuestsLabel.classList.add('serviceCost');
+                    totalAmountGuestsLabel.textContent = object._format.formatCost(totalAmountForGuests.totalAmount, object._currency);
+                    
+                    totalGuestsLabel.textContent = null;
+                    totalGuestsLabel.appendChild(totalNumberOfGuestsLabel);
+                    totalGuestsLabel.appendChild(totalAmountGuestsLabel);
+                    
+                }
+                
+                const guestsDetailsPanel = document.createElement('div');
+                guestsDetailsPanel.setAttribute('class', 'costPerGuests hidden_panel');
+                for (var i = 0; i < totalAmountForGuests.labeles.length; i++) {
+                    
+                    const gusetDetailsLabel = document.createElement('div');
+                    gusetDetailsLabel.textContent = totalAmountForGuests.labeles[i];
+                    guestsDetailsPanel.appendChild(gusetDetailsLabel);
+                    
+                }
+                
+                totalNumberOfGuestsValuePanel.appendChild(guestsDetailsPanel);
+                totalGuestsLabel.classList.add('addedGuests_click');
+                totalGuestsLabel.onclick = function(event) {
+                    
+                    if (guestsDetailsPanel.classList.contains('hidden_panel') === true) {
+                        
+                        guestsDetailsPanel.classList.remove('hidden_panel');
+                        
+                    } else {
+                        
+                        guestsDetailsPanel.classList.add('hidden_panel');
+                        
+                    }
+                    
+                };
+                
+            }
             
         }
         
@@ -7065,7 +7120,60 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         var totalNumberOfGuestsPanel = document.getElementById(object._prefix + 'totalNumberOfGuests');
                         var totalNumberOfGuestsValuePanel = totalNumberOfGuestsPanel.getElementsByClassName('value')[0];
                         var totalNumberOfGuestsErrorPanel = totalNumberOfGuestsPanel.getElementsByClassName('errorMessage')[0];
-                        totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        //totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        
+                        const totalGuestsLabel = document.createElement('div');
+                        totalGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        totalNumberOfGuestsValuePanel.textContent = null;
+                        totalNumberOfGuestsValuePanel.appendChild(totalGuestsLabel);
+                        if (totalAmountForGuests.labeles.length > 0) {
+                            
+                            if (totalAmountForGuests.totalAmount > 0) {
+                                
+                                const totalNumberOfGuestsLabel = document.createElement('span');
+                                totalNumberOfGuestsLabel.classList.add('serviceName');
+                                totalNumberOfGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                                
+                                const totalAmountGuestsLabel = document.createElement('span');
+                                totalAmountGuestsLabel.classList.add('serviceCost');
+                                totalAmountGuestsLabel.textContent = object._format.formatCost(totalAmountForGuests.totalAmount, object._currency);
+                                
+                                totalGuestsLabel.textContent = null;
+                                totalGuestsLabel.appendChild(totalNumberOfGuestsLabel);
+                                totalGuestsLabel.appendChild(totalAmountGuestsLabel);
+                                
+                            }
+                            
+                            const guestsDetailsPanel = document.createElement('div');
+                            guestsDetailsPanel.setAttribute('class', 'costPerGuests hidden_panel');
+                            for (var i = 0; i < totalAmountForGuests.labeles.length; i++) {
+                                
+                                const gusetDetailsLabel = document.createElement('div');
+                                gusetDetailsLabel.textContent = totalAmountForGuests.labeles[i];
+                                guestsDetailsPanel.appendChild(gusetDetailsLabel);
+                                console.log(gusetDetailsLabel);
+                                
+                            }
+                            
+                            totalNumberOfGuestsValuePanel.appendChild(guestsDetailsPanel);
+                            totalGuestsLabel.classList.add('addedGuests_click');
+                            totalGuestsLabel.onclick = function(event) {
+                                
+                                if (guestsDetailsPanel.classList.contains('hidden_panel') === true) {
+                                    
+                                    guestsDetailsPanel.classList.remove('hidden_panel');
+                                    
+                                } else {
+                                    
+                                    guestsDetailsPanel.classList.add('hidden_panel');
+                                    
+                                }
+                                
+                            };
+                            
+                        }
+                        
+                        
                         var responseLimitGuests = object._servicesControl.verifyToLimitGuests(responseGuests, object._calendarAccount.limitNumberOfGuests, object._calendarAccount.type);
                         object._console.log(responseLimitGuests);
                         if (responseLimitGuests.isGuests === true) {
@@ -8407,7 +8515,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     }
                                     
                                     var costInService = document.createElement('div');
-                                    costInService.textContent = guest.name + ': ' + object._format.formatCost(costsWithKey[guest.costInServices], currency) + ' * ' + guest.selectedName;
+                                    costInService.textContent = guest.name + ': ' + guest.selectedName + ' * ' + object._format.formatCost(costsWithKey[guest.costInServices], currency);
                                     if (guest.number > 0) {
                                         
                                         costPerGuests.appendChild(costInService);

@@ -953,7 +953,7 @@
 		
 	}
 	
-    Booking_Package_Input.prototype.validateInputValues = function(formFields, inputData) {
+    Booking_Package_Input.prototype.validateInputValuesForUser = function(formFields, inputData, actionPrefix) {
     	
     	const object = this;
     	let scrollIntoView = true;
@@ -966,7 +966,7 @@
             	
                 object._console.log(field.id);
                 object._console.log(elements);
-                const tr = document.getElementById('tr_input_field_' + field.id);
+                const tr = document.getElementById('tr_input_field_' + actionPrefix + field.id);
                 tr.classList.remove('error_empty_value');
                 
                 let values = null;
@@ -1058,7 +1058,7 @@
     	
     };
     
-    Booking_Package_Input.prototype.createUserProfiledPanel = function(formFields, userProfile, inputData, elementName, defaultName) {
+    Booking_Package_Input.prototype.createUserProfiledPanel = function(formFields, userProfile, inputData, actionPrefix, elementName, defaultName) {
 		
 		let parentElementName = 'table';
 		let trElementName = 'tr';
@@ -1131,7 +1131,7 @@
 					
 				}
 				var td = object.create(tdElementName, null, [inputElement], null, null, null, null);
-				var tr = object.create(trElementName, null, [th, td], 'tr_input_field_' + field.id, null, null, null);
+				var tr = object.create(trElementName, null, [th, td], 'tr_input_field_' + actionPrefix + field.id, null, null, null);
 				tr.setAttribute("valign", "top");
 				if (elementName === 'div') {
 					

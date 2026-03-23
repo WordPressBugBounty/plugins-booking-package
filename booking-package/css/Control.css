@@ -4405,7 +4405,7 @@
     
 }
 
-#inputFormPanel .courseLinePanelInLink {
+#inputFormPanel .courseLinePanelInLink, #inputFormPanel .addedGuests_click, #inputFormPanel .extraCharge_click {
     
     color: #2626ff;
     cursor: pointer;
@@ -4509,6 +4509,12 @@
     color: #ff1c1c;
     margin-left: 4px;
     top: 3px;
+    
+}
+
+#inputFormPanel .serviceCost {
+    
+    margin-left: 1em;
     
 }
 

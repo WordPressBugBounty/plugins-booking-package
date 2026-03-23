@@ -1875,7 +1875,7 @@
                 list = JSON.parse(guest.json);
                 
             }
-            //console.log(list);
+            
             let label = guest.name + ': ' + list[index].name;
             if (parseInt(list[index].price) > 0) {
                 
@@ -1892,13 +1892,6 @@
             }
             
         }
-        
-        if (response.totalAmount > 0) {
-            
-            console.log(response);
-            
-        }
-        
         
         return response;
         
@@ -3429,7 +3422,7 @@
                 
                 var surcharge = surchargeList[i];
                 var nameSpan = object._element.create('span', surcharge.name, null, null, null, 'planName', null);
-                var costSpan = object._element.create('span', null, null, null, null, 'planPrice', null);
+                var costSpan = object._element.create('span', null, null, null, null, 'planPrice serviceCost', null);
                 if (parseInt(surcharge.taxValue) > 0) {
                     
                     costSpan.textContent = format.formatCost( (surcharge.taxValue * reflectAdditional), currency);
@@ -3442,10 +3435,10 @@
                 if (reflectAdditional > 1) {
                     
                     reflectAdditionalPanel.classList.add('reflectPanel');
-                    var breakdownPanel = object._element.create('div', format.formatCost(surcharge.taxValue, currency) + ' * ' + reflectAdditionalTitle, null, null, null, 'hidden_panel breakdownPanel breakdownPanel_' + i, null);
+                    var breakdownPanel = object._element.create('div', reflectAdditionalTitle + ' * ' + format.formatCost(surcharge.taxValue, currency), null, null, null, 'hidden_panel breakdownPanel breakdownPanel_' + i, null);
                     extraChargeValuePanel.appendChild(breakdownPanel);
                     addPanel.setAttribute('data-breakdownKey', i);
-                    addPanel.classList.add('courseLinePanelInLink');
+                    addPanel.classList.add('extraCharge_click');
                     addPanel.onclick = function() {
                         
                         var breakdownKey = this.getAttribute('data-breakdownKey');

@@ -240,6 +240,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._hotelOptions = [];
         this._errorNumberOfCustomers = 0;
         this._locale_id = reservation_info.locale_id;
+        this._isAnimationEndAttachedForTimeSlots = false;
         this._numberFormatter = false;
         if (parseInt(reservation_info.numberFormatter) === 1) {
             
@@ -2129,7 +2130,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 **/
                                 object._console.log('amount1 = ' + amount1);
                                 var costInService = document.createElement('div');
-                                costInService.textContent = guest.name + ': ' + object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' * ' + guest.selectedName;
+                                costInService.textContent = guest.name + ': ' + guest.selectedName + ' * ' + object._format.formatCost(costsWithKey[guest.costInServices], object._currency);
                                 if (parseInt(costsWithKey[guest.costInServices]) == 0) {
                                     
                                     costInService.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
@@ -5654,7 +5655,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             var topPanel = document.getElementById('bottomPanel').getBoundingClientRect();
             object._console.error(typeof document.getElementById('bottomPanel').getBoundingClientRect);
             object._console.error(topPanel);
-            serviceBottomPanel.style.height = topPanel.height + 'px';
+            //serviceBottomPanel.style.height = topPanel.height + 'px';
             
         }
         
@@ -6658,7 +6659,10 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log(course);
         if (course != null && object._calendarAccount.flowOfBooking == 'calendar') {
             
+            
             object.setTopLengthOnServiceElementWithCSS(false);
+            
+            /**
             object._console.error('scheduleMainPanel = ' + scheduleMainPanel.getBoundingClientRect().height);
             object._console.error('courseMainPanel = ' + courseMainPanel.getBoundingClientRect().height);
             if (scheduleMainPanel.getBoundingClientRect().height < courseMainPanel.getBoundingClientRect().height) {
@@ -6710,6 +6714,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 }
                 
             }
+            **/
             
             if (object._headingPosition == 0) {
                 
@@ -6717,13 +6722,39 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             }
             
+            const resizeServiceAndTimeSlotPanel = function(courseMainPanel, scheduleMainPanel) {
+                
+                courseMainPanel.style.height = null;
+                scheduleMainPanel.style.height = null;
+                if (courseMainPanel.offsetHeight < scheduleMainPanel.offsetHeight) {
+                    
+                    courseMainPanel.setAttribute('style', 'height: ' + scheduleMainPanel.offsetHeight + 'px;');
+                    
+                } else {
+                    
+                    scheduleMainPanel.setAttribute('style', 'height: ' + courseMainPanel.offsetHeight + 'px;');
+                    
+                }
+                
+                
+            };
+            
             scheduleMainPanel.classList.add("postionCenterForScheduleListPanel");
+            resizeServiceAndTimeSlotPanel(courseMainPanel, scheduleMainPanel);
             scheduleMainPanel.addEventListener("animationend", function(event){
                 
                 var element = document.body;
-                object._console.log(element);
+                object._isAnimationEndAttachedForTimeSlots = true;
+                resizeServiceAndTimeSlotPanel(courseMainPanel, scheduleMainPanel);
                 
-            });
+                
+            }, {once: true});
+            
+            if (object._isAnimationEndAttachedForTimeSlots === true) {
+                
+                resizeServiceAndTimeSlotPanel(courseMainPanel, scheduleMainPanel);
+                
+            }
             
             if (object._headingPosition == 1) {
                 
@@ -6736,7 +6767,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
                 courseMainPanel.addEventListener("animationend", (function(){
                     
-                    courseMainPanel.style.height = null;
+                    //courseMainPanel.style.height = null;
                     daysListPanel.classList.add("hidden_panel");
                     if (object._headingPosition == 1) {
                         
@@ -6857,7 +6888,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             } else {
                 
-                object.createSchedule(calendar.month, calendar.day, calendar.year, false, daysListPanel, courseMainPanel, scheduleMainPanel, weekDaysPanelList, calendarData, courseList, selectedOptions, accountKey, callback);
+                object.createSchedule(calendar.month, calendar.day, calendar.year, true, daysListPanel, courseMainPanel, scheduleMainPanel, weekDaysPanelList, calendarData, courseList, selectedOptions, accountKey, callback);
                 
             }
             
@@ -6950,6 +6981,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             returnToDayListButton.onclick = function() {
                 
+                object._isAnimationEndAttachedForTimeSlots = false;
                 retrunServicesPanel();
                 
             };
@@ -7141,6 +7173,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         //object.setCoupon(null);
         object._clientForStripe = null;
         object._console.log(object._userInformation);
+        object._isAnimationEndAttachedForTimeSlots = false;
         var top = 0;
         var calendarKey = object._calendar.getDateKey(month, day, year);
         object._console.log(schedule);
@@ -7338,7 +7371,59 @@ var error_hCaptcha_for_booking_package = function(response) {
                         var totalNumberOfGuestsPanel = document.getElementById(object._prefix + 'totalNumberOfGuests');
                         var totalNumberOfGuestsValuePanel = totalNumberOfGuestsPanel.getElementsByClassName('value')[0];
                         var totalNumberOfGuestsErrorPanel = totalNumberOfGuestsPanel.getElementsByClassName('errorMessage')[0];
-                        totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        
+                        const totalGuestsLabel = document.createElement('div');
+                        totalGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        totalNumberOfGuestsValuePanel.textContent = null;
+                        totalNumberOfGuestsValuePanel.appendChild(totalGuestsLabel);
+                        //totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        if (totalAmountForGuests.labeles.length > 0) {
+                            
+                            if (totalAmountForGuests.totalAmount > 0) {
+                                
+                                const totalNumberOfGuestsLabel = document.createElement('span');
+                                totalNumberOfGuestsLabel.classList.add('serviceName');
+                                totalNumberOfGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                                
+                                const totalAmountGuestsLabel = document.createElement('span');
+                                totalAmountGuestsLabel.classList.add('serviceCost');
+                                totalAmountGuestsLabel.textContent = object._format.formatCost(totalAmountForGuests.totalAmount, object._currency);
+                                
+                                totalGuestsLabel.textContent = null;
+                                totalGuestsLabel.appendChild(totalNumberOfGuestsLabel);
+                                totalGuestsLabel.appendChild(totalAmountGuestsLabel);
+                                
+                            }
+                            
+                            const guestsDetailsPanel = document.createElement('div');
+                            guestsDetailsPanel.setAttribute('class', 'costPerGuests hidden_panel');
+                            for (var i = 0; i < totalAmountForGuests.labeles.length; i++) {
+                                
+                                const gusetDetailsLabel = document.createElement('div');
+                                gusetDetailsLabel.textContent = totalAmountForGuests.labeles[i];
+                                guestsDetailsPanel.appendChild(gusetDetailsLabel);
+                                
+                            }
+                            
+                            totalNumberOfGuestsValuePanel.appendChild(guestsDetailsPanel);
+                            totalGuestsLabel.classList.add('addedGuests_click');
+                            totalGuestsLabel.onclick = function(event) {
+                                
+                                if (guestsDetailsPanel.classList.contains('hidden_panel') === true) {
+                                    
+                                    guestsDetailsPanel.classList.remove('hidden_panel');
+                                    
+                                } else {
+                                    
+                                    guestsDetailsPanel.classList.add('hidden_panel');
+                                    
+                                }
+                                
+                            };
+                            
+                        }
+                        
+                        
                         var responseLimitGuests = object._servicesControl.verifyToLimitGuests(responseGuests, object._calendarAccount.limitNumberOfGuests, object._calendarAccount.type);
                         object._console.log(responseLimitGuests);
                         if (responseLimitGuests.isGuests === true) {
@@ -10047,7 +10132,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         // Check the availability of the Payment Request API first.
         paymentRequest.canMakePayment().then(function(result) {
-            console.log(result);
+            
             object._console.log(result);
             if (result) {
                 

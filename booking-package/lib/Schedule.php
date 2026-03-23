@@ -1276,19 +1276,25 @@
 				array(intval($userId))
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);
+			$hasProfile = true;
 			$response = 0;
 			$locale = get_user_locale($userId);
 			if (!empty($row) && intval($row['status']) == 1) {
 				
 				if (empty($row['profile'])) {
 					
+					$hasProfile = false;
 					$row['profile'] = '[]';
 					
 				}
 				
 				$value = json_decode($row['value'], true);
 				$profile = json_decode($row['profile'], true);
-				$value = $this->margeProfile($value, $profile);
+				if ($hasProfile === true) {
+					
+					$value = $this->margeProfile($value, $profile);
+					
+				}
 				$response = array('value' => $value, 'profile' => $profile, 'locale' => $locale);
 				
 			} else {
@@ -1298,13 +1304,18 @@
 					
 					if (empty($row['profile'])) {
 						
+						$hasProfile= false;
 						$row['profile'] = '[]';
 						
 					}
 					
 					$value = json_decode($row['value'], true);
 					$profile = json_decode($row['profile'], true);
-					$value = $this->margeProfile($value, $profile);
+					if ($hasProfile === true) {
+						
+						$value = $this->margeProfile($value, $profile);
+						
+					}
 					$response = array('value' => $value, 'profile' => $profile, 'locale' => $locale);
 					
 				}
@@ -10769,7 +10780,7 @@
 					if ($number > 0 && intval($costsWithKey[$costKey]) != 0 && intval($guest['reflectService']) == 1) {
 						
 						#$hasReflectService = true;
-						$guests[$key]['content'] = $guest['name'] . ': ' . $this->formatCost($costsWithKey[$costKey], $currency) . ' * ' . $option['name'];
+						$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'] . ' * ' . $this->formatCost($costsWithKey[$costKey], $currency);
 						$totalCost1 += $costsWithKey[$costKey] * $number;
 						
 					} else if ($number > 0 && intval($costsWithKey[$costKey]) != 0 && intval($guest['reflectService']) == 0) {
@@ -13940,10 +13951,11 @@
 					if ($tax['type'] == 'surcharge' && $tax['active'] == 'true') {
 						
 						$cost = $this->formatCost($tax['taxValue'], $currency);
-						$details = $tax['name'] . ' ' . $cost;
+						
 						if ($reflectAdditional > 1) {
 							
-							$details .= ' * ' . $reflectAdditionalTitle;
+							#$details .= ' * ' . $reflectAdditionalTitle;
+							$details = $tax['name'] . ': ' . $reflectAdditionalTitle . ' * ' . $cost;
 							
 						}
 						array_push($surchargesDetails, $details);
@@ -14013,30 +14025,6 @@
 								$detailsExcludedGuests .= ' ' .  $this->formatCost($subtotalInService, $currency);
 								
 							}
-							
-							/**
-							if (isset($costs[0]) && is_int(intval($costs[0])) === true && intval($responseCostInService['max']) != 0) {
-								
-								if ($responseCostInService['hasMultipleCosts'] === true) {
-									
-									#$details .= ' ' . sprintf(__('%s to %s', 'booking-package'), $this->formatCost($responseCostInService['min'], $currency), $this->formatCost($responseCostInService['max'], $currency));
-									#$detailsExcludedGuests .= ' ' . sprintf(__('%s to %s', 'booking-package'), $this->formatCost($responseCostInService['min'], $currency), $this->formatCost($responseCostInService['max'], $currency));
-									$details .= ' ' .  $this->formatCost($subtotalInService, $currency);
-									$detailsExcludedGuests .= ' ' .  $this->formatCost($subtotalInService, $currency);
-									
-								} else {
-									
-									#$details .= ' ' . $this->formatCost($costs[0], $currency);
-									#$detailsExcludedGuests .= ' ' . $this->formatCost($costs[0], $currency);
-									$details .= ' ' . $this->formatCost($subtotalInService, $currency);
-									$detailsExcludedGuests .= ' ' . $this->formatCost($subtotalInService, $currency);
-									
-								}
-								
-							} else {
-								
-							}
-							**/
 							
 							if ($reflectService > 0) {
 								

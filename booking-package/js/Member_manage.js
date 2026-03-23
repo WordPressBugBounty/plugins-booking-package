@@ -2261,7 +2261,7 @@ Member_manage.prototype.editUser = function(tr, user, formFields){
     //const formFields = JSON.parse(JSON.stringify(object._userFormFields));
     const userProfile = input.changeValueForUserFormFields(formFields, JSON.parse(JSON.stringify(user.profile)));
     object._console.log(userProfile);
-    const table = input.createUserProfiledPanel(formFields, userProfile, inputData, 'table', object._defaultName);
+    const table = input.createUserProfiledPanel(formFields, userProfile, inputData, 'edit_', 'table', object._defaultName);
     table.classList.add('fixed');
     const customFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
     customFormFieldPanel.textContent = null;
@@ -2278,7 +2278,7 @@ Member_manage.prototype.editUser = function(tr, user, formFields){
     
     upload_button.onclick = function(event) {
         
-        const response = input.validateInputValues(formFields, inputData);
+        const response = input.validateInputValuesForUser(formFields, inputData, 'edit_');
         let updata = response.updata;
         let customUserFields = response.customUserFields;
         object._console.log(customUserFields);
@@ -2791,7 +2791,7 @@ Member_manage.prototype.userForm = function(){
             custom_title.textContent = null;
             
         }
-        const table = input.createUserProfiledPanel(formFields, {}, inputData, 'table', {});
+        const table = input.createUserProfiledPanel(formFields, {}, inputData, 'add_', 'table', {});
         object._console.log(table);
         const addCustomFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
         addCustomFormFieldPanel.textContent = null;
@@ -2803,7 +2803,7 @@ Member_manage.prototype.userForm = function(){
         register_button.onclick = function() {
             
             object._console.log(inputData);
-            const response = input.validateInputValues(formFields, inputData);
+            const response = input.validateInputValuesForUser(formFields, inputData, 'add_');
             let updata = response.updata;
             let customUserFields = response.customUserFields;
             object._console.log(response);

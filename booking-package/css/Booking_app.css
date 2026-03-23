@@ -760,7 +760,7 @@
     
 }
 
-#booking-package_durationStay .error_empty_value {
+#booking-package_durationStay .error_empty_value, #booking-package-user-edit-form .error_empty_value {
     
     background-color: #FFD5D5;
     
@@ -2759,7 +2759,27 @@
     
 }
 
-#booking-package_inputFormPanel .addedService_click, #booking-package_serviceDetails .addedService_click, #booking-package_myBookingDetailsFroVisitor .addedService_click {
+#booking-package_inputFormPanel .addedService_click, #booking-package_serviceDetails .addedService_click, #booking-package_myBookingDetailsFroVisitor .addedService_click, #booking-package_myBookingDetails .courseLinePanelInLink {
+    
+    color: #2626ff;
+    cursor: pointer;
+    font-weight: normal;
+    float: none;
+    margin-bottom: 0;
+    
+}
+
+#booking-package_inputFormPanel .extraCharge_click, #booking-package_serviceDetails .extraCharge_click, #booking-package_myBookingDetailsFroVisitor .extraCharge_click, #booking-package_myBookingDetails .extraCharge_click {
+    
+    color: #2626ff;
+    cursor: pointer;
+    font-weight: normal;
+    float: none;
+    margin-bottom: 0;
+    
+}
+
+#booking-package_inputFormPanel .addedGuests_click, #booking-package_serviceDetails .addedGuests_click, #booking-package_myBookingDetailsFroVisitor .addedGuests_click, #booking-package_myBookingDetails .addedGuests_click {
     
     color: #2626ff;
     cursor: pointer;
@@ -2781,7 +2801,7 @@
     **/
 }
 
-#booking-package_inputFormPanel .serviceCost, #booking-package_myBookingDetailsFroVisitor .serviceCost, #booking-package_myBookingDetails .serviceCost {
+#booking-package_inputFormPanel .serviceCost, #booking-package_myBookingDetailsFroVisitor .serviceCost, #booking-package_myBookingDetails .serviceCost, #booking-package_myBookingDetails .planPrice {
     
     /**
     float: left;
@@ -2833,7 +2853,7 @@
     
 }
 
-#booking-package_inputFormPanel .required:after, #addCustomFormFieldPanel .required:after {
+#booking-package_inputFormPanel .required:after, #addCustomFormFieldPanel .required:after, #booking-package-user-edit-form .required:after {
     
     position: relative;
     top: 3px;

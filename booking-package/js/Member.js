@@ -1441,7 +1441,7 @@
         object._input.setPrefix(object._prefix + 'edit_form');
         const userProfile = object._input.changeValueForUserFormFields(formFields, JSON.parse(JSON.stringify(setting.profile)));
         object._console.log(userProfile);
-        const table = object._input.createUserProfiledPanel(formFields, userProfile, inputData, 'div', {});
+        const table = object._input.createUserProfiledPanel(formFields, userProfile, inputData, 'edit_', 'div', {});
         object._console.log(table);
         const editCustomFormFieldPanel = document.getElementById('editCustomFormFieldPanel');
         editCustomFormFieldPanel.textContent = null;
@@ -1471,7 +1471,7 @@
         register_user_button.onclick = function(){
             
             
-            const response = input.validateInputValues(formFields, inputData);
+            const response = input.validateInputValuesForUser(formFields, inputData, 'edit_');
             let updata = response.updata;
             let customUserFields = response.customUserFields;
             object._console.log(response);
@@ -1653,7 +1653,7 @@
         object._console.log(formFields);
         const input = new Booking_Package_Input(object._debug);
         object._input.setPrefix(object._prefix + 'sign_up_');
-        const table = object._input.createUserProfiledPanel(formFields, {}, inputData, 'div', {});
+        const table = object._input.createUserProfiledPanel(formFields, {}, inputData, 'add_', 'div', {});
         object._console.log(table);
         const addCustomFormFieldPanel = document.getElementById('addCustomFormFieldPanel');
         addCustomFormFieldPanel.textContent = null;
@@ -1661,7 +1661,7 @@
         
         register_user_button.onclick = function() {
             
-            const response = input.validateInputValues(formFields, inputData);
+            const response = input.validateInputValuesForUser(formFields, inputData, 'add_');
             let updata = response.updata;
             let customUserFields = response.customUserFields;
             object._console.log(response);
