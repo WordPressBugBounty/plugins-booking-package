@@ -17,6 +17,118 @@
             
         }
         
+        public function cancellationLimitTime() {
+            
+$document = <<<EOF
+
+<div>
+    <h2>Dynamic Override of Cancellation Limit Time (Filter Hook)</h2>
+    <div>
+        The cancellation limit time configured in the Calendar Account ("Allow Cancellation Up To") can be dynamically overridden using the <code>booking_package_override_cancellation_limit_time</code> filter hook. 
+        <b>Please note that this hook is only executed when the "Allow Customer Cancellations" option is set to "Enabled" within the Calendar Account settings tab.</b> 
+        This allows you to set highly specific cancellation deadlines down to the minute.
+    </div>
+    <strong style="font-size: 1.2em;">Filter Hook Details</strong>
+    <ul><li>Hook Name: <code>booking_package_override_cancellation_limit_time</code></li></ul>
+    <strong style="font-size: 1.2em;">Parameters</strong>
+    <ol>
+        <li><b>\$current_cancellation_limit_time</b> (int) (Target for modification) The current cancellation limit time in minutes retrieved from the calendar settings.</li>
+        <li><b>\$calendar_account_id</b> (int) The ID of the calendar account associated with this reminder.</li>
+    </ol>
+    <div>
+        <strong style="font-size: 1.2em;">Important:</strong> The return value <b>must be an integer (<code>int</code>) of <code>1</code> or greater</b>. If <code>0</code> or a non-numeric value is returned, the system will fall back to the original setting configured in the Calendar Account. It represents the number of minutes before the booking time that cancellations are allowed. There are no restrictions on the intervals, allowing you to specify exact times in 1-minute increments. For example:
+        <ul>
+            <li><code>15</code> (15 minutes prior)</li>
+            <li><code>105</code> (1 hour and 45 minutes prior)</li>
+            <li><code>150</code> (2 hour and 30 minutes prior)</li>
+        </ul>
+    </div>
+    
+    <strong style="font-size: 1.2em;">Usage Example</strong>
+    <div>This is a sample code that overrides the default cancellation limit time, allowing customers to cancel up to 90 minutes (1.5 hours) before their booking specifically when the Calendar Account ID is <code>5</code>. For all other calendars, it returns <code>0</code> to keep their default settings.</div>
+    <br>
+    <code>/**<br>
+    * Customize Booking Package text based on calendar and language<br>
+    * <br>
+    * @param int \$current_cancellation_limit_time Current time in minutes<br>
+    * @param int \$calendar_account_id Calendar Account ID<br>
+    * @return int Modified time in minutes<br>
+    */<br>
+    
+    function my_custom_cancellation_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
+        // Check if the target is Calendar Account ID 5<br>
+        if ( $calendar_account_id === 5 ) {<br>
+            // Override the limit time to 90 minutes.<br>
+            return 90;<br>
+        }<br>
+        // Return 0 (or $current_cancellation_limit_time) to use the original setting<br>
+        return 0;<br>
+    }<br>
+    add_filter( 'booking_package_override_cancellation_limit_time', 'my_custom_cancellation_time', 10, 1 );<br>
+    
+    </code>
+    
+</div>
+
+EOF;
+            
+            return $document;
+            
+        }
+        
+        public function reminderNotificationTime() {
+            
+$document = <<<EOF
+
+<div>
+    <h2>Dynamic Override of Reminder Notification Time (Filter Hook)</h2>
+    <div>The reminder notification time configured in the Calendar Account can be dynamically overridden during the email sending process using the <code>booking_package_override_reminder_notification_time</code> filter hook. This allows you to set custom timing intervals that are not available in the default select box.</div>
+    <strong style="font-size: 1.2em;">Filter Hook Details</strong>
+    <ul><li>Hook Name: <code>booking_package_override_reminder_notification_time</code></li></ul>
+    <strong style="font-size: 1.2em;">Parameters</strong>
+    <ol>
+        <li><b>\$current_reminder_notification_time</b> (int) (Target for modification) The current notification time in minutes retrieved from the calendar settings.</li>
+        <li><b>\$calendar_account_id</b> (int) The ID of the calendar account associated with this reminder.</li>
+    </ol>
+    <div>
+        <strong style="font-size: 1.2em;">Important:</strong> The return value <b>must be an integer (<code>int</code>) of <code>60</code> or greater</b>. It must be specified in minutes and should be provided in 60-minute increments. For example:
+        <ul>
+            <li><code>60</code> (1 hour prior)</li>
+            <li><code>6120</code> (102 hours / 4 days and 6 hours prior)</li>
+            <li><code>10800</code> (180 hours / 7 days and 12 hours prior)</li>
+        </ul>
+    </div>
+    
+    <strong style="font-size: 1.2em;">Usage Example</strong>
+    <div>This is a sample code that overrides the default reminder notification time and sets it to be sent 4 days and 6 hours (6120 minutes) before the booking.</div>
+    <br>
+    <code>/**<br>
+    * Customize Booking Package text based on calendar and language<br>
+    * <br>
+    * @param int \$current_reminder_notification_time Current time in minutes<br>
+    * @param int \$calendar_account_id Calendar Account ID<br
+    * @return int Modified time in minutes<br>
+    */<br>
+    
+    function my_custom_reminder_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
+        if ( $calendar_account_id === 5 ) {<br>
+            // Override the notification time to 6120 minutes (4 days and 6 hours). <br>
+            // The value must be an integer of 60 or greater.<br>
+            return 6120;<br>
+        }<br>
+    }<br>
+    add_filter( 'booking_package_override_reminder_notification_time', 'my_custom_reminder_time', 10, 1 );<br>
+    
+    </code>
+    
+</div>
+
+EOF;
+            
+            return $document;
+            
+        }
+        
         public function dynamicTextModification() {
             
 $document = <<<EOF

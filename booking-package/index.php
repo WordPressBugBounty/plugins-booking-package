@@ -3,7 +3,7 @@
 Plugin Name: Booking Package SAASPROJECT
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.06
+Version:     1.7.07
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1123,8 +1123,6 @@ Domain Path: /languages
 				
 			}
 			
-			
-			
 			$deleteKeys = array("googleCalendarID", "idForGoogleWebhook", "expirationForGoogleWebhook", "ical", "icalToken", "email_from", "email_from_title", "email_to", "email_to_title");
 			for ($i = 0; $i < count($deleteKeys); $i++) {
 				
@@ -1671,8 +1669,9 @@ Domain Path: /languages
 				
 				if ($paymentMethod[$i] == 'stripe' || $paymentMethod[$i] == 'stripe_konbini' || $paymentMethod[$i] == 'stripe_paypay') {
 					
-					$stripe_public_key = get_option($this->prefix."stripe_public_key", null);
-					if (!empty($stripe_public_key)) {
+					$stripe_active = get_option($this->prefix . 'stripe_active', 0);
+					$stripe_public_key = get_option($this->prefix . "stripe_public_key", null);
+					if (!empty($stripe_public_key) && intval($stripe_active) === 1) {
 						
 						array_push($new_paymentMethod, $paymentMethod[$i]);
 						$localize_script['stripe_active'] = 1;
@@ -1687,7 +1686,7 @@ Domain Path: /languages
 					
 				} else if ($paymentMethod[$i] == 'paypal') {
 					
-					$paypal_public_key = get_option($this->prefix."paypal_client_id", null);
+					$paypal_public_key = get_option($this->prefix . "paypal_client_id", null);
 					if (!empty($paypal_public_key)) {
 						
 						$localePayPal = 'locale=en_US';
@@ -1725,6 +1724,8 @@ Domain Path: /languages
 				}
 				
 			}
+			
+			
 			
 			if (count($new_paymentMethod) == 0) {
 				
@@ -1770,6 +1771,16 @@ Domain Path: /languages
 			}
 			
 			$html = '<div id="booking-package-locale-' . $this->locale . '" class="start_booking_package' . $widgetClass . '" data-ID="' . $accountKey . '">';
+			
+			if (is_ssl() === false && $localize_script['stripe_active'] === 1) {
+				
+				$localize_script['stripe_active'] = 0;
+				unset($localize_script['stripe_public_key']);
+				$html .= '<div class="booking_package_nonce_error">An SSL connection is required to use Stripe payments.</div>';
+				
+			}
+			
+			
 			$html .= '<div id="booking_package_json_format_error_panel" class="hidden_panel"><p></p><p></p></div>';
 			$html .= '<div id="booking_package_nonce_error_panel" class="booking_package_nonce_error hidden_panel"><p>' . sprintf($nonce_error_message, '<b>' . __('Select the URL for AJAX on the public page', 'booking-package') . '</b>', '<b>' . __('Select a function to validate the value of a nonce with AJAX on the public page', 'booking-package') . '</b>') . '</p></div>';
 			$html .= '<div id="booking-package-id-' . $accountKey . '" class="">';
@@ -5994,6 +6005,20 @@ Domain Path: /languages
 				'content' => $content,
 			));
 			
+			$content = $document->reminderNotificationTime();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'reminderNotificationTime',
+				'title' => __('Dynamic Override of Reminder Notification Time', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->cancellationLimitTime();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'cancellationLimitTime',
+				'title' => __('Dynamic Override of Cancellation Limit Time', 'booking-package'),
+				'content' => $content,
+			));
+			
 			$content = $document->videos();
 			$screen->add_help_tab(array(
 				'id'    => $this->plugin_name . 'videos',
@@ -6896,7 +6921,6 @@ Domain Path: /languages
 				$dictionary['Please enable the "%s" item in the "Settings" tab.'] = __('Please enable the "%s" item in the "Settings" tab.', 'booking-package');
 				$dictionary['Despite having valid items, the functionality of "%s" is disabled.'] = __('Despite having valid items, the functionality of "%s" is disabled.', 'booking-package');
 				$dictionary["If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field."] = __("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", 'booking-package');
-				$dictionary['Count Total Guests Toward Availability'] = __("Count Total Guests Toward Availability", 'booking-package');
 				
 			} else if ($mode == "setting_page") {
 				

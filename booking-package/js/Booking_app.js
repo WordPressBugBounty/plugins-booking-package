@@ -1135,6 +1135,10 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
+                //const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
+                //console.log(totalAmountForGuests);
+                //totalCost += totalAmountForGuests.totalAmount;
+                
                 object._console.log(guestsDetails.guests);
                 object.setGuestsList(guestsDetails.guests);
                 if (totalNumberOfGuests > 1) {
@@ -2075,6 +2079,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             if (services[key].selected == 1) {
                 
+                const service = services[key];
                 course = true;
                 //var hasReflectService = false;
                 var courseCostPanel = null;
@@ -2195,7 +2200,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
-                var goods = {label: services[key].name, amount: amount1 + amount2, applicantCount: applicantCount, type: 'services'};
+                var goods = {id: service.key, label: services[key].name, amount: amount1 + amount2, applicantCount: applicantCount, type: 'services'};
                 goodsList.push(goods);
                 totalCost += amount1 + amount2;
                 object._console.log('amount1 =' + amount1 + ' amount2 = ' + amount2);
@@ -2257,6 +2262,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     var reflectServicePanel = document.createElement('span');
                     reflectServicePanel.classList.add('reflectPanel');
+                    courseLinePanel.id = object._prefix + 'service_details_label';
                     courseLinePanel.classList.add('addedService_click');
                     courseLinePanel.onclick = function() {
                         
@@ -2411,7 +2417,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 
                             }
                             
-                            var goods = {label: option.name, amount: subtotal1 + subtotal2, applicantCount: applicantCount, type: 'options'};
+                            var goods = {id: service.key, selectedOption: i,label: option.name, amount: subtotal1 + subtotal2, applicantCount: applicantCount, type: 'options'};
                             goodsList.push(goods);
                             totalCost += subtotal1 + subtotal2;
                             optionAmount = subtotal1 + subtotal2;
@@ -7374,6 +7380,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         const totalGuestsLabel = document.createElement('div');
                         totalGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        totalGuestsLabel.id = object._prefix + 'guest_details_label';
                         totalNumberOfGuestsValuePanel.textContent = null;
                         totalNumberOfGuestsValuePanel.appendChild(totalGuestsLabel);
                         //totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
@@ -7631,6 +7638,15 @@ var error_hCaptcha_for_booking_package = function(response) {
                             
                         }
                         object._console.log(goodsList)
+                        
+                        if (parseInt(object._calendarAccount.guestsBool) == 1) {
+                            
+                            var guestsList = object.getGuestsList();
+                            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+                            totalCost += totalAmountForGuests.totalAmount;
+                            
+                        }
+                        
                         object._console.log('totalCost = ' + totalCost);
                         
                         /** Coupon code **/
@@ -8818,6 +8834,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         
+        /**
         console.log(calendarAccount);
         console.log(object._callback_stripe);
         console.log(booking_data);
@@ -8825,6 +8842,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         console.log(saved_booking_completed_panel);
         console.log(saved_durationStay_panel);
         console.log('sendVerificationCode = ' + sendVerificationCode);
+        **/
         
         const loadingPanel = document.createElement('div');
         loadingPanel.textContent = object._i18n.get('Loading...');
@@ -8842,7 +8860,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                 const bookingBlockPanel = document.getElementById("bookingBlockPanel");
                 bookingBlockPanel.classList.remove("hidden_panel");
                 object.submitBookingData(post_data, null, null, function(response) {
-                    
+                    console.log(response);
                     object._console.log(response);
                     if (response === false) {
                         
@@ -8856,6 +8874,33 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         bookingBlockPanel.classList.add("hidden_panel");
                         inputFormPanel.replaceChildren(...saved_booking_completed_panel.childNodes);
+                        const topBarPanel = document.getElementById('reservationHeader');
+                        topBarPanel.textContent = object.i18n("Booking Completed");
+                        topBarPanel.classList.remove("booking_confirmed");
+                        topBarPanel.classList.add("booking_completed");
+                        
+                        if (response.status === 'error') {
+                            
+                            const titleLabel = document.getElementById('reservationHeader');
+                            titleLabel.textContent = object._i18n.get('Error');
+                            titleLabel.setAttribute('style', 'color: #ff1c1c;');
+                            
+                        } else {
+                            
+                            if (typeof object._redirectPage == 'string') {
+                                
+                                inputFormPanel.classList.add('hidden_panel');
+                                var redirectForm = document.createElement('form');
+                                redirectForm.method = 'post';
+                                redirectForm.action = object._redirectPage;
+                                //formPanel.textContent = null;
+                                inputFormPanel.appendChild(redirectForm);
+                                redirectForm.submit();
+                                return null;
+                                
+                            }
+                            
+                        }
                         
                         if (calendarAccount.type === 'hotel') {
                             
@@ -8866,17 +8911,80 @@ var error_hCaptcha_for_booking_package = function(response) {
                             
                         }
                         
-                        const topBarPanel = document.getElementById('reservationHeader');
-                        topBarPanel.textContent = object.i18n("Booking Completed");
-                        topBarPanel.classList.remove("booking_confirmed");
-                        topBarPanel.classList.add("booking_completed");
                         object.setScrollY(inputFormPanel);
-                        
                         document.getElementById('returnToSchedules').onclick = function() {
                             
                             window.location.reload();
                             
                         };
+                        
+                        const guest_details_label = document.getElementById(object._prefix + 'guest_details_label');
+                        if (guest_details_label !== null) {
+                            
+                            let details = guest_details_label.nextElementSibling;
+                            console.log(guest_details_label);
+                            console.log(details);
+                            guest_details_label.onclick = function(event) {
+                                
+                                if (details.classList.contains('hidden_panel') === true) {
+                                    
+                                    details.classList.remove('hidden_panel');
+                                    
+                                } else {
+                                    
+                                    details.classList.add('hidden_panel');
+                                    
+                                }
+                                
+                            };
+                            
+                        }
+                        
+                        const service_details_label = document.getElementById(object._prefix + 'service_details_label');
+                        if (service_details_label !== null) {
+                            
+                            let details = service_details_label.nextElementSibling;
+                            console.log(service_details_label);
+                            console.log(details);
+                            service_details_label.onclick = function(event) {
+                                
+                                if (details.classList.contains('hidden_panel') === true) {
+                                    
+                                    details.classList.remove('hidden_panel');
+                                    
+                                } else {
+                                    
+                                    details.classList.add('hidden_panel');
+                                    
+                                }
+                                
+                            };
+                            
+                        }
+                        
+                        const extra_charge_details_label = document.getElementById(object._prefix + 'extra_charge_details_label');
+                        if (extra_charge_details_label !== null) {
+                            
+                            let details = extra_charge_details_label.nextElementSibling;
+                            console.log(extra_charge_details_label);
+                            console.log(details);
+                            extra_charge_details_label.onclick = function(event) {
+                                
+                                if (details.classList.contains('hidden_panel') === true) {
+                                    
+                                    details.classList.remove('hidden_panel');
+                                    
+                                } else {
+                                    
+                                    details.classList.add('hidden_panel');
+                                    
+                                }
+                                
+                            };
+                            
+                        }
+                        
+                        
                         object.sendBookingPackageUserFunction('displayed_booking_complete', null);
                         
                     }
@@ -9503,23 +9611,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         
-        var total = 0;
-        for (var i = 0; i < goodsList.length; i++) {
-            
-            total += goodsList[i].amount;
-            
-        }
         
-        total = object.getDiscountCostByCoupon(total);
-        
-        if (currency.toLocaleUpperCase() != 'JPY') {
-            
-            total = Number(total) / 100;
-            total = total.toFixed(2);
-            
-        }
-        
-        object._console.log("total = " + total);
         var submit_payment = document.createElement("div");
         submit_payment.id = "paypal-button";
         payPalPanel.appendChild(submit_payment);
@@ -9543,6 +9635,16 @@ var error_hCaptcha_for_booking_package = function(response) {
                     total += goodsList[i].amount;
                     
                 }
+                
+                if (calendarAccount.type === 'day' && parseInt(object._calendarAccount.guestsBool) == 1) {
+                    
+                    var guestsList = object.getGuestsList();
+                    const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+                    console.log(totalAmountForGuests);
+                    total += totalAmountForGuests.totalAmount;
+                    
+                }
+                
                 total = object.getDiscountCostByCoupon(total);
                 
                 if (currency.toLocaleUpperCase() != 'JPY') {
@@ -9854,6 +9956,13 @@ var error_hCaptcha_for_booking_package = function(response) {
             total += goodsList[i].amount;
             
         }
+        
+        if (total === 0) {
+            
+            total = 450;
+            
+        }
+        
         object._console.log('total = ' + total);
         
         var stripe = Stripe(stripe_public_key);
@@ -9999,7 +10108,6 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         elements = stripe.elements(options);
         object.setExpressCheckoutRequest(elements);
-        
         const expressCheckoutDiv = document.createElement('div');
         expressCheckoutDiv.id = 'express-checkout-element';
         stripePanel.appendChild(expressCheckoutDiv);
@@ -10033,7 +10141,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             var valueList = {};
             var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
-            console.error(post);
+            //console.error(post);
             if (post === false) {
                 
                 object.showUnfilled(formPanelList);
@@ -10058,14 +10166,12 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             var valueList = {};
             var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
-            console.log(post);
             var isBooking = object.intentForStripe('intentForStripeExpressCheckout', post, formPanelList, function(client) {
                 
                 if (client !== false) {
                     
                     object.isReCAPTCHA_v3(function() {
                         
-                        console.log(client);
                         var clientSecret = client.client_secret;
                         const return_url = new URL(window.location.href);
                         return_url.searchParams.set('callback_stripe', '1');
@@ -10101,7 +10207,6 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         });
         **/
-        
         
         
         var payment_request_button = document.createElement("div");
@@ -10240,10 +10345,11 @@ var error_hCaptcha_for_booking_package = function(response) {
                 mode: 'payment',
                 amount: totalCost,
                 currency: object._currency,
+                captureMethod: 'manual',
             };
             
             // Set up Stripe.js and Elements to use in checkout form.
-            console.log(elements);
+            //console.log(elements);
             elements.update(options);
             
         }
@@ -10270,6 +10376,15 @@ var error_hCaptcha_for_booking_package = function(response) {
             
         }
         object._console.log(goodsList);
+        
+        if (calendarAccount.type === 'day' && parseInt(object._calendarAccount.guestsBool) == 1) {
+            
+            var guestsList = object.getGuestsList();
+            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+            amount += totalAmountForGuests.totalAmount;
+            
+        }
+        
         object._console.log('amount = ' + amount);
         amount = object.getDiscountCostByCoupon(amount);
         const totalAmount = amount + taxes;
@@ -10282,7 +10397,7 @@ var error_hCaptcha_for_booking_package = function(response) {
     Booking_Package.prototype.intentForStripe = function(mode, post, formPanelList, callback) {
         
         var object = this;
-        
+        const calendarAccount = object._calendarAccount;
         var goodsList = object.getGoodsList();
         var amount = 0;
         var taxes = 0;
@@ -10299,10 +10414,23 @@ var error_hCaptcha_for_booking_package = function(response) {
             }
             
         }
+        
+        
         object._console.log(goodsList);
         object._console.log('amount = ' + amount);
+        
+        
+        if (calendarAccount.type === 'day' && parseInt(object._calendarAccount.guestsBool) == 1) {
+            
+            var guestsList = object.getGuestsList();
+            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+            amount += totalAmountForGuests.totalAmount;
+            
+        }
+        
         amount = object.getDiscountCostByCoupon(amount);
         var total = amount + taxes;
+        
         object._console.log('amount = ' + amount);
         object._console.log('taxes = ' + taxes);
         object._console.log('total = ' + total);
@@ -10312,10 +10440,18 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             var bookingBlockPanel = document.getElementById("bookingBlockPanel");
             bookingBlockPanel.classList.remove("hidden_panel");
-            var post = {booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, mode: mode, amount: total};
-            if (mode == "updateIntentForStripe" && object._clientForStripe != null) {
+            var post = {booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, mode: mode, amount: total, guests: post.guests, selectedCourseList: post.selectedCourseList, accountKey: post.accountKey, applicantCount: post.applicantCount, courseKey: post.courseKey, timeKey: post.timeKey};
+            
+            var coupon = object.getCoupon();
+            if (coupon != null) {
                 
-                post.id = object._clientForStripe.id;
+                post.couponID = coupon.id;
+                
+            }
+            
+            if (calendarAccount.type == "hotel") {
+                
+                post.json = JSON.stringify(object._hotel.verifySchedule(true));
                 
             }
             
@@ -10551,13 +10687,66 @@ var error_hCaptcha_for_booking_package = function(response) {
                 object._console.log(postGuests);
                 
                 var responseGuests = object._servicesControl.getValueReflectGuests(guestsList);
+                const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
                 object._console.log(responseGuests);
                 var totalNumberOfGuestsPanel = document.getElementById(object._prefix + 'totalNumberOfGuests');
                 var totalNumberOfGuestsValuePanel = totalNumberOfGuestsPanel.getElementsByClassName('value')[0];
                 var totalNumberOfGuestsErrorPanel = totalNumberOfGuestsPanel.getElementsByClassName('errorMessage')[0];
-                totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                //totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
                 var responseLimitGuests = object._servicesControl.verifyToLimitGuests(responseGuests, object._calendarAccount.limitNumberOfGuests, object._calendarAccount.type);
                 object._console.log(responseLimitGuests);
+                
+                const totalGuestsLabel = document.createElement('div');
+                totalGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                totalGuestsLabel.id = object._prefix + 'guest_details_label';
+                totalNumberOfGuestsValuePanel.textContent = null;
+                totalNumberOfGuestsValuePanel.appendChild(totalGuestsLabel);
+                if (totalAmountForGuests.labeles.length > 0) {
+                    
+                    if (totalAmountForGuests.totalAmount > 0) {
+                        
+                        const totalNumberOfGuestsLabel = document.createElement('span');
+                        totalNumberOfGuestsLabel.classList.add('serviceName');
+                        totalNumberOfGuestsLabel.textContent = responseGuests.totalNumberOfGuestsTitle;
+                        
+                        const totalAmountGuestsLabel = document.createElement('span');
+                        totalAmountGuestsLabel.classList.add('serviceCost');
+                        totalAmountGuestsLabel.textContent = object._format.formatCost(totalAmountForGuests.totalAmount, object._currency);
+                        
+                        totalGuestsLabel.textContent = null;
+                        totalGuestsLabel.appendChild(totalNumberOfGuestsLabel);
+                        totalGuestsLabel.appendChild(totalAmountGuestsLabel);
+                        
+                    }
+                    
+                    const guestsDetailsPanel = document.createElement('div');
+                    guestsDetailsPanel.setAttribute('class', 'costPerGuests hidden_panel');
+                    for (var i = 0; i < totalAmountForGuests.labeles.length; i++) {
+                        
+                        const gusetDetailsLabel = document.createElement('div');
+                        gusetDetailsLabel.textContent = totalAmountForGuests.labeles[i];
+                        guestsDetailsPanel.appendChild(gusetDetailsLabel);
+                        
+                    }
+                    
+                    totalNumberOfGuestsValuePanel.appendChild(guestsDetailsPanel);
+                    totalGuestsLabel.classList.add('addedGuests_click');
+                    totalGuestsLabel.onclick = function(event) {
+                        
+                        if (guestsDetailsPanel.classList.contains('hidden_panel') === true) {
+                            
+                            guestsDetailsPanel.classList.remove('hidden_panel');
+                            
+                        } else {
+                            
+                            guestsDetailsPanel.classList.add('hidden_panel');
+                            
+                        }
+                        
+                    };
+                    
+                }
+                
                 if (responseLimitGuests.isGuests === true) {
                     
                     totalNumberOfGuestsPanel.classList.remove('error_empty_value');
@@ -10620,8 +10809,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                 post.selectedOptions = JSON.stringify(selectedOptions);
                 
             }
-            
-            
             
             
             if (postGuests.length > 0) {

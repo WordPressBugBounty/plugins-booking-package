@@ -2791,6 +2791,7 @@
         this._numberFormatter = numberFormatter;
         this._currency_info = currency_info;
         this._taxes = [];
+        this._prefix = 'booking_package_';
         this._visitorsDetails = {};
         this._servicesControl = null;
         if(typeof i18n == 'object'){
@@ -2808,6 +2809,12 @@
             this._console.log = debug.getConsoleLog();
             
         }
+        
+    };
+    
+    TAXES.prototype.setPrefix = function(prefix) {
+        
+        this._prefix = prefix;
         
     };
     
@@ -3283,11 +3290,11 @@
             if ((tax.type == 'tax' && tax.tax == 'tax_exclusive') || tax.type == 'surcharge') {
                 
                 var cost = parseInt(tax.taxValue);
-                var goods = {label: tax.name, amount: cost, applicantCount: 1, type: tax.type};
+                var goods = {id: tax.key, label: tax.name, amount: cost, applicantCount: 1, type: tax.type};
                 if (tax.type == 'surcharge') {
                     
                     cost *= applicantCount;
-                    goods = {label: tax.name, amount: cost, applicantCount: applicantCount, type: tax.type};
+                    goods = {id: tax.key, label: tax.name, amount: cost, applicantCount: applicantCount, type: tax.type};
                     
                 }
                 totalCost += cost;
@@ -3438,6 +3445,7 @@
                     var breakdownPanel = object._element.create('div', reflectAdditionalTitle + ' * ' + format.formatCost(surcharge.taxValue, currency), null, null, null, 'hidden_panel breakdownPanel breakdownPanel_' + i, null);
                     extraChargeValuePanel.appendChild(breakdownPanel);
                     addPanel.setAttribute('data-breakdownKey', i);
+                    addPanel.id = object._prefix + 'extra_charge_details_label';
                     addPanel.classList.add('extraCharge_click');
                     addPanel.onclick = function() {
                         

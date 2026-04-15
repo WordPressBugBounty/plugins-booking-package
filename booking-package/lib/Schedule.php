@@ -3549,7 +3549,7 @@
 			$wpdb->insert(
 				$table_name, 
 				array(
-					'name' => sanitize_text_field($_POST['name']), 
+					'name' => sanitize_text_field( wp_unslash( $_POST['name'] ) ), 
 					'type' => sanitize_text_field($_POST['type']), 
 					'status' => sanitize_text_field($_POST['status']), 
 					'courseTitle' => sanitize_text_field( __('Service', 'booking-package') ), 
@@ -3593,7 +3593,7 @@
 					'paymentMethod' => sanitize_text_field($_POST['paymentMethod']),
 					'email_from' => sanitize_text_field(trim($_POST['email_from'])),
 					'email_to' => sanitize_text_field(trim($_POST['email_to'])),
-					'email_from_title' => sanitize_text_field(trim($_POST['email_from_title'])),
+					'email_from_title' => sanitize_text_field( wp_unslash( trim( $_POST['email_from_title'] ) ) ),
 					'servicesPage' => $_POST['servicesPage'],
 					'calenarPage' => $_POST['calenarPage'],
 					'schedulesPage' => $_POST['schedulesPage'],
@@ -3994,7 +3994,7 @@
 				$bool = $wpdb->update(
 					$table_name,
 					array(
-						'name' => sanitize_text_field($_POST['name']), 
+						'name' => sanitize_text_field( wp_unslash( $_POST['name'] ) ), 
 						'status' => sanitize_text_field($_POST['status']), 
 						'courseTitle' => sanitize_text_field( __('Service', 'booking-package') ),
 						'courseBool' => intval($_POST['courseBool']),
@@ -4035,7 +4035,7 @@
 						'paymentMethod' => sanitize_text_field($_POST['paymentMethod']),
 						'email_from' => sanitize_text_field(trim($_POST['email_from'])),
 						'email_to' => sanitize_text_field(trim($_POST['email_to'])),
-						'email_from_title' => sanitize_text_field(trim($_POST['email_from_title'])),
+						'email_from_title' => sanitize_text_field( wp_unslash( trim( $_POST['email_from_title'] ) ) ),
 						'servicesPage' => $_POST['servicesPage'],
 						'calenarPage' => $_POST['calenarPage'],
 						'schedulesPage' => $_POST['schedulesPage'],
@@ -8799,14 +8799,19 @@
     		
     	}
     	
-    	public function getTaxesDetailsForVisitor($bookingID, $applicantCount, $totalCost) {
+    	public function getTaxesDetailsForVisitor($bookingID, $applicantCount, $taxes, $totalCost) {
     		
     		global $wpdb;
-    		$taxes = array();
-    		$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			$sql = $wpdb->prepare("SELECT `taxes` FROM " . $table_name . " WHERE `key` = %d;", array(intval($bookingID)));
-			$row = $wpdb->get_row($sql, ARRAY_A);
-			$taxes = json_decode($row['taxes'], true);
+    		if ($bookingID !== null) {
+    			
+    			$taxes = array();
+	    		$table_name = $wpdb->prefix . "booking_package_booked_customers";
+				$sql = $wpdb->prepare("SELECT `taxes` FROM " . $table_name . " WHERE `key` = %d;", array(intval($bookingID)));
+				$row = $wpdb->get_row($sql, ARRAY_A);
+				$taxes = json_decode($row['taxes'], true);
+    			
+    		}
+    		
 			
 			usort($taxes, function ($a, $b) {
 				
@@ -8942,55 +8947,218 @@
 		public function intentForStripe() {
 			
 			global $wpdb;
-			$currency = get_option($this->prefix . "currency", 'usd');
-			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			$response = $creditCard->intentForStripe($secret_key, $_POST['amount'], $currency);
-			return $response;
+			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
+			if ($verifyAmount !== false && $verifyAmount !== 0) {
+				
+				$currency = get_option($this->prefix . "currency", 'usd');
+				$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+				$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+				$response = $creditCard->intentForStripe($secret_key, $verifyAmount, $currency);
+				return $response;
+				
+			}
+			
+			return array('status' => false);
 			
 		}
 		
 		public function intentForStripeExpressCheckout() {
 			
 			global $wpdb;
-			$currency = get_option($this->prefix . "currency", 'usd');
-			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			$response = $creditCard->intentForStripeExpressCheckout($secret_key, $_POST['amount'], $currency);
-			return $response;
+			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
+			if ($verifyAmount !== false && $verifyAmount !== 0) {
+				
+				$currency = get_option($this->prefix . "currency", 'usd');
+				$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+				$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+				$response = $creditCard->intentForStripeExpressCheckout($secret_key, $verifyAmount, $currency);
+				return $response;
+				
+			}
+			
+			return array('status' => false);
 			
 		}
 		
 		public function intentForStripePayPay() {
 			
 			global $wpdb;
-			$currency = get_option($this->prefix . "currency", 'jpy');
-			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			$response = $creditCard->intentForStripePayPay($secret_key, $_POST['amount'], $currency);
-			return $response;
+			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
+			if ($verifyAmount !== false && $verifyAmount !== 0) {
+				
+				$currency = get_option($this->prefix . "currency", 'jpy');
+				$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+				$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+				$response = $creditCard->intentForStripePayPay($secret_key, $verifyAmount, $currency);
+				return $response;
+				
+			}
+			
+			return array('status' => false);
 			
 		}
 		
 		public function intentForStripeKonbini() {
 			
 			global $wpdb;
-			$currency = get_option($this->prefix . "currency", 'jpy');
-			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
-			$expiresDate = date('U') + (intval(get_option($this->prefix . "stripe_konbini_expiration_date", 1440)) * 60);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			$response = $creditCard->intentForStripeKonbini($secret_key, $_POST['amount'], $currency, $expiresDate);
-			return $response;
+			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
+			if ($verifyAmount !== false && $verifyAmount !== 0) {
+				
+				$currency = get_option($this->prefix . "currency", 'jpy');
+				$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+				$expiresDate = date('U') + (intval(get_option($this->prefix . "stripe_konbini_expiration_date", 1440)) * 60);
+				$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+				$response = $creditCard->intentForStripeKonbini($secret_key, $verifyAmount, $currency, $expiresDate);
+				return $response;
+				
+			}
+			
+			return array('status' => false);
 			
 		}
 		
-		public function updateIntentForStripe() {
+		public function getVerifyAmountForStripePayments($amount) {
 			
 			global $wpdb;
-			$secret_key = get_option($this->prefix . "stripe_secret_key", null);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			$response = $creditCard->updateIntentForStripe($secret_key, $_POST['amount'], $_POST['id']);
-			return $response;
+			$verifyAmount = 0;
+			$coupon = null;
+			$services = array();
+			$responseGuests = array();
+			$guests = array();
+			$applicantCount = intval($_POST['applicantCount']);
+			$reflectServiceCount = 1;
+			$reflectAdditionalCount = 1;
+			$accountKey = 1;
+			$accountCalendarKey = 1;
+			if (isset($_POST['accountKey'])) {
+				
+				$accountKey = intval($_POST['accountKey']);
+				$accountCalendarKey = intval($_POST['accountKey']);
+				
+			}
+			
+			$calendarAccount = $this->getCalendarAccount($accountKey);
+			
+			$table_name = $wpdb->prefix . "booking_package_schedules";
+    		$sql = $wpdb->prepare(
+    			"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
+    			array(intval($_POST['timeKey']))
+    		);
+    		$row = $wpdb->get_row($sql, ARRAY_A);
+			if (is_null($row)) {
+				
+				return false;
+				
+			} else {
+				
+				$sql_start_unixTime = $row['unixTime'];
+				$bookingYMD = intval($row['year'] . sprintf('%02d%02d', $row['month'], $row['day']));
+				if ($calendarAccount['type'] == "hotel" && isset($_POST['json'])) {
+					
+					$accommodationDetails = $this->createAccommodationDetails($accountKey, $accountCalendarKey, $_POST['json'], $sql_start_unixTime, $applicantCount, 'book', null);
+					if (isset($accommodationDetails['status']) && $accommodationDetails['status'] == "error") {
+						
+						return false;
+						
+					}
+					$verifyAmount = $this->getAmount(null, $calendarAccount, $accommodationDetails, null, null, null, null);
+					
+				} else {
+					
+					if (isset($_POST['couponID'])) {
+						
+						$couponResponse = $this->serachCoupons($row['unixTime'], $_POST['couponID'], $accountKey);
+						if (intval($couponResponse['status']) == 1) {
+							
+							$coupon = $couponResponse['coupon'];
+							
+						}
+						
+					}
+					
+					if (isset($_POST['guests']) && intval($calendarAccount['guestsBool']) == 1) {
+						
+						$responseGuests = $this->getSelectedGuests($calendarAccount, $_POST['guests'] );
+						$guests = $responseGuests['guests'];
+						
+					}
+					
+					if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
+						
+						#$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $responseGuests['guests'], "selectedOptionsList", $coupon, $applicantCount);
+						$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $reflectServiceCount);
+						$services = $servicesDetails['object'];
+						
+					}
+					
+					$taxes = $this->createTaxesDetails($accountKey, 'day', $verifyAmount, $bookingYMD, $applicantCount, null);
+					$verifyAmount = $this->getAmount(null, $calendarAccount, array(), $services, $responseGuests, $taxes, $coupon);
+					
+					/**
+					if ($responseGuests['isGuests'] === true) {
+						
+						$guests = $responseGuests['guests'];
+						$applicantCount = $responseGuests['applicantCount'];
+						$reflectServiceCount = $responseGuests['reflectService'];
+						$reflectAdditionalCount = $responseGuests['reflectAdditional'];
+						if ($applicantCount == 0) {
+							
+							$applicantCount = 1;
+							
+						}
+						
+						$verifyAmount += $this->getSelectedGuestTotalAmount($calendarAccount, $responseGuests['guests'], true);
+						
+					}
+					
+					
+					if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
+						
+						$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $reflectServiceCount);
+						$verifyAmount += intval($servicesDetails['cost']);
+						$services = $servicesDetails['object'];
+						foreach ((array) $services as $key => $service) {
+							
+							$row = $this->serachCourse($accountKey, $_POST['timeKey'], $service['key'], $servicesDetails, $bookingYMD);
+							if (isset($row['status']) && $row['status'] == 'error') {
+								
+								return false;
+							
+							}
+							
+						}
+						
+					}
+					
+					$taxes = $this->createTaxesDetails($accountKey, 'day', $verifyAmount, $bookingYMD, $applicantCount, null);
+					for ($i = 0; $i < count($taxes); $i++) {
+						
+						$tax = $taxes[$i];
+						if ($tax['type'] == 'tax' && $tax['tax'] == 'tax_exclusive') {
+							
+							$verifyAmount += $tax['taxValue'];
+							
+						} else if ($tax['type'] == 'surcharge') {
+							
+							$verifyAmount += $tax['taxValue'] * $reflectAdditionalCount;
+							
+						}
+						
+					}
+					**/
+				}
+				
+			}
+			
+			
+			#var_dump(intval($verifyAmount));
+			if (intval($verifyAmount) === intval($amount) && intval($verifyAmount) !== 0 && intval($amount) !== 0) {
+				
+				return intval($verifyAmount);
+				
+			}
+			
+			return false;
 			
 		}
 		
@@ -10036,7 +10204,7 @@
 						
 						$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
 						$currency = get_option($this->prefix."currency", "usd");
-						$amount = $this->getAmount($lastID, $calendarAccount, $accommodationDetails, $services, $responseGuests, $coupon);
+						$amount = $this->getAmount($lastID, $calendarAccount, $accommodationDetails, $services, $responseGuests, null, $coupon);
 						if (intval($payment_active) == 1 && !empty($secret_key)) {
 							
 							$payResponse = $creditCard->pay($_POST['payType'], $stripe_konbini, $stripe_paypay, $public_key, $secret_key, $_POST['payToken'], $payment_live, $amount, $currency, $lastID, $visitorName, $visitorEmail, $visitorBookingDate);
@@ -11110,7 +11278,20 @@
 				$unixTime = date('U');
 				if ($isExtensionsValid === true) {
 					
-					$unixTime = $unixTime + (intval($calendarAccount['allowCancellationVisitor']) * 60);
+					$current_cancellation_limit_time = intval($calendarAccount['allowCancellationVisitor']);
+					$cancellation_limit_time = apply_filters( 'booking_package_override_cancellation_limit_time', $current_cancellation_limit_time, intval($calendarAccount['key']) );
+					if ( !is_numeric($cancellation_limit_time) || $cancellation_limit_time <= 0 ) {
+					    
+					    $cancellation_limit_time = $current_cancellation_limit_time;
+					    
+					} else {
+					    
+					    $cancellation_limit_time = intval($cancellation_limit_time);
+					    
+					}
+					
+					$unixTime = $unixTime + ($cancellation_limit_time * 60);
+					#$unixTime = $unixTime + (intval($calendarAccount['allowCancellationVisitor']) * 60);
 					
 				} else {
 					
@@ -12667,6 +12848,8 @@
 			$value = $email;
 			if (!is_null($title) && strlen($title) != 0) {
 				
+				$title = stripslashes($title);
+				$title = wp_specialchars_decode($title, ENT_QUOTES);
 				$value = sprintf("%s <%s>", $title, $email);
 				
 			}
@@ -13486,7 +13669,7 @@
     	}
 		
 		
-		public function getAmount($bookingID, $calendarAccount, $accommodationDetails, $services = null, $guests = null, $coupon = null) {
+		public function getAmount($bookingID, $calendarAccount, $accommodationDetails, $services = null, $guests = null, $taxes = null, $coupon = null) {
 			
 			$amount = 0;
 			$reflectAdditional = 1;
@@ -13540,7 +13723,7 @@
 				$amount += $this->getSelectedGuestTotalAmount($calendarAccount, $guestsList, true);
 				$amount = $this->getDiscountCostByCoupon($coupon, $amount);
 				
-				$taxes = $this->getTaxesDetailsForVisitor($bookingID, $reflectAdditional, $amount);
+				$taxes = $this->getTaxesDetailsForVisitor($bookingID, $reflectAdditional, $taxes, $amount);
 				for ($i = 0; $i < count($taxes); $i++) {
 					
 					$tax = $taxes[$i];
@@ -13733,7 +13916,7 @@
 					
 				}
 				
-				$amount = $this->getAmount($bookingID, $calendarAccount, $accommodationDetails, $services, $guests, $coupon);
+				$amount = $this->getAmount($bookingID, $calendarAccount, $accommodationDetails, $services, $guests, null, $coupon);
 				$amount = $this->formatCost($amount, $currency);
 				$contents = str_replace('[totalPaymentAmount]', $amount, $contents);
 				$contents = str_replace('[totalAmount]', $amount, $contents);
@@ -13956,9 +14139,9 @@
 							
 							#$details .= ' * ' . $reflectAdditionalTitle;
 							$details = $tax['name'] . ': ' . $reflectAdditionalTitle . ' * ' . $cost;
+							array_push($surchargesDetails, $details);
 							
 						}
-						array_push($surchargesDetails, $details);
 						
 					}
 					
@@ -14963,7 +15146,19 @@
 				}
 				
 				date_default_timezone_set($calendarAccount['timezone']);
-				$unixTime = date('U') + $calendarAccount['bookingReminder'] * 60;
+				$current_reminder_notification_time = intval($calendarAccount['bookingReminder']);
+				$reminder_notification_time = apply_filters( 'booking_package_override_reminder_notification_time', $current_reminder_notification_time, intval($calendarAccount['key']) );
+				if ( !is_numeric( $reminder_notification_time ) || $reminder_notification_time < 60 || $reminder_notification_time % 60 !== 0 ) {
+					
+					$reminder_notification_time = $current_reminder_notification_time;
+					
+				} else {
+					
+					$reminder_notification_time = intval($reminder_notification_time);
+					
+				}
+				
+				$unixTime = date('U') + $reminder_notification_time * 60;
 				$month = date('m', $unixTime);
 				$day = date('d', $unixTime);
 				$year = date('Y', $unixTime);
