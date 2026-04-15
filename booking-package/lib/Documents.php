@@ -57,11 +57,11 @@ $document = <<<EOF
     
     function my_custom_cancellation_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
         // Check if the target is Calendar Account ID 5<br>
-        if ( $calendar_account_id === 5 ) {<br>
+        if ( \$calendar_account_id === 5 ) {<br>
             // Override the limit time to 90 minutes.<br>
             return 90;<br>
         }<br>
-        // Return 0 (or $current_cancellation_limit_time) to use the original setting<br>
+        // Return 0 (or \$current_cancellation_limit_time) to use the original setting<br>
         return 0;<br>
     }<br>
     add_filter( 'booking_package_override_cancellation_limit_time', 'my_custom_cancellation_time', 10, 1 );<br>
@@ -111,7 +111,7 @@ $document = <<<EOF
     */<br>
     
     function my_custom_reminder_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
-        if ( $calendar_account_id === 5 ) {<br>
+        if ( \$calendar_account_id === 5 ) {<br>
             // Override the notification time to 6120 minutes (4 days and 6 hours). <br>
             // The value must be an integer of 60 or greater.<br>
             return 6120;<br>
