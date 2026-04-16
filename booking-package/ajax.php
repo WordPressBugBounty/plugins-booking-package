@@ -1,5 +1,11 @@
 <?php
     
+    if (!defined('ABSPATH')) {
+		
+		exit;
+		
+	}
+    
     /** Load WordPress Bootstrap */
 	require_once dirname( __DIR__, 3 ) . '/wp-load.php';
 	

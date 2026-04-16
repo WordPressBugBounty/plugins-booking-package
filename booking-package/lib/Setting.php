@@ -640,7 +640,7 @@
                     ), 
                     'ajax_url' => array('name' => __('AJAX URL for Public Page', 'booking-package'), 'value' => 'ajax', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                     array(
-                        'ajax' => plugins_url() . '/booking-package/ajax.php',
+                        /** 'ajax' => plugins_url() . '/booking-package/ajax.php', **/
                         'top' => get_home_url(),
                         'admin-ajax' => admin_url('admin-ajax.php'),
                     )), 
