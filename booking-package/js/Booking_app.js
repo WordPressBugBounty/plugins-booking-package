@@ -9590,7 +9590,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         payPalPanel.id = "booking-package_pay_with_paypal";
         payPalPanel.classList.add("hidden_panel");
         cartPanel.appendChild(payPalPanel);
-        
+        const calendarAccount = object._calendarAccount;
         
         var locale = 'en_US';
         if (object._locale != null && object._locale != '') {
@@ -9640,7 +9640,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     var guestsList = object.getGuestsList();
                     const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
-                    console.log(totalAmountForGuests);
+                    //console.log(totalAmountForGuests);
                     total += totalAmountForGuests.totalAmount;
                     
                 }
