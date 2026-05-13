@@ -1,4 +1,10 @@
-
+	
+	function Booking_App_Fetch() {
+		
+		
+		
+	}
+	
 	function Booking_App_XMLHttp(url, data, webApp, callback, responseCallback) {
 		
 		if(webApp == true){
@@ -141,8 +147,7 @@
 						object.errorJSONFormat(xhr.responseText, xhr.status, 'errorInServer');
 						
 					}
-					//window.alert("Response Error. HTTP Status: " + xhr.status);
-					//callback({status: 0, status_code: xhr.status});
+					
 					
 				}
 				
@@ -174,6 +179,14 @@
 			
 			xhr.open("POST", url);
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			
+			if (data.booking_package_wp_rest_nonce != null) {
+				
+				xhr.setRequestHeader('X-WP-Nonce', data.booking_package_wp_rest_nonce);
+				xhr.withCredentials = true;
+				
+			}
+			
 			xhr.send(this.encodeHTMLForm(data));
 			
 		} catch(e) {

@@ -16,6 +16,12 @@
         this._responseText = null;
         this._front_end = front_end;
         this._plugin_name = null;
+        this._wp_rest_nonce = null;
+        if (data.wp_rest_nonce != null) {
+            
+            this._wp_rest_nonce = data.wp_rest_nonce;
+            
+        }
         
         var locale = 'en_US';
         if (data != null && data.locale != null) {
@@ -113,6 +119,12 @@
                 page: window.location.href,
             };
             
+            if (this._wp_rest_nonce != null) {
+                
+                post.booking_package_wp_rest_nonce = this._wp_rest_nonce;
+                
+            }
+            
             if (this._plugin_name != null) {
                 
                 post.plugin_name = this._plugin_name;
@@ -126,8 +138,13 @@
                 
             }
             
-            fetch(this._url)
-                .then(response => response.text()).then(function (text) {
+            var xmlHttp = new Booking_App_XMLHttp(object._data.url, post, 0, function(response){
+                
+                object.setResponseText(null);
+                
+            });
+            /**
+            fetch(this._url).then(response => response.text()).then(function (text) {
                     
                     var lines = text.split("\n");
                     post.source = lines[object._line - 1];
@@ -140,7 +157,7 @@
                     
                 }
             );
-            
+            **/
             
         } else {
             

@@ -7,6 +7,9 @@
 /* globals Confirm */
 /* globals Booking_Package_DatabaseUpdateErrors */
 /* globals Booking_Package_Elements */
+/* globals my_editor_settings */
+/* globals jQuery */
+/* globals wp */
 
 /**
 import { EditorState } from "https://cdn.skypack.dev/@codemirror/state";
@@ -77,6 +80,8 @@ window.addEventListener('error', function(event) {
 		this._tab = null;
 		this._prefix = setting_data.prefix;
 		this._my_subscription_url = setting_data.my_subscription_url
+		this._wpEditor = null;
+		this._wpJavaScriptEditor = null;
 		if (setting_data.tab != null) {
 			
 			this._tab = setting_data.tab;
@@ -1145,66 +1150,51 @@ window.addEventListener('error', function(event) {
 		
 		var object = this;
 		object._console.log("cssPanel");
-		var css_textarea = document.getElementById("css");
-		var editor = null;
-		if (object._countCssPanel == 0) {
-			/**
-			object._jsEditor = CodeMirror.fromTextArea(
-				css_textarea, 
-				{
-					mode: "css",
-					lineNumbers: true,
-					indentUnit: 4,
-				}
-			);
-			**/
+		var $textarea = jQuery('#css_textarea');
+		if ($textarea.length === 0) return;
+		
+		if (object._wpEditor == null) {
 			
-			require.config({
-				paths: {
-					'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs'
-				}
-			});
-			
-			require(['vs/editor/editor.main'], function () {
+			if (typeof wp !== 'undefined' && wp.codeEditor && typeof my_editor_settings !== 'undefined') {
 				
-				editor = monaco.editor.create(document.getElementById('css_editor'), {
-					value: css_textarea.value,
-					language: 'css',
-					theme: 'vs-light'
-				});
-			});
+				var settings = jQuery.extend(true, {}, my_editor_settings);
+				settings.codemirror.mode = "css";
+				settings.codemirror.lint = false;
+				settings.codemirror.indentUnit = 4;
+				settings.codemirror.lineNumbers = true;
+				
+				object._wpEditor = wp.codeEditor.initialize($textarea, settings);
+            	object._wpEditor.codemirror.focus();
+				
+			}
 			
-			window.addEventListener('resize', () => {
-				editor.layout();
-		    });
-	    	
+			
+		} else {
+			
+			object._wpEditor.codemirror.refresh();
+			
 		}
-		
-		object._countCssPanel++;
-		
 		
 		document.getElementById("save_css").onclick = function() {
 			
-			//object._jsEditor.save();
-			//var value = css_textarea.value;
-			if (editor == null) {
+			if (object._wpEditor) {
 				
-				return null;
+				const value = object._wpEditor.codemirror.getValue();
+				console.log(value);
+				object._console.log(value);
+				var loadingPanel = document.getElementById("loadingPanel");
+		    	loadingPanel.classList.remove("hidden_panel");
+		    	
+		    	var postData = {mode: 'updateCss', nonce: object._nonce, action: object._action, value: value};
+				object._console.log(postData);
+		    	var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
+					
+					object._console.log(json);	
+					loadingPanel.classList.add("hidden_panel");
+										
+				});
 				
 			}
-			const value = editor.getValue();
-			object._console.log(value);
-			var loadingPanel = document.getElementById("loadingPanel");
-        	loadingPanel.classList.remove("hidden_panel");
-        	
-        	var postData = {mode: 'updateCss', nonce: object._nonce, action: object._action, value: value};
-			object._console.log(postData);
-        	var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
-				
-				object._console.log(json);	
-				loadingPanel.classList.add("hidden_panel");
-									
-			});
 			
 		}
 		
@@ -1215,67 +1205,53 @@ window.addEventListener('error', function(event) {
 		var object = this;
 		object._console.log("javascriptPanel");
 		object._console.log("_isExtensionsValid = " + object._isExtensionsValid);
-		var javascript_textarea = document.getElementById("javascript_booking_package");
-		var editor = null;
-		if (object._countJavascriptPanel == 0) {
-			/**
-			object._jsEditor = CodeMirror.fromTextArea(
-				javascript_textarea, 
-				{
-					mode: "javascript",
-					lineNumbers: true,
-					indentUnit: 4,
-				}
-			);
-			**/
+		var $textarea = jQuery('#javascript_booking_package');
+		if ($textarea.length === 0) return;
+		
+		if (object._wpJavaScriptEditor == null) {
 			
-			require.config({
-				paths: {
-					'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs'
-				}
-			});
-			
-			require(['vs/editor/editor.main'], function () {
+			if (typeof wp !== 'undefined' && wp.codeEditor && typeof my_editor_settings !== 'undefined') {
 				
-				editor = monaco.editor.create(document.getElementById('javascript_editor'), {
-					value: javascript_textarea.value,
-					language: 'javascript',
-					theme: 'vs-light'
-				});
-			});
+				var settings = jQuery.extend(true, {}, my_editor_settings);
+				settings.codemirror.mode = "javascript";
+				settings.codemirror.lint = false;
+				settings.codemirror.indentUnit = 4;
+				settings.codemirror.lineNumbers = true;
+				
+				object._wpJavaScriptEditor = wp.codeEditor.initialize($textarea, settings);
+            	object._wpJavaScriptEditor.codemirror.focus();
+				
+			}
 			
-			window.addEventListener('resize', () => {
-				editor.layout();
-		    });
+			
+		} else {
+			
+			object._wpJavaScriptEditor.codemirror.refresh();
 			
 		}
 		
-		object._countJavascriptPanel++;
 		
 		if (object._isExtensionsValid == 1) {
 			
 			document.getElementById("save_javascript").onclick = function() {
 				
-				//object._jsEditor.save();
-				//var value = javascript_textarea.value;
-				if (editor == null) {
+				if (object._wpJavaScriptEditor) {
 					
-					return null;
+					const value = object._wpJavaScriptEditor.codemirror.getValue();
+					object._console.log(value);
+					var loadingPanel = document.getElementById("loadingPanel");
+					loadingPanel.classList.remove("hidden_panel");
+					
+					var postData = {mode: 'updateJavaScript', nonce: object._nonce, action: object._action, value: value};
+					object._console.log(postData);
+					var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
+						
+						object._console.log(json);	
+						loadingPanel.classList.add("hidden_panel");
+						
+					});
 					
 				}
-				const value = editor.getValue();
-				object._console.log(value);
-				var loadingPanel = document.getElementById("loadingPanel");
-				loadingPanel.classList.remove("hidden_panel");
-				
-				var postData = {mode: 'updateJavaScript', nonce: object._nonce, action: object._action, value: value};
-				object._console.log(postData);
-				var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
-					
-					object._console.log(json);	
-					loadingPanel.classList.add("hidden_panel");
-					
-				});
 				
 			}
 			

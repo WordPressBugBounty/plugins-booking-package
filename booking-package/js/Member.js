@@ -25,6 +25,7 @@
         //this._subscriptions = null;
         this._url = url;
         this._nonce = nonce;
+        this._wp_rest_nonce = null;
         this._action = action;
         this._function = {name: "root", post: {}};
         this._top = 0;
@@ -42,6 +43,13 @@
             this._numberFormatter = true;
             
         }
+        
+        if (reservation_info.wp_rest_nonce != null) {
+            
+            this._wp_rest_nonce = reservation_info.wp_rest_nonce;
+            
+        }
+        
         this._currency = reservation_info.currency;
         this._currencies = reservation_info.currencies;
         this._currency_info = {locale: this._locale, currency: this._currency, info: this._currencies[this._currency]};
@@ -447,7 +455,7 @@
                     
                 }
                     
-                var post = {mode: 'user_login_for_frontend', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, user_login: user_login, user_password: user_password, remember: remember, plugin: 'booking-package'};
+                var post = {mode: 'user_login_for_frontend', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, user_login: user_login, user_password: user_password, remember: remember, plugin: 'booking-package'};
                 var sendToServer = function() {
                     
                     object._console.log(post);
@@ -908,7 +916,7 @@
         
         
         
-        var post = {mode: 'getUsersBookedList', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, offset: offset, user_id: setting.current_member_id, locale: object._locale};
+        var post = {mode: 'getUsersBookedList', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, offset: offset, user_id: setting.current_member_id, locale: object._locale};
         var bookingBlockPanel = document.getElementById("bookingBlockPanel");
         bookingBlockPanel.classList.remove("hidden_panel");
         new Booking_App_XMLHttp(object._url, post, false, function(response) {
@@ -1149,7 +1157,7 @@
             cancelButton.onclick = function() {
                 
                 object._console.log(reservationData);
-                var post = {booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, mode: 'cancelUserBooking', key: reservationData.key, accountKey: reservationData.accountKey, token: reservationData.cancellationToken, status: 'canceled', user_id: setting.current_member_id, sendEmail: 1};
+                var post = {booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, mode: 'cancelUserBooking', key: reservationData.key, accountKey: reservationData.accountKey, token: reservationData.cancellationToken, status: 'canceled', user_id: setting.current_member_id, sendEmail: 1};
                 object._console.log(post);
                 if (window.confirm(object._i18n.get("Can we really cancel your booking?"))) {
                     
@@ -1353,7 +1361,7 @@
     Booking_Package_Member.prototype.deleteSubscription = function(product, callback){
         
         var object = this;
-        var post = {mode: 'deleteSubscription', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, product: product.product};
+        var post = {mode: 'deleteSubscription', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, product: product.product};
         var bookingBlockPanel = document.getElementById("bookingBlockPanel");
         bookingBlockPanel.classList.remove("hidden_panel");
         new Booking_App_XMLHttp(object._url, post, false, function(response){
@@ -1390,7 +1398,7 @@
         object._console.log("delete_member");
         if(window.confirm(object._i18n.get("Do you really want to delete the license as a member?"))){
             
-            var post = {mode: 'deleteUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action};
+            var post = {mode: 'deleteUser', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action};
             var bookingBlockPanel = document.getElementById("bookingBlockPanel");
             bookingBlockPanel.classList.remove("hidden_panel");
             new Booking_App_XMLHttp(object._url, post, false, function(response){
@@ -1502,7 +1510,7 @@
                 
             }
             
-            var post = {mode: 'updateUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, user_login: setting.user_login, accountKey: object._calendarAccount.key, customUserFields: JSON.stringify(customUserFields)};
+            var post = {mode: 'updateUser', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, user_login: setting.user_login, accountKey: object._calendarAccount.key, customUserFields: JSON.stringify(customUserFields)};
             if (document.getElementById("booking-package-permalink") != null) {
                 
                 post.permalink = document.getElementById("booking-package-permalink").value;
@@ -1523,7 +1531,7 @@
                 object._console.log(post);
                 post.mode = object._prefix + 'sendVerificationCode';
                 post.booking_package_user_action = 1;
-                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
+                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
                     
                     if (response === true) {
                         
@@ -1676,7 +1684,7 @@
             };
             
             var registeringErrorMessage = '';
-            var post = {mode: 'createUser', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action, accountKey: object._calendarAccount.key, user_login: user_data.user_login, user_email: user_data.user_email, user_pass: user_data.user_pass, customUserFields: JSON.stringify(customUserFields)};
+            var post = {mode: 'createUser', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, accountKey: object._calendarAccount.key, user_login: user_data.user_login, user_email: user_data.user_email, user_pass: user_data.user_pass, customUserFields: JSON.stringify(customUserFields)};
             for (var key in user_data) {
                 
                 let errorPanel = null;
@@ -1730,7 +1738,7 @@
                 
                 post.mode = object._prefix + 'sendVerificationCode';
                 post.booking_package_user_action = 1;
-                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
+                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
                     
                     if (response === true) {
                         
@@ -1862,7 +1870,7 @@
     Booking_Package_Member.prototype.logout = function(login, logout, register, callback){
         
         var object = this;
-        var post = {mode: 'logout', booking_package_nonce: object._nonce, plugin_name: object._plugin_name, action: object._action};
+        var post = {mode: 'logout', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action};
         object._console.log(post);
         var bookingBlockPanel = document.getElementById("bookingBlockPanel");
         bookingBlockPanel.classList.remove("hidden_panel");

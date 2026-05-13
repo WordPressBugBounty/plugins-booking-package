@@ -2384,12 +2384,17 @@
         
     };
     
-    Booking_App_ObjectsControl.prototype.sendbookingVerificationCode = function(url, action, nonce, plugin_name, prefix, post, bookingVerificationCode, callback) {
+    Booking_App_ObjectsControl.prototype.sendbookingVerificationCode = function(url, action, nonce, wp_rest_nonce, plugin_name, prefix, post, bookingVerificationCode, callback) {
         
         var object = this;
         if (bookingVerificationCode === true) {
             
             post.mode = prefix + 'sendVerificationCode';
+            if (wp_rest_nonce != null) {
+                
+                post.booking_package_wp_rest_nonce = wp_rest_nonce;
+                
+            }
             object._console.log(post);
             var bookingBlockPanel = document.getElementById("bookingBlockPanel");
             bookingBlockPanel.classList.remove("hidden_panel");
@@ -2428,7 +2433,12 @@
                         if (verificationCode.length == 6 && isNaN(Number(verificationCode)) === false) {
                             
                             var checkVerificationCodePost = {booking_package_nonce: nonce, plugin_name: plugin_name, action: action, mode: prefix + 'checkVerificationCode', verificationCode: verificationCode};
-                            object._console.log(post);
+                            if (wp_rest_nonce != null) {
+                                
+                                checkVerificationCodePost.booking_package_wp_rest_nonce = wp_rest_nonce;
+                                
+                            }
+                            object._console.log(checkVerificationCodePost);
                             var bookingBlockPanel = document.getElementById("bookingBlockPanel");
                             bookingBlockPanel.classList.remove("hidden_panel");
                             new Booking_App_XMLHttp(url, checkVerificationCodePost, false, function(response) {

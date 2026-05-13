@@ -23,6 +23,8 @@
         
         public $extraChargeForTimeSlotBooking = 0;
         
+        public $restUrl = 0;
+        
         public $form = array(
         	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'last_name', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -48,6 +50,12 @@
             $this->prefix = $prefix;
             $this->pluginName = $pluginName;
             $this->userRoleName = $userRoleName;
+            
+        }
+        
+        public function setRestUrl($restUrl) {
+            
+            $this->restUrl = $restUrl;
             
         }
         
@@ -638,9 +646,10 @@
                             '1825' => sprintf(__('%d years', 'booking-package'), 5), 
                         )
                     ), 
-                    'ajax_url' => array('name' => __('AJAX URL for Public Page', 'booking-package'), 'value' => 'ajax', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
+                    'ajax_url' => array('name' => __('AJAX URL for Public Page', 'booking-package'), 'value' => 'top', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                     array(
                         /** 'ajax' => plugins_url() . '/booking-package/ajax.php', **/
+                        'rest_url' => rest_url( 'booking-package/v1/request' ),
                         'top' => get_home_url(),
                         'admin-ajax' => admin_url('admin-ajax.php'),
                     )), 
@@ -905,6 +914,11 @@
                 
             }
             
+            if ($this->restUrl === 0) {
+                
+                unset($list['General']['ajax_url']['valueList']['rest_url']);
+                
+            }
             
             foreach ((array) $list as $listKey => $listValue) {
                 
@@ -947,6 +961,8 @@
                 $list[$listKey] = $category;
                 
             }
+            
+            
             
             return $list;
             
@@ -6831,6 +6847,7 @@
             $response = array('status' => 'error');
             $subscriptions = $this->upgradePlan('get');
             $expiration_date = intval($subscriptions['expiration_date_for_subscriptions']);
+            
             if ( intval($subscriptions['expiration_date_for_subscriptions']) == 0 && $countExpiration === false ) {
                 
                 if ($this->getSubscriptionStatus() === 'Canceled') {
@@ -6843,39 +6860,6 @@
                 return false;
                 
             }
-            /**
-            $numberOfVerificationAttemptsForExpiration = get_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', null);
-            if ( is_null($numberOfVerificationAttemptsForExpiration) ) {
-                
-                $numberOfVerificationAttemptsForExpiration = 0;
-                add_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', $numberOfVerificationAttemptsForExpiration, '', 'no');
-                
-            }
-            
-            if (
-                $countExpiration === true && 
-                intval($subscriptions['expiration_date_for_subscriptions']) == 0 && 
-                intval($numberOfVerificationAttemptsForExpiration) < 3 && 
-                empty($subscriptions['customer_id_for_subscriptions']) === false && 
-                empty($subscriptions['id_for_subscriptions']) === false
-            ) {
-                
-                $expiration_date = date('U') - 1440;
-                
-            } else if (
-                $countExpiration === true && 
-                (
-                    intval($numberOfVerificationAttemptsForExpiration) >= 3 || 
-                    empty($subscriptions['customer_id_for_subscriptions']) || 
-                    empty($subscriptions['id_for_subscriptions']))
-                ) 
-            {
-                
-                $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", 0);
-                return false;
-                
-            }
-            **/
             
             if ($expiration_date < date('U')) {
                 
@@ -6922,29 +6906,22 @@
                         $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
                         $this->updateSubscriptionStatus('Inactive');
                         $this->notificationSubscriptionRenewalFailed(true);
-                        /**
-                        if ($countExpiration === true) {
-                            
-                            if ($numberOfVerificationAttemptsForExpiration === 3) {
-                                
-                                $this->notificationSubscriptionRenewalFailed();
-                                
-                            }
-                            $numberOfVerificationAttemptsForExpiration++;
-                            update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', $numberOfVerificationAttemptsForExpiration);
-                            
-                        }
-                        **/
-                        
                         return false;
                         
                     }
+                    
+                } else {
+                    
+                    $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
+                    $this->updateSubscriptionStatus('Inactive');
+                    $this->notificationSubscriptionRenewalFailed(true);
+                    return false;
                     
                 }
                 
             }
             
-            if ($this->getSubscriptionStatus() !== 'Canceled') {
+            if ($this->getSubscriptionStatus() !== 'Canceled' && intval($statusCode) == 200) {
                 
                 $this->updateSubscriptionStatus('Active');
                 

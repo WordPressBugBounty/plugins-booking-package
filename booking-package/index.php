@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.10
+Version:     1.7.11
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -124,6 +124,8 @@ Domain Path: /languages
 		
 		public $extraChargeForTimeSlotBooking = 0;
 		
+		public $restUrl = 0;
+		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
 			require_once(plugin_dir_path( __FILE__ ) . 'lib/Setting.php');
@@ -137,8 +139,14 @@ Domain Path: /languages
             require_once(plugin_dir_path( __FILE__ ) . 'lib/Nonce.php');
 			
             global $wpdb;
-            $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'ajax');
+            $this->ajaxUrl = get_option($this->prefix . 'ajax_url', 'top');
             if ($this->ajaxUrl === 'ajax') {
+            	
+            	$this->ajaxUrl = 'top';
+            	
+            }
+            
+            if ($this->restUrl === 0 && $this->ajaxUrl === 'rest_url') {
             	
             	$this->ajaxUrl = 'top';
             	
@@ -146,14 +154,8 @@ Domain Path: /languages
             
             
 			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
-			if ($this->ajaxNonceFunction === 'custom_nonce_validation') {
-				
-				#$this->ajaxNonceFunction = 'wp_verify_nonce';
-				
-			}
-			
-			
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
+            $this->setting->setRestUrl($this->restUrl);
             $this->setting->setMessagingApp($this->messagingApp);
             $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);
             $this->setting->setPayWithPayPay($this->payWithPayPay);
@@ -248,6 +250,14 @@ Domain Path: /languages
 				
 			}
 			
+			add_action('rest_api_init', function () {
+				register_rest_route('booking-package/v1', '/request', array(
+					'methods'  => 'POST', 
+					'callback' => array($this, 'wp_ajax_booking_package_for_public'),
+					'permission_callback' => '__return_true', 
+				));
+			});
+			
 			add_action('widgets_init', array($this, 'register_widget'));
 			//add_action('load-plugins.php', array($this, 'load_plugins'));
 			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
@@ -295,6 +305,20 @@ Domain Path: /languages
 				
 				if (isset($_POST['plugin_name']) && $_POST['plugin_name'] === $this->plugin_name && isset($_POST['action']) && $_POST['action'] === $this->action_public) {
 					
+					if (empty($_POST['action']) || !is_scalar($_POST['action'])) {
+						
+						wp_die('Invalid Action', 400);
+						
+					}
+					
+					send_origin_headers();
+					send_nosniff_header();
+					nocache_headers();
+					header('X-Robots-Tag: noindex');
+					
+					add_action('init', array($this, 'wp_ajax_booking_package_for_public'));
+					
+					/**
 					send_origin_headers();
 					header('Content-Type: text/html; charset=' . get_option('blog_charset'));
 					header('X-Robots-Tag: noindex');
@@ -307,6 +331,7 @@ Domain Path: /languages
 					nocache_headers();
 					
 					add_action('init', array($this, 'wp_ajax_booking_package_for_public'));
+					**/
 					
 				}
 				
@@ -2992,7 +3017,14 @@ Domain Path: /languages
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('wp-color-picker');
 			wp_enqueue_script('jquery-ui-sortable');
-			wp_enqueue_script('monaco_editor', 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs/loader.js', array(), $this->plugin_version);
+			wp_enqueue_script('underscore');
+			wp_enqueue_script('wp-util');
+			$editor_settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
+			wp_add_inline_script(
+				'setting_page', 
+				sprintf( 'var my_editor_settings = %s;', wp_json_encode( $editor_settings ) ),
+				'after'
+			);
 			
 			?>
 			
@@ -3134,7 +3166,7 @@ Domain Path: /languages
 										for ($i = 0; $i < 300; $i++) {
 											
 											print '<tr id="time_slots_' . $i . '">';
-											print	'<th>' . $i + 1 . '</th>';
+											print	'<th>' . ( $i + 1 ) . '</th>';
 											print	'<td id="time_slot_id_' . $i . '" class="timeTd">';
 											print		'<div id="access_time_' . $i . '" class="noTime" data-select="' . $i . '">access_time</div>';
 											print		'<div id="access_hour_' . $i . '" class="hidden_panel" data-select="' . $i . '"></div>';
@@ -3925,18 +3957,22 @@ Domain Path: /languages
 			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js' . $p_v, array(), $this->plugin_version);
 			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js' . $p_v, array(), $this->plugin_version);
 			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('setting_page', plugin_dir_url( __FILE__ ).'js/setting.js' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_script('setting_page', plugin_dir_url( __FILE__ ).'js/setting.js' . $p_v, array('jquery', 'underscore'), $this->plugin_version);
 			wp_localize_script('setting_page', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('setting_page', 'setting_data', $localize_script);
 			
-			#wp_enqueue_style('codemirror_css', 'https://codemirror.net/5/lib/codemirror.css', array(), $this->plugin_version);
-			#wp_enqueue_script('codemirror_js', 'https://codemirror.net/5/lib/codemirror.js', array(), $this->plugin_version);
-			#wp_enqueue_script('codemirror_css_js', 'https://codemirror.net/5/mode/css/css.js', array(), $this->plugin_version);
-			#wp_enqueue_script('codemirror_javascript_js', 'https://codemirror.net/5/mode/javascript/javascript.js', array(), $this->plugin_version);
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('wp-color-picker');
 			wp_enqueue_script('jquery-ui-sortable');
-			wp_enqueue_script('monaco_editor', 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs/loader.js', array(), $this->plugin_version);
+			wp_enqueue_script('underscore');
+			wp_enqueue_script('wp-util');
+			$editor_settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
+			wp_add_inline_script(
+				'setting_page', 
+				sprintf( 'var my_editor_settings = %s;', wp_json_encode( $editor_settings ) ),
+				'after'
+			);
+			
 			?>
 				
 				<div id="booking_package_general_settings" class="wrap">
@@ -4126,8 +4162,7 @@ Domain Path: /languages
 								
 								<div class="title">CSS</div>
 								<div style="padding-bottom: 1em;"><?php _e("Change the front-end page design by defining CSS.", 'booking-package'); ?></div>
-								<div id="css_editor" style="height: 100vh;"></div>
-								<textarea id="css" rows="50" style="display: none;"><?php print $front_end_css; ?></textarea>
+								<textarea id="css_textarea" rows="50" style=""><?php print $front_end_css; ?></textarea>
 								<div class="bottomButtonPanel"><button id="save_css" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 								
 							</div>
@@ -4142,8 +4177,7 @@ Domain Path: /languages
 									
 								}
 								?>
-								<div id="javascript_editor" style="height: 100vh;"></div>
-								<textarea id="javascript_booking_package" rows="50" style="display: none;"><?php print $front_end_javascript; ?></textarea>
+								<textarea id="javascript_booking_package" rows="50" style=""><?php print $front_end_javascript; ?></textarea>
 								<div class="bottomButtonPanel"><button id="save_javascript" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 								
 							</div>
@@ -4308,60 +4342,74 @@ Domain Path: /languages
 			
 		}
 		
-		public function wp_ajax_booking_package_for_public() {
+		public function wp_ajax_booking_package_for_public($request = null) {
 			
-			$_POST['mode'] = sanitize_text_field( esc_html($_POST['mode']) );
-			$_POST['booking_package_nonce'] = sanitize_text_field( esc_html($_POST['booking_package_nonce']) );
-			$verify_nonce = false;
-			if ($this->ajaxNonceFunction === 'check_ajax_referer' && isset($_POST['booking_package_nonce']) === true) {
+			#error_log('REST API Params: ' . print_r($request->get_params(), true));
+			if ($request instanceof WP_REST_Request) {
 				
-				$verify_nonce = check_ajax_referer($this->action_public . "_ajax", 'booking_package_nonce', false);
-				
-			} else if ($this->ajaxNonceFunction === 'wp_verify_nonce' && isset($_POST['booking_package_nonce']) === true) {
-				
-				$verify_nonce = wp_verify_nonce($_POST['booking_package_nonce'], $this->action_public . "_ajax");
-				
-			}  else if ($this->ajaxNonceFunction === 'custom_nonce_validation' && isset($_POST['booking_package_nonce']) === true) {
-				
-				if ($this->nonce->verify($_POST['booking_package_nonce'], $this->action_public . "_ajax") === true) {
+				$params = $request->get_params();
+				foreach ($params as $key => $value) {
 					
-					$verify_nonce = 1;
-					
-				}
-				
-			}
-			
-			if (intval($verify_nonce) === 1 || intval($verify_nonce) === 2) {
-				
-				$setting = $this->setting;
-				$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
-				
-				date_default_timezone_set($this->getTimeZone());
-				if (isset($_POST['accountKey'])) {
-					
-					$calendarAccount = $schedule->getCalendarAccount($_POST['accountKey']);
-					if (isset($calendarAccount['timezone']) && $calendarAccount['timezone'] != 'none') {
+					if (!isset($_POST[$key])) {
 						
-						if (date_default_timezone_set($calendarAccount['timezone'])) {
-							
-							$this->timezone = $calendarAccount['timezone'];
-							
-						}
+						$_POST[$key] = $value;
 						
 					}
 					
 				}
 				
-				$response = $schedule->requestAjaxFrontEnd($this->prefix);
-				print json_encode($response);
-				
-			} else {
-				
-				print json_encode(array('status' => 'error', 'mode' => $_POST['mode'], "message" => __("The nonce has been invalidated. Please reload the page.", 'booking-package'), "received_nonce" => $_POST['booking_package_nonce'], "verify_nonce" => $verify_nonce));
-				
 			}
 			
-			die();
+			$mode  = isset($_POST['mode']) ? sanitize_text_field(wp_unslash($_POST['mode'])) : '';
+			$nonce = isset($_POST['booking_package_nonce']) ? sanitize_text_field(wp_unslash($_POST['booking_package_nonce'])) : '';
+			
+			$verify_nonce = false;
+			$action_name  = $this->action_public . '_ajax';
+			#var_dump($action_name);
+			switch ($this->ajaxNonceFunction) {
+				case 'check_ajax_referer':
+					$verify_nonce = check_ajax_referer($action_name, 'booking_package_nonce', false);
+					break;
+				case 'wp_verify_nonce':
+					$verify_nonce = wp_verify_nonce($nonce, $action_name);
+					break;
+				case 'custom_nonce_validation':
+					if ($this->nonce->verify($nonce, $action_name)) {
+						$verify_nonce = 1;
+					}
+					break;
+			}
+			
+			if ($verify_nonce === 1 || $verify_nonce === 2 || $verify_nonce === true) {
+				
+				$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
+				
+				date_default_timezone_set($this->getTimeZone());
+				if (isset($_POST['accountKey'])) {
+					$account_key = sanitize_text_field(wp_unslash($_POST['accountKey']));
+					$calendarAccount = $schedule->getCalendarAccount($account_key);
+						
+					if (isset($calendarAccount['timezone']) && $calendarAccount['timezone'] !== 'none') {
+						if (date_default_timezone_set($calendarAccount['timezone'])) {
+							$this->timezone = $calendarAccount['timezone'];
+						}
+					}
+				}
+				
+				$response = $schedule->requestAjaxFrontEnd($this->prefix, $mode);
+				wp_send_json($response);
+					
+			} else {
+				
+				wp_send_json(array(
+					'status'        => 'error',
+					'mode'          => $mode,
+					'message'       => __("The nonce has been invalidated. Please reload the page.", 'booking-package'),
+					'received_nonce'=> $nonce,
+					'verify_nonce'  => $verify_nonce
+				), 403);
+				
+			}
 			
 		}
 		
@@ -5839,6 +5887,10 @@ Domain Path: /languages
 					
 					$url = plugins_url() . '/booking-package/ajax.php';
 					
+				} else if ($this->ajaxUrl === 'rest_url') {
+					
+					$url = rest_url( 'booking-package/v1/request' );
+					
 				} else if ($this->ajaxUrl === 'admin-ajax') {
 					
 					$url = admin_url('admin-ajax.php');
@@ -5851,10 +5903,17 @@ Domain Path: /languages
 					$nonce = $this->nonce->create($this->action_public . "_ajax");
 					
 				}
+				$wp_rest_nonce = null;
+				if (is_user_logged_in() && $this->ajaxUrl === 'rest_url' ) {
+					
+					$wp_rest_nonce = wp_create_nonce('wp_rest');
+					
+				}
 				
 				$localize_script = array(
 					'url' => $url, 
 					'action' => $this->action_public, 
+					'wp_rest_nonce' => $wp_rest_nonce,
 					'nonce' => $nonce, 
 					'prefix' => $this->prefix,
 					'plugin_name' => $this->plugin_name,
@@ -5893,6 +5952,7 @@ Domain Path: /languages
 					'numberFormatter' => $numberFormatter,
 					'managementUsersV2' => intval($this->managementUsersV2),
 					'userFormFields' => $setting->getUserInputFields(),
+					'ajaxUrl' => $this->ajaxUrl,
 				);
 				
 			} else if ($mode == 'member') {

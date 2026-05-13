@@ -81,6 +81,58 @@
         
         public function wp_ajax_booking_package_for_public() {
         	
+			$mode  = isset($_POST['mode']) ? sanitize_text_field(wp_unslash($_POST['mode'])) : '';
+			$nonce = isset($_POST['booking_package_nonce']) ? sanitize_text_field(wp_unslash($_POST['booking_package_nonce'])) : '';
+			
+			$verify_nonce = false;
+			$action_name  = $this->action_public . "_ajax";
+			
+			switch ($this->ajaxNonceFunction) {
+				case 'check_ajax_referer':
+					$verify_nonce = check_ajax_referer($action_name, 'booking_package_nonce', false);
+					break;
+				case 'wp_verify_nonce':
+					$verify_nonce = wp_verify_nonce($nonce, $action_name);
+					break;
+				case 'custom_nonce_validation':
+					if ($this->nonce->verify($nonce, $action_name)) {
+						$verify_nonce = 1;
+					}
+					break;
+			}
+			
+			if ($verify_nonce === 1 || $verify_nonce === 2 || $verify_nonce === true) {
+				
+				$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
+				
+				date_default_timezone_set($this->getTimeZone());
+				if (isset($_POST['accountKey'])) {
+					$account_key = sanitize_text_field(wp_unslash($_POST['accountKey']));
+					$calendarAccount = $schedule->getCalendarAccount($account_key);
+						
+					if (isset($calendarAccount['timezone']) && $calendarAccount['timezone'] !== 'none') {
+						if (date_default_timezone_set($calendarAccount['timezone'])) {
+							$this->timezone = $calendarAccount['timezone'];
+						}
+					}
+				}
+				
+				$response = $schedule->requestAjaxFrontEnd($this->prefix, $mode);
+				wp_send_json($response);
+					
+			} else {
+				
+				wp_send_json(array(
+					'status'        => 'error',
+					'mode'          => $mode,
+					'message'       => __("The nonce has been invalidated. Please reload the page.", 'booking-package'),
+					'received_nonce'=> $nonce,
+					'verify_nonce'  => $verify_nonce
+				), 403);
+				
+			}
+        	
+        	/**
         	$_POST['mode'] = sanitize_text_field( esc_html($_POST['mode']) );
 			$_POST['booking_package_nonce'] = sanitize_text_field( esc_html($_POST['booking_package_nonce']) );
 			$verify_nonce = false;
@@ -133,6 +185,7 @@
 			}
 			
 			die();
+			**/
 			
 		}
 		

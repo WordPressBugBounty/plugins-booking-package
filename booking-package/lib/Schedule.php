@@ -15309,131 +15309,131 @@
 		    
 		}
 		
-		public function requestAjaxFrontEnd($prefix) {
+		public function requestAjaxFrontEnd($prefix, $mode) {
 			
-        	$response = array('status' => 'error', 'mode' => $_POST['mode']);
+        	$response = array('status' => 'error', 'mode' => $mode);
         	
-        	if ($_POST['mode'] == $prefix . 'getReservationData') {
+        	if ($mode == $prefix . 'getReservationData') {
         		
 				$response = $this->getReservationData(intval($_POST['month']), intval($_POST['day']), intval($_POST['year']), false, true);
         		
         	}
         	
-        	if ($_POST['mode'] == $prefix . 'sendVerificationCode') {
+        	if ($mode == $prefix . 'sendVerificationCode') {
         		
         		$response = $this->sendVerificationCode();
         		
         	}
         	
-        	if ($_POST['mode'] == $prefix . 'checkVerificationCode') {
+        	if ($mode == $prefix . 'checkVerificationCode') {
         		
         		$response = $this->checkVerificationCode();
         		
         	}
         	
-        	if ($_POST['mode'] == 'getReservationData') {
+        	if ($mode == 'getReservationData') {
         		
 				$response = $this->getReservationData(intval($_POST['month']), intval($_POST['day']), intval($_POST['year']), false, true);
         		
         	}
         	
-        	if ($_POST['mode'] == 'serachCoupons') {
+        	if ($mode == 'serachCoupons') {
         		
         		$response = $this->serachCoupons(intval($_POST['unixTime']), $_POST['couponID'], intval($_POST['accountKey']));
         		
         	}
         	
-        	if ($_POST['mode'] == 'intentForStripe') {
+        	if ($mode == 'intentForStripe') {
         		
         		$response = $this->intentForStripe();
         		
         	}
         	
-        	if ($_POST['mode'] == 'intentForStripeExpressCheckout') {
+        	if ($mode == 'intentForStripeExpressCheckout') {
         		
         		$response = $this->intentForStripeExpressCheckout();
         		
         	}
         	
-        	if ($_POST['mode'] == 'intentForStripeKonbini') {
+        	if ($mode == 'intentForStripeKonbini') {
         		
         		$response = $this->intentForStripeKonbini();
         		
         	}
         	
-        	if ($_POST['mode'] == 'intentForStripePayPay') {
+        	if ($mode == 'intentForStripePayPay') {
         		
         		$response = $this->intentForStripePayPay();
         		
         	}
         	
-        	if ($_POST['mode'] == 'updateIntentForStripe') {
+        	if ($mode == 'updateIntentForStripe') {
         		
         		$response = $this->updateIntentForStripe();
         		
         	}
         	
-        	if ($_POST['mode'] == 'sendBooking') {
+        	if ($mode == 'sendBooking') {
         		
 				$response = $this->sendBooking();
         		
         	}
         	
-        	if ($_POST['mode'] == 'scriptError') {
+        	if ($mode == 'scriptError') {
 				
 				$response = $this->scriptError($_POST);
 				
 			}
 			
-			if ($_POST['mode'] == 'createUser') {
+			if ($mode == 'createUser') {
 				
 				$response = $this->createUser(0, intval($_POST['accountKey']));
 				
 			}
 			
-			if ($_POST['mode'] == 'user_login_for_frontend') {
+			if ($mode == 'user_login_for_frontend') {
 				
 				$response = $this->user_login_for_frontend($_POST['user_login'], $_POST['user_password'], $_POST['remember']);
 				
 			}
 			
-			if ($_POST['mode'] == 'logout') {
+			if ($mode == 'logout') {
 				
 				$response = $this->logout();
 				
 			}
 			
-			if ($_POST['mode'] == 'updateUser') {
+			if ($mode == 'updateUser') {
 				
 				$response = $this->updateUser(0, $_POST['accountKey']);
 				
 			}
 			
-			if ($_POST['mode'] == 'createCustomer') {
+			if ($mode == 'createCustomer') {
 				
 				$response = $this->createCustomer();
 				
 			}
 			
-			if ($_POST['mode'] == 'deleteSubscription') {
+			if ($mode == 'deleteSubscription') {
 				
 				$response = $this->deleteSubscription($_POST['product']);
 				
 			}
 			
-			if ($_POST['mode'] == 'deleteUser') {
+			if ($mode == 'deleteUser') {
 				
 				$response = $this->deleteUser(0);
 				
 			}
 			
-			if ($_POST['mode'] == 'cancelBookingData' && isset($_POST['key']) && isset($_POST['token'])) {
+			if ($mode == 'cancelBookingData' && isset($_POST['key']) && isset($_POST['token'])) {
 				
 				$response = $this->cancelBookingData(intval($_POST['key']), $_POST['token'], 'canceled');
 				
 			}
 			
-			if ($_POST['mode'] == 'getUsersBookedList') {
+			if ($mode == 'getUsersBookedList') {
 				
 				$user = $this->get_user();
 				if (intval($user['status']) == 1 && intval($user['user']['current_member_id']) == intval($_POST['user_id'])) {
@@ -15449,7 +15449,7 @@
 				
 			}
 			
-			if ($_POST['mode'] == 'cancelUserBooking') {
+			if ($mode == 'cancelUserBooking') {
 				
 				$user = $this->get_user();
 				if (intval($user['status']) == 1 && intval($user['user']['current_member_id']) == intval($_POST['user_id'])) {
