@@ -6845,6 +6845,7 @@
             
             $url = BOOKING_PACKAGE_EXTENSION_URL;
             $response = array('status' => 'error');
+            $statusCode = 0;
             $subscriptions = $this->upgradePlan('get');
             $expiration_date = intval($subscriptions['expiration_date_for_subscriptions']);
             
