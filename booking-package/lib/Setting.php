@@ -6902,6 +6902,8 @@
                             
                         }
                         
+                        return true;
+                        
                     } else if (intval($response->status) == 0) {
                         
                         $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
@@ -6922,11 +6924,14 @@
                 
             }
             
+            /**
             if ($this->getSubscriptionStatus() !== 'Canceled' && intval($statusCode) == 200) {
                 
                 $this->updateSubscriptionStatus('Active');
                 
             }
+            **/
+            
             return true;
             
         }
