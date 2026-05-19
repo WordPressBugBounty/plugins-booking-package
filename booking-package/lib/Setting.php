@@ -23,8 +23,6 @@
         
         public $extraChargeForTimeSlotBooking = 0;
         
-        public $restUrl = 0;
-        
         public $form = array(
         	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'last_name', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -50,12 +48,6 @@
             $this->prefix = $prefix;
             $this->pluginName = $pluginName;
             $this->userRoleName = $userRoleName;
-            
-        }
-        
-        public function setRestUrl($restUrl) {
-            
-            $this->restUrl = $restUrl;
             
         }
         
@@ -649,9 +641,9 @@
                     'ajax_url' => array('name' => __('AJAX URL for Public Page', 'booking-package'), 'value' => 'top', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => 
                     array(
                         /** 'ajax' => plugins_url() . '/booking-package/ajax.php', **/
-                        'rest_url' => rest_url( 'booking-package/v1/request' ),
                         'top' => get_home_url(),
                         'admin-ajax' => admin_url('admin-ajax.php'),
+                        'rest_url' => rest_url( 'booking-package/v1/request' ),
                     )), 
                     'ajax_nonce_function' => array('name' => __('AJAX Nonce Validation Function', 'booking-package'), 'value' => 'custom_nonce_validation', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('check_ajax_referer' => 'check_ajax_referer()', 'wp_verify_nonce' => 'wp_verify_nonce()', 'custom_nonce_validation' => __('Use custom plugin nonce validation', 'booking-package'))), 
                     
@@ -911,12 +903,6 @@
                 }
                 
                 $list['General']['currency']['valueList'] = $currencies_name;
-                
-            }
-            
-            if ($this->restUrl === 0) {
-                
-                unset($list['General']['ajax_url']['valueList']['rest_url']);
                 
             }
             

@@ -107,7 +107,6 @@ window.addEventListener('error', function(event) {
             
         }
         
-        
         if (schedule_data.servicesExcludedGuestsInEmail != null) {
             
             this._servicesExcludedGuestsInEmail = parseInt(schedule_data.servicesExcludedGuestsInEmail);
