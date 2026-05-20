@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.15
+Version:     1.7.16
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -544,8 +544,8 @@ Domain Path: /languages
 					);
 					
 					$p_v = "?p_v=".$this->plugin_version;
-					wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->plugin_version);
-					wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->plugin_version);
+					wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+					wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 					$fontFaceStyle = $this->getFontFaceStyle();
 		            wp_add_inline_style("Control.css", $fontFaceStyle);
 					
@@ -754,7 +754,6 @@ Domain Path: /languages
 			
 			if ($displayMenu === true) {
 				
-				#wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ).'css/Control.css', array(), $this->plugin_version);
 				$title = '<span class="top_toolbar_icon"></span><span>Booking Package</span>';
 				$plugin_top_bar = $this->plugin_name.'_top_bar';
 				$args = array(
@@ -932,8 +931,8 @@ Domain Path: /languages
 			);
 			
 			$p_v = "?p_v=" . $this->plugin_version;
-			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_script( 'Error_js', plugin_dir_url( __FILE__ ) . 'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
 			wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ) . 'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
 			wp_enqueue_script( 'Confirm_js', plugin_dir_url( __FILE__ ) . 'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
@@ -1123,11 +1122,6 @@ Domain Path: /languages
 			}
 			
             $p_v = "?p_v=".$this->plugin_version;
-            /**
-            wp_enqueue_style( 'booking_app_js_css', plugin_dir_url( __FILE__ ).'css/Booking_app.css' . '?plugin_v=' . $this->plugin_version, array(), $this->plugin_version);
-            wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
-            **/
-            
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("booking_app_js_css", $fontFaceStyle);
             
@@ -2246,8 +2240,8 @@ Domain Path: /languages
             	
             }
             $p_v = "?p_v=" . $this->plugin_version;
-			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("Control.css", $fontFaceStyle);
@@ -2487,8 +2481,8 @@ Domain Path: /languages
 			wp_localize_script('Member_js', 'setting_data', $localize_script);
 			wp_localize_script('Member_js', $this->prefix.'dictionary', $dictionary);
 			
-			wp_enqueue_style('Control.css', plugin_dir_url( __FILE__ ).'css/Control.css', array(), $this->plugin_version);
-			wp_enqueue_style('Control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css', array(), $this->plugin_version);
+			wp_enqueue_style('Control.css', plugin_dir_url( __FILE__ ).'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+			wp_enqueue_style('Control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
             wp_add_inline_style("Control.css", $this->getFontFaceStyle());
 			
@@ -2980,11 +2974,10 @@ Domain Path: /languages
 			print $subscriptionRenewalFailedText;
 			
 			$p_v = "?p_v=" . $this->plugin_version;
-			#wp_print_scripts(array('jquery-ui-sortable'.$p_v));
 			wp_enqueue_style('wp-color-picker');
-			wp_enqueue_style('booking_app_js_css.css', plugin_dir_url( __FILE__ ).'css/Booking_app.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_style('Control.css', plugin_dir_url( __FILE__ ).'css/Control.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_style('Control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_style('booking_app_js_css.css', plugin_dir_url( __FILE__ ).'css/Booking_app.css', array(), $this->get_plugin_asset_version('css/Booking_app.css') );
+			wp_enqueue_style('Control.css', plugin_dir_url( __FILE__ ).'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+			wp_enqueue_style('Control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("Control.css", $fontFaceStyle);
@@ -2998,12 +2991,6 @@ Domain Path: /languages
 			wp_enqueue_script('schedule_pange', plugin_dir_url( __FILE__ ).'js/Schedule.js', array(), $this->get_plugin_asset_version('js/Schedule.js') );
 			wp_localize_script('schedule_pange', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('schedule_pange', 'schedule_data', $localize_script);
-			/**
-			wp_enqueue_style('codemirror_css', 'https://codemirror.net/5/lib/codemirror.css', array(), $this->plugin_version);
-			wp_enqueue_script('codemirror_js', 'https://codemirror.net/5/lib/codemirror.js', array(), $this->plugin_version);
-			wp_enqueue_script('codemirror_css_js', 'https://codemirror.net/5/mode/css/css.js', array(), $this->plugin_version);
-			wp_enqueue_script('codemirror_javascript_js', 'https://codemirror.net/5/mode/javascript/javascript.js', array(), $this->plugin_version);
-			**/
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('wp-color-picker');
 			wp_enqueue_script('jquery-ui-sortable');
@@ -3877,8 +3864,8 @@ Domain Path: /languages
 			$localize_script = $this->localizeScript("setting_page");
 			$p_v = "?p_v=" . $this->plugin_version;
 			wp_enqueue_style('wp-color-picker');
-			wp_enqueue_style( 'setting_page', plugin_dir_url( __FILE__ ).'css/Control.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_style( 'control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_style( 'setting_page', plugin_dir_url( __FILE__ ).'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
+			wp_enqueue_style( 'control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("Control.css", $fontFaceStyle);

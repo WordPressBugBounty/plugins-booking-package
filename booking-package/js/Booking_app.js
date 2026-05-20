@@ -9189,107 +9189,17 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                     
                     object._console.log(post);
-                    
                     object.submitBookingData(post, formPanelList, valueList, function(response) {
                         
                         callback(response);
-                        bookingBlockPanel.classList.add("hidden_panel");
-                        
-                    });
-                    
-                    /**
-                    var bookingBlockPanel = document.getElementById("bookingBlockPanel");
-                    bookingBlockPanel.classList.remove("hidden_panel");
-                    xmlHttp = new Booking_App_XMLHttp(url, post, false, function(response){
-                        
-                        object._console.log(response);
-                        object.setNewNonce(response);
-                        if (response.status == "success") {
+                        var bookingBlockPanel = document.getElementById("bookingBlockPanel");
+                        if (bookingBlockPanel != null) {
                             
-                            response.mode = "completed";
-                            callback(response);
-                            object.setUserInformation(response.userInformationValues);
-                            
-                            object.hiddenInputAndShowLabelForCustomer(formPanelList, valueList);
-                            
-                            if (document.getElementById(object._prefix + 'reCAPTCHA')) {
-                                
-                                var reCAPTCHA = document.getElementById(object._prefix + 'reCAPTCHA');
-                                reCAPTCHA.classList.add('hidden_panel');
-                                
-                            }
-                            
-                            if (document.getElementById(object._prefix + 'hCaptcha')) {
-                                
-                                var hCaptcha = document.getElementById(object._prefix + 'hCaptcha');
-                                hCaptcha.classList.add('hidden_panel');
-                                
-                            }
-                            
-                            if (document.getElementById("booking-package_paymentMethod")) {
-                                
-                                var paymentMethod = document.getElementById("booking-package_paymentMethod");
-                                paymentMethod.parentNode.removeChild(paymentMethod);
-                                
-                            }
-                            
-                        } else {
-                            
-                            var message = "";
-                            if (response.message != null) {
-                                
-                                message = response.message;
-                                
-                            }
-                            
-                            if (response.calendar != null && response.schedule != null) {
-                                
-                                callback(response);
-                                
-                            } else {
-                                
-                                callback(false);
-                                
-                            }
-                            
-                            var timer = setInterval(function(){
-                                
-                                clearInterval(timer);
-                                alert(message);
-                                
-                            }, 500);
-                            
-                            if (response.reload != null && parseInt(response.reload) == 1) {
-                                
-                                window.location.reload(true);
-                                
-                            }
-                            
-                            if (object._hCaptcha.status === true) {
-                                
-                                object.lockBooking(true, null, 'hCaptcha');
-                                hcaptcha.reset(object._hCaptcha.hcaptchaID);
-                                
-                            }
-                            
-                            if (object._googleReCAPTCHA.status === true && object._googleReCAPTCHA.v == 'v2') {
-                                
-                                object.lockBooking(true, null, 'ReCAPTCHA');
-                                grecaptcha.reset(object._googleReCAPTCHA.reCaptcha);
-                                object.setGoogleReCAPTCHA(object._prefix + 'reCAPTCHA', 'paymentPanel');
-                                
-                            }
+                            bookingBlockPanel.classList.add("hidden_panel");
                             
                         }
                         
-                        bookingBlockPanel.classList.add("hidden_panel");
-                        
-                    }, function(responseText){
-                        
-                        object.setResponseText(responseText);
-                        
                     });
-                    **/
                     
                 } else {
                     
