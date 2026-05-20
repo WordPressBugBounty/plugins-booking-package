@@ -37,6 +37,7 @@
         this._themes = 0;
         this._locale = properties.locale;
         this._numberFormatter = false;
+        this._wpEditor = {};
         if (parseInt(properties.numberFormatter) === 1) {
             
             this._numberFormatter = true;
@@ -178,6 +179,8 @@
         var labels = {select_date_button: object._i18n.get('Select a Date'), return_button: object._i18n.get('Return'), next_button: object._i18n.get('Next'), apply_button: object._i18n.get('Apply'), next_page_button: object._i18n.get('Next Page'), booking_verification_button: object._i18n.get('Verify'), book_now_button: object._i18n.get('Book Now'), previous_available_day_button: object._i18n.get('Previous Available Day'), next_available_day_button: object._i18n.get('Next Available Day'), return_form_button: object._i18n.get('Return to Input Form'), cancel_booking_button: object._i18n.get('Cancel Booking'), login_button: object._i18n.get('Sign In'), register_button: object._i18n.get('Register'), left_arrow_button: object._i18n.get('Left Arrow'), right_arrow_button: object._i18n.get('Right Arrow'), cancel_user_booking_button: object._i18n.get('Cancel Booking'), change_user_password_button: object._i18n.get('Change Password'), update_user_button: object._i18n.get('Update Profile'), delete_user_button: object._i18n.get('Delete')
         };
         
+        object._wpEditor = {};
+        
         var setCustomizeCss = function(customizeButtons) {
             
             var css = '';
@@ -226,7 +229,7 @@
         var table = object.create('table', null, null, 'customizeButtonPanel', null, 'form-table', null);
         customizePanel.appendChild(table);
         
-        for (var key in keysWithoutHover) {
+        for (let key in keysWithoutHover) {
             
             object._console.log(key);
             var th = object.create('th', labels[key], null, null, 'vertical-align: top; font-weight: 600;', null, null);
@@ -234,10 +237,10 @@
             var switchPanel = object.create('div', null, null, null, null, 'switchButtonPanel', null);
             var classNamePanel = object.create('div', object._i18n.get('CSS class selector:') + ' .' + key, null, null, null, null, null);
             
-            var textarea = object.create('div', null, null, 'customize_' + key, 'height: 20vh;', null, {key: key});
+            var textarea = object.create('textarea', null, null, 'customize_' + key, 'height: 20vh;', null, {key: key});
             var textareaPanel = object.create('div', null, [textarea], null, null, null, null);
             
-            var textareaHover = object.create('div', null, null, 'customize_' + key + '_hover', 'height: 20vh;', null, {key: key + ':hover'});
+            var textareaHover = object.create('textarea', null, null, 'customize_' + key + '_hover', 'height: 20vh;', null, {key: key + ':hover'});
             var textareaHoverPanel = object.create('div', null, [textareaHover], null, null, null, null);
             
             var previewLabel = object.create('div', object._i18n.get('Preview') + ':', null, null, null, 'previewLabel', []);
@@ -281,6 +284,7 @@
             
             (function (key, customizeButtons, switchPanel, classNamePanel, textarea, textareaHover, previewButton, applyButton, setCustomizeCss) {
                 
+                applyButton.setAttribute('data-key', key);
                 var getStyle = function(key, customizeButtons) {
                     
                     var style = '';
@@ -298,154 +302,70 @@
                     
                 };
                 
-                var editor = null;
-                var editor_hover = null;
-                require.config({
-                    paths: {
-                        'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs'
+                if (typeof wp !== 'undefined' && wp.codeEditor && typeof my_editor_settings !== 'undefined') {
+                    
+                    var settings = jQuery.extend(true, {}, my_editor_settings);
+                    settings.codemirror.mode = "css";
+                    settings.codemirror.lint = false;
+                    settings.codemirror.indentUnit = 4;
+                    settings.codemirror.lineNumbers = true;
+                    
+                    if (object._wpEditor[key] == null) {
+                        
+                        textarea.value = getStyle(key, customizeButtons);
+                        object._wpEditor[key] = wp.codeEditor.initialize(textarea, settings);
+                        
+                    } else {
+                        
+                        object._wpEditor[key].codemirror.refresh();
+                        
                     }
-                });
-                
-                require(['vs/editor/editor.main'], function () {
                     
-                    editor = monaco.editor.create(document.getElementById('customize_' + key), {
-                        value: getStyle(key, customizeButtons),
-                        language: 'css',
-                        theme: 'vs-light'
-                    });
-                    
-                    editor_hover = monaco.editor.create(document.getElementById('customize_' + key + '_hover'), {
-                        value: getStyle(key + ':hover', customizeButtons),
-                        language: 'css',
-                        theme: 'vs-light'
-                    });
-                    
-                    var textareaPanel = textarea.parentNode;
-                    var textareaHoverPanel = textareaHover.parentNode;
-                    textareaHoverPanel.classList.add('hidden_panel');
-                    
-                });
-    			
+                    if (object._wpEditor[key + ':hover'] == null) {
+                        
+                        object._wpEditor[key + ':hover'] = getStyle(key + ':hover', customizeButtons);
+                        object._wpEditor[key + ':hover'] = wp.codeEditor.initialize(textareaHover, settings);
+                        
+                    } else {
+                        
+                        object._wpEditor[key + ':hover'].codemirror.refresh();
+                        
+                    }
+                }
+            	
                 window.addEventListener('resize', () => {
                     
-                    let hasHiddenOnTextarea = false;
-                    let hasHiddenOnTextareaHover = false;
-                    if (textareaPanel.classList.contains('hidden_panel')) {
+                    if (object._wpEditor[key]) {
                         
-                        hasHiddenOnTextarea = true;
-                        textareaPanel.classList.remove('hidden_panel');
+                        object._wpEditor[key].codemirror.refresh();
                         
                     }
                     
-                    if (textareaHoverPanel.classList.contains('hidden_panel')){
+                    if (object._wpEditor[key + ':hover']) {
                         
-                        hasHiddenOnTextareaHover = true;
-                        textareaHoverPanel.classList.remove('hidden_panel');
-                        
-                    }
-                    
-                    editor.layout();
-                    editor_hover.layout();
-                    
-                    if (hasHiddenOnTextarea === true) {
-                        
-                        textareaPanel.classList.add('hidden_panel');
+                        object._wpEditor[key + ':hover'].codemirror.refresh();
                         
                     }
-                    
-                    if (hasHiddenOnTextareaHover === true) {
-                        
-                        textareaHoverPanel.classList.add('hidden_panel');
-                        
-                    }
-                    
-                    /**
-                    let hasHiddenOnTextarea = false;
-                    let hasHiddenOnTextareaHover = false;
-                    if (textareaPanel.classList.contains('hidden_panel')) {
-                        
-                        hasHiddenOnTextarea = true;
-                        textareaPanel.classList.remove('hidden_panel');
-                        
-                    }
-                    
-                    if (textareaHoverPanel.classList.contains('hidden_panel')){
-                        
-                        hasHiddenOnTextareaHover = true;
-                        textareaHoverPanel.classList.remove('hidden_panel');
-                        
-                    }
-                    
-                    var timer = setInterval(function(){
-                        
-                        console.log('resize 2');
-                        
-                        let hasHiddenOnTextarea = false;
-                        let hasHiddenOnTextareaHover = false;
-                        if (textareaPanel.classList.contains('hidden_panel')) {
-                            
-                            hasHiddenOnTextarea = true;
-                            
-                            
-                        }
-                        
-                        if (textareaHoverPanel.classList.contains('hidden_panel')){
-                            
-                            hasHiddenOnTextareaHover = true;
-                            
-                            
-                        }
-                        
-                        textareaPanel.classList.remove('hidden_panel');
-                        textareaHoverPanel.classList.remove('hidden_panel');
-                        
-                        console.log('hasHiddenOnTextarea = ' + hasHiddenOnTextarea);
-                        console.log('hasHiddenOnTextareaHover = ' + hasHiddenOnTextareaHover);
-                        console.log(editor.getContentWidth());
-                        editor.layout();
-                        editor_hover.layout();
-                        
-                        if (hasHiddenOnTextarea === true) {
-                            
-                            textareaPanel.classList.add('hidden_panel');
-                            
-                        }
-                        
-                        if (hasHiddenOnTextareaHover === true) {
-                            
-                            textareaHoverPanel.classList.add('hidden_panel');
-                            
-                        }
-                        
-                        clearInterval(timer);
-                        
-                    }, 1000);
-                    
-                    
-                    console.log('resize 1');
-                    editor.layout();
-                    editor_hover.layout();
-                    
-                    if (hasHiddenOnTextarea === true) {
-                        
-                        textareaPanel.classList.add('hidden_panel');
-                        
-                    }
-                    
-                    if (hasHiddenOnTextareaHover === true) {
-                        
-                        textareaHoverPanel.classList.add('hidden_panel');
-                        
-                    }
-                    
-                    **/
                     
                 });
                 
                 applyButton.onclick = function(event) {
                     
-                    textarea.value = editor.getValue();
-                    textareaHover.value = editor_hover.getValue();
+                    var key = this.getAttribute('data-key');
+                    if (object._wpEditor[key]) {
+                        
+                        object._wpEditor[key].codemirror.save();
+                        textarea.value = object._wpEditor[key].codemirror.getValue();
+                        
+                    }
+                    
+                    if (object._wpEditor[key + ':hover']) {
+                        
+                        object._wpEditor[key + ':hover'].codemirror.save();
+                        textareaHover.value = object._wpEditor[key + ':hover'].codemirror.getValue();
+                        
+                    }
+                    
                     var textareas = [textarea, textareaHover];
                     for (var textIndex = 0; textIndex < textareas.length; textIndex++) {
                         
@@ -479,7 +399,7 @@
                 
                 var textareaPanel = textarea.parentNode;
                 var textareaHoverPanel = textareaHover.parentNode;
-                //textareaHoverPanel.classList.add('hidden_panel');
+                textareaHoverPanel.classList.add('hidden_panel');
                 
                 var mainClass = object.createButton(null, null, 'selectedButton', {key: key}, object._i18n.get('Class'));
                 var hoverClass = object.createButton(null, null, null, {key: key + ':hover'}, object._i18n.get('Pseudo-class') + ' :hover');

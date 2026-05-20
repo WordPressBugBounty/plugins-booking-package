@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.14
+Version:     1.7.15
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -549,8 +549,8 @@ Domain Path: /languages
 					$fontFaceStyle = $this->getFontFaceStyle();
 		            wp_add_inline_style("Control.css", $fontFaceStyle);
 					
-					wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js'.$p_v);
-					wp_enqueue_script('Delete_Plugin_js', plugin_dir_url( __FILE__ ) . 'js/Delete_plugin.js', array(), $this->plugin_version);
+					wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+					wp_enqueue_script('Delete_Plugin_js', plugin_dir_url( __FILE__ ) . 'js/Delete_plugin.js', array(), $this->get_plugin_asset_version('js/Delete_plugin.js') );
 					wp_localize_script('Delete_Plugin_js', $this->prefix.'dictionary', $dictionary);
 					wp_localize_script('Delete_Plugin_js', 'delete_plugin_data', $localize_script);
 					
@@ -934,12 +934,12 @@ Domain Path: /languages
 			$p_v = "?p_v=" . $this->plugin_version;
 			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css' . $p_v, array(), $this->plugin_version);
 			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'Error_js', plugin_dir_url( __FILE__ ) . 'js/Error.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ) . 'js/i18n.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'Confirm_js', plugin_dir_url( __FILE__ ) . 'js/Confirm.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'XMLHttp_js', plugin_dir_url( __FILE__ ) . 'js/XMLHttp.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'Calendar_js', plugin_dir_url( __FILE__ ) . 'js/Calendar.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script( 'Reservation_manage_js', plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js' . $p_v, array(), $this->plugin_version);
+			wp_enqueue_script( 'Error_js', plugin_dir_url( __FILE__ ) . 'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
+			wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ) . 'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+			wp_enqueue_script( 'Confirm_js', plugin_dir_url( __FILE__ ) . 'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
+			wp_enqueue_script( 'XMLHttp_js', plugin_dir_url( __FILE__ ) . 'js/XMLHttp.js', array(), $this->get_plugin_asset_version('js/XMLHttp.js') );
+			wp_enqueue_script( 'Calendar_js', plugin_dir_url( __FILE__ ) . 'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script( 'Reservation_manage_js', plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js', array(), $this->get_plugin_asset_version('js/Reservation_manage.js') );
 			wp_localize_script('Reservation_manage_js', 'schedule_data', $localize_script);
 			wp_localize_script('Reservation_manage_js', $this->prefix . 'dictionary', $dictionary);
 			
@@ -2251,14 +2251,14 @@ Domain Path: /languages
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("Control.css", $fontFaceStyle);
-            wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ) . 'js/Error.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ) . 'js/i18n.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ) . 'js/XMLHttp.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ) . 'js/Confirm.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Input_js', plugin_dir_url( __FILE__ ) . 'js/Input.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ) . 'js/Calendar.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ) . 'js/Hotel.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Reservation_manage_js', plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js' . $p_v, array(), $this->plugin_version);
+            wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ) . 'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
+			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ) . 'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ) . 'js/XMLHttp.js', array(), $this->get_plugin_asset_version('js/XMLHttp.js') );
+			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ) . 'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
+			wp_enqueue_script('Input_js', plugin_dir_url( __FILE__ ) . 'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
+			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ) . 'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ) . 'js/Hotel.js', array(), $this->get_plugin_asset_version('js/Hotel.js') );
+			wp_enqueue_script('Reservation_manage_js', plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js', array(), $this->get_plugin_asset_version('js/Reservation_manage.js') );
 			
 			wp_localize_script('Reservation_manage_js', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('Reservation_manage_js', 'schedule_data', $localize_script);
@@ -2475,15 +2475,15 @@ Domain Path: /languages
 			print $subscriptionRenewalFailedText;
 			
 			$dictionary = $this->getDictionary("user_management", $this->plugin_name);
-			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js'.$p_v);
-			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js'.$p_v);
-			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js'.$p_v);
-			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js'.$p_v);
-			wp_enqueue_script('Input_js', plugin_dir_url( __FILE__ ).'js/Input.js'.$p_v);
-			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ).'js/Hotel.js'.$p_v);
-			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js'.$p_v);
-			wp_enqueue_script('Reservation_manage', plugin_dir_url( __FILE__ ).'js/Reservation_manage.js'.$p_v);
-			wp_enqueue_script('Member_js', plugin_dir_url( __FILE__ ).'js/Member_manage.js'.$p_v);
+			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js', array(), $this->get_plugin_asset_version('js/XMLHttp.js') );
+			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
+			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script('Input_js', plugin_dir_url( __FILE__ ).'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
+			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ).'js/Hotel.js', array(), $this->get_plugin_asset_version('js/Hotel.js') );
+			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
+			wp_enqueue_script('Reservation_manage', plugin_dir_url( __FILE__ ).'js/Reservation_manage.js', array(), $this->get_plugin_asset_version('js/Reservation_manage.js') );
+			wp_enqueue_script('Member_js', plugin_dir_url( __FILE__ ).'js/Member_manage.js', array(), $this->get_plugin_asset_version('js/Member_manage.js') );
 			wp_localize_script('Member_js', 'setting_data', $localize_script);
 			wp_localize_script('Member_js', $this->prefix.'dictionary', $dictionary);
 			
@@ -2988,14 +2988,14 @@ Domain Path: /languages
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
 			$fontFaceStyle = $this->getFontFaceStyle();
             wp_add_inline_style("Control.css", $fontFaceStyle);
-            wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Customize_js', plugin_dir_url( __FILE__ ).'js/Customize.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('schedule_pange', plugin_dir_url( __FILE__ ).'js/Schedule.js' . $p_v, array(), $this->plugin_version);
+            wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
+			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js', array(), $this->get_plugin_asset_version('js/XMLHttp.js') );
+			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
+			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
+			wp_enqueue_script('Customize_js', plugin_dir_url( __FILE__ ).'js/Customize.js', array(), $this->get_plugin_asset_version('js/Customize.js') );
+			wp_enqueue_script('schedule_pange', plugin_dir_url( __FILE__ ).'js/Schedule.js', array(), $this->get_plugin_asset_version('js/Schedule.js') );
 			wp_localize_script('schedule_pange', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('schedule_pange', 'schedule_data', $localize_script);
 			/**
@@ -3011,7 +3011,7 @@ Domain Path: /languages
 			wp_enqueue_script('wp-util');
 			$editor_settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
 			wp_add_inline_script(
-				'setting_page', 
+				'schedule_pange', 
 				sprintf( 'var my_editor_settings = %s;', wp_json_encode( $editor_settings ) ),
 				'after'
 			);
@@ -3941,13 +3941,13 @@ Domain Path: /languages
 			print $subscriptionRenewalFailedText;
 			
 			#wp_enqueue_script( array( 'jquery-ui-sortable' ));
-			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js' . $p_v, array(), $this->plugin_version);
-			wp_enqueue_script('setting_page', plugin_dir_url( __FILE__ ).'js/setting.js' . $p_v, array('jquery', 'underscore'), $this->plugin_version);
+			wp_enqueue_script('Error_js', plugin_dir_url( __FILE__ ).'js/Error.js', array(), $this->get_plugin_asset_version('js/Error.js') );
+			wp_enqueue_script('i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
+			wp_enqueue_script('XMLHttp_js', plugin_dir_url( __FILE__ ).'js/XMLHttp.js', array(), $this->get_plugin_asset_version('js/XMLHttp.js') );
+			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
+			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
+			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script('setting_page', plugin_dir_url( __FILE__ ).'js/setting.js', array('jquery', 'underscore'), $this->get_plugin_asset_version('js/setting.js') );
 			wp_localize_script('setting_page', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('setting_page', 'setting_data', $localize_script);
 			
@@ -4254,6 +4254,19 @@ Domain Path: /languages
 			
 			$load_end_time = microtime(true) - $load_start_time;
 			echo '<!-- Load time: ' . $load_end_time . ' -->';
+			
+		}
+		
+		public function get_plugin_asset_version($relative_path) {
+			
+			$file_path = plugin_dir_path(__FILE__) . $relative_path;
+			if (file_exists($file_path)) {
+				
+				return $this->plugin_version . '.' . filemtime($file_path);
+				
+			}
+			
+			return $this->plugin_version;
 			
 		}
 		
