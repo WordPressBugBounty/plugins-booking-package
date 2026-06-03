@@ -412,7 +412,6 @@ window.addEventListener('error', function(event) {
 							
 							object.subscriptionDiteilPanel();
 							window.location.replace(object._setting_data.subscriptionLink);
-							//window.location.reload();
 							
 						}
 						object._loadingPanel.setAttribute("class", "hidden_panel");

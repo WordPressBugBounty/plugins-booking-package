@@ -31,6 +31,8 @@
         
         public $payWithPayPay = 0;
         
+        public $request_timeout = 30;
+        
         public function __construct($prefix, $pluginName, $currencies, $userRoleName = 'booking_package_user'){
             
             global $wpdb;
@@ -569,8 +571,21 @@
 		}
         
         public function createUser($administrator = 0, $accountKey = null) {
+        	
+        	if (intval($administrator) === 1) {
+				
+				if (is_user_logged_in() === false || ( current_user_can('edit_users') === false && current_user_can('booking_package_manager') === false && current_user_can('booking_package_editor') === false) ) {
+					
+					return array(
+						'status' => 'error',
+						'error_messages' => 'Permission denied: You do not have authorization to create a user.'
+					);
+					
+				}
+				
+			}
 			
-			if ($administrator == 0) {
+			if (intval($administrator) === 0) {
 				
 				if (!isset($_POST['googleReCaptchaToken'])) {
 					
@@ -626,14 +641,15 @@
 				
 			}
 			
-			
+			$s_user_login = sanitize_user($_POST['user_login']);
+			$s_user_email = sanitize_email($_POST['user_email']);
 			$response = array("status" => "success", "activation" => $activation);
-			#$user_login = username_exists($_POST['user_login']);
+			#$user_login = username_exists($s_user_login);
 			$user_pass = trim($_POST['user_pass']);
 			$userdata = array(
-				'user_login' => $_POST['user_login'],
+				'user_login' => sanitize_user($s_user_login),
 				'user_pass' => $user_pass,
-				'user_email' => $_POST['user_email'],
+				'user_email' => $s_user_email,
 				'role' => $this->userRoleName,
 			);
 			
@@ -663,17 +679,17 @@
 				}
 				
 				update_user_meta($user_id, 'show_admin_bar_front', 'false');
-				$hash = wp_hash(sanitize_text_field($_POST['user_email']).sanitize_text_field($_POST['user_login']).date('U'));
+				$hash = wp_hash(sanitize_text_field($s_user_email).sanitize_text_field($s_user_login).date('U'));
 				$response['user_id'] = $user_id;
-				$response['user_login'] = esc_html($_POST['user_login']);
-				$response['user_email'] = esc_html($_POST['user_email']);
+				$response['user_login'] = esc_html($s_user_login);
+				$response['user_email'] = esc_html($s_user_email);
 				$response['profile'] = $customUserFields;
-				$this->add_user($user_id, $_POST['user_login'], $_POST['user_email'], $activation, $hash);
+				$this->add_user($user_id, $s_user_login, $s_user_email, $activation, $hash);
 				
 				if ($activation == 1) {
 					
 					$userdata = array(
-						'user_login' => $_POST['user_login'],
+						'user_login' => $s_user_login,
 						'user_password' => $user_pass,
 						'remember' => true
 					);
@@ -693,22 +709,11 @@
 					
 				} else {
 					
-					$uri = $_POST['permalink']."?mode=activation&k=".$hash."&u=".sanitize_text_field($_POST['user_login']);
+					$uri = $_POST['permalink'] . "?mode=activation&k=" . $hash . "&u=" . $s_user_login;
 					$subject = get_option($this->prefix."subject_email_for_member", "No title");
 					$body = get_option($this->prefix."body_email_for_member", "No message");
-					/**
-					if (preg_match('/(\[activation_url\])/', $body, $matches)) {
-						
-						$body = preg_replace('/(\[activation_url\])/', $uri, $body);
-						
-					} else {
-						
-						$body = $uri."\n".$body;
-						
-					}
-					**/
 					$body = str_replace('[activation_url]', $uri, $body);
-					$this->sendMail(sanitize_text_field($_POST['user_email']), $subject, $body, 'text', $accountKey);
+					$this->sendMail($s_user_email, $subject, $body, 'text', $accountKey);
 					
 				}
 				
@@ -809,23 +814,42 @@
 			$response = array("status" => "error");
 			$userId = 0;
 			
-			$currentUser = wp_get_current_user();
-			if ($administrator === 0 && $currentUser->user_login !== sanitize_text_field($_POST['user_login'])) {
+			if (is_user_logged_in() === false) {
 				
-				$response['error_messages'] = 'Error';
+				$response['error_messages'] = 'Unauthorized: You must be logged in.';
 				return $response;
 				
 			}
 			
+			$currentUser = wp_get_current_user();
 			$user = get_user_by('login', sanitize_text_field($_POST['user_login']));
 			if ($user === false) {
 				
 				return $response;
 				
-			} else {
+			}
+			
+			$userId = $user->ID;
+			$userOldEmail = $user->user_email;
+			
+			if ( user_can( $userId, 'manage_options' ) && current_user_can( 'manage_options' ) === false ) {
+                
+                $response['error_messages'] = 'Permission denied: You cannot edit an administrator account.';
+                return $response;
+                
+            }
+			
+			if ($currentUser->ID !== $userId && current_user_can('edit_users') === false) {
 				
-				$userId = $user->ID;
-				$userOldEmail = $user->user_email;
+				$response['error_messages'] = 'Permission denied: You cannot edit this user.';
+				return $response;
+				
+			}
+			
+			if ($administrator === 0 && $currentUser->user_login !== sanitize_text_field($_POST['user_login'])) {
+				
+				$response['error_messages'] = 'Error';
+				return $response;
 				
 			}
 			
@@ -849,7 +873,7 @@
 				$userdata = array('ID' => $userId);
 				if (isset($_POST['user_email'])) {
 					
-					$userdata['user_email'] = $_POST['user_email'];
+					$userdata['user_email'] = sanitize_text_field($_POST['user_email']);
 					$hash = wp_hash(sanitize_text_field($_POST['user_email']) . sanitize_text_field($_POST['user_login']) . date('U'));
 					
 				} else {
@@ -1800,15 +1824,25 @@
 			require_once( ABSPATH.'wp-admin/includes/user.php' );
 			$reality = false;
 			$userId = 0;
+			
+			if (is_user_logged_in() === false) {
+				
+				$response['error_messages'] = 'Unauthorized: You must be logged in.';
+				return $response;
+				
+			}
+			
+			$currentUser = wp_get_current_user();
+			
 			if (intval($administrator) == 1) {
 				
 				$user = get_user_by('login', sanitize_text_field($_POST['user_login']));
 				if ($user !== false) {
 					
 					$reality = true;
+					$userId = $user->ID;
 					
 				}
-				$userId = $user->ID;
 				
 			} else {
 			
@@ -1820,6 +1854,22 @@
 				}
 			
 			}
+			
+			
+			if (user_can( $userId, 'manage_options' ) && current_user_can( 'manage_options' ) === false) {
+				
+				$response['error_messages'] = 'Permission denied: You cannot delete an administrator account.';
+				return $response;
+				
+			}
+			
+			if ($currentUser->ID !== $userId && current_user_can( 'delete_users' ) === false) {
+				
+				$response['error_messages'] = 'Permission denied: You cannot delete this user.';
+				return $response;
+				
+			}
+			
 			
 			if ($reality === true) {
 				
@@ -2116,6 +2166,7 @@
     			$product = $products[$index];
 				$args = array(
 					'method' => 'GET',
+					'timeout' => $this->request_timeout, 
 					'headers' => array(
 						'Authorization' => 'Basic ' . base64_encode($secret . ':')
 					)
@@ -9380,6 +9431,7 @@
 			$secretKey = get_option($this->prefix . "hCaptcha_Secret_key", "0");
 			$args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => array(
                 	'secret' => $secretKey,
                 	'response' => $token
@@ -9472,6 +9524,7 @@
 	        
 	        $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $event,
             );
             $json = wp_remote_request('https://recaptchaenterprise.googleapis.com/v1/projects/' . $projectId . '/assessments?key=' . $apiKey, $args);
@@ -9528,6 +9581,7 @@
 			
 			$args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => array(
                 	'secret' => $secretKey,
                 	'response' => $googleReCaptchaToken
@@ -14812,6 +14866,7 @@
 						);
 						$args = array(
 							'method' => 'POST',
+							'timeout' => $this->request_timeout, 
 							'body' => json_encode($params),
 							'headers' => array(
 								'content-type' => 'application/json', 
@@ -14876,6 +14931,7 @@
 						
 						$args = array(
 							'method' => 'POST',
+							'timeout' => $this->request_timeout, 
 							'body' => $params,
 							'headers' => array(
 								'Authorization' => 'Basic ' . base64_encode($twilio_sid . ':' . $twilio_token)
@@ -14982,6 +15038,7 @@
 				
 				$args = array(
 					'method' => 'POST',
+					'timeout' => $this->request_timeout, 
 					'body' => $params,
 					'headers' => array(
 						'Authorization' => 'Basic ' . base64_encode('api:' . $mailgun_api_key)
@@ -15087,6 +15144,7 @@
 					
 					$args = array(
 	                    'method' => 'POST',
+	                    'timeout' => $this->request_timeout, 
 	                    'body' => $params
 	                );
 	                $response = wp_remote_request("https://saasproject.net/lib/scriptError.php", $args);

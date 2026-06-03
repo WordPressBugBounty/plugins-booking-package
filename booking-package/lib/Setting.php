@@ -13,6 +13,8 @@
         
         private $isExtensionsValid = null;
         
+        public $request_timeout = 30;
+        
         public $guestForDayOfTheWeekRates = 1;
         
         public $messagingApp = 0;
@@ -6293,6 +6295,7 @@
             
             $license = array(
                 'status' => 0,
+                'subscription_status' => '',
                 'customer_id' => trim(esc_html($customer_id)),
                 'subscription_id' => trim(esc_html($subscription_id)),
                 'url' => get_site_url(),
@@ -6301,6 +6304,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout,
                 'body' => array(
                     'mode' => 'error', 
                     'subscription_mode' => 'lookingForSubscription',
@@ -6317,6 +6321,13 @@
                 
                 unset($response['status']);
                 $license['status'] = 1;
+                if (isset($response['subscription_status']) === true) {
+                    
+                    $license['subscription_status'] = $response['subscription_status'];
+                    
+                }
+                
+                
                 $this->updateSubscribeSite();
                 foreach ((array) $response as $key => $value) {
                     
@@ -6343,20 +6354,18 @@
                     }
                     
                 }
-                $this->updateSubscriptionStatus('Active');
                 
-                /**
-                $numberOfVerificationAttemptsForExpiration = get_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', null);
-                if ( is_null($numberOfVerificationAttemptsForExpiration) ) {
+                if ($this->getSubscriptionStatus() !== 'Canceled') {
                     
-                    add_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0, '', 'no');
-                    
-                } else {
-                    
-                    update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0);
+                    $this->updateSubscriptionStatus('Active');
                     
                 }
-                **/
+                
+                if (strtolower( $license['subscription_status'] ) === 'canceled') {
+                    
+                    $this->updateSubscriptionStatus('Canceled');
+                    
+                }
                 
             } else {
                 
@@ -6457,8 +6466,10 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout,
                     'body' => $params
                 );
+                
                 $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelSubscription/", $args);
                 $statusCode = wp_remote_retrieve_response_code($response);
                 $response = json_decode(wp_remote_retrieve_body($response), true);
@@ -6469,6 +6480,7 @@
                     $response['status'] = 'success';
                     
                 }
+                
                 
             }
             
@@ -6560,6 +6572,7 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout,
                     'body' => $params
                 );
                 $response = wp_remote_request($url . "checkLatestInvoice/", $args);
@@ -6867,6 +6880,7 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout,
                     'body' => $params
                 );
                 $response = wp_remote_request($url . "updateLicense/", $args);
@@ -6909,14 +6923,6 @@
                 }
                 
             }
-            
-            /**
-            if ($this->getSubscriptionStatus() !== 'Canceled' && intval($statusCode) == 200) {
-                
-                $this->updateSubscriptionStatus('Active');
-                
-            }
-            **/
             
             return true;
             
@@ -7001,6 +7007,7 @@
             );
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout,
                 'body' => $params
             );
             $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelAtPeriodEnd/", $args);
@@ -7423,6 +7430,7 @@
 			
 			$args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout,
                 'body' => $params
             );
             $response = wp_remote_request($url . "activation/", $args);

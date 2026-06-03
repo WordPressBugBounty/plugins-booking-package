@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.16
+Version:     1.7.17
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -255,6 +255,8 @@ Domain Path: /languages
 			add_filter('login_headerurl', array($this, 'login_headerurl'));
 			add_filter('login_headertext', array($this, 'login_headertext'));
 			add_action('wp_print_footer_scripts', array($this, 'add_footer_scripts'), 5);
+			add_action('admin_post_booking-package-activate-subscription', array($this, 'activatePaidSubscription'));
+			add_action('admin_post_nopriv_booking-package-activate-subscription', array($this, 'activatePaidSubscription'));
 			
 			if (is_admin() === false) {
 				
@@ -330,12 +332,6 @@ Domain Path: /languages
 			if (isset($_POST['booking_package_heartbeat'])) {
 				
 				add_action('init', array($this, 'heartbeat'));
-				
-			}
-			
-			if (isset($_POST['mode']) && $_POST['mode'] == 'booking-package-activate-subscription') {
-				
-				add_action('init', array($this, 'activatePaidSubscription'));
 				
 			}
 			
@@ -2151,6 +2147,19 @@ Domain Path: /languages
 					'booking-package-script-Booking_app-js' =>  plugin_dir_url( __FILE__ ) . 'js/Booking_app.js' . '?ver=' . $this->plugin_version . '&date=' . $pluginDate,
 					'booking-package-script-Reservation_manage-js' =>  plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js' . '?ver=' . $this->plugin_version . '&date=' . $pluginDate,
 				);
+				/**
+				$files = array(
+					'booking-package-script-Error-js' => plugin_dir_url( __FILE__ ) . 'js/Error.js' . '?ver=' . $this->get_plugin_asset_version('js/Error.js'),
+					'booking-package-script-i18n-js' =>  plugin_dir_url( __FILE__ ) . 'js/i18n.js' . '?ver=' . $this->get_plugin_asset_version('js/i18n.js'),
+					'booking-package-script-XMLHttp-js' =>  plugin_dir_url( __FILE__ ) . 'js/XMLHttp.js' . '?ver=' . $this->get_plugin_asset_version('js/XMLHttp.js'),
+					'booking-package-script-Input-js' =>  plugin_dir_url( __FILE__ ) . 'js/Input.js' . '?ver=' . $this->get_plugin_asset_version('js/Input.js'),
+					'booking-package-script-Calendar-js' =>  plugin_dir_url( __FILE__ ) . 'js/Calendar.js' . '?ver=' . $this->get_plugin_asset_version('js/Calendar.js'),
+					'booking-package-script-Hotel-js' =>  plugin_dir_url( __FILE__ ) . 'js/Hotel.js' . '?ver=' . $this->get_plugin_asset_version('js/Hotel.js'),
+					'booking-package-script-Member-js' =>  plugin_dir_url( __FILE__ ) . 'js/Member.js' . '?ver=' . $this->get_plugin_asset_version('js/Member.js'),
+					'booking-package-script-Booking_app-js' =>  plugin_dir_url( __FILE__ ) . 'js/Booking_app.js' . '?ver=' . $this->get_plugin_asset_version('js/Booking_app.js'),
+					'booking-package-script-Reservation_manage-js' =>  plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js' . '?ver=' . $this->get_plugin_asset_version('js/Reservation_manage.js'),
+				);
+				**/
 				
 				if ($this->front_end_js === true) {
 					
@@ -4428,7 +4437,12 @@ Domain Path: /languages
 		
 		public function selectedMode(){
 			
-			$response = array('status' => 'error', 'mode' => $_POST['mode']);
+			$response = array('status' => 'error', 'mode' => sanitize_text_field($_POST['mode']) );
+			if (is_user_logged_in() === false || (current_user_can('edit_others_posts') === false && current_user_can('booking_package_manager') === false && current_user_can('booking_package_editor') === false) ) {
+				
+				return $response;
+				
+			}
 			
 			$setting = $this->setting;
 			
@@ -5283,10 +5297,14 @@ Domain Path: /languages
 		
 		public function activatePaidSubscription() {
 			
-			$setting = $this->setting;
-			$setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']) );
-			header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
-			die();
+			if (isset($_POST['mode']) && $_POST['mode'] == 'booking-package-activate-subscription' && isset($_POST['customer_id_for_subscriptions']) && isset($_POST['subscriptions_id_for_subscriptions'])) {
+				
+				$setting = $this->setting;
+				$setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']) );
+				header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
+				die();
+				
+			}
 			
 		}
 		

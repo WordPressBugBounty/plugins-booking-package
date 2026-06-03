@@ -13,6 +13,8 @@
         
         public $prefix = null;
         
+        public $request_timeout = 30;
+        
         public function __construct($pluginName, $prefix){
             
             $this->pluginName = $pluginName;
@@ -64,6 +66,7 @@
             
             $args = array(
 				'method' => 'POST',
+				'timeout' => $this->request_timeout, 
 				'body' => $params,
 				'headers' => array(
 					'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -108,6 +111,7 @@
 	        
 	        $args = array(
 				'method' => 'GET',
+				'timeout' => $this->request_timeout, 
 				'headers' => array(
 					'Authorization' => 'Basic ' . base64_encode($secret . ':')
 				)
@@ -158,6 +162,7 @@
 	        
 	        $args = array(
 				'method' => 'POST',
+				'timeout' => $this->request_timeout, 
 				'body' => $params,
 				'headers' => array(
 					'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -202,6 +207,7 @@
                 
                 $args = array(
                     'method' => 'GET',
+                    'timeout' => $this->request_timeout, 
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
                     )
@@ -247,6 +253,7 @@
 	            
 	            $args = array(
                     'method' => 'DELETE',
+                    'timeout' => $this->request_timeout, 
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
                     )
@@ -276,6 +283,7 @@
                         
                         $args = array(
                             'method' => 'DELETE',
+                            'timeout' => $this->request_timeout, 
                             'headers' => array(
                                 'Authorization' => 'Basic ' . base64_encode($secret . ':')
                             )
@@ -401,6 +409,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -424,6 +433,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => http_build_query($params),
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -446,6 +456,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -477,6 +488,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -497,6 +509,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -515,6 +528,7 @@
             $params = array();
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 /**'body' => $params, **/
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -551,6 +565,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -696,6 +711,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'body' => $params,
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($public_key . ':' . $secret)
@@ -741,6 +757,7 @@
             
             $args = array(
                 'method' => 'POST',
+                'timeout' => $this->request_timeout, 
                 'headers' => array(
                     'content-type' => 'application/json',
                     'Authorization' => 'Bearer ' . $token
@@ -793,6 +810,7 @@
             
             $args = array(
                 'method' => 'PATCH',
+                'timeout' => $this->request_timeout, 
                 'body' => json_encode($params),
                 'headers' => array(
                     'content-type' => 'application/json',
@@ -840,6 +858,7 @@
             
             $args = array(
                 'method' => 'GET',
+                'timeout' => $this->request_timeout, 
                 'headers' => array(
                     'content-type' => 'application/json',
                     'Authorization' => 'Bearer ' . $token
@@ -885,6 +904,7 @@
             
             $args = array(
                 'method' => 'PATCH',
+                'timeout' => $this->request_timeout, 
                 'body' => json_encode($params),
                 'headers' => array(
                     'content-type' => 'application/json',
@@ -934,6 +954,7 @@
             
             $args = array(
                 'method' => 'GET',
+                'timeout' => $this->request_timeout, 
                 'headers' => array(
                     'content-type' => 'application/json',
                     'Authorization' => 'Bearer ' . $token
@@ -967,6 +988,7 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout, 
                     /**'body' => json_encode($params),**/
                     'headers' => array(
                         'content-type' => 'application/json',
@@ -1017,6 +1039,7 @@
                 
                 $args = array(
                     'method' => 'GET',
+                    'timeout' => $this->request_timeout, 
                     /** 'body' => $params, **/
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -1061,6 +1084,7 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout, 
                     /** 'body' => $params, **/
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
@@ -1089,6 +1113,7 @@
                 
                 $args = array(
                     'method' => 'POST',
+                    'timeout' => $this->request_timeout, 
                     'body' => $params,
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
