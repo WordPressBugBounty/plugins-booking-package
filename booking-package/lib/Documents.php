@@ -17,6 +17,66 @@
             
         }
         
+        public function numberOfAvailableDaysFromToday() {
+            
+$document = <<<EOF
+
+<div>
+    <h2>Dynamic Override of "Number of Available Days From Today" on Frontend (Filter Hook)</h2>
+    <div>
+        This filter hook dynamically changes how many days in advance a booking can be made on the frontend booking calendar. 
+        It is used to shorten (restrict) the default booking acceptance period configured in the admin dashboard based on specific calendars or custom conditions.
+    </div>
+    <strong style="font-size: 1.2em;">Filter Hook Details</strong>
+    <ul><li>Hook Name: <code>booking_package_frontend_available_days_from_today</code></li></ul>
+    <strong style="font-size: 1.2em;">Parameters</strong>
+    <ol>
+        <li><b>\$default_days</b> (int) The default number of available days configured in the "<b>Number of Available Days From Today</b>" within the Setting tab.</li>
+        <li><b>\$calendar_account_id</b> (int) The ID of the target calendar account.</li>
+    </ol>
+    <strong style="font-size: 1.2em;">Return Value</strong>
+    <ol>
+        <li>(int) The modified number of available days. (Must be an integer of 1 or greater)</li>
+    </ol>
+    <strong style="font-size: 1.2em;">Specifications and Important Notes</strong>
+    <ol>
+        <li><b>Return Value Restrictions</b>: The return value from the hook MUST be an integer of 1 or greater, and it MUST be less than the value configured in "<b>Number of Available Days From Today</b>" in the Setting tab.</li>
+        <li>This hook only functions when restricting the booking period to be shorter than the default setting. The override is applied only when the return value meets the conditions mentioned above (1 or greater AND less than the Setting tab value).</li>
+        <li>If a value of <code>0</code> or less is specified, or if a value greater than or equal to the Setting tab value (an extension of the period) is returned, the hook will be ignored, and the default setting will be applied as is.</li>
+    </ol>
+    
+    <strong style="font-size: 1.2em;">Usage Example</strong>
+    <div>
+        Assuming the "<b>Number of Available Days From Today</b>" is set to 30 in the Setting tab, this example restricts the booking period to "7 days from today" only for a specific calendar (e.g., Calendar ID <code>5</code>).
+    </div>
+    <br>
+    <code>/**<br>
+    /**
+     * Restrict the booking acceptance period to 7 days for a specific calendar.
+     */<br>
+    
+    function custom_booking_available_days( \$default_days, \$calendar_account_id ) {<br>
+        // Return 7 days only if the Calendar Account ID is 5.<br>
+        // * Note: "Number of Available Days From Today" in the Setting tab must be set to 8 or more for this to work.<br>
+        if ( \$calendar_account_id === 5 ) {<br>
+            // Override the limit time to 90 minutes.<br>
+            return 7;<br>
+        }<br>
+        // Maintain the default setting for all other calendars.<br>
+        return \$default_days;<br>
+    }<br>
+    add_filter( 'booking_package_frontend_available_days_from_today', 'custom_booking_available_days', 10, 2 );<br>
+    
+    </code>
+    
+</div>
+
+EOF;
+            
+            return $document;            
+            
+        }
+        
         public function cancellationLimitTime() {
             
 $document = <<<EOF

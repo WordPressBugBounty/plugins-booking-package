@@ -6393,6 +6393,15 @@
 				
 				$reserveData['schedule_start_day'] = $schedule_start_day;
 				
+				$override_date = null;
+				$override_last_day = apply_filters( 'booking_package_frontend_available_days_from_today', intval($account['maxAccountScheduleDay']), intval($accountCalendarKey) );
+				if (empty($override_last_day) === false && intval($override_last_day) < intval($account['maxAccountScheduleDay']) && $public !== false) {
+					
+					$override_last_day = ( $override_last_day * (1440 * 60) ) + date('U');
+					$override_date = intval( date('Ymd', $override_last_day) );
+					
+				}
+				
 				$visitorList = array();
 				$number = 0;
 				foreach ((array) $calendarList as $key => $value) {
@@ -6422,7 +6431,18 @@
 						}
 						
 						$key = intval($value['year'].sprintf("%02d%02d", $value['month'], $i));
-						$rows = $wpdb->get_results($sql, ARRAY_A);
+						$rows = null;
+						if (is_null($override_date) === true) {
+							
+							$rows = $wpdb->get_results($sql, ARRAY_A);
+							
+						} else if ($override_date > $key) {
+							
+							$rows = $wpdb->get_results($sql, ARRAY_A);
+							
+						}
+						
+						#$rows = $wpdb->get_results($sql, ARRAY_A);
 						if (is_null($rows)) {
 							
 							$rows = array();

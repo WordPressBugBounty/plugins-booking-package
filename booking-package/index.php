@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.17
+Version:     1.7.18
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -6098,6 +6098,13 @@ Domain Path: /languages
 			$screen->add_help_tab(array(
 				'id' => $this->plugin_name . 'cancellationLimitTime',
 				'title' => __('Dynamic Override of Cancellation Limit Time', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->numberOfAvailableDaysFromToday();
+			$screen->add_help_tab(array(
+				'id' => $this->plugin_name . 'numberOfAvailableDaysFromToday',
+				'title' => sprintf(__('Dynamic Override of "%s" on Frontend', 'booking-package'), __('Number of Available Days From Today', 'booking-package')),
 				'content' => $content,
 			));
 			
