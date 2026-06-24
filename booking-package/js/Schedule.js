@@ -1036,6 +1036,7 @@ window.addEventListener('error', function(event) {
 	    }
 	    
     	object.getAccountScheduleData(month, day, year, account, 1);
+    	
 	    
     };
     
@@ -7340,6 +7341,8 @@ window.addEventListener('error', function(event) {
             
         }
         
+        object.setupContextualHelpTriggers();
+        
     };
 
     SCHEDULE.prototype.addItem = function(mainPanel, mode, account, inputTypeList, calendarType, callback){
@@ -8555,6 +8558,8 @@ window.addEventListener('error', function(event) {
         	
     		
         };
+        
+        object.setupContextualHelpTriggers();
     	
     };
 
@@ -9726,7 +9731,53 @@ window.addEventListener('error', function(event) {
             }
         	
         }
+        
+        object.setupContextualHelpTriggers();
     	
+    };
+    
+    SCHEDULE.prototype.setupContextualHelpTriggers = function() {
+        
+        const helpTriggers = document.querySelectorAll('.bqp-help-trigger');
+        if (helpTriggers.length === 0) {
+            
+            return null;
+            
+        }
+        
+        helpTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.dataset.helpTarget;
+                const helpWrap = document.getElementById('contextual-help-wrap');
+                const helpLinkBtn = document.getElementById('contextual-help-link');
+                if (helpWrap && window.getComputedStyle(helpWrap).display === 'none') {
+                    
+                    if (helpLinkBtn) {
+                        
+                        helpLinkBtn.click();
+                        
+                    }
+                    
+                }
+                
+                const targetTabLink = document.querySelector(`#tab-link-${targetId} a`);
+                
+                if (targetTabLink) {
+                    
+                    targetTabLink.click();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                }
+                
+            });
+            
+        });
+        
     };
     
     SCHEDULE.prototype.copyItem = function(key, mode, account, callback){
@@ -11658,6 +11709,13 @@ window.addEventListener('error', function(event) {
                     
                 }
                 
+                if (field.filterHookKey != null && typeof field.filterHookKey === "string") {
+                    
+                    const filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', {'help-target': object._prefix + field.filterHookKey});
+                    valuePanel.appendChild(filterHookMessage);
+                    
+                }
+                
                 if (field.extensionsValidMessage != null && parseInt(field.extensionsValidMessage) == 1 && parseInt(field.isExtensionsValid) == 1 && isExtensionsValid == 0) {
                     
                     var extensionsValidPanel = document.createElement("div");
@@ -11906,12 +11964,19 @@ window.addEventListener('error', function(event) {
             
         }
         
-        if (input.message != null && typeof input.message == "string") {
+        if (input.message != null && typeof input.message === "string") {
             
             var messageLabel = document.createElement("div");
             messageLabel.classList.add("messageLabel");
             messageLabel.insertAdjacentHTML("beforeend", input.message);
             valuePanel.appendChild(messageLabel);
+            
+        }
+        
+        if (input.filterHookKey != null && typeof input.filterHookKey === "string") {
+            
+            const filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', {'help-target': object._prefix + input.filterHookKey});
+            valuePanel.appendChild(filterHookMessage);
             
         }
         

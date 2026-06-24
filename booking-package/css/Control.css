@@ -3900,9 +3900,17 @@
     **/
 }
 
-#addCoursePanel .messageLabel {
+#addCoursePanel .messageLabel, #addCoursePanel .filterHookMessage {
     
     margin-top: 0.5em;
+    
+}
+
+#addCoursePanel .filterHookMessage {
+    
+    color: #3858e9; 
+    text-decoration: underline;
+    cursor: pointer;
     
 }
 

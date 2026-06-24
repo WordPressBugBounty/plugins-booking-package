@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.18
+Version:     1.7.19
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -122,8 +122,6 @@ Domain Path: /languages
 		
 		public $guestLimitsPerTimeSlot = 0;
 		
-		public $extraChargeForTimeSlotBooking = 0;
-		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
 			require_once(plugin_dir_path( __FILE__ ) . 'lib/Setting.php');
@@ -149,7 +147,6 @@ Domain Path: /languages
             $this->setting->setMessagingApp($this->messagingApp);
             $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);
             $this->setting->setPayWithPayPay($this->payWithPayPay);
-            $this->setting->setExtraChargeForTimeSlotBooking($this->extraChargeForTimeSlotBooking);
             $this->currencies = $this->setting->getCurrencies();
             $this->nonce = new booking_package_nonce($this->prefix, $this->plugin_name, $this->ajaxNonceFunction);
             $this->widget = $widget;
@@ -6047,70 +6044,70 @@ Domain Path: /languages
 			
 			$content = $document->displayBookingCalendar();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'displayBookingCalendar',
+				'id' => $this->prefix . 'displayBookingCalendar',
 				'title' => __('How to Display the Booking Calendar', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->weeklyScheduleTemplates();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'weeklyScheduleTemplates',
+				'id' => $this->prefix . 'weeklyScheduleTemplates',
 				'title' => __('Weekly Schedule Templates', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->weeklyScheduleTemplates();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'weeklyScheduleTemplates',
+				'id' => $this->prefix . 'weeklyScheduleTemplates',
 				'title' => __('Weekly Schedule Templates', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->bulkScheduleRegistration();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'bulkScheduleRegistration',
+				'id' => $this->prefix . 'bulkScheduleRegistration',
 				'title' => __('Bulk Schedule Registration', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->emailSendingSettings();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'emailSendingSettings',
+				'id' => $this->prefix . 'emailSendingSettings',
 				'title' => __('Email Sending Settings', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->dynamicTextModification();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'dynamicTextModification',
+				'id' => $this->prefix . 'dynamicTextModification',
 				'title' => __('Dynamic Text Modification', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->reminderNotificationTime();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'reminderNotificationTime',
+				'id' => $this->prefix . 'reminderNotificationTime',
 				'title' => __('Dynamic Override of Reminder Notification Time', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->cancellationLimitTime();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'cancellationLimitTime',
+				'id' => $this->prefix . 'cancellationLimitTime',
 				'title' => __('Dynamic Override of Cancellation Limit Time', 'booking-package'),
 				'content' => $content,
 			));
 			
 			$content = $document->numberOfAvailableDaysFromToday();
 			$screen->add_help_tab(array(
-				'id' => $this->plugin_name . 'numberOfAvailableDaysFromToday',
+				'id' => $this->prefix . 'numberOfAvailableDaysFromToday',
 				'title' => sprintf(__('Dynamic Override of "%s" on Frontend', 'booking-package'), __('Number of Available Days From Today', 'booking-package')),
 				'content' => $content,
 			));
 			
 			$content = $document->videos();
 			$screen->add_help_tab(array(
-				'id'    => $this->plugin_name . 'videos',
+				'id'    => $this->prefix . 'videos',
 				'title'   => __('Videos', 'booking-package'), 
 				'content' => $content,
 			));
@@ -7010,6 +7007,7 @@ Domain Path: /languages
 				$dictionary['Please enable the "%s" item in the "Settings" tab.'] = __('Please enable the "%s" item in the "Settings" tab.', 'booking-package');
 				$dictionary['Despite having valid items, the functionality of "%s" is disabled.'] = __('Despite having valid items, the functionality of "%s" is disabled.', 'booking-package');
 				$dictionary["If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field."] = __("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", 'booking-package');
+				$dictionary['Advanced: Dynamically override values via filter hooks.'] = __("Advanced: Dynamically override values via filter hooks.", 'booking-package');
 				
 			} else if ($mode == "setting_page") {
 				

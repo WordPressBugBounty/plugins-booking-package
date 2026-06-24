@@ -23,8 +23,6 @@
         
         public $payWithPayPay = 0;
         
-        public $extraChargeForTimeSlotBooking = 0;
-        
         public $form = array(
         	array('id' => 'first_name', 'name' => 'First name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
         	array('id' => 'last_name', 'name' => 'Last name', 'value' => '', 'type' => 'TEXT', 'active' => 'true', 'options' => '', 'required' => 'true', 'isName' => 'true', 'isAddress' => 'false', 'isEmail' => 'false', 'isTerms' => 'false'),
@@ -74,12 +72,6 @@
         public function setGuestForDayOfTheWeekRates($guestForDayOfTheWeekRates) {
             
             $this->guestForDayOfTheWeekRates = $guestForDayOfTheWeekRates;
-            
-        }
-        
-        public function setExtraChargeForTimeSlotBooking($extraChargeForTimeSlotBooking) {
-            
-            $this->extraChargeForTimeSlotBooking = $extraChargeForTimeSlotBooking;
             
         }
         
@@ -146,8 +138,8 @@
         public function guestsInputType(){
             
             $guestsInputTypeList = array(
-                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'target' => 'both'),
-                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'target' => 'both'),
+                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'target' => 'both', 'filterHookKey' => 'dynamicTextModification'),
+                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'target' => 'both', 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('true' => 'Enabled'), "class" => '', 'target' => 'both'),
                 'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array(1 => __('Yes', 'booking-package'), 0 => __('No', 'booking-package')), 'target' => 'both'),
                 'costInServices' => array('key' => 'costInServices', 'name' => __('Applicable Price Level', 'booking-package'), 'value' => 'cost_1', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('cost_1' => __(/**'Cost 1'**/ 'Base Price', 'booking-package'), 'cost_2' => sprintf(__('Price %s', 'booking-package'), '2'), 'cost_3' => sprintf(__('Price %s', 'booking-package'), '3'), 'cost_4' => sprintf(__('Price %s', 'booking-package'), '4'), 'cost_5' => sprintf(__('Price %s', 'booking-package'), '5'), 'cost_6' => sprintf(__('Price %s', 'booking-package'), '6')), 'target' => 'day'),
@@ -161,6 +153,7 @@
                     'value' => '', 
                     'inputLimit' => 1, 
                     'inputType' => 'EXTRA', 
+                    'filterHookKey' => 'dynamicTextModification', 
                     "optionsType" => array(
                         "number" => array("type" => "TEXT", "value" => "", "target" => "both"), 
                         "name" => array("type" => "TEXT", "value" => "", "target" => "both"),
@@ -205,12 +198,6 @@
                 
             }
             
-            if ($this->extraChargeForTimeSlotBooking === 0) {
-                
-                $guestsInputTypeList['json']['optionsType']['price']['target'] = 'hotel';
-                
-            }
-            
             return $guestsInputTypeList;
             
         }
@@ -249,8 +236,8 @@
             
             $couponsInputTypeList = array(
                 'id' => array('key' => 'id', 'name' => __('Coupon code', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'target' => 'both'),
-                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'target' => 'both'),
-                'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
+                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'target' => 'both', 'filterHookKey' => 'dynamicTextModification'),
+                'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('1' => 'Enabled'), "class" => ""),
                 'target' => array('key' => 'target', 'name' => __('Target', 'booking-package'), 'value' => 'customers', 'inputLimit' => 1, 'inputType' => 'RADIO', 'target' => 'both', 'valueList' => array('visitors' => __('Customers', 'booking-package'), 'users' => __('Users', 'booking-package')), "class" => ""),
                 'limited' => array('key' => 'limited', 'name' => __('Coupon Usage', 'booking-package'), 'value' => 'unlimited', 'inputLimit' => 1, 'inputType' => 'RADIO', 'target' => 'both', 'valueList' => array('unlimited' => __('Unlimited Usage', 'booking-package'), 'limited' => __('One-Time Use Per User', 'booking-package')), "class" => ""),
@@ -1374,7 +1361,7 @@
                 'email_from_title' => array('key' => 'email_from_title', 'name' => __('Sender Name', 'booking-package'), 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
                 **/
                 'status' => array('key' => 'status', 'name' => __('Calendar Status', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('open' => __('Enabled', 'booking-package'), 'closed' => __('Disabled', 'booking-package'))),
-                'maxAccountScheduleDay' => array('key' => 'maxAccountScheduleDay', 'name' => __('Number of Available Days From Today', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0),
+                'maxAccountScheduleDay' => array('key' => 'maxAccountScheduleDay', 'name' => __('Number of Available Days From Today', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'option' => 0, 'filterHookKey' => 'numberOfAvailableDaysFromToday'),
                 'unavailableDaysFromToday' => array('key' => 'unavailableDaysFromToday', 'name' => __('Number of Unavailable Days From Today', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30')),
                 'maxBookingSlotsPerDay' => array(
                     'key' => 'maxBookingSlotsPerDay', 
@@ -1881,7 +1868,7 @@
                 'insertConfirmedPage' => array('key' => 'insertConfirmedPage', 'name' => __('Insert Booking Confirmation Page Before Completion Page', 'booking-package'), 'target' => 'both', 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 'blockSameTimeBookingByUser' => array('key' => 'blockSameTimeBookingByUser', 'name' => __('Prevent Multiple Bookings', 'booking-package'), 'target' => 'day', 'value' => '0', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'option' => 0, 'valueList' => array(1 => 'Enabled', 0 => 'Disabled')),
                 
-                'bookingReminder' => array('key' => 'bookingReminder', 'name' => __('Reminder Notification Time', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 1, 'option' => 0, 'message' => __('Reminders are sent only for \'Approved\' bookings.', 'booking-package'), 
+                'bookingReminder' => array('key' => 'bookingReminder', 'name' => __('Reminder Notification Time', 'booking-package'), 'target' => 'both', 'disabled' => 0, 'value' => '0', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 1, 'option' => 0, 'filterHookKey' => 'reminderNotificationTime', 'message' => __('Reminders are sent only for \'Approved\' bookings.', 'booking-package'), 
                     'valueList' => array(
                         '60' => sprintf(__('About %d hour before', 'booking-package'), 1), 
                         '120' => sprintf(__('About %d hours before', 'booking-package'), 2), 
@@ -1934,6 +1921,7 @@
                             'inputType' => 'SELECT',
                             'isExtensionsValid' => 1, 
                             /** 'insertAfterElement' => '%s the booking start time', **/
+                            'filterHookKey' => 'cancellationLimitTime',
                             'actions' => null,
                             'valueList' => array(
                                 30 => array('key' => 30, 'name' => sprintf(__('%s minutes before', 'booking-package'), "30")), 
@@ -2168,8 +2156,8 @@
             }
             
             $addNewCourse =  array(
-                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
-                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
+                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'filterHookKey' => 'dynamicTextModification'),
+                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('name' => __('Status', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => array('true' => __('Enabled', 'booking-package'))),
                 'target' => array('name' => __('Target', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'valueList' => array('visitors_users' => __('Customers and Users', 'booking-package'), 'visitors' => __('Customers', 'booking-package'), 'users' => __('Users', 'booking-package'))),
                 'stopService' => array(
@@ -2402,6 +2390,7 @@
                     'isExtensionsValidPanel' => 0, 
                     'format' => 'json', 
                     'valueList' => '', 
+                    'filterHookKey' => 'dynamicTextModification', 
                     "optionsType" => array(
                         "name" => array("type" => "TEXT", "value" => "", "target" => "both"), 
                         /** "cost" => array("type" => "TEXT", "value" => "", "target" => "both"), **/
@@ -2477,7 +2466,7 @@
             }
             
             $addSubscriptions = array(
-                'name' => array('name' => __('Name', 'booking-package'), 'type' => 'both', 'gen' => 'both', 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
+                'name' => array('name' => __('Name', 'booking-package'), 'type' => 'both', 'gen' => 'both', 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 1, 'valueList' => '', 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('name' => __('Status', 'booking-package'), 'type' => 'both', 'gen' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => array('true' => __('Enabled', 'booking-package')), 'actions' => null),
                 'type' => array('name' => __('Type', 'booking-package'), 'type' => 'both', 'gen' => '1', 'value' => '', 'inputLimit' => 2, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 1, 'valueList' => array('tax' => __('Tax', 'booking-package'), 'surcharge' => __('Extra Charge', 'booking-package')), 'option' => 1, 'optionsList' => array('tax' => 1, 'method' => 1), 'actions' => null),
                 'tax' => array('name' => __('Tax', 'booking-package'), 'type' => 'tax', 'gen' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 1, 'valueList' => array('tax_exclusive' => __('Tax-exclusive pricing', 'booking-package'), 'tax_inclusive' => __('Tax-inclusive pricing', 'booking-package')), 'actions' => null, 'valueClasses' => array('tax_exclusive' => 'tax_exclusive', 'tax_inclusive' => 'tax_inclusive'), 'disabled' => 1),
@@ -2579,8 +2568,8 @@
         public function getOptionsForHotelData(){
             
             $options = array(
-                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'disabled' => 0),
-                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'target' => 'both'),
+                'name' => array('name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'disabled' => 0, 'filterHookKey' => 'dynamicTextModification'),
+                'description' => array('name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => '', 'target' => 'both', 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('name' => __('Status', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'CHECK', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => array('true' => __('Enabled', 'booking-package'))),
                 'required' => array('key' => 'required', 'name' => 'Required', 'value' => 'true', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
                 'range' => array('name' => __('Pricing Basis', 'booking-package'), 'value' => 'allDays', 'inputLimit' => 2, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'isExtensionsValidPanel' => 0, 'valueList' => array('allDays' => __('Charge per Day', 'booking-package'), 'oneBooking' => __('Charge Once per Booking', 'booking-package')), 'actions' => null),
@@ -2594,6 +2583,7 @@
                     'isExtensionsValidPanel' => 0, 
                     'format' => 'json', 
                     'valueList' => '', 
+                    'filterHookKey' => 'dynamicTextModification', 
                     "optionsType" => array(
                         "name" => array("type" => "TEXT", "value" => "", "target" => "both"), 
                         "adult" => array("type" => "TEXT", "value" => "", "target" => "both", "class" => array("optionWithChargeAdult")), 
@@ -2649,13 +2639,13 @@
             
             $formInputType = array(
                 'id' => array('key' => 'id', 'name' => __('Unique ID', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', "class" => ""),
-                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', "class" => ""),
+                'name' => array('key' => 'name', 'name' => __('Name', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', "class" => "", 'filterHookKey' => 'dynamicTextModification'),
                 'value' => array('key' => 'value', 'name' => __('Value', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => "hidden_panel"),
                 'groupId' => array('key' => 'groupId', 'name' => 'Group ID', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
                 #'groupName' => array('key' => 'groupName', 'name' => 'Group name', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
-                'uri' => array('key' => 'uri', 'name' => 'URL', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
-                'placeholder' => array('key' => 'placeholder', 'name' => __('Placeholder Text', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => ""),
-                'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', "class" => ""),
+                'uri' => array('key' => 'uri', 'name' => 'URL', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => "", 'filterHookKey' => 'dynamicTextModification'),
+                'placeholder' => array('key' => 'placeholder', 'name' => __('Placeholder Text', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', "class" => "", 'filterHookKey' => 'dynamicTextModification'),
+                'description' => array('key' => 'description', 'name' => __('Description', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXTAREA', "class" => "", 'filterHookKey' => 'dynamicTextModification'),
                 'active' => array('key' => 'active', 'name' => __('Status', 'booking-package'), 'value' => 'true', 'inputLimit' => 2, 'inputType' => 'CHECK', 'valueList' => array('true' => __('Enabled', 'booking-package')), "class" => ""),
                 'required' => array('key' => 'required', 'name' => __('Required', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes - Front-end and Dashboard', 'booking-package'), 'true_frontEnd' => __('Yes - Front-end only', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
                 'isName' => array('key' => 'isName', 'name' => sprintf(__('Use as %s Field', 'booking-package'), __('Name', 'booking-package')), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
@@ -2666,7 +2656,7 @@
                 'isAutocomplete' => array('key' => 'isAutocomplete', 'name' => __('Save User Input Values', 'booking-package'), 'value' => 'false', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('true' => __('Yes', 'booking-package'), 'false' => __('No', 'booking-package')), "class" => ""),
                 'targetCustomers' => array('key' => 'targetCustomers', 'name' => __('Target', 'booking-package'), 'value' => 'customers', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('customersAndUsers' => __('Customers and Users', 'booking-package'), 'visitors' => __('Customers', 'booking-package'), 'users' => __('Users', 'booking-package')), "class" => ""),
                 'type' => array('key' => 'type', 'name' => __('Type', 'booking-package'), 'value' => 'TEXT', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('TEXT' => 'TEXT', 'SELECT' => 'SELECT', 'CHECK' => 'CHECK', 'RADIO' => 'RADIO', 'TEXTAREA' => 'TEXTAREA'), "class" => ""),
-                'options' => array('key' => 'options', 'name' => __('Options', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'OPTION', 'format' => 'array', "class" => "", "options" => array("name" => "text"), 'format' => 'jsonString', 'optionsType' => array(array("type" => "TEXT", "value" => "", "target" => "both"))),
+                'options' => array('key' => 'options', 'name' => __('Options', 'booking-package'), 'value' => '', 'inputLimit' => 2, 'inputType' => 'OPTION', 'format' => 'array', "class" => "", "options" => array("name" => "text"), 'format' => 'jsonString', 'optionsType' => array(array("type" => "TEXT", "value" => "", "target" => "both")), 'filterHookKey' => 'dynamicTextModification'),
             );
             
             if ($this->messagingApp === 0) {
