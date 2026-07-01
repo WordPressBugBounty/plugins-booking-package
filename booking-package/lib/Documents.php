@@ -50,24 +50,25 @@ $document = <<<EOF
         Assuming the "<b>Number of Available Days From Today</b>" is set to 30 in the Setting tab, this example restricts the booking period to "7 days from today" only for a specific calendar (e.g., Calendar ID <code>5</code>).
     </div>
     <br>
-    <code>/**<br>
+    <textarea class="booking-package-sample-code" style="display:none;">
+<?php
     /**
      * Restrict the booking acceptance period to 7 days for a specific calendar.
-     */<br>
+     */
     
-    function custom_booking_available_days( \$default_days, \$calendar_account_id ) {<br>
-        // Return 7 days only if the Calendar Account ID is 5.<br>
-        // * Note: "Number of Available Days From Today" in the Setting tab must be set to 8 or more for this to work.<br>
-        if ( \$calendar_account_id === 5 ) {<br>
-            // Override the limit time to 90 minutes.<br>
-            return 7;<br>
-        }<br>
-        // Maintain the default setting for all other calendars.<br>
-        return \$default_days;<br>
-    }<br>
-    add_filter( 'booking_package_frontend_available_days_from_today', 'custom_booking_available_days', 10, 2 );<br>
-    
-    </code>
+    function custom_booking_available_days( \$default_days, \$calendar_account_id ) {
+        // Return 7 days only if the Calendar Account ID is 5.
+        // * Note: "Number of Available Days From Today" in the Setting tab must be set to 8 or more for this to work.
+        if ( \$calendar_account_id === 5 ) {
+            // Override the limit time to 90 minutes.
+            return 7;
+        }
+        // Maintain the default setting for all other calendars.
+        return \$default_days;
+    }
+    add_filter( 'booking_package_frontend_available_days_from_today', 'custom_booking_available_days', 10, 2 );
+?>
+    </textarea>
     
 </div>
 
@@ -107,26 +108,27 @@ $document = <<<EOF
     <strong style="font-size: 1.2em;">Usage Example</strong>
     <div>This is a sample code that overrides the default cancellation limit time, allowing customers to cancel up to 90 minutes (1.5 hours) before their booking specifically when the Calendar Account ID is <code>5</code>. For all other calendars, it returns <code>0</code> to keep their default settings.</div>
     <br>
-    <code>/**<br>
-    * Customize Booking Package text based on calendar and language<br>
-    * <br>
-    * @param int \$current_cancellation_limit_time Current time in minutes<br>
-    * @param int \$calendar_account_id Calendar Account ID<br>
-    * @return int Modified time in minutes<br>
-    */<br>
+    <textarea class="booking-package-sample-code" style="display:none;">
+<?php
+    /** Dynamic Override of Cancellation Limit Time
+    * 
+    * @param int \$current_cancellation_limit_time Current time in minutes
+    * @param int \$calendar_account_id Calendar Account ID
+    * @return int Modified time in minutes
+    */
     
-    function my_custom_cancellation_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
-        // Check if the target is Calendar Account ID 5<br>
-        if ( \$calendar_account_id === 5 ) {<br>
-            // Override the limit time to 90 minutes.<br>
-            return 90;<br>
-        }<br>
-        // Return 0 (or \$current_cancellation_limit_time) to use the original setting<br>
-        return 0;<br>
-    }<br>
-    add_filter( 'booking_package_override_cancellation_limit_time', 'my_custom_cancellation_time', 10, 1 );<br>
-    
-    </code>
+    function my_custom_cancellation_time( \$current_cancellation_limit_time, \$calendar_account_id ) {
+        // Check if the target is Calendar Account ID 5
+        if ( \$calendar_account_id === 5 ) {
+            // Override the limit time to 90 minutes.
+            return 90;
+        }
+        // Return 0 (or \$current_cancellation_limit_time) to use the original setting
+        return 0;
+    }
+    add_filter( 'booking_package_override_cancellation_limit_time', 'my_custom_cancellation_time', 10, 1 );
+?>
+    </textarea>
     
 </div>
 
@@ -162,24 +164,25 @@ $document = <<<EOF
     <strong style="font-size: 1.2em;">Usage Example</strong>
     <div>This is a sample code that overrides the default reminder notification time and sets it to be sent 4 days and 6 hours (6120 minutes) before the booking.</div>
     <br>
-    <code>/**<br>
-    * Customize Booking Package text based on calendar and language<br>
-    * <br>
-    * @param int \$current_reminder_notification_time Current time in minutes<br>
+    <textarea class="booking-package-sample-code" style="display:none;">
+<?php
+    /** Dynamic Override of Reminder Notification Time
+    * 
+    * @param int \$current_reminder_notification_time Current time in minutes
     * @param int \$calendar_account_id Calendar Account ID<br
-    * @return int Modified time in minutes<br>
-    */<br>
+    * @return int Modified time in minutes
+    */
     
-    function my_custom_reminder_time( \$current_reminder_notification_time, \$calendar_account_id ) {<br>
-        if ( \$calendar_account_id === 5 ) {<br>
-            // Override the notification time to 6120 minutes (4 days and 6 hours). <br>
-            // The value must be an integer of 60 or greater.<br>
-            return 6120;<br>
-        }<br>
-    }<br>
-    add_filter( 'booking_package_override_reminder_notification_time', 'my_custom_reminder_time', 10, 1 );<br>
-    
-    </code>
+    function my_custom_reminder_time( \$current_reminder_notification_time, \$calendar_account_id ) {
+        if ( \$calendar_account_id === 5 ) {
+            // Override the notification time to 6120 minutes (4 days and 6 hours). 
+            // The value must be an integer of 60 or greater.
+            return 6120;
+        }
+    }
+    add_filter( 'booking_package_override_reminder_notification_time', 'my_custom_reminder_time', 10, 1 );
+?>
+    </textarea>
     
 </div>
 
@@ -211,26 +214,28 @@ $document = <<<EOF
     <strong style="font-size: 1.2em;">Usage Example</strong>
     <div>This is a sample code that changes the label of the <b>first_name</b> field to "Nombre (Solo para ID 5)" only when the site language is Spanish (<b>es_ES</b>) and the Calendar Account ID is <b>5</b>.</div>
     <br>
-    <code>/**<br>
-    * Customize Booking Package text based on calendar and language<br>
-    * <br>
-    * @param string     \$type                Type of text<br>
-    * @param int        \$calendar_account_id Calendar Account ID<br>
-    * @param string|int \$unique_id           Unique ID<br>
-    * @param string     \$locale              Current site locale<br>
-    * @param array      \$string_array        Array of text to translate<br>
-    * @return array                          Modified text array<br>
-    */<br>
-    function my_advanced_translator( \$type, \$calendar_account_id, \$unique_id, \$locale, \$string_array ) {<br>
-    	// Check if specific conditions are met<br>
-    	if ( \$type === 'form_field' && \$unique_id === 'first_name' && \$calendar_account_id === 5 && \$locale === 'es_ES' ) {<br>
-    		\$string_array['label'] = 'Nombre (Solo para ID 5)';<br>
-    	}<br>
-    	// Always return the array<br>
-    	return \$string_array;<br>
-    }<br>
+    <textarea class="booking-package-sample-code" style="display:none;">
+<?php
+    /** Dynamic Text Translation and Modification
+    * 
+    * @param string     \$type                Type of text
+    * @param int        \$calendar_account_id Calendar Account ID
+    * @param string|int \$unique_id           Unique ID
+    * @param string     \$locale              Current site locale
+    * @param array      \$string_array        Array of text to translate
+    * @return array                          Modified text array
+    */
+    function my_advanced_translator( \$type, \$calendar_account_id, \$unique_id, \$locale, \$string_array ) {
+    	// Check if specific conditions are met
+    	if ( \$type === 'form_field' && \$unique_id === 'first_name' && \$calendar_account_id === 5 && \$locale === 'es_ES' ) {
+    		\$string_array['label'] = 'Nombre (Solo para ID 5)';
+    	}
+    	// Always return the array
+    	return \$string_array;
+    }
     add_filter( 'booking_package_get_translate_text', 'my_advanced_translator', 10, 5 );
-    </code>
+?>
+    </textarea>
     
 </div>
 

@@ -127,6 +127,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
     this._changeDisplayFormatBookedCustomersForHotel = 'table';
     this._changeDisplayFormatBookedCustomersForDay = 'list';
     this._mobile = parseInt(schedule_data.mobile);
+    this._updateGuestFunction = 0;
+    if (parseInt(schedule_data.updateGuestFunction) === 1) {
+        
+        this._updateGuestFunction  = 1;
+        console.error('updateGuestFunction = ' + this._updateGuestFunction);
+        
+    }
+    
     
     if (schedule_data.guestForDayOfTheWeekRates != null) {
             
@@ -7065,27 +7073,56 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList, selectBox, multipleApplicantCountList);
                         object._console.log(multipleApplicantCountList);
                         object._console.log(multipleApplicantCount);
-                        
+                        const remainedCount = maxApplicantCount - multipleApplicantCount;
                         for (var guestsKey in guestsList) {
                             
+                            const guest = guestsList[guestsKey];
                             if (guestsList[guestsKey].guestsInCapacity == 'included') {
                                 
                                 document.getElementById(object._prefix + 'guests_' + guestsList[guestsKey].key).classList.remove('error_empty_value');
                                 var select = document.getElementById(object._prefix + 'input_guests_' + guestsList[guestsKey].key);
+                                const options = JSON.parse(guest.json);
+                                const guestOptions = select.options;
                                 object._console.log(select);
-                                if (multipleApplicantCount >= maxApplicantCount) {
+                                
+                                
+                                if (object._updateGuestFunction === 0) {
                                     
-                                    if (select.selectedIndex == 0) {
+                                    if (multipleApplicantCount >= maxApplicantCount) {
                                         
-                                        select.disabled = true;
+                                        if (select.selectedIndex == 0) {
+                                            
+                                            select.disabled = true;
+                                            
+                                        }
+                                        
+                                    } else {
+                                        
+                                        select.disabled = false;
                                         
                                     }
                                     
                                 } else {
                                     
-                                    select.disabled = false;
+                                    for (let i = 0; i < guestOptions.length; i++) {
+                                        
+                                        guestOptions[i].disabled = false;
+                                        if (options[i].number > (remainedCount + parseInt(guest.number))) {
+                                            
+                                            console.error(guestOptions[i]);
+                                            guestOptions[i].disabled = true;
+                                            
+                                        } else {
+                                            
+                                            guestOptions[i].disabled = false;
+                                            
+                                        }
+                                        
+                                    }
                                     
                                 }
+                                
+                                
                                 
                             }
                             

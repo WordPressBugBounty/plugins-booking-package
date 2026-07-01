@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.19
+Version:     1.7.20
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -121,6 +121,8 @@ Domain Path: /languages
 		public $notificationsForUser = 0;
 		
 		public $guestLimitsPerTimeSlot = 0;
+		
+		public $updateGuestFunction = 0;
 		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
@@ -3009,6 +3011,44 @@ Domain Path: /languages
 				'after'
 			);
 			
+			$help_editor_settings = wp_enqueue_code_editor(array('type' => 'application/x-httpd-php'));
+			if ( $help_editor_settings !== false ) {
+				
+				$help_editor_settings['codemirror']['readOnly'] = 'nocursor';
+				$help_editor_settings['codemirror']['lineNumbers'] = true;
+				$help_editor_settings['codemirror']['mode'] = 'text/x-php';
+				
+				$help_init_script = sprintf(
+					'jQuery(function($) {
+						
+						var cmInstances = [];
+						var editorSettings = %s;
+						editorSettings.codemirror.viewportMargin = Infinity;
+						$(".booking-package-sample-code").each(function() {
+							var editorObj = wp.codeEditor.initialize(this, editorSettings);
+							if (editorObj && editorObj.codemirror) {
+								cmInstances.push(editorObj.codemirror);
+							}
+						});
+						
+						$(document).on("click", ".contextual-help-tabs a", function() {
+							
+							setTimeout(function() {
+								$.each(cmInstances, function(index, cm) {
+									cm.refresh();
+								});
+							}, 50); 
+							
+						});
+					});',
+					wp_json_encode($help_editor_settings)
+				);
+				
+				wp_add_inline_script('schedule_pange', $help_init_script, 'after');
+				
+			}
+			
+			
 			?>
 			
 			<div id="booking_package_calendar_accounts" style='display: none;'>
@@ -5604,6 +5644,7 @@ Domain Path: /languages
 					'guestForDayOfTheWeekRates' => $this->guestForDayOfTheWeekRates,
 					'numberFormatter' => $numberFormatter,
 					'mobile' => $mobile,
+					'updateGuestFunction' => $this->updateGuestFunction,
 				);
 				
 			} else if ($mode == 'schedule_page') {
@@ -5958,6 +5999,7 @@ Domain Path: /languages
 					'managementUsersV2' => intval($this->managementUsersV2),
 					'userFormFields' => $setting->getUserInputFields(),
 					'ajaxUrl' => $this->ajaxUrl,
+					'updateGuestFunction' => $this->updateGuestFunction,
 				);
 				
 			} else if ($mode == 'member') {

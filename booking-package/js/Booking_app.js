@@ -244,6 +244,15 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._locale_id = reservation_info.locale_id;
         this._isAnimationEndAttachedForTimeSlots = false;
         this._numberFormatter = false;
+        this._updateGuestFunction = 0;
+        if (parseInt(reservation_info.updateGuestFunction) === 1) {
+            
+            this._updateGuestFunction = 1;
+            console.error('updateGuestFunction = ' + this._updateGuestFunction);
+            
+        }
+        
+        
         if (parseInt(reservation_info.numberFormatter) === 1) {
             
             this._numberFormatter = true;
@@ -4636,6 +4645,9 @@ var error_hCaptcha_for_booking_package = function(response) {
                 document.getElementById("bookingPrice").textContent = object._format.formatCost(totalAmount, object._currency);
                 var verifyGuests = object._hotel.verifyGuestsInRooms(response.rooms);
                 object._console.log(verifyGuests);
+                
+                //const guests = verifyGuests.guestsList;
+                
                 var isBookingButton = object._hotel.verifyBookingButton(verifyGuests, response.nights);
                 if (isBookingButton === true) {
                     
@@ -7329,27 +7341,55 @@ var error_hCaptcha_for_booking_package = function(response) {
                         
                         
                         object._console.log(multipleApplicantCountList);
-                        object._console.log(multipleApplicantCount);
-                        
+                        object._console.log("maxApplicantCount = " + maxApplicantCount);
+                        object._console.log("multipleApplicantCount = " + multipleApplicantCount);
+                        const remainedCount = maxApplicantCount - multipleApplicantCount;
                         for (var guestsKey in guestsList) {
                             
-                            if (guestsList[guestsKey].guestsInCapacity == 'included') {
+                            const guest = guestsList[guestsKey];
+                            if (guest.guestsInCapacity == 'included') {
                                 
-                                var select = document.getElementById(object._prefix + 'input_guests_' + guestsList[guestsKey].key);
+                                var select = document.getElementById(object._prefix + 'input_guests_' + guest.key);
+                                const options = JSON.parse(guest.json);
+                                const guestOptions = select.options;
                                 object._console.log(select);
-                                if (multipleApplicantCount >= maxApplicantCount) {
+                                
+                                if (object._updateGuestFunction === 0) {
                                     
-                                    if (select.selectedIndex == 0) {
+                                    if (multipleApplicantCount >= maxApplicantCount) {
                                         
-                                        select.disabled = true;
+                                        if (select.selectedIndex == 0) {
+                                            
+                                            select.disabled = true;
+                                            
+                                        }
+                                        
+                                    } else {
+                                        
+                                        select.disabled = false;
                                         
                                     }
                                     
                                 } else {
                                     
-                                    select.disabled = false;
+                                    for (let i = 0; i < guestOptions.length; i++) {
+                                        
+                                        guestOptions[i].disabled = false;
+                                        if (options[i].number > (remainedCount + parseInt(guest.number))) {
+                                            
+                                            console.error(guestOptions[i]);
+                                            guestOptions[i].disabled = true;
+                                            
+                                        } else {
+                                            
+                                            guestOptions[i].disabled = false;
+                                            
+                                        }
+                                        
+                                    }
                                     
                                 }
+                                
                                 
                             }
                             

@@ -2968,6 +2968,12 @@
 	
 }
 
+#calendarPage .arrowLeft, #calendarPage .arrowRight, #schedulePage .arrowLeft, #schedulePage .arrowRight, #calendarPanelForBookingDate .arrowLeft, #calendarPanelForBookingDate .arrowRight, #holidaysCalendarPanel .arrowLeft, #holidaysCalendarPanel .arrowRight, #nationalHolidaysCalendarPanel .arrowLeft, #nationalHolidaysCalendarPanel .arrowRight {
+    
+    cursor: pointer;
+    
+}
+
 #calendarPage .footerOnCalendar {
     
     display: grid;
@@ -6510,4 +6516,8 @@
 	overflow-x: auto;
 	line-height: 1.5;
 	**/
+}
+
+.contextual-help-tabs-wrap .CodeMirror {
+    height: auto;
 }
