@@ -9362,8 +9362,9 @@
 					if (!is_null($endUnix)) {
 						
 						$sql = $wpdb->prepare(
-							"SELECT * FROM `".$table_name."` WHERE (`status` = 'pending' OR `status` = 'approved') AND `emails` LIKE '%\"" . $email . "\"%' AND `accountKey` = %d AND `scheduleUnixTime` < %d ORDER BY `scheduleUnixTime` DESC;", 
+							"SELECT * FROM `".$table_name."` WHERE (`status` = 'pending' OR `status` = 'approved') AND `emails` LIKE %s AND `accountKey` = %d AND `scheduleUnixTime` < %d ORDER BY `scheduleUnixTime` DESC;", 
 							array(
+								'%"' . $email . '"%',
 								intval($accountKey),
 								intval($startUnix),
 							)
@@ -9391,8 +9392,9 @@
 						}
 						
 						$sql = $wpdb->prepare(
-							"SELECT * FROM `".$table_name."` WHERE (`status` = 'pending' OR `status` = 'approved') AND `emails` LIKE '%\"" . $email . "\"%' AND `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d;", 
+							"SELECT * FROM `".$table_name."` WHERE (`status` = 'pending' OR `status` = 'approved') AND `emails` LIKE %s AND `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` < %d;", 
 							array(
+								'%"' . $email . '"%',
 								intval($accountKey),
 								intval($startUnix),
 								intval($endUnix),
@@ -15089,6 +15091,12 @@
 			global $wpdb;
 			$params = array();
 			$date = date('U') - (1440 * 60);
+			
+			if (isset($errors['source']) === false) {
+				
+				$errors['source'] = '';
+				
+			}
 			
 			$table_name = $wpdb->prefix . "booking_package_error";
 			$sql = $wpdb->prepare(
