@@ -1367,7 +1367,7 @@
 
 #booking-package_calendarPage .selected_day_slot {
     
-    background-color: #b1daff;
+    background-color: #b1daff !important;
     
 }
 

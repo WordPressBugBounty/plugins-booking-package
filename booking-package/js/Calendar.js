@@ -1881,7 +1881,7 @@
                 
                 label += ' ' + object._format.formatCost( parseInt( list[index]. price ) , object._currency);
                 response.totalAmount += parseInt(list[index].price);
-                console.log('totalAmount = ' + response.totalAmount);
+                //console.log('totalAmount = ' + response.totalAmount);
                 
             }
             

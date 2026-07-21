@@ -244,14 +244,6 @@ var error_hCaptcha_for_booking_package = function(response) {
         this._locale_id = reservation_info.locale_id;
         this._isAnimationEndAttachedForTimeSlots = false;
         this._numberFormatter = false;
-        this._updateGuestFunction = 0;
-        if (parseInt(reservation_info.updateGuestFunction) === 1) {
-            
-            this._updateGuestFunction = 1;
-            console.error('updateGuestFunction = ' + this._updateGuestFunction);
-            
-        }
-        
         
         if (parseInt(reservation_info.numberFormatter) === 1) {
             
@@ -7354,37 +7346,17 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 const guestOptions = select.options;
                                 object._console.log(select);
                                 
-                                if (object._updateGuestFunction === 0) {
+                                for (let i = 0; i < guestOptions.length; i++) {
                                     
-                                    if (multipleApplicantCount >= maxApplicantCount) {
+                                    guestOptions[i].disabled = false;
+                                    if (options[i].number > (remainedCount + parseInt(guest.number))) {
                                         
-                                        if (select.selectedIndex == 0) {
-                                            
-                                            select.disabled = true;
-                                            
-                                        }
+                                        //console.error(guestOptions[i]);
+                                        guestOptions[i].disabled = true;
                                         
                                     } else {
                                         
-                                        select.disabled = false;
-                                        
-                                    }
-                                    
-                                } else {
-                                    
-                                    for (let i = 0; i < guestOptions.length; i++) {
-                                        
                                         guestOptions[i].disabled = false;
-                                        if (options[i].number > (remainedCount + parseInt(guest.number))) {
-                                            
-                                            console.error(guestOptions[i]);
-                                            guestOptions[i].disabled = true;
-                                            
-                                        } else {
-                                            
-                                            guestOptions[i].disabled = false;
-                                            
-                                        }
                                         
                                     }
                                     

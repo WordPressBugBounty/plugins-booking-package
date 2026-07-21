@@ -240,7 +240,7 @@
 				$calendar['pastDay > .dateField'] = array('color' => '#FFF', 'background-color' => '#a81c1c');
 				$calendar['dateField'] = array('color' => '#FFF', 'background-color' => '#0f9b79');
 				$calendar['closingDay'] = array();
-				$calendar['selected_day_slot'] = array('background-color' => 'initial');
+				$calendar['selected_day_slot'] = array('background-color' => '#FFF !important');
 				$calendar['selected_start_day'] = array();
 				$calendar['selected_start_day > .dateField'] = array('background-image' => 'repeating-linear-gradient(270deg, #3979CC 0px 50%, transparent 0% 100%);');
 				$calendar['selected_day_range'] = array();
@@ -1128,6 +1128,7 @@
 				
 			} else {
 				
+				/**
 				$queryList = array();
 				$valueList = array();
 				$keywords = $_POST['keywords'];
@@ -1175,6 +1176,76 @@
 					);
 					
 				}
+				**/
+				
+				
+				$valueList = array();
+				$and_conditions = array();
+				$keywords_raw = isset($_POST['keywords']) ? wp_unslash($_POST['keywords']) : '';
+				if (function_exists('mb_convert_kana')) {
+					$keywords_raw = mb_convert_kana($keywords_raw, 's', 'UTF-8');
+				}
+				
+				$keywords_sanitized = sanitize_text_field($keywords_raw);
+				$keywords_array = explode(' ', $keywords_sanitized);
+				
+				$keywords_array = array_filter($keywords_array, 'strlen');
+				
+				foreach ($keywords_array as $keyword) {
+					
+					$escaped_keyword = $wpdb->esc_like($keyword);
+					$like_string = '%' . $escaped_keyword . '%';
+					
+					$word_json = trim(json_encode($keyword), '"');
+					$word_json = str_replace('\\', '%\\', $word_json);
+					$escaped_word_json = $wpdb->esc_like($word_json);
+					$like_string_json = '%' . $escaped_word_json . '%';
+					
+					$keyword_group = array(
+						"`user_login` LIKE %s",
+						"`email` LIKE %s",
+						"`value` LIKE %s"
+					);
+					
+					$and_conditions[] = "(" . implode(' OR ', $keyword_group) . ")";
+					
+					$valueList[] = $like_string;
+					$valueList[] = $like_string;
+					$valueList[] = $like_string_json;
+					
+				}
+				
+				$offset = isset($_POST['offset']) ? max(0, intval($_POST['offset'])) : 0;
+				$number = isset($_POST['number']) ? max(1, intval($_POST['number'])) : 20;
+				
+				array_push($valueList, $offset, $number);
+				
+				$table_name = $wpdb->prefix . "booking_package_users";
+				
+				$is_meta = isset($_POST['meta']) && intval($_POST['meta']) === 1;
+				$select_columns = $is_meta 
+					? "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile`, `locale`"
+					: "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile`, `locale`";
+				
+				if (!empty($and_conditions)) {
+					
+					$where_clause = implode(' AND ', $and_conditions);
+					$sql = $wpdb->prepare(
+						"SELECT {$select_columns} FROM `" . $table_name . "` WHERE " . $where_clause . " LIMIT %d, %d",
+						$valueList
+					);
+					
+				} else {
+					
+					$sql = $wpdb->prepare(
+						"SELECT {$select_columns} FROM `" . $table_name . "` LIMIT %d, %d",
+						$offset, $number
+					);
+					
+				}
+				
+				
+				
 				
 				$rows = $wpdb->get_results($sql, ARRAY_A);
 				foreach ($rows as $key => $row) {

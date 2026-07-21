@@ -127,14 +127,6 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
     this._changeDisplayFormatBookedCustomersForHotel = 'table';
     this._changeDisplayFormatBookedCustomersForDay = 'list';
     this._mobile = parseInt(schedule_data.mobile);
-    this._updateGuestFunction = 0;
-    if (parseInt(schedule_data.updateGuestFunction) === 1) {
-        
-        this._updateGuestFunction  = 1;
-        console.error('updateGuestFunction = ' + this._updateGuestFunction);
-        
-    }
-    
     
     if (schedule_data.guestForDayOfTheWeekRates != null) {
             
@@ -7085,38 +7077,17 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                 const guestOptions = select.options;
                                 object._console.log(select);
                                 
-                                
-                                if (object._updateGuestFunction === 0) {
+                                for (let i = 0; i < guestOptions.length; i++) {
                                     
-                                    if (multipleApplicantCount >= maxApplicantCount) {
+                                    guestOptions[i].disabled = false;
+                                    if (options[i].number > (remainedCount + parseInt(guest.number))) {
                                         
-                                        if (select.selectedIndex == 0) {
-                                            
-                                            select.disabled = true;
-                                            
-                                        }
+                                        //console.error(guestOptions[i]);
+                                        guestOptions[i].disabled = true;
                                         
                                     } else {
                                         
-                                        select.disabled = false;
-                                        
-                                    }
-                                    
-                                } else {
-                                    
-                                    for (let i = 0; i < guestOptions.length; i++) {
-                                        
                                         guestOptions[i].disabled = false;
-                                        if (options[i].number > (remainedCount + parseInt(guest.number))) {
-                                            
-                                            console.error(guestOptions[i]);
-                                            guestOptions[i].disabled = true;
-                                            
-                                        } else {
-                                            
-                                            guestOptions[i].disabled = false;
-                                            
-                                        }
                                         
                                     }
                                     
