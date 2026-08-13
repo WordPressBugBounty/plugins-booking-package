@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.22
+Version:     1.7.23
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -84,7 +84,7 @@ Domain Path: /languages
 		
 		public $ajaxUrl = 'ajax';
 		
-		public $ajaxNonceFunction = 'custom_nonce_validation';
+		public $ajaxNonceFunction = 'check_ajax_referer';
 		
 		public $dubug_javascript = 0;
 		
@@ -142,7 +142,7 @@ Domain Path: /languages
             	
             }
             
-			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'custom_nonce_validation');
+			$this->ajaxNonceFunction = get_option($this->prefix . 'ajax_nonce_function', 'check_ajax_referer');
             $this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
             $this->setting->setMessagingApp($this->messagingApp);
             $this->setting->setMaxBookingSlotsPerDay($this->maxBookingSlotsPerDay);

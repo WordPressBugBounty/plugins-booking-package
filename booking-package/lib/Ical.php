@@ -265,7 +265,7 @@
                 }
                 
                 $description = implode('\n', $descriptionList);
-                $selectedOptionsObject = $schedule->getSelectedServices($calendarAccount, json_decode($bookingDetail['options'], true), $guestsList, "options", array());
+                $selectedOptionsObject = $schedule->getSelectedServices($calendarAccount, json_decode($bookingDetail['options'], true), $guestsList, "options", array(), 1, false);
                 $courseTime = intval($bookingDetail['courseTime']);
                 $courseTime += $selectedOptionsObject['time'];
                 $services = $selectedOptionsObject['object'];

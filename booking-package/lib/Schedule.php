@@ -7398,7 +7398,7 @@
 					
 					$responseGuests = $this->jsonDecodeForGuests($row['guests']);
 					$selectedOptionsObject = $this->getSelectedOptions($calendarAccount, $row['options'], $responseGuests['guests']);
-					$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount']);
+					$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount'], false);
 					$services = $servicesDetails['object'];
 					$customer['amount'] += $servicesDetails['cost'];
 					
@@ -9227,8 +9227,13 @@
 					
 					if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
 						
-						#$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $responseGuests['guests'], "selectedOptionsList", $coupon, $applicantCount);
-						$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $reflectServiceCount);
+						#$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $responseGuests['guests'], "selectedOptionsList", $coupon, $applicantCount, true);
+						$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $reflectServiceCount, true);
+						if ($servicesDetails['status'] === false) {
+							
+							return false;
+							
+						}
 						$services = $servicesDetails['object'];
 						
 					}
@@ -9236,58 +9241,6 @@
 					$taxes = $this->createTaxesDetails($accountKey, 'day', $verifyAmount, $bookingYMD, $applicantCount, null);
 					$verifyAmount = $this->getAmount(null, $calendarAccount, array(), $services, $responseGuests, $taxes, $coupon);
 					
-					/**
-					if ($responseGuests['isGuests'] === true) {
-						
-						$guests = $responseGuests['guests'];
-						$applicantCount = $responseGuests['applicantCount'];
-						$reflectServiceCount = $responseGuests['reflectService'];
-						$reflectAdditionalCount = $responseGuests['reflectAdditional'];
-						if ($applicantCount == 0) {
-							
-							$applicantCount = 1;
-							
-						}
-						
-						$verifyAmount += $this->getSelectedGuestTotalAmount($calendarAccount, $responseGuests['guests'], true);
-						
-					}
-					
-					
-					if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
-						
-						$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $reflectServiceCount);
-						$verifyAmount += intval($servicesDetails['cost']);
-						$services = $servicesDetails['object'];
-						foreach ((array) $services as $key => $service) {
-							
-							$row = $this->serachCourse($accountKey, $_POST['timeKey'], $service['key'], $servicesDetails, $bookingYMD);
-							if (isset($row['status']) && $row['status'] == 'error') {
-								
-								return false;
-							
-							}
-							
-						}
-						
-					}
-					
-					$taxes = $this->createTaxesDetails($accountKey, 'day', $verifyAmount, $bookingYMD, $applicantCount, null);
-					for ($i = 0; $i < count($taxes); $i++) {
-						
-						$tax = $taxes[$i];
-						if ($tax['type'] == 'tax' && $tax['tax'] == 'tax_exclusive') {
-							
-							$verifyAmount += $tax['taxValue'];
-							
-						} else if ($tax['type'] == 'surcharge') {
-							
-							$verifyAmount += $tax['taxValue'] * $reflectAdditionalCount;
-							
-						}
-						
-					}
-					**/
 				}
 				
 			}
@@ -9380,7 +9333,7 @@
 						}
 						#$responseGuests = json_decode($row['guests'], true);
 						$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-						$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount']);
+						$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount'], false);
 						$bookedUnixTime = $row['scheduleUnixTime'] + ($servicesDetails['time'] * 60);
 						if ($startUnix < $bookedUnixTime) {
 							
@@ -9452,7 +9405,7 @@
 							}
 							#$responseGuests = json_decode($row['guests'], true);
 							$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-							$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount']);
+							$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount'], false);
 							$bookedUnixTime = $row['scheduleUnixTime'] + ($servicesDetails['time'] * 60);
 							if ($startUnix < $bookedUnixTime) {
 								
@@ -10165,7 +10118,13 @@
 						
 						if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
 							
-							$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $applicantCount);
+							$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $applicantCount, true);
+							if ($servicesDetails['status'] === false) {
+								
+								return array('status' => 'error', 'message' => $servicesDetails['message']);
+								
+							}
+							
 							$services = $servicesDetails['object'];
 							foreach ((array) $services as $key => $service) {
 								
@@ -10836,8 +10795,9 @@
 			
 		}
     	
-    	public function getSelectedServices($calendarAccount, $selectedServices, $guests, $targetOptions, $coupon = array(), $applicantCount = 1) {
+    	public function getSelectedServices($calendarAccount, $selectedServices, $guests, $targetOptions, $coupon = array(), $applicantCount = 1, $verifyServices = false) {
     		
+    		global $wpdb;
     		$time = 0;
     		$cost = 0;
     		$hasKeys = array(
@@ -10875,7 +10835,81 @@
                 
                 if (is_array($jsonList)) {
 					
+					$table_name = $wpdb->prefix . "booking_package_services";
 					for ($i = 0; $i < count($jsonList); $i++) {
+						
+						if ($verifyServices === true) {
+							
+							$sql = $wpdb->prepare(
+								"SELECT * FROM " . $table_name . " WHERE `key` = %d;", 
+								array(intval($jsonList[$i]['key']))
+							);
+							$verify_service = $wpdb->get_row($sql, ARRAY_A);
+							if (empty($verify_service) === true) {
+								
+								return array('status' => false, 'message' => 'Invalid service.');
+								
+							}
+							
+							if ($verify_service['active'] !== 'true') {
+								
+								return array('status' => false, 'message' => 'Service currently suspended.');
+								
+							}
+							
+							$jsonList[$i]['time'] = intval($verify_service['time']);
+							$jsonList[$i]['cost'] = intval($verify_service['cost']);
+							$jsonList[$i]['cost_1'] = intval($verify_service['cost_1']);
+							$jsonList[$i]['cost_2'] = intval($verify_service['cost_2']);
+							$jsonList[$i]['cost_3'] = intval($verify_service['cost_3']);
+							$jsonList[$i]['cost_4'] = intval($verify_service['cost_4']);
+							$jsonList[$i]['cost_5'] = intval($verify_service['cost_5']);
+							$jsonList[$i]['cost_6'] = intval($verify_service['cost_6']);
+							
+							$verify_options = json_decode($verify_service['options'], true);
+							if (!is_array($verify_options)) {
+								
+								$verify_options = array();
+								
+							}
+							
+							if (!isset($jsonList[$i]['options']) || !is_array($jsonList[$i]['options'])) {
+								
+								$jsonList[$i]['options'] = array();
+								
+							}
+							
+							if (is_array($verify_options) && is_array($jsonList[$i]['options']) && count($verify_options) === count($jsonList[$i]['options'])) {
+								
+								$jsonList[$i]['options'] = (function($verify_options, $options) {
+									
+									for ($j = 0; $j < count($verify_options); $j++) {
+										
+										$verify_option = $verify_options[$j];
+										$options[$j]['time'] = intval($verify_option['time']);
+										$options[$j]['cost'] = intval($verify_option['cost']);
+										$options[$j]['cost_1'] = intval($verify_option['cost_1']);
+										$options[$j]['cost_2'] = intval($verify_option['cost_2']);
+										$options[$j]['cost_3'] = intval($verify_option['cost_3']);
+										$options[$j]['cost_4'] = intval($verify_option['cost_4']);
+										$options[$j]['cost_5'] = intval($verify_option['cost_5']);
+										$options[$j]['cost_6'] = intval($verify_option['cost_6']);
+										
+									}
+									
+									return $options;
+									
+								})($verify_options, $jsonList[$i]['options']);
+								
+								
+							} else {
+								
+								return array('status' => false, 'message' => 'Invalid options.');
+								
+							}
+							
+						}
+						
 						
 						$time += intval($jsonList[$i]['time']);
 						//$cost += intval($jsonList[$i]['cost']);
@@ -10927,7 +10961,7 @@
 			}
 			
 			$cost = $this->getDiscountCostByCoupon($coupon, $cost);
-			return array("time" => $time, "cost" => $cost, "object" => $services);
+			return array("status" => true, "time" => $time, "cost" => $cost, "object" => $services);
 			
 		}
 		
@@ -11545,7 +11579,7 @@
 					$preparation = json_decode($row['preparation'], true);
 					$responseGuests = $this->jsonDecodeForGuests($row['guests']);
 					$selectedOptionsObject = $this->getSelectedOptions($calendarAccount, $row['options'], $responseGuests['guests']);
-					$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount);
+					$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 					$services = $servicesDetails['object'];
 					
 					if (empty($responseGuests) === true) {
@@ -11577,7 +11611,7 @@
 							$hasMultipleServices = 0;
 							#$responseGuests = json_decode($row['guests'], true);
 							$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-							$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount);
+							$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 							$services = $servicesDetails['object'];
 							if (is_array($services)) {
 								
@@ -11919,7 +11953,7 @@
 				
 				#$responseGuests = json_decode($row['guests'], true);
 				$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-				$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount);
+				$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 				$services = $servicesDetails['object'];
 				$unixTimeEnd = $row['scheduleUnixTime'] + ($servicesDetails['time'] * 60) + ($row['maintenanceTime'] * 60);
 				
@@ -11986,7 +12020,7 @@
 					$courseCost = $row['courseCost'];
 					#$responseGuests = json_decode($row['guests'], true);
 					$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-					$servicesDetails1 = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount);
+					$servicesDetails1 = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 					$services = $servicesDetails1['object'];
 					$courseTime = $servicesDetails1['time'];
 					$deleteSql = null;
@@ -12082,7 +12116,7 @@
 							
 						}
 						
-						$servicesDetails2 = $this->getSelectedServices($calendarAccount, $_POST['options'], $responseGuests['guests'], "options", $coupon, $applicantCount);
+						$servicesDetails2 = $this->getSelectedServices($calendarAccount, $_POST['options'], $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 						$selectedServices = $servicesDetails2['object'];
 						$courseTime = $servicesDetails2['time'];
 						$totalCost = intval($servicesDetails2['cost']);
@@ -12417,7 +12451,7 @@
             	
 				$options = json_decode($row['options'], true);
 				$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-				$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount);
+				$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
 				$services = $servicesDetails['object'];
 				
 				if (empty($responseGuests) === true) {
@@ -13980,7 +14014,7 @@
 			}
 			
 			$guests = $this->jsonDecodeForGuests($customer['guests']);
-			$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($customer['options'], true), $guests['guests'], "options", $coupon, $customer['applicantCount']);
+			$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($customer['options'], true), $guests['guests'], "options", $coupon, $customer['applicantCount'], false);
 			$services = $servicesDetails['object'];
 			#$guests = $responseGuests['guests'];
 			#var_dump($servicesDetails);
@@ -15355,7 +15389,7 @@
 						}
 						
 						$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-						$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount']);
+						$servicesDetails = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $row['applicantCount'], false);
 						$services = $servicesDetails['object'];
 						
 						$email = $this->createEmailMessage($calendarAccount['key'], 'booking_reminder_notification', intval($row['key']));
