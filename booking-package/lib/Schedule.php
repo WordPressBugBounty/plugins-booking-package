@@ -10901,6 +10901,39 @@
 									
 								})($verify_options, $jsonList[$i]['options']);
 								
+							} else {
+								
+								return array('status' => false, 'message' => 'Invalid options.');
+								
+							}
+							
+							if (!isset($jsonList[$i]['selectedOptionsList']) || !is_array($jsonList[$i]['selectedOptionsList'])) {
+								
+								$jsonList[$i]['selectedOptionsList'] = array();
+								
+							}
+							
+							if (is_array($verify_options) && is_array($jsonList[$i]['selectedOptionsList']) && count($verify_options) === count($jsonList[$i]['selectedOptionsList'])) {
+								
+								$jsonList[$i]['selectedOptionsList'] = (function($verify_options, $selectedOptionsList) {
+									
+									for ($j = 0; $j < count($verify_options); $j++) {
+										
+										$verify_option = $verify_options[$j];
+										$selectedOptionsList[$j]['time'] = intval($verify_option['time']);
+										$selectedOptionsList[$j]['cost'] = intval($verify_option['cost']);
+										$selectedOptionsList[$j]['cost_1'] = intval($verify_option['cost_1']);
+										$selectedOptionsList[$j]['cost_2'] = intval($verify_option['cost_2']);
+										$selectedOptionsList[$j]['cost_3'] = intval($verify_option['cost_3']);
+										$selectedOptionsList[$j]['cost_4'] = intval($verify_option['cost_4']);
+										$selectedOptionsList[$j]['cost_5'] = intval($verify_option['cost_5']);
+										$selectedOptionsList[$j]['cost_6'] = intval($verify_option['cost_6']);
+										
+									}
+									
+									return $selectedOptionsList;
+									
+								})($verify_options, $jsonList[$i]['selectedOptionsList']);
 								
 							} else {
 								
