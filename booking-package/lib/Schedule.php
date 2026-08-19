@@ -10857,6 +10857,9 @@
 								
 							}
 							
+							$setting = new booking_package_setting($this->prefix, $this->pluginName);
+							$verify_service = $setting->getTranslateService($verify_service, $calendarAccount['key']);
+							
 							$jsonList[$i]['time'] = intval($verify_service['time']);
 							$jsonList[$i]['cost'] = intval($verify_service['cost']);
 							$jsonList[$i]['cost_1'] = intval($verify_service['cost_1']);
@@ -10885,6 +10888,12 @@
 									
 									for ($j = 0; $j < count($verify_options); $j++) {
 										
+										if ($verify_options[$j]['name'] !== $options[$j]['name']) {
+											
+											return false;
+											
+										}
+										
 										$verify_option = $verify_options[$j];
 										$options[$j]['time'] = intval($verify_option['time']);
 										$options[$j]['cost'] = intval($verify_option['cost']);
@@ -10900,6 +10909,12 @@
 									return $options;
 									
 								})($verify_options, $jsonList[$i]['options']);
+								
+								if ($jsonList[$i]['options'] === false) {
+									
+									return array('status' => false, 'message' => 'Invalid options.');
+									
+								}
 								
 							} else {
 								
@@ -10919,6 +10934,12 @@
 									
 									for ($j = 0; $j < count($verify_options); $j++) {
 										
+										if ($verify_options[$j]['name'] !== $selectedOptionsList[$j]['name']) {
+											
+											return false;
+											
+										}
+										
 										$verify_option = $verify_options[$j];
 										$selectedOptionsList[$j]['time'] = intval($verify_option['time']);
 										$selectedOptionsList[$j]['cost'] = intval($verify_option['cost']);
@@ -10934,6 +10955,12 @@
 									return $selectedOptionsList;
 									
 								})($verify_options, $jsonList[$i]['selectedOptionsList']);
+								
+								if ($jsonList[$i]['selectedOptionsList'] === false) {
+									
+									return array('status' => false, 'message' => 'Invalid options.');
+									
+								}
 								
 							} else {
 								

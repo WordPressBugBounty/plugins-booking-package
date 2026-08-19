@@ -3,8 +3,8 @@ Contributors: masaakitanaka
 Donate link: https://saasproject.net/donate/
 Tags: Booking, reservation, appointment, Booking calendar, 予約システム
 Requires at least: 3.5
-Tested up to: 7.0
-Stable tag: 1.7.24
+Tested up to: 7.1
+Stable tag: 1.7.25
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -302,6 +302,9 @@ If you have some technical questions please post to the [support page](https://w
 
 = 1.7.24 =
 * Security Fix: Enhanced security validation for Stripe payments option prices. Discovered by Muni Nitish Kumar Yaddala.
+
+= 1.7.25 =
+* Security Fix: Applied an additional security patch for option validation.
 
 == Upgrade notice ==
 -
