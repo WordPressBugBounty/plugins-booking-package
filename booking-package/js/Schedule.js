@@ -3079,12 +3079,7 @@ window.addEventListener('error', function(event) {
         thead.appendChild(tdDelete);
         
         var tbody = document.createElement('tbody');
-        /**
-        const table = document.getElementById('time_slots_table');
-        table.appendChild(tbody);
-        **/
-        
-        var table = object.create('table', null, [thead, tbody], 'time_slots_table', 'border: 0;', 'wp-list-table widefat fixed striped', null);
+        var table = object.create('table', null, [thead, tbody], 'time_slots_table', 'border: 0;', 'widefat fixed striped', null);
         media_frame_content.appendChild(table);
         
         
