@@ -4821,6 +4821,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         object.initWeekDaysList();
         var weekDaysPanelList = [];
+        const weekdayClasses = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
         for (var i = startDay; i <= endDay; i++) {
             
             if (calendarArray[i] == null) {
@@ -4833,10 +4834,12 @@ var error_hCaptcha_for_booking_package = function(response) {
             var key = object._calendar.getDateKey(calendar.month, calendar.day, calendar.year);
             var weekNum = calendarData.calendar[key].week;
             var selecteWeekData = object.serachDayPanelList(key);
+            console.log(calendarData.calendar[key].week);
             
             var weekPanel = document.createElement("div");
             weekPanel.classList.add("weekPanel");
             weekPanel.classList.add(weekNum +"_OfWeek");
+            weekPanel.classList.add(weekdayClasses[parseInt(weekNum)]);
             weekPanel.textContent = this._i18n.get(this.weekName[weekNum]);
             
             var dayPanel = document.createElement("div");

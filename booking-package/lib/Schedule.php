@@ -10894,9 +10894,10 @@
 											
 										}
 										
+										
 										$verify_option = $verify_options[$j];
 										$options[$j]['time'] = intval($verify_option['time']);
-										$options[$j]['cost'] = intval($verify_option['cost']);
+										#$options[$j]['cost'] = intval($verify_option['cost']);
 										$options[$j]['cost_1'] = intval($verify_option['cost_1']);
 										$options[$j]['cost_2'] = intval($verify_option['cost_2']);
 										$options[$j]['cost_3'] = intval($verify_option['cost_3']);
@@ -10942,7 +10943,7 @@
 										
 										$verify_option = $verify_options[$j];
 										$selectedOptionsList[$j]['time'] = intval($verify_option['time']);
-										$selectedOptionsList[$j]['cost'] = intval($verify_option['cost']);
+										#$selectedOptionsList[$j]['cost'] = intval($verify_option['cost']);
 										$selectedOptionsList[$j]['cost_1'] = intval($verify_option['cost_1']);
 										$selectedOptionsList[$j]['cost_2'] = intval($verify_option['cost_2']);
 										$selectedOptionsList[$j]['cost_3'] = intval($verify_option['cost_3']);
@@ -14884,92 +14885,25 @@
 					
 				}
 				
-				$mailgun_active = intval(get_option($this->prefix."mailgun_active", 0));
 				if ($enableEmail == 1) {
 					
-					if ($mailgun_active == 1) {
+					$sendVisitor = false;
+					if (count($visitorEmail) != 0 && $emailKey == 'visitor') {
 						
-						$mailgun_aip_base_url = get_option($this->prefix."mailgun_aip_base_url", 0);
-						$mailgun_api_key = get_option($this->prefix."mailgun_api_key", 0);
-						//$mailgun_password = get_option($this->prefix."mailgun_password", 0);
+						$sendVisitor = wp_mail($visitorEmail, $emailSubject, $emailBody, $headers, $attachments);
+						$responseList['sendVisitor'] = $sendVisitor;
 						
-						$params = array('from' => $from, 'to' => implode(",", $visitorEmail), 'subject' => $emailSubject);
-						if ($emailFormat == "text") {
-							
-							$params['text'] = $emailBody;
-							
-						} else {
-							
-							$params['html'] = $emailBody;
-							
-						}
-						$responseList['params']['visitor'] = $params;
-						if (count($visitorEmail) != 0 && $emailKey == 'visitor') {
-							
-							$paramsQuery = http_build_query($params);
-							$context = array(
-								'http' => array(
-									'method' => 'POST', 
-									'header' => "Content-Type: application/x-www-form-urlencoded\r\n".
-									"Content-Length: ".strlen($paramsQuery)."\r\n".
-									"User-Agent: PHP\r\n".
-									"Host: api.mailgun.net\r\n".
-									"Authorization: Basic ".base64_encode("api:".$mailgun_api_key),
-									'content' => $paramsQuery
-								)
-							);
-							
-							$context = stream_context_create($context);
-							$response = file_get_contents($mailgun_aip_base_url.'/messages', false, $context);
-							$responseList['response']['visitor'] = $response;
-							
-						} else if ($emailKey == 'admin') {
-							
-							if (!empty($to)) {
-								
-								$params['to'] = $to;
-								$responseList['params']['admin'] = $params;
-								$paramsQuery = http_build_query($params);
-								$context = array(
-									'http' => array(
-										'method' => 'POST', 
-										'header' => "Content-Type: application/x-www-form-urlencoded\r\n".
-										"Content-Length: ".strlen($paramsQuery)."\r\n".
-										"User-Agent: PHP\r\n".
-										"Host: api.mailgun.net\r\n".
-										"Authorization: Basic ".base64_encode("api:".$mailgun_api_key),
-										'content' => $paramsQuery
-									)
-								);
-								
-								$context = stream_context_create($context);
-								$response = file_get_contents($mailgun_aip_base_url.'/messages', false, $context);
-								$responseList['response']['admin'] = $response;
-								
-							}
-							
-						}
+					} else if ($emailKey == 'admin') {
 						
-					} else {
-						
-						$sendVisitor = false;
-						if (count($visitorEmail) != 0 && $emailKey == 'visitor') {
+						if (!empty($to)) {
 							
-							$sendVisitor = wp_mail($visitorEmail, $emailSubject, $emailBody, $headers, $attachments);
-							$responseList['sendVisitor'] = $sendVisitor;
-							
-						} else if ($emailKey == 'admin') {
-							
-							if (!empty($to)) {
-								
-								$sendControl = wp_mail($to, $emailSubject, $emailBody, $headers, $attachments);
-								$responseList['sendControl'] = $sendControl;
-								
-							}
+							$sendControl = wp_mail($to, $emailSubject, $emailBody, $headers, $attachments);
+							$responseList['sendControl'] = $sendControl;
 							
 						}
 						
 					}
+					
 					
 				}
 				
@@ -14979,7 +14913,6 @@
 					
 				}
 				
-				$responseList['mailgun_active'] = $mailgun_active;
 				if ($enableSMS == 1 && $emailKey == 'visitor') {
 					
 					#$this->sendMessagingServices($calendarAccount, $visitorSMS, '', $emailBody);
@@ -15196,55 +15129,9 @@
 				
 			}
 			
-			$mailgun_active = intval(get_option($this->prefix."mailgun_active", 0));
-			if ($mailgun_active == 1) {
-				
-				$mailgun_aip_base_url = get_option($this->prefix."mailgun_aip_base_url", 0);
-				$mailgun_api_key = get_option($this->prefix."mailgun_api_key", 0);
-				//$mailgun_password = get_option($this->prefix."mailgun_password", 0);
-				#var_dump($mailgun_api_key);
-				
-				$params = array('from' => $from, 'to' => $user_email, 'subject' => $subject);
-				if ($emailFormat == "text") {
-					
-					$body = strip_tags($body);
-					$params['text'] = $body;
-					
-				} else {
-					
-					array_push($headers, "Content-Type: text/html; charset=UTF-8");
-					#$bodyStyle = 'word-wrap: break-word; white-space: pre;';
-					#$header = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-					#$header .= '<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Booking email</title></head>';
-					#$header .= '<body style="'.$bodyStyle.'">';
-					#$body = $header.$body."</body></html>";
-					$params['html'] = $body;
-					
-				}
-				$responseList['params']['visitor'] = $params;
-				
-				$args = array(
-					'method' => 'POST',
-					'timeout' => $this->request_timeout, 
-					'body' => $params,
-					'headers' => array(
-						'Authorization' => 'Basic ' . base64_encode('api:' . $mailgun_api_key)
-					)
-				);
-				$response = wp_remote_request($mailgun_aip_base_url . '/messages', $args);
-				$statusCode = wp_remote_retrieve_response_code($response);
-				$response = json_decode(wp_remote_retrieve_body($response), true);
-				$responseList['response']['visitor'] = $response;
-				
-			} else {
-				
-				$sendVisitor = false;
-				$sendVisitor = wp_mail($user_email, $subject, $body, $headers);
-				$responseList['sendVisitor'] = $sendVisitor;
-				
-			}
-			
-			$responseList['mailgun_active'] = $mailgun_active;
+			$sendVisitor = false;
+			$sendVisitor = wp_mail($user_email, $subject, $body, $headers);
+			$responseList['sendVisitor'] = $sendVisitor;
 			return $responseList;
 			
 		}

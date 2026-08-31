@@ -784,16 +784,6 @@
                     
                 ),
                 
-                
-                
-                "Mailgun" => array(
-                    'mailgun_active' => array('name' => __('Active', 'booking-package'), 'deprecated' => true, 'value' => '0', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('1' => __('Enabled', 'booking-package'), '0' => __('Disabled', 'booking-package'))), 
-                    'mailgun_aip_base_url' => array('name' => __('API Base URL', 'booking-package'), 'deprecated' => true, 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
-                    'mailgun_api_key' => array('name' => __('API Key', 'booking-package'), 'deprecated' => true, 'value' => '', 'isExtensionsValid' => 0, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
-                    /**
-                    'mailgun_password' => array('name' => __('Password', 'booking-package'), 'value' => '', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'TEXT'),
-                    **/
-                ),
                 "Stripe" => array(
                     'stripe_active' => array('name' => __('Active', 'booking-package'), 'value' => '0', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('1' => __('Enabled', 'booking-package'), '0' => __('Disabled', 'booking-package'))), 
                     'stripe_public_key' => array('name' => __('Public Key', 'booking-package'), 'value' => '', 'isExtensionsValid' => 1, 'inputLimit' => 1, 'inputType' => 'TEXT'), 
