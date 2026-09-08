@@ -10118,7 +10118,14 @@
 						
 						if (isset($_POST['courseKey']) || isset($_POST['selectedCourseList'])) {
 							
-							$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $applicantCount, true);
+							$verifyServices = true;
+							if ($administrator === true) {
+								
+								#$verifyServices = false;
+								
+							}
+							
+							$servicesDetails = $this->getSelectedServices($calendarAccount, $_POST['selectedCourseList'], $guests, "selectedOptionsList", $coupon, $applicantCount, $verifyServices);
 							if ($servicesDetails['status'] === false) {
 								
 								return array('status' => 'error', 'message' => $servicesDetails['message']);
@@ -10913,7 +10920,7 @@
 								
 								if ($jsonList[$i]['options'] === false) {
 									
-									return array('status' => false, 'message' => 'Invalid options.');
+									return array('status' => false, 'message' => 'Invalid option name.');
 									
 								}
 								
@@ -10959,7 +10966,7 @@
 								
 								if ($jsonList[$i]['selectedOptionsList'] === false) {
 									
-									return array('status' => false, 'message' => 'Invalid options.');
+									return array('status' => false, 'message' => 'Invalid option name.');
 									
 								}
 								

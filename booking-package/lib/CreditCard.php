@@ -1032,6 +1032,9 @@
             
         }
         
+        
+        
+        /**
         public function cancelStripe($payId, $secret, $chargeId){
             
             $status = 'requires_capture';
@@ -1040,7 +1043,6 @@
                 $args = array(
                     'method' => 'GET',
                     'timeout' => $this->request_timeout, 
-                    /** 'body' => $params, **/
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
                     )
@@ -1048,21 +1050,6 @@
                 $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $chargeId, $args);
                 $httpCode = wp_remote_retrieve_response_code($response);
                 $response = json_decode(wp_remote_retrieve_body($response), true);
-                
-                /**
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/' . $chargeId);
-                curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                curl_setopt($ch, CURLOPT_POST, 0);
-                
-                ob_start();
-                $response = curl_exec($ch);
-                $response = ob_get_contents();
-                ob_end_clean();
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close ($ch);
-                $response = json_decode($response, true);
-                **/
                 
                 if ($response['status'] == 'succeeded') {
                     
@@ -1085,27 +1072,12 @@
                 $args = array(
                     'method' => 'POST',
                     'timeout' => $this->request_timeout, 
-                    /** 'body' => $params, **/
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode($secret . ':')
                     )
                 );
                 $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $chargeId . '/cancel', $args);
                 $httpCode = wp_remote_retrieve_response_code($response);
-                #$response = json_decode(wp_remote_retrieve_body($response), true);
-                
-                /**
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/' . $chargeId . '/cancel');
-                curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                curl_setopt($ch, CURLOPT_POST, 1);
-                ob_start();
-                $response = curl_exec($ch);
-                $response = ob_get_contents();
-                ob_end_clean();
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close ($ch);
-                **/
                 
             } else if ($status == 'succeeded') {
                 
@@ -1121,22 +1093,6 @@
                 );
                 $response = wp_remote_request('https://api.stripe.com/v1/refunds', $args);
                 $httpCode = wp_remote_retrieve_response_code($response);
-                #$response = json_decode(wp_remote_retrieve_body($response), true);
-                
-                /**
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/refunds");
-                curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-                curl_setopt($ch, CURLOPT_POST, 1);
-                
-                ob_start();
-                $response = curl_exec($ch);
-                $response = ob_get_contents();
-                ob_end_clean();
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close ($ch);
-                **/
                 
             }
             
@@ -1158,6 +1114,110 @@
             
             return $message;
             
+        }
+        **/
+        
+        public function cancelStripe($payId, $secret, $chargeId) {
+            
+            $status = 'requires_capture';
+            $originalId = $chargeId;
+            if (preg_match('/^pi_/', $originalId)) {
+                $args = array(
+                    'method' => 'GET',
+                    'timeout' => $this->request_timeout, 
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                    )
+                );
+                $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $originalId, $args);
+                
+                if (!is_wp_error($response)) {
+                    
+                    $responseBody = json_decode(wp_remote_retrieve_body($response), true);
+                    if (isset($responseBody['status']) && $responseBody['status'] == 'succeeded') {
+                        
+                        $status = 'succeeded';
+                        
+                    }
+                    
+                } else {
+                    
+                    return $this->httpCodeError(500, $payId);
+                    
+                }
+            } else {
+                
+                $status = 'succeeded';
+                
+            }
+            
+            $response = null;
+            $httpCode = null;
+            $message = array();
+            if ($status == 'requires_capture') {
+                
+                $args = array(
+                    'method' => 'POST',
+                    'timeout' => $this->request_timeout, 
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                    )
+                );
+                $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $originalId . '/cancel', $args);
+                
+            } else if ($status == 'succeeded') {
+                
+                if (preg_match('/^pi_/', $originalId)) {
+                    
+                    $params = array('payment_intent' => $originalId);
+                    
+                } else {
+                    
+                    $params = array('charge' => $originalId);
+                    
+                }
+                
+                $args = array(
+                    'method' => 'POST',
+                    'timeout' => $this->request_timeout, 
+                    'body' => $params,
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                    )
+                );
+                $response = wp_remote_request('https://api.stripe.com/v1/refunds', $args);
+                
+            }
+            
+            if (!is_wp_error($response) && $response !== null) {
+                
+                $httpCode = wp_remote_retrieve_response_code($response);
+                $responseBody = json_decode(wp_remote_retrieve_body($response), true);
+                
+                if ($httpCode < 400) {
+                    
+                    $success_statuses = array('succeeded', 'canceled', 'pending');
+                    if (isset($responseBody['id']) && isset($responseBody['status']) && in_array($responseBody['status'], $success_statuses)) {
+                        
+                        $message['cardToken'] = $responseBody['id'];
+                        
+                    } else {
+                        
+                        $message = $this->httpCodeError($httpCode, $payId);
+                        
+                    }
+                    
+                } else {
+                    
+                    $message = $this->httpCodeError($httpCode, $payId);
+                    
+                }
+                
+            } else {
+                $message = $this->httpCodeError(500, $payId);
+            }
+            
+            return $message;
         }
         
         public function cancelPayPal($payId, $secret, $chargeId){

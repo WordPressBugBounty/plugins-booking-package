@@ -4834,7 +4834,6 @@ var error_hCaptcha_for_booking_package = function(response) {
             var key = object._calendar.getDateKey(calendar.month, calendar.day, calendar.year);
             var weekNum = calendarData.calendar[key].week;
             var selecteWeekData = object.serachDayPanelList(key);
-            console.log(calendarData.calendar[key].week);
             
             var weekPanel = document.createElement("div");
             weekPanel.classList.add("weekPanel");
