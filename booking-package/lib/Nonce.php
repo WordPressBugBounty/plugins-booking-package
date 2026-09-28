@@ -45,6 +45,12 @@
         
         public function verify($nonce, $action) {
             
+            if (!is_string($nonce) || strpos($nonce, '|') === false) {
+                
+                return false;
+                
+            }
+            
             $unique = get_site_url();
             list($hash, $timestamp) = explode('|', $nonce);
             $expiration = 1440 * 60;

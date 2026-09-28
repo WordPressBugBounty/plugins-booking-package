@@ -6359,6 +6359,31 @@
             
         }
         
+        public function getUpgradeSubscriptionDetails($plugin_headers) {
+            
+            $timezone = get_option('timezone_string', '');
+			if (is_null($timezone) || strlen($timezone) == 0) {
+				
+				$timezone = 'UTC';
+				
+			}
+			
+			$plugin_version = $plugin_headers['version'];
+			$upgradeDetail = array(
+			    "status" => true,
+				"timeZone" => $timezone, 
+				"local" => get_locale(), 
+				"site" => get_site_url(), 
+				"pluginUrl" => get_site_url(),
+				"locale" => get_locale(), 
+				"plugin_v" => $plugin_version,
+				"getUpgradeUrl" => BOOKING_PACKAGE_EXTENSION_URL,
+			);
+			
+            return $upgradeDetail;
+            
+        }
+        
         public function upgradePlan($type) {
             
             $response = array('status' => 'error');

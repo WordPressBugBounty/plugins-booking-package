@@ -90,12 +90,12 @@ window.addEventListener('error', function(event) {
 		
 		object._console.log(setting_data);
 		
-		
+		const upgrade = new Upgrade(this._nonce, this._action, this._url);
 		
 		this._getSubscription = document.createElement('div');
-		if (document.getElementById('booking_packaeg_paid_subscription') != null) {
+		if (document.getElementById('booking_package_paid_subscription') != null) {
 			
-			this._getSubscription = document.getElementById('booking_packaeg_paid_subscription');
+			this._getSubscription = document.getElementById('booking_package_paid_subscription');
 			if (document.getElementById('upgradeSubmit') != null) {
 				
 				document.getElementById('upgradeSubmit').setAttribute('style', 'margin-left: 10px;');

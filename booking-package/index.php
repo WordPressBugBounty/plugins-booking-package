@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.28
+Version:     1.7.29
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -228,7 +228,7 @@ Domain Path: /languages
 			
 			add_action('admin_bar_menu', array($this, 'admin_bar_menu'), 100);
 			add_action('wp_ajax_'.$this->action_control, array($this, 'wp_ajax_booking_package'));
-			add_action('wp_ajax_nopriv_'.$this->action_control, array($this, 'wp_ajax_booking_package'));
+			//add_action('wp_ajax_nopriv_'.$this->action_control, array($this, 'wp_ajax_booking_package'));
 			
 			if ($this->ajaxUrl === 'admin-ajax') {
 				
@@ -2259,6 +2259,7 @@ Domain Path: /languages
 			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ) . 'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
 			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ) . 'js/Hotel.js', array(), $this->get_plugin_asset_version('js/Hotel.js') );
 			wp_enqueue_script('Reservation_manage_js', plugin_dir_url( __FILE__ ) . 'js/Reservation_manage.js', array(), $this->get_plugin_asset_version('js/Reservation_manage.js') );
+			wp_enqueue_script('Upgrade_js', plugin_dir_url( __FILE__ ) . 'js/Upgrade.js', array(), $this->get_plugin_asset_version('js/Upgrade.js') );
 			
 			wp_localize_script('Reservation_manage_js', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('Reservation_manage_js', 'schedule_data', $localize_script);
@@ -2483,6 +2484,7 @@ Domain Path: /languages
 			wp_enqueue_script('Hotel_js', plugin_dir_url( __FILE__ ).'js/Hotel.js', array(), $this->get_plugin_asset_version('js/Hotel.js') );
 			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
 			wp_enqueue_script('Reservation_manage', plugin_dir_url( __FILE__ ).'js/Reservation_manage.js', array(), $this->get_plugin_asset_version('js/Reservation_manage.js') );
+			wp_enqueue_script('Upgrade_js', plugin_dir_url( __FILE__ ) . 'js/Upgrade.js', array(), $this->get_plugin_asset_version('js/Upgrade.js') );
 			wp_enqueue_script('Member_js', plugin_dir_url( __FILE__ ).'js/Member_manage.js', array(), $this->get_plugin_asset_version('js/Member_manage.js') );
 			wp_localize_script('Member_js', 'setting_data', $localize_script);
 			wp_localize_script('Member_js', $this->prefix.'dictionary', $dictionary);
@@ -2993,6 +2995,7 @@ Domain Path: /languages
 			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
 			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
 			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
+			wp_enqueue_script('Upgrade_js', plugin_dir_url( __FILE__ ) . 'js/Upgrade.js', array(), $this->get_plugin_asset_version('js/Upgrade.js') );
 			wp_enqueue_script('Customize_js', plugin_dir_url( __FILE__ ).'js/Customize.js', array(), $this->get_plugin_asset_version('js/Customize.js') );
 			wp_enqueue_script('schedule_pange', plugin_dir_url( __FILE__ ).'js/Schedule.js', array(), $this->get_plugin_asset_version('js/Schedule.js') );
 			wp_localize_script('schedule_pange', $this->prefix.'dictionary', $dictionary);
@@ -3978,6 +3981,7 @@ Domain Path: /languages
 			wp_enqueue_script('input_js', plugin_dir_url( __FILE__ ).'js/Input.js', array(), $this->get_plugin_asset_version('js/Input.js') );
 			wp_enqueue_script('Confirm_js', plugin_dir_url( __FILE__ ).'js/Confirm.js', array(), $this->get_plugin_asset_version('js/Confirm.js') );
 			wp_enqueue_script('Calendar_js', plugin_dir_url( __FILE__ ).'js/Calendar.js', array(), $this->get_plugin_asset_version('js/Calendar.js') );
+			wp_enqueue_script('Upgrade_js', plugin_dir_url( __FILE__ ) . 'js/Upgrade.js', array(), $this->get_plugin_asset_version('js/Upgrade.js') );
 			wp_enqueue_script('setting_page', plugin_dir_url( __FILE__ ).'js/setting.js', array('jquery', 'underscore'), $this->get_plugin_asset_version('js/setting.js') );
 			wp_localize_script('setting_page', $this->prefix.'dictionary', $dictionary);
 			wp_localize_script('setting_page', 'setting_data', $localize_script);
@@ -4449,6 +4453,21 @@ Domain Path: /languages
 		
 		public function wp_ajax_booking_package(){
 			
+			$manager_cap = 'manage_options';
+		    $custom_manager = $this->prefix . 'manager';
+		    $custom_editor  = $this->prefix . 'editor';
+		    $has_permission = current_user_can('manage_options') || current_user_can($custom_manager) || current_user_can($custom_editor);
+			if ($has_permission === false) {
+				
+				wp_send_json_error(array(
+					'status'  => 'error',
+					'message' => __('You do not have permission to access this page.', 'booking-package')
+				), 403);
+				
+				wp_die();
+				
+			}
+		    
 			$_POST['mode'] = sanitize_text_field( esc_html($_POST['mode']) );
 			if (isset($_POST['nonce']) && check_ajax_referer($this->action_control . "_ajax", 'nonce')) {
 				
@@ -4463,10 +4482,9 @@ Domain Path: /languages
 					
 				}
 				
-				
 			}
 			
-			die();
+			wp_die();
 			
 		}
 		
@@ -4801,6 +4819,13 @@ Domain Path: /languages
 			if ($_POST['mode'] == 'updataEmailMessageForCalendarAccount') {
 				
 				$response = $setting->updataEmailMessageForCalendarAccount();
+				
+			}
+			
+			if ($_POST['mode'] == 'getUpgradeSubscriptionDetails') {
+				
+				$plugin_headers = get_file_data(__FILE__, array('version' => 'Version', 'Page Name' => 'Page Name'));
+				$response = $setting->getUpgradeSubscriptionDetails($plugin_headers);
 				
 			}
 			
@@ -5275,55 +5300,41 @@ Domain Path: /languages
 		
 		public function getDownloadCSV() {
 			
-			$download = false;
-			if (current_user_can('manage_options') && current_user_can('edit_pages')) {
+			$has_permission = current_user_can('manage_options') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
+			if ($has_permission === false) {
 				
-				$download = true;
-				
-			}
-			
-			$roles = array($this->prefix . 'manager', $this->prefix . 'editor');
-			for ($i = 0; $i < count($roles); $i++) {
-				
-				if (current_user_can($roles[$i]) === true) {
-					
-					$download = true;
-					break;
-					
-				}
+				wp_die(__('You are not allowed to access this part of the site.'), 403);
 				
 			}
 			
-			/** if (!current_user_can('manage_options') && !current_user_can('edit_pages') && (!defined('DOING_AJAX') || !DOING_AJAX)) { **/
-			if ($download === false && (!defined('DOING_AJAX') || !DOING_AJAX)) {
+			$nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+			if (!wp_verify_nonce( $nonce, $this->action_control . "_download")) {
 				
-				wp_die('You are not allowed to access this part of the site.');
+				wp_die('Security check', 403); 
 				
 			} else {
 				
-				$nonce = $_POST['nonce'];
-				if (!wp_verify_nonce( $nonce, $this->action_control . "_download")) {
+				global $wpdb;
+				$characterCodeOfDownloadFile = get_option($this->prefix . "characterCodeOfDownloadFile", "UTF-8");
+				if (ob_get_length()) {
 					
-					die('Security check'); 
-					
-				} else {
-					
-					global $wpdb;
-					$characterCodeOfDownloadFile = get_option($this->prefix . "characterCodeOfDownloadFile", "UTF-8");
-					header("Content-Type: application/octet-stream");
-					header("Content-Disposition: attachment; filename=\"List.csv\"");
-					$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
-					$data = $schedule->getDownloadCSV();
-					$str = $data['csv'];
-					if ($characterCodeOfDownloadFile != 'UTF-8' && function_exists('mb_convert_encoding')) {
-						
-						$str = mb_convert_encoding($data['csv'], $characterCodeOfDownloadFile, 'UTF-8');
-						
-					}
-					
-					echo $str;
+					ob_end_clean();
 					
 				}
+				
+				nocache_headers();
+				header("Content-Type: application/octet-stream");
+				header("Content-Disposition: attachment; filename=\"List.csv\"");
+				$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
+				$data = $schedule->getDownloadCSV();
+				$str = $data['csv'];
+				if ($characterCodeOfDownloadFile != 'UTF-8' && function_exists('mb_convert_encoding')) {
+					
+					$str = mb_convert_encoding($data['csv'], $characterCodeOfDownloadFile, 'UTF-8');
+					
+				}
+				
+				echo $str;
 				die();
 				
 			}
@@ -5405,7 +5416,7 @@ Domain Path: /languages
 			
 		}
 		
-		public function upgradeButton($isExtensionsValid = false, $daiplay = true){
+		public function upgradeButton($isExtensionsValid = false, $display = true){
 			
 			if ($isExtensionsValid === true) {
 				
@@ -5419,57 +5430,13 @@ Domain Path: /languages
 				
 			}
 			
-			$uri = plugin_dir_url( __FILE__ );
-			$parse_url = parse_url($uri);
-			$locale = get_locale();
-			$dictionary = $this->getDictionary("Upgrade_js", $this->plugin_name);
-			
-			$timezone = $this->timezone;
-			$upgradeDetail = array(
-				"timeZone" => $timezone, 
-				"local" => get_locale(), 
-				"site" => get_site_url(), 
-				"locale" => $locale, 
-				"plugin_v" => $this->plugin_version
-			);
-			
-			$subscriptions = $this->getSubscriptions();
-			foreach ((array) $subscriptions as $key => $value) {
-				
-				$upgradeDetail[$key] = $value;
-				
-			}
-			
-			$upgradeDetail['secure'] = 0;
-			if ($parse_url['scheme'] == 'https') {
-				
-				$upgradeDetail['secure'] = 1;
-				
-			}
-			
-			#$pluginUrl = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
-			#$upgradeDetail['pluginUrl'] = $pluginUrl;
-			$upgradeDetail['pluginUrl'] = get_site_url();
 			$hidden_class = '';
-			if ($daiplay === false) {
+			if ($display === false) {
 				
 				$hidden_class = ' class="hidden_panel"';
 				
 			}
-			echo '<form id="booking_packaeg_paid_subscription" action="' . BOOKING_PACKAGE_UPGRRADE_URL . '" method="post" style="" ' . $hidden_class . '>';
-			$posts = array("extension_url", "local", "timeZone", "site", "pluginUrl", "plugin_v");
-			for ($i = 0; $i < count($posts); $i++) {
-				
-				$key = $posts[$i];
-				if (isset($upgradeDetail[$key])) {
-					
-					echo '<input type="hidden" name="'.$key.'" value="'.$upgradeDetail[$key].'">';
-					
-				}
-				
-			}
-			
-			echo '<input type="hidden" name="getUpgradeUrl" value="' . 'https://saasproject.net/api/1.7/' . '">';
+			echo '<form id="booking_package_paid_subscription" action="' . esc_url(BOOKING_PACKAGE_UPGRRADE_URL) . '" method="post" style="" ' . $hidden_class . '>';
 			echo '<input id="upgradeSubmit" type="submit" class="media-button button-primary button-large media-button-insert" value="' . __('Get a paid subscription', 'booking-package') . '">';
 			echo '</form>';
 			
@@ -5642,6 +5609,7 @@ Domain Path: /languages
 					'guestForDayOfTheWeekRates' => $this->guestForDayOfTheWeekRates,
 					'numberFormatter' => $numberFormatter,
 					'mobile' => $mobile,
+					'upgradeButton' => 1,
 				);
 				
 			} else if ($mode == 'schedule_page') {
@@ -6025,6 +5993,7 @@ Domain Path: /languages
 					'inputType' => $setting->getFormInputTypeForUser(),
 					'userFormFields' => $setting->getUserInputFields(),
 					'notificationsForUser' => $this->notificationsForUser,
+					'upgradeButton' => 1,
 				);
 				
 				

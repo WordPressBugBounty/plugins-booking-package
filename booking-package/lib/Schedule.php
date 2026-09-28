@@ -7570,30 +7570,38 @@
 			}
 			
 			$lineBreakCodes = get_option($this->prefix . 'lineBreakCodesInCsv', 'LF');
-			
-			$temp = tmpfile();
-			$path = stream_get_meta_data($temp)['uri'];
-			$fp = fopen($path, 'w');
+			$fp = fopen('php://temp', 'r+');
 			foreach ((array) $customersList as $key => $value) {
 				
+				$safe_row = array_map(function($field) {
+					
+					if (is_string($field) && strlen($field) > 0) {
+						
+						$first_char = $field[0];
+						if (in_array($first_char, array('=', '+', '-', '@', "\t", "\r"), true)) {
+							
+							return "'" . $field;
+							
+						}
+						
+					}
+					return $field;
+					
+				}, $value);
 				
-				if ($lineBreakCodes === 'LF') {
-					
-					fputcsv($fp, $value);
-					
-				} else {
-					
-					#$value = implode(',', $value) . "\r\n";
-					#fwrite($fp, $value);
-					fwrite($fp, rtrim(fputcsv($fp, $value, ',', "\"", "\\", "")) . "\r\n");
-					
-				}
+				fputcsv($fp, $safe_row);
 				
 			}
-			fseek($fp, 0);
-			$csv = file_get_contents($path);
-			fclose($temp);
 			
+			rewind($fp);
+			$csv = stream_get_contents($fp);
+			fclose($fp);
+			
+			if ($lineBreakCodes !== 'LF') {
+				
+				$csv = str_replace("\n", "\r\n", str_replace("\r\n", "\n", $csv));
+				
+			}
 			
 			$response['rows'] = $rows;
 			$response['customersList'] = $customersList;
@@ -7765,6 +7773,55 @@
 			$table_name = $wpdb->prefix . "booking_package_booked_customers";
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && $requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
 				
+				
+				$selectedService = $servicesDetails['object'][0];
+				$targetServiceKey = intval($selectedService['key']);
+				$serviceDuration = intval($servicesDetails['time']) * 60;
+				
+				$reqStart = intval($schedule['unixTime']);
+				$reqEnd   = $reqStart + $serviceDuration;
+				
+				$dayStart = mktime(0, 0, 0, $schedule['month'], $schedule['day'], $schedule['year']);
+				$dayEnd   = mktime(23, 59, 59, $schedule['month'], $schedule['day'], $schedule['year']);
+				
+				$calendarAccount = $this->getCalendarAccount($accountKey);
+				$accountCalendarKey = (intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
+				$bookedServices = $this->getBookedServices(array(), $dayStart, $dayEnd, $accountKey, $accountCalendarKey);
+				
+				if (!empty($bookedServices)) {
+					$dayData = reset($bookedServices);
+					
+					foreach ($dayData as $timeStr => $servicesInTime) {
+						if (isset($servicesInTime[$targetServiceKey])) {
+							$serviceInfo = $servicesInTime[$targetServiceKey];
+							
+							$existHour = intval(substr($timeStr, 0, 2));
+							$existMin  = intval(substr($timeStr, 2, 2));
+							$existStart = mktime($existHour, $existMin, 0, $schedule['month'], $schedule['day'], $schedule['year']);
+							$existEnd   = $existStart + (intval($serviceInfo['maximumDurationTime']) * 60);
+							
+							if ($reqStart < $existEnd && $existStart < $reqEnd) {
+								
+								$slotOverlapCount = intval($serviceInfo['count']);
+								if (isset($timeSlots[$existStart])) {
+									
+									$timeSlots[$existStart] += $slotOverlapCount;
+									
+								} else {
+									
+									$timeSlots[$existStart] = $slotOverlapCount;
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				/**
 				$selectedService = $servicesDetails['object'][0];
 				$start_unixTime = $schedule['unixTime'];
 				$end_unixTime = intval($start_unixTime) + ($servicesDetails['time'] * 60);
@@ -7808,6 +7865,7 @@
 					}
 					
 				}
+				**/
 				
 			} else {
 				

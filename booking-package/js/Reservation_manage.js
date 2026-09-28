@@ -140,6 +140,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         
     }
     
+    if (parseInt(schedule_data.upgradeButton) === 1) {
+        
+        const upgrade = new Upgrade(this._nonce, this._action, this._url);
+        
+    }
+    
+    
+    
     this._monthFullName = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var weekName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     

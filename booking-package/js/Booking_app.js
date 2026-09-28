@@ -926,6 +926,91 @@ var error_hCaptcha_for_booking_package = function(response) {
                     object.setFunction("getReservationData", post);
                     new Booking_App_XMLHttp(object._url, post, false, function(calendarData) {
                         
+                        var displayCalendar = function(locale_calendar) {
+                            
+                            if (bookingBlockPanel != null) {
+                                
+                                bookingBlockPanel.classList.add("hidden_panel");
+                                
+                            }
+                            
+                            object._console.log(calendarData);
+                            object.resetIndexOfDayPanelList();
+                            object.setNewNonce(calendarData);
+                            
+                            if (calendarData != null && typeof calendarData == 'object') {
+                                
+                                if (calendarData.date != null) {
+                                    
+                                    calendarData = prepareCalendarData(calendarData, object._calendarAccount);
+                                    if (object._calendarAccount.flowOfBooking == 'services' && update === false) {
+                                        
+                                        object.createServicesPanel(calendarData, month, day, year, accountKey);
+                                        
+                                    } else {
+                                        
+                                        object.createCalendar(calendarData, month, day, year, accountKey, null);
+                                        
+                                    }
+                                    if (startCalendar === true) {
+                                        
+                                        object._console.log(object._locale_id);
+                                        object._console.log(locale_calendar);
+                                        locale_calendar.classList.add('opening_effect_calendar');
+                                        
+                                    }
+                                    
+                                } else {
+                                    
+                                    var booking_package_nonce_error_panel = document.getElementById('booking_package_nonce_error_panel');
+                                    if (booking_package_nonce_error_panel != null) {
+                                        
+                                        booking_package_nonce_error_panel.classList.remove('hidden_panel');
+                                        
+                                    }
+                                    window.alert(calendarData.message);
+                                    
+                                }
+                                
+                            }
+                            
+                            locale_calendar.classList.remove('hidden_panel');
+                                
+                        };
+                        
+                        var locale_calendar = document.getElementById(object._uniqueID);
+                        if (locale_calendar != null) {
+                            
+                            displayCalendar(locale_calendar);
+                            
+                        } else {
+                            
+                            (function() {
+                                
+                                var count = 0;
+                                var timer = setInterval(function() {
+                                    
+                                    count++;
+                                    console.error("Number of retries: " + count);
+                                    var el = document.getElementById(object._uniqueID);
+                                    if (el != null) {
+                                        
+                                        clearInterval(timer);
+                                        displayCalendar(el);
+                                        
+                                    } else if (count >= 100) {
+                                        
+                                        clearInterval(timer);
+                                        
+                                    }
+                                    
+                                }, 50);
+                                
+                            })();
+                            
+                        }
+                        
+                        /**
                         bookingBlockPanel.classList.add("hidden_panel");
                         var locale_calendar = document.getElementById(object._uniqueID);
                         object._console.log(calendarData);
@@ -966,7 +1051,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         }
                         
                         locale_calendar.classList.remove('hidden_panel');
-                        //object.sendBookingPackageUserFunction('displayed_calendar', null);
+                        **/
                         
                     }, function(responseText){
                         

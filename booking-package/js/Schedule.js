@@ -134,6 +134,8 @@ window.addEventListener('error', function(event) {
             
         }
         
+        const upgrade = new Upgrade(this.nonce, this.action, this.url);
+        
         object._console.log("this._isExtensionsValid = " + this._isExtensionsValid);
         object._console.log(this.schedule_data);
         object._console.log(booking_package_dictionary);
