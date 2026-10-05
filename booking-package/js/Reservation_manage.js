@@ -6701,7 +6701,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         var totalCost = 0;
         if(schedule != null){
             
-            var date = object._calendar.formatBookingDate(calendarData.date.month, day, calendarData.date.year, schedule.hour, schedule.min, schedule.title, schedule.weekKey, 'text');
+            //var date = object._calendar.formatBookingDate(calendarData.date.month, day, calendarData.date.year, schedule.hour, schedule.min, schedule.title, schedule.weekKey, 'text');
+            var date = object._calendar.formatBookingDate(schedule.month, schedule.day, schedule.year, schedule.hour, schedule.min, schedule.title, schedule.weekKey, 'text');
             var rowPanel = object.createRowPanel(object._i18n.get("Booking Date"), date, null, null, null);
             formPanel.appendChild(rowPanel);
             totalCost = parseInt(schedule.cost);

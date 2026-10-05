@@ -112,8 +112,8 @@
 	        weekClassName.shift();
 	        weekName.shift();
 	        
-	    }
-	    
+        }
+        
 	    object._console.log(weekName);
 	    return {weekName: weekName, weekClassName: weekClassName};
 	    
@@ -1481,10 +1481,75 @@
                 
             } else if (service.stopServiceForDayOfTimes == 'timeSlot') {
                 
+                var ymd = parseInt(year + ("0" + month).slice(-2) + ("0" + day).slice(-2));
+                var minutes = new Array(1440).fill(0);
+                var bookedServicesOnDay = bookedServices[ymd];
+                var serviceKey = parseInt(service.key);
+                var limit = parseInt(service.stopServiceForSpecifiedNumberOfTimes);
+                var serviceDuration = parseInt(durationTime);
+                
+                if (bookedServicesOnDay != null) {
+                    
+                    console.log(bookedServicesOnDay);
+                    for (var time in bookedServicesOnDay) {
+                        
+                        var timeServices = bookedServicesOnDay[time];
+                        if (timeServices[serviceKey] != null) {
+                            
+                            var serviceInfo = timeServices[serviceKey];
+                            var startMin = (parseInt(time.substring(0, 2)) * 60) + parseInt(time.substring(2, 4));
+                            var endMin = startMin + parseInt(serviceInfo.maximumDurationTime);
+                            var count = parseInt(serviceInfo.count);
+                            
+                            for (var m = startMin; ( m < endMin && m < 1440 ); m++) {
+                                
+                                minutes[m] += count;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                console.log(schedules);
+                console.log(minutes);
+                for (var i = 0; i < schedules.length; i++) {
+                    
+                    var schedule = schedules[i];
+                    if (schedule.select === true && parseInt(schedule.remainder) >= 0) {
+                        
+                        var startMin = (parseInt(schedule.hour) * 60) + parseInt(schedule.min);
+                        var endMin = startMin + serviceDuration;
+                        for (var m = startMin; ( m < endMin && m < 1440 ); m++) {
+                            
+                            if (minutes[m] >= limit) {
+                                
+                                schedule.select = false;
+                                break;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                /**
                 function findSlotsCorrected(timeSlots, duration, threshold) {
                     
                     if (typeof threshold !== 'number' || typeof duration !== 'number' || duration < 0) {
-                        console.error("エラー: threshold と duration は適切な数値である必要があります。");
+                        console.error("Error: 'threshold' and 'duration' must be valid numbers.");
                         return [];
                     }
                     
@@ -1642,133 +1707,6 @@
                     
                 }
                 
-                /**
-                let timeSlots = {};
-                for (var i = 0; i < schedules.length; i++) {
-                    
-                    var schedule = schedules[i];
-                    if (parseInt(schedule.remainder) >= 0) {
-                        
-                        let count = 0;
-                        if (parseInt(schedule.capacity) != parseInt(schedule.remainder)) {
-                            
-                            var bookedServicesOnDay = bookedServices[parseInt(schedule.ymd)];
-                            var time = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                            if (bookedServicesOnDay != null && bookedServicesOnDay[time] != null) {
-                                console.log('StartTime' + time);
-                                var bookedServicesTimes = bookedServicesOnDay[time];
-                                object._console.error(bookedServicesTimes);
-                                if (bookedServicesTimes[service.key] != null) {
-                                    
-                                    var startSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) - (durationTime * 60);
-                                    var startServiceSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60);
-                                    var endSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) + (bookedServicesTimes[service.key].maximumDurationTime * 60);
-                                    
-                                    (function(schedules, timeSlots, time, service, bookedServicesOnDay, bookedServicesTimes, startServiceSec, startSec, endSec, callback) {
-                                        
-                                        let count = parseInt(bookedServicesTimes.count);
-                                        object._console.log(time);
-                                        object._console.log(service);
-                                        object._console.log(bookedServicesTimes);
-                                        object._console.log('startSec = ' + startSec);
-                                        object._console.log('endSec = ' + endSec);
-                                        
-                                        console.log('startSec = ' + startSec);
-                                        console.log('endSec = ' + endSec);
-                                        
-                                        for (var i = 0; i < schedules.length; i++) {
-                                            
-                                            var schedule = schedules[i];
-                                            var scheduleTime = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                                            var sec = ((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60;
-                                            if (sec > startSec && sec < endSec) {
-                                                
-                                                console.log(time);
-                                                console.log('調査対象' + scheduleTime);
-                                                if (timeSlots[scheduleTime] == null) {
-                                                    
-                                                    timeSlots[scheduleTime] = bookedServicesTimes.count;
-                                                    
-                                                } else {
-                                                    
-                                                    console.error(scheduleTime);
-                                                    timeSlots[scheduleTime] += bookedServicesTimes.count;
-                                                }
-                                                
-                                                console.log(timeSlots[scheduleTime]);
-                                                console.log(bookedServicesTimes.count);
-                                                
-                                                
-                                                //if (scheduleTime == time && bookedServicesTimes.count < parseInt(service.stopServiceForSpecifiedNumberOfTimes)) {
-                                                if (timeSlots[scheduleTime] < parseInt(service.stopServiceForSpecifiedNumberOfTimes)) {
-                                                    
-                                                    callback(i, true);
-                                                    
-                                                } else {
-                                                    
-                                                    callback(i, false);
-                                                    
-                                                }
-                                                
-                                            }
-                                            
-                                        }
-                                        
-                                    }) (schedules, timeSlots, time, service, bookedServicesOnDay, bookedServicesTimes[service.key], startServiceSec, startSec, endSec, function(key, bool) {
-                                        
-                                        schedules[key].select = bool;
-                                        
-                                    });
-                                    
-                                    object._console.log(bookedServicesOnDay);
-                                    
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                }
-                console.log(schedules);
-                console.log(timeSlots);
-                **/
-                
-                /**
-                let stopTimeSlots = findSlotsCorrected(timeSlots, durationTime, parseInt(service.stopServiceForSpecifiedNumberOfTimes));
-                console.log(stopTimeSlots);
-                for (var i = 0; i < stopTimeSlots.length; i++) {
-                    
-                    const time = stopTimeSlots[i];
-                    console.log(time);
-                    (function(stopTimeSlot, schedules, callback) {
-                        
-                        for (var i = 0; i < schedules.length; i++) {
-                            
-                            let schedule = schedules[i];
-                            var scheduleTime = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                            if (stopTimeSlot === scheduleTime) {
-                                
-                                console.log(schedule);
-                                callback(i, true);
-                                break;
-                                
-                            }
-                            
-                        }
-                        
-                    })(stopTimeSlots[i], schedules, function(key, bool) {
-                        
-                        console.log(key);
-                        console.log(bool);
-                        schedules[key].select = false;
-                        
-                    });
-                    
-                }
-                **/
-                
                 for (var i = 0; i < schedules.length; i++) {
                     
                     var schedule = schedules[i];
@@ -1776,6 +1714,7 @@
                     console.log(scheduleTime + ' ' + schedule.select);
                     
                 }
+                **/
                 
             } else if (service.stopServiceForDayOfTimes == 'day') {
                 
@@ -1783,13 +1722,17 @@
                 var schedule = schedules[0];
                 var bookedServicesOnDay = bookedServices[parseInt(schedule.ymd)];
                 object._console.log(bookedServicesOnDay);
-                for (var time in bookedServicesOnDay) {
+                if (bookedServicesOnDay != null) {
                     
-                    var bookedServices = bookedServicesOnDay[time];
-                    if (bookedServices[parseInt(service.key)] != null) {
+                    for (var time in bookedServicesOnDay) {
                         
-                        count += bookedServices[parseInt(service.key)].count;
-                        object._console.log(bookedServices[parseInt(service.key)]);
+                        var timeServices = bookedServicesOnDay[time];
+                        if (timeServices[parseInt(service.key)] != null) {
+                            
+                            count += timeServices[parseInt(service.key)].count;
+                            object._console.log(timeServices[parseInt(service.key)]);
+                            
+                        }
                         
                     }
                     

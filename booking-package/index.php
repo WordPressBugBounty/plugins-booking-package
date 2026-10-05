@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.29
+Version:     1.7.30
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -21,7 +21,7 @@ Domain Path: /languages
 	define("BOOKING_PACKAGE_EXTENSION_URL", "https://saasproject.net/api/1.7/");
 	
 	define('BOOKING_PACKAGE_UPGRRADE_URL', "https://saasproject.net/upgrade/");
-	
+
 	define('BOOKING_PACKAGE_MY_SUBSCRIPTION_URL', "https://saasproject.net/update-subscription/");
 	
 	define("BOOKING_PACKAGE_MAX_DEADLINE_TIME", 1440);
@@ -1096,7 +1096,13 @@ Domain Path: /languages
 			$this->loaded_plugin = true;
 			$load_start_time = microtime(true);
 			$atts = extract(shortcode_atts(array('id' => 1, 'locale' => null, 'services' => null, 'initial_month' => null, 'initial_year' => null), $atts, "booking_package"));
-			$accountKey = $id;
+			$accountKey = intval($id);
+			if ($accountKey <= 0) {
+				
+				$accountKey = 1;
+				
+			}
+			
 			$this->upgrader_process();
 			
 			if (isset($services) && !empty($services)) {
@@ -1132,7 +1138,7 @@ Domain Path: /languages
             $calendarAccount = $schedule->getCalendarAccount($accountKey, $isExtensionsValid);
 			if ($calendarAccount === false) {
 				
-				echo '<div class="calendarNotFound">';
+				echo '<div class="calendarNotFound" style="color: red; font-size: 2em; padding: 1em; text-align: center;">';
 				echo 'The booking calendar was not found.';
 				echo '</div>';
 				return null;
@@ -2129,7 +2135,7 @@ Domain Path: /languages
 		
 		public function add_footer_scripts() {
 			
-			if ($this->loaded_plugin === true && !is_admin()) {
+			if ($this->loaded_plugin === true && !is_admin() && !empty($this->calendarScript)) {
 				
 				$setting = $this->setting;
 				$pluginDate = date('U');
@@ -4453,10 +4459,7 @@ Domain Path: /languages
 		
 		public function wp_ajax_booking_package(){
 			
-			$manager_cap = 'manage_options';
-		    $custom_manager = $this->prefix . 'manager';
-		    $custom_editor  = $this->prefix . 'editor';
-		    $has_permission = current_user_can('manage_options') || current_user_can($custom_manager) || current_user_can($custom_editor);
+		    $has_permission = current_user_can('manage_options') || current_user_can('edit_others_posts') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
 			if ($has_permission === false) {
 				
 				wp_send_json_error(array(
@@ -5300,7 +5303,7 @@ Domain Path: /languages
 		
 		public function getDownloadCSV() {
 			
-			$has_permission = current_user_can('manage_options') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
+			$has_permission = current_user_can('manage_options') || current_user_can('edit_others_posts') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
 			if ($has_permission === false) {
 				
 				wp_die(__('You are not allowed to access this part of the site.'), 403);

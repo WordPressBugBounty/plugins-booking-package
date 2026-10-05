@@ -2152,12 +2152,12 @@
                 'target' => array('name' => __('Target', 'booking-package'), 'value' => '', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'valueList' => array('visitors_users' => __('Customers and Users', 'booking-package'), 'visitors' => __('Customers', 'booking-package'), 'users' => __('Users', 'booking-package'))),
                 'stopService' => array(
                     'key' => 'stopService',
-                    'name' => __('Stop Offering This Service Under the Following Conditions', 'booking-package'), 
+                    'name' => __('Service Availability', 'booking-package'), 
                     'value' => '', 
                     'inputLimit' => 1, 
                     'inputType' => 'MULTIPLE_FIELDS', 
                     'isExtensionsValid' => 1,
-                    'message' => sprintf( __("If you select any option other than '%s', the '%s' feature will be disabled.", 'booking-package'), __('Disabled', 'booking-package'), __('Allow selecting multiple services', 'booking-package') ),
+                    'message' => sprintf( __("If any restriction other than '%s' is selected, the '%s' feature will be disabled.", 'booking-package'), __('Always available', 'booking-package'), __('Allow selecting multiple services', 'booking-package') ),
                     'valueList' => array(
                         0 => array(
                             'key' => 'stopServiceUnderFollowingConditions',
@@ -2167,10 +2167,10 @@
                             'isExtensionsValid' => 1, 
                             'actions' => null,
                             'valueList' => array(
-                                'doNotStop' => __('Disabled', 'booking-package'), 
-                                'isNotEqual' => sprintf( __("When the '%s' and '%s' values for the time slot do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') ), 
-                                'isEqual' => sprintf( __("When the '%s' and '%s' values for the time slot are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') ),
-                                'specifiedNumberOfTimes' => __('When the specified booking limit is reached.', 'booking-package'),
+                                'doNotStop' => __('Always available', 'booking-package'), 
+                                'isNotEqual' => sprintf( __("Stop when '%s' and '%s' do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') ), 
+                                'isEqual' => sprintf( __("Stop when '%s' and '%s' are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') ),
+                                'specifiedNumberOfTimes' => __('When the booking limit is reached.', 'booking-package'),
                             ),
                             'className' => 'stopServiceUnderFollowingConditions',
                         ),
@@ -2182,7 +2182,7 @@
                             'isExtensionsValid' => 1, 
                             'actions' => null,
                             'valueList' => array( 
-                                'sameServiceIsNotStopped' => __('Allow booking this service if its start time overlaps with the start time of an existing booking for the same service.', 'booking-package'), 
+                                'sameServiceIsNotStopped' => __('Exception: Allow booking if the start time matches an existing booking for the same service.', 'booking-package'), 
                             ),
                             'className' => 'doNotStopServiceAsException',
                         ),
@@ -2195,8 +2195,8 @@
                             'actions' => null,
                             'valueList' => array( 
                                 'day' => __('Total bookings per day', 'booking-package'), 
-                                'timeSlot' => __('Bookings per time slot', 'booking-package'), 
-                                'startTimeSlot' => __('Maximum bookings per start time slot', 'booking-package'),
+                                'timeSlot' => __('Bookings per time slot (Concurrent)', 'booking-package'), 
+                                'startTimeSlot' => __('Bookings with the same start time', 'booking-package'),
                             ),
                             'className' => 'stopServiceForDayOfTimes',
                         ),
