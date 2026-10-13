@@ -585,6 +585,25 @@
 				
 			}
 			
+			$check_email_for_member = intval(get_option($this->prefix . 'check_email_for_member', 0));
+			if ($check_email_for_member === 1 && $administrator === 0) {
+				
+				$token = isset($_POST['verificationToken']) ? sanitize_text_field($_POST['verificationToken']) : '';
+				if (empty($token) || !get_transient('bp_verified_' . $token)) {
+					
+					$error_text = __('Please complete verification code verification.', 'booking-package');
+					return array(
+						'status' => 'error',
+						'message' => $error_text,
+						'error_messages' => $error_text
+					);
+					
+				}
+				
+				delete_transient('bp_verified_' . $token);
+				
+			}
+			
 			if (intval($administrator) === 0) {
 				
 				if (!isset($_POST['googleReCaptchaToken'])) {
@@ -814,6 +833,25 @@
 			$response = array("status" => "error");
 			$userId = 0;
 			
+			$check_email_for_member = intval(get_option($this->prefix . 'check_email_for_member', 0));
+			if ($check_email_for_member === 1 && $administrator === 0) {
+				
+				$token = isset($_POST['verificationToken']) ? sanitize_text_field($_POST['verificationToken']) : '';
+				if (empty($token) || !get_transient('bp_verified_' . $token)) {
+					
+					$error_text = __('Please complete verification code verification.', 'booking-package');
+					return array(
+						'status' => 'error',
+						'message' => $error_text,
+						'error_messages' => $error_text
+					);
+					
+				}
+				
+				delete_transient('bp_verified_' . $token);
+				
+			}
+			
 			if (is_user_logged_in() === false) {
 				
 				$response['error_messages'] = 'Unauthorized: You must be logged in.';
@@ -897,10 +935,15 @@
 					
 				} else {
 					
-					if ($administrator == 1) {
+					if ($administrator == 1 && isset($_POST['status'])) {
 						
 						#$status = 1;
 						$status = intval($_POST['status']);
+						
+					} else {
+						
+						$existingStatus = $wpdb->get_var( $wpdb->prepare("SELECT `status` FROM `" . $table_name . "` WHERE `key` = %d;", intval($userId)) );
+    					$status = (!is_null($existingStatus)) ? intval($existingStatus) : 1;
 						
 					}
 					
@@ -1893,6 +1936,7 @@
         public function deleteUser($administrator = 0){
 			
 			require_once( ABSPATH.'wp-admin/includes/user.php' );
+			$response = array('status' => 'error');
 			$reality = false;
 			$userId = 0;
 			
@@ -2122,6 +2166,11 @@
     	}
     	
     	public function createCustomer(){
+			
+			$user = $this->get_user();
+    		if (intval($user['status']) !== 1) {
+    			return array('status' => 'error', 'message' => __('You do not have permission to access this page.', 'booking-package'));
+    		}
     		
     		$response = array("status" => 1);
     		$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
@@ -2129,9 +2178,24 @@
     		$payment_live = 0;
     		$calendarAccount = $this->getCalendarAccount(intval($_POST['calendarAccountKey']));
     		$paymentMethod = explode(",", $calendarAccount['paymentMethod']);
-    		$response['calendarAccount'] = $calendarAccount;
-    		$user = $this->get_user();
-    		#$response['user'] = $user;
+			
+			$safeCalendarAccount = $calendarAccount;
+    		$sensitive_keys = array(
+    			'email_from', 
+    			'email_to', 
+    			'icalToken', 
+    			'googleCalendarID', 
+    			'googleCalendarName', 
+    			'googleCalendarSync', 
+    			'subscriptionIdForStripe'
+    		);
+    		foreach ($sensitive_keys as $skey) {
+				
+    			unset($safeCalendarAccount[$skey]);
+				
+    		}
+    		$response['calendarAccount'] = $safeCalendarAccount;
+			
     		if(intval($user['status']) == 1){
     			
     			if(isset($_POST['payType']) && $_POST['payType'] == 'stripe'){
@@ -2151,7 +2215,7 @@
 	    			$response['subscription'] = $subscription;
 	    			if(is_array($subscription)){
 	    				
-	    				$stripe = $creditCard->createCustomer($_POST['payType'], $public_key, $secret_key, $_POST['payToken'], $calendarAccount, $subscription, $user['user'], $payment_live, $payment_active);
+	    				$stripe = $creditCard->createCustomer($_POST['payType'], null, $secret_key, $_POST['payToken'], $calendarAccount, $subscription, $user['user'], $payment_live, $payment_active);
 	    				$response['stripe'] = $stripe;
 	    				if(isset($stripe['subscription']['status']) && $stripe['subscription']['status'] == 'active'){
 	    					
@@ -2424,8 +2488,7 @@
 				array(
 					intval($month), 
 					intval($day), 
-					intval($year), 
-					sanitize_text_field($accountKey)
+					intval($year)
 				)
 			);
 			
@@ -4319,73 +4382,6 @@
         	
         }
         
-        public function updateCalendarAccountForGoogleWebhook($accountKey, $idForGoogleWebhook, $expirationForGoogleWebhook){
-        	
-        	global $wpdb;
-        	$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
-        	
-        	$bool = $wpdb->update( 
-        		$table_name,
-				array(
-					'idForGoogleWebhook' => sanitize_text_field($idForGoogleWebhook), 
-					'expirationForGoogleWebhook' => sanitize_text_field($expirationForGoogleWebhook)
-				),
-				array('key' => intval($accountKey)),
-				array('%s', '%s', '%s'),
-				array('%d')
-			);
-			
-        	if($bool === 1){
-        		
-        		$key = $this->prefix."id_for_google_webhook";
-        		if(get_option($key) === false){
-        			
-        			add_option($key, sanitize_text_field($idForGoogleWebhook));
-        			
-        		}else{
-        			
-        			update_option($key, sanitize_text_field($idForGoogleWebhook));
-        			
-				}
-        		
-        		return $this->getCalendarAccountListData();
-        		
-        	}else{
-        		
-        		return array("status" => $bool);
-        		
-        	}
-        	
-        	
-        }
-        
-        
-        
-        public function lookingForGoogleCalendarId($googleCalendarId = false){
-        	
-        	global $wpdb;
-        	$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
-        	if($googleCalendarId != false){
-        		
-        		$sql = $wpdb->prepare(
-        			"SELECT `key`,`type`,`googleCalendarID`,`idForGoogleWebhook`,`expirationForGoogleWebhook` FROM ".$table_name." WHERE `idForGoogleWebhook` = %s;", 
-        			array(sanitize_text_field($googleCalendarId))
-        		);
-        		$row = $wpdb->get_row($sql, ARRAY_A);
-				if(strlen($row['type']) == 0 || is_null($row['type'])){
-					
-					$row['type'] = 'day';
-					
-				}
-        		
-        		return $row;
-        		
-        	}
-        	
-        	return null;
-        	
-        }
-        
         public function deleteCalendarAccount(){
 			
 			global $wpdb;
@@ -5067,7 +5063,7 @@
 							
 						} else {
 							
-							$sql = "DELETE FORM ".$table_name." WHERE `key` = %d;";
+							$sql = "DELETE FROM ".$table_name." WHERE `key` = %d;";
 							$value = array(	
 								intval($row['key'])
 							);
@@ -5233,7 +5229,7 @@
 				$account['hotelChargeOnFriday'] = intval($account['cost']);
 				$account['hotelChargeOnSaturday'] = intval($account['cost']);
 				$account['hotelChargeOnDayBeforeNationalHoliday'] = 0;
-				$account['hotelChargeOnNatiohotelChargeOnNationalHolidaynalHoliday'] = 0;
+				$account['hotelChargeOnNationalHoliday'] = 0;
 				
 			} else {
 				
@@ -5283,7 +5279,7 @@
 			$rows = array(intval($row['key']) => $row);
 			
 			#$wpdb->query("START TRANSACTION");
-			$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_schedules" . "` WRITE, `" . $wpdb->prefix . "booking_package_template_schedules" . "` WRITE");
+			$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_schedules" . "` WRITE, `" . $wpdb->prefix . "booking_package_template_schedules" . "` WRITE, `" . $wpdb->prefix . "booking_package_calendar_accounts" . "` WRITE");
 			try {
 				
 				foreach ((array) $rows as $row) {
@@ -5988,7 +5984,8 @@
 							if ($type == 'hotel') {
 								
 								$SQL = $wpdb->prepare(
-									"SELECT `key`, `accountKey`, `cancellationToken`, `checkin`, `checkout` FROM `" . $customer_table_name . "` WHERE `accountKey` = %d AND (`checkOut` >= %d AND `checkOut` < %d) OR (`checkIn` >= %d AND `checkIn` < %d);", 
+									//"SELECT `key`, `accountKey`, `cancellationToken`, `checkin`, `checkout` FROM `" . $customer_table_name . "` WHERE `accountKey` = %d AND (`checkOut` >= %d AND `checkOut` < %d) OR (`checkIn` >= %d AND `checkIn` < %d);", 
+									"SELECT `key`, `accountKey`, `cancellationToken`, `checkin`, `checkout` FROM `" . $customer_table_name . "` WHERE `accountKey` = %d AND ( (`checkOut` >= %d AND `checkOut` < %d) OR (`checkIn` >= %d AND `checkIn` < %d) );",
 									array($accountKeys[$i], intval($unixTime_from), intval($unixTime_to), intval($unixTime_from), intval($unixTime_to))
 								);
 								
@@ -7612,6 +7609,16 @@
 			#$currentDate = intval(date('Ymd'));
 			$currentDate = intval(date('Ymd', $unixTime));
 			$response = array('status' => 0, 'coupon' => array(), 'currentDate' => $currentDate, 'message' => '');
+			
+			$ip_address = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : 'unknown';
+			$rate_key = 'bp_coupon_rate_' . md5($ip_address);
+			$attempt_count = intval(get_transient($rate_key));
+			
+			if ($attempt_count >= 20) {$response['message'] = __('Too many requests. Please try again later.', 'booking-package');
+				return $response;
+			}
+			set_transient($rate_key, $attempt_count + 1, 5 * MINUTE_IN_SECONDS);
+			
 			global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_coupons";
             $sql = $wpdb->prepare(
@@ -7760,22 +7767,38 @@
 		}
 		
 		
-		
-		public function stopServiceUnderFollowingConditions($accountKey, $scheduleKey,$schedule, $requestService,$servicesDetails, $bookingYMD, $bookingID) {
-				
+		/**
+		 * Evaluates service-specific availability rules (Service Availability settings).
+		 * 
+		 * [NOTE]
+		 * Overall calendar capacity, remaining seat management, and double-booking prevention
+		 * are strictly and independently handled by separate processes such as updateRemainderSeart()
+		 * using database transactions and table locks.
+		 * This function does not manage the remaining capacity of the schedule itself; it is only
+		 * responsible for determining whether individual service-specific restriction rules
+		 * (such as concurrent booking limits or daily booking limits for a specific service) are satisfied.
+		 * 
+		 * Note: When modifying an existing booking ($bookingID is provided), it decrements the slot count
+		 * by one as an update to the existing booking before evaluation.
+		 */
+		public function stopServiceUnderFollowingConditions($accountKey, $scheduleKey, $schedule, $requestService, $servicesDetails, $bookingYMD, $bookingID) {
+			
 			global $wpdb;
 			$response = array('status' => true, 'message' => '');
 			$hasServices = array();
 			$timeSlots = array();
 			$bookingIDs = array();
+			$original_timezone = null;
 			$table_name =$wpdb->prefix . "booking_package_booked_customers";
 			
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && ($requestService['stopServiceForDayOfTimes'] == 'timeSlot' || $requestService['stopServiceForDayOfTimes'] == 'day')) {
 				
 				$calendarAccount = $this->getCalendarAccount($accountKey);
 				$accountCalendarKey = (!empty($calendarAccount) && intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
+				
 				if (!empty($calendarAccount['timezone']) &&$calendarAccount['timezone'] !== 'none') {
 					
+					$original_timezone = date_default_timezone_get();
 					date_default_timezone_set($calendarAccount['timezone']);
 					
 				}
@@ -7783,8 +7806,11 @@
 				$dayStart = mktime(0, 0, 0,$schedule['month'], $schedule['day'], $schedule['year']);
 				$dayEnd   = mktime(23, 59, 59,$schedule['month'], $schedule['day'], $schedule['year']);
 				$dayKey   = sprintf('%04d%02d%02d',$schedule['year'], $schedule['month'], $schedule['day']);
+				$prevDayKey = date('Ymd', $dayStart - 86400);
+				$nextDayKey = date('Ymd', $dayEnd + 1);
 				
-				$bookedServices =$this->getBookedServices(array(), $dayStart, $dayEnd, $accountKey, $accountCalendarKey);
+				#$bookedServices =$this->getBookedServices(array(), $dayStart, $dayEnd, $accountKey, $accountCalendarKey);
+				$bookedServices = $this->getBookedServices(array(), $dayStart - 86400, $dayEnd + 86400, $accountKey, $accountCalendarKey);
 				$dayData = (!empty($bookedServices) && isset($bookedServices[$dayKey])) ? $bookedServices[$dayKey] : array();
 				
 				$selectedService =$servicesDetails['object'][0];
@@ -7795,21 +7821,64 @@
 					$serviceDuration = intval($servicesDetails['time']);
 					$reqStart = intval($schedule['unixTime']);
 					$reqStartMin = (intval(date('H',$reqStart)) * 60) + intval(date('i', $reqStart));
+					#$reqEndMin = min($reqStartMin +$serviceDuration, 1440);
 					$reqEndMin = $reqStartMin + $serviceDuration;
-					
 					for ($m = $reqStartMin; $m < $reqEndMin; $m++) {
 						
 						$timeSlots[$m] = 0;
 						
 					}
 					
+					$dayOffsets = array(
+						
+						$prevDayKey => -1440,
+						$dayKey => 0,
+						$nextDayKey => 1440,
+						
+					);
+
+					foreach ($dayOffsets as $dKey => $offsetMin) {
+						
+						if (!empty($bookedServices[$dKey])) {
+							
+							foreach ($bookedServices[$dKey] as $timeStr => $servicesInTime) {
+								
+								if (isset($servicesInTime[$targetServiceKey])) {
+									
+									$serviceInfo = $servicesInTime[$targetServiceKey];
+									$existStartMin = (intval(substr($timeStr, 0, 2)) * 60) + intval(substr($timeStr, 2, 2)) + $offsetMin;
+									$existEndMin = $existStartMin + intval($serviceInfo['maximumDurationTime']);
+									$count = intval($serviceInfo['count']);
+									
+									if ($reqStartMin < $existEndMin && $existStartMin < $reqEndMin) {
+										
+										$overlapStart = max($reqStartMin, $existStartMin);
+										$overlapEnd   = min($reqEndMin, $existEndMin);
+										for ($m = $overlapStart; $m < $overlapEnd; $m++) {
+											
+											$timeSlots[$m] += $count;
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+					/**
 					foreach ($dayData as $timeStr => $servicesInTime) {
 						
 						if (isset($servicesInTime[$targetServiceKey])) {
 							
 							$serviceInfo = $servicesInTime[$targetServiceKey];
 							$existStartMin = (intval(substr($timeStr, 0, 2)) * 60) + intval(substr($timeStr, 2, 2));
-							$existEndMin = $existStartMin + intval($serviceInfo['maximumDurationTime']);
+							#$existEndMin = $existStartMin + intval($serviceInfo['maximumDurationTime']);
+							$existEndMin = min($existStartMin + intval($serviceInfo['maximumDurationTime']), 1440);
 							$count = intval($serviceInfo['count']);
 							
 							if ($reqStartMin < $existEndMin && $existStartMin < $reqEndMin) {
@@ -7827,36 +7896,15 @@
 						}
 						
 					}
-					
+					**/
 					
 					if (empty($bookingID) === false) {
 						
-						$currentBooking = $wpdb->get_row(
-							$wpdb->prepare(
-								"SELECT `scheduleUnixTime` FROM `" . $table_name . "` WHERE `key` = %d AND `status` != 'canceled';",
-								intval($bookingID)
-							), 
-						ARRAY_A);
-						
-						if (!empty($currentBooking)) {
+						for ($m = $reqStartMin; $m < $reqEndMin; $m++) {
 							
-							$curStart = intval($currentBooking['scheduleUnixTime']);
-							$curStartMin = (intval( date('H', $curStart) ) * 60) + intval( date('i', $curStart) );
-							$curEndMin   = $curStartMin + $serviceDuration;
-							
-							if ($reqStartMin < $curEndMin && $curStartMin < $reqEndMin) {
+							if (isset($timeSlots[$m]) && $timeSlots[$m] > 0) {
 								
-								$subStart = max($reqStartMin, $curStartMin);
-								$subEnd = min($reqEndMin, $curEndMin);
-								for ($m = $subStart; $m < $subEnd; $m++) {
-									
-									if (isset($timeSlots[$m]) && $timeSlots[$m] > 0) {
-										
-										$timeSlots[$m]--;
-										
-									}
-									
-								}
+								$timeSlots[$m]--;
 								
 							}
 							
@@ -7877,11 +7925,13 @@
 						}
 						
 					}
-					if (!empty($bookingID) && $dayCount > 0) {
+					
+					if (empty($bookingID) === false && $dayCount > 0) {
 						
 						$dayCount--;
 						
 					}
+					
 				}
 				
 			} else {
@@ -7991,6 +8041,13 @@
 						
 						$response['status'] = false;
 						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Total bookings per day', 'booking-package');
+						
+						if (!is_null($original_timezone)) {
+							
+							date_default_timezone_set($original_timezone);
+							
+						}
+						
 						return $response;
 						
 					}
@@ -7999,230 +8056,11 @@
 				
 			}
 			
-			return $response;
-			
-		}
-		
-		
-		public function stopServiceUnderFollowingConditions_old($accountKey, $scheduleKey, $schedule, $requestService, $servicesDetails, $bookingYMD, $bookingID) {
-			
-			global $wpdb;
-			$response = array('status' => true, 'message' => '');
-			$hasServices = array();
-			$timeSlots = array();
-			$bookingIDs = array();
-			$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && $requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
+			if (!is_null($original_timezone)) {
 				
-				$selectedService = $servicesDetails['object'][0];
-				$targetServiceKey = intval($selectedService['key']);
-				$serviceDuration = intval($servicesDetails['time']);
-				
-				$reqStart = intval($schedule['unixTime']);
-				$reqEnd = $reqStart + ($serviceDuration * 60);
-				
-				$dayStart = mktime(0, 0, 0, $schedule['month'], $schedule['day'], $schedule['year']);
-				$dayEnd   = mktime(23, 59, 59, $schedule['month'], $schedule['day'], $schedule['year']);
-				
-				$calendarAccount = $this->getCalendarAccount($accountKey);
-				#$accountCalendarKey = (intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
-				$accountCalendarKey = (!empty($calendarAccount) && intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
-				$bookedServices = $this->getBookedServices(array(), $dayStart, $dayEnd, $accountKey, $accountCalendarKey);
-				
-				$reqStartMin = (intval(date('H', $reqStart)) * 60) + intval(date('i', $reqStart));
-				$reqEndMin   = $reqStartMin + $serviceDuration;
-				for ($m = $reqStartMin; $m < $reqEndMin; $m++) {
-					
-					$timeSlots[$m] = 0;
-					
-				}
-				
-				$dayKey = date('Ymd', $reqStart);
-				if (!empty($bookedServices) && isset($bookedServices[$dayKey])) {
-					
-					$dayData = $bookedServices[$dayKey];
-					foreach ($dayData as $timeStr => $servicesInTime) {
-						if (isset($servicesInTime[$targetServiceKey])) {
-							$serviceInfo = $servicesInTime[$targetServiceKey];
-							
-							$existStartMin = (intval(substr($timeStr, 0, 2)) * 60) + intval(substr($timeStr, 2, 2));
-							$existEndMin = $existStartMin + intval($serviceInfo['maximumDurationTime']);
-							$count = intval($serviceInfo['count']);
-							
-							if ($reqStartMin < $existEndMin && $existStartMin < $reqEndMin) {
-								$overlapStart = max($reqStartMin, $existStartMin);
-								$overlapEnd   = min($reqEndMin, $existEndMin);
-								for ($m = $overlapStart; $m < $overlapEnd; $m++) {
-									
-									$timeSlots[$m] += $count;
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else {
-				
-				
-				$sql = $wpdb->prepare(
-					"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
-					array(intval($scheduleKey))
-				);
-				
-				if (is_null($bookingID) === false) {
-					
-					$sql = $wpdb->prepare(
-						"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `key` != %d AND `scheduleKey` = %d AND `status` != 'canceled';", 
-						array(intval($bookingID), intval($scheduleKey))
-					);
-					
-				}
-				
-				$rows = $wpdb->get_results($sql, ARRAY_A);
-				foreach ((array) $rows as $row) {
-					
-					array_push($bookingIDs, intval($row['key']));
-					$services = json_decode($row['options'], true);
-					for ($i = 0; $i < count($services); $i++) {
-						
-						$serviceKey = intval($services[$i]['key']);
-						if (isset($hasServices[$serviceKey])) {
-							
-							$hasServices[$serviceKey]++;
-							
-						} else {
-							
-							$hasServices[$serviceKey] = 1;
-							
-						}
-						
-					}
-					
-				}
+				date_default_timezone_set($original_timezone);
 				
 			}
-			
-			if (empty($bookingID) === false) {
-				
-				$bookingIDs = array_diff($bookingIDs, array($bookingID));
-				$bookingIDs = array_values($bookingIDs);
-				
-			}
-			
-			if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual' || $requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
-				
-				if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual') {
-					
-					if (count($rows) != 0) {
-						
-						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
-						
-					}
-					
-					if ($requestService['doNotStopServiceAsException'] == 'sameServiceIsNotStopped') {
-						
-						if (isset($hasServices[intval($requestService['key'])])) {
-							
-							$response['status'] = true;
-							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Allow booking this service if its start time overlaps with the start time of an existing booking for the same service.', 'booking-package');
-							
-						}
-						
-					}
-					
-				} else if ($requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
-					
-					if (count($rows) == 0) {
-						
-						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
-						
-					}
-					
-				}
-				
-			} else if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes') {
-				
-				if ($requestService['stopServiceForDayOfTimes'] == 'startTimeSlot') {
-					
-					if (isset($hasServices[intval($requestService['key'])]) && $hasServices[intval($requestService['key'])] >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
-						
-						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Maximum bookings per start time slot', 'booking-package');
-						
-					}
-					
-				} else if ($requestService['stopServiceForDayOfTimes'] == 'timeSlot') {
-					
-					foreach ($timeSlots as $time => $slot) {
-						
-						if ( intval($slot) >= intval($requestService['stopServiceForSpecifiedNumberOfTimes']) ) {
-							
-							$response['status'] = false;
-							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Bookings per time slot', 'booking-package');
-							break;
-							
-						}
-						
-					}
-					
-				} else if ($requestService['stopServiceForDayOfTimes'] == 'day') {
-					
-					$calendarAccount = $this->getCalendarAccount($accountKey);
-					$accountCalendarKey = (!empty($calendarAccount) && intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
-					if (!empty($calendarAccount['timezone']) && $calendarAccount['timezone'] !== 'none') {
-						
-						date_default_timezone_set($calendarAccount['timezone']);
-						
-					}
-					
-					$dayStart = mktime(0, 0, 0, $schedule['month'], $schedule['day'], $schedule['year']);
-					$dayEnd   = mktime(23, 59, 59, $schedule['month'], $schedule['day'], $schedule['year']);
-					
-					$bookedServices = $this->getBookedServices(array(), $dayStart, $dayEnd, $accountKey, $accountCalendarKey);
-					
-					$count = 0;
-					$dayKey = sprintf('%04d%02d%02d', $schedule['year'], $schedule['month'], $schedule['day']);
-					$targetKey = intval($requestService['key']);
-					
-					if (!empty($bookedServices) && isset($bookedServices[$dayKey])) {
-						
-						foreach ($bookedServices[$dayKey] as $time => $services) {
-							
-							if (isset($services[$targetKey])) {
-								
-								$count += intval($services[$targetKey]['count']);
-								
-							}
-							
-						}
-						
-					}
-					
-					if (!empty($bookingID) && $count > 0) {
-						
-						$count--;
-						
-					}
-					
-					if ($count >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
-						
-						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Total bookings per day', 'booking-package');
-						return $response;
-						
-					}
-					
-				}
-				
-			}
-			
 			
 			return $response;
 			
@@ -9966,6 +9804,23 @@
 				
 			} else {
 				
+				$raw_email = isset($_POST['user_email']) ? sanitize_email(trim($_POST['user_email'])) : '';
+				if (!is_email($raw_email)) {
+					
+					return array('status' => false, 'message' => __('Invalid email address.', 'booking-package'));
+					
+				}
+				
+				$ip_address = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : 'unknown';
+				$rate_key = 'bp_rate_' . md5($ip_address . '_' . $raw_email);
+				$send_count = intval(get_transient($rate_key));
+				
+				if ($send_count >= 5) {
+					return array('status' => false, 'message' => __('Too many requests. Please try again later.', 'booking-package'));
+				}
+				
+				set_transient($rate_key, $send_count + 1, HOUR_IN_SECONDS);
+				
 				$bookingVerificationCode = 'email';
 				$userValues = array(
 					'emails' => array($_POST['user_email']),
@@ -9980,6 +9835,37 @@
 			$response = array('status' => false, 'message' => null, 'user' => $user, 'userValues' => $userValues, 'bookingVerificationCode' => $bookingVerificationCode);
 			
 			if ($bookingVerificationCode != 'false') {
+				
+				$all_destinations = array_merge($userValues['emails'], $userValues['sms']);
+				foreach ($all_destinations as $dest) {
+					
+					if (empty($dest)) {
+						
+						continue;
+						
+					}
+					
+					$limit_key = 'bp_code_limit_' . md5($dest);
+					if (get_transient($limit_key)) {
+						
+						return array(
+							'status' => false,
+							'message' => __('Please wait a moment before requesting another code.', 'booking-package')
+						);
+						
+					}
+					
+				}
+				
+				foreach ($all_destinations as $dest) {
+					
+					if (!empty($dest)) {
+						
+						set_transient('bp_code_limit_' . md5($dest), true, 60);
+						
+					}
+					
+				}
 				
 				#$verificationCode = $_SESSION['verificationCode'];
 				$verificationCode = rand(100000, 999999);
@@ -10023,8 +9909,11 @@
 					
 				} else {
 					
+					$verificationToken = wp_generate_password(32, false);
+					
+					set_transient('bp_verify_' . $verificationToken, wp_hash($verificationCode), 15 * MINUTE_IN_SECONDS);
 					$response['status'] = true;
-					$response['verificationHashCode'] = wp_hash($verificationCode);
+					$response['verificationToken'] = $verificationToken;
 					$response['twilio'] = $twilio;
 					$response['notifications'] = implode(', ', $notifications);
 					
@@ -10042,19 +9931,34 @@
 		
 		public function checkVerificationCode($administrator = false) {
 			
-			$response = array('status' => true, 'verificationCode' => esc_html($_POST['verificationCode']), 'verificationHashCode' => wp_hash($_POST['verificationCode']), 'error_message' => __('The verification code is incorrect.', 'booking-package'));
-			/**
-			if ($_POST['verificationCode'] == $_SESSION['verificationCode']) {
+			$inputCode = isset($_POST['verificationCode']) ? trim($_POST['verificationCode']) : '';
+    		$token = isset($_POST['verificationToken']) ? sanitize_text_field($_POST['verificationToken']) : '';
+			
+			$response = array(
+				'status' => false, 
+				'verificationCode' => esc_html($inputCode), 
+				'error_message' => __('The verification code is incorrect.', 'booking-package')
+			);
+			
+			if (empty($inputCode) || empty($token)) {
 				
-				unset($_SESSION['verificationCode']);
-				$response['status'] = true;
-				
-			} else {
-				
-				$response['message'] = __('The verification code is incorrect.', 'booking-package');
+				return $response;
 				
 			}
-			**/
+			
+			$expectedHash = get_transient('bp_verify_' . $token);
+			
+			if ($expectedHash && hash_equals($expectedHash, wp_hash($inputCode))) {
+				
+				delete_transient('bp_verify_' . $token);
+				set_transient('bp_verified_' . $token, true, 10 * MINUTE_IN_SECONDS);
+
+				$response['status'] = true;
+				$response['verificationToken'] = $token;
+				unset($response['error_message']);
+				
+			}
+			
 			return $response;
 			
 		}
@@ -10157,12 +10061,31 @@
 				
 			}
 			
+			
 			$calendarAccount = $this->getCalendarAccount($accountKey);
 			if (intval($calendarAccount['schedulesSharing']) == 1) {
 				
 				$accountCalendarKey = intval($calendarAccount['targetSchedules']);
 				
 			}
+			
+			if ($calendarAccount['bookingVerificationCode'] != 'false' && $administrator === false) {
+				
+				$token = isset($_POST['verificationToken']) ? sanitize_text_field($_POST['verificationToken']) : '';
+				if (empty($token) || !get_transient('bp_verified_' . $token)) {
+					
+					$this->cancelPayment();
+					return array(
+						'status' => 'error',
+						'message' => __('Please complete verification code verification.', 'booking-package')
+					);
+					
+				}
+				
+				delete_transient('bp_verified_' . $token);
+				
+			}
+			
 			$paymentMethod = explode(",", $calendarAccount['paymentMethod']);
 			$preparation = array("time" => intval($calendarAccount["preparationTime"]), "position" => $calendarAccount["positionPreparationTime"], "v" => 1);
 			$response_user = $this->get_user_id($administrator, $_POST['userId']);
@@ -10510,6 +10433,31 @@
 						return $response;
 						
 					}
+					
+					$available_methods = array_filter(array_map('trim', explode(",", strtolower($calendarAccount['paymentMethod']))));
+					$online_methods = array('stripe', 'stripe_paypay', 'stripe_konbini', 'paypal');
+					$has_online_method = !empty(array_intersect($available_methods, $online_methods));
+					$allows_locally = in_array('locally', $available_methods, true);
+					if (!($administrator === true && $has_permission) && $has_online_method) {
+						
+						$selected_pay_type = isset($_POST['payType']) ? strtolower(sanitize_text_field($_POST['payType'])) : '';
+						$requires_online = !$allows_locally || in_array($selected_pay_type, $online_methods, true);
+						if ($requires_online) {
+							
+							if (!isset($_POST['payToken']) || empty(trim($_POST['payToken']))) {
+								
+								$this->cancelPayment();
+								return array(
+									'status'  => 'error',
+									'message' => __('Payment information is required to complete this booking.', 'booking-package')
+								);
+								
+							}
+							
+						}
+						
+					}
+					
 					$this->updateBookingCount('add', intval($_POST['timeKey']), intval($applicantCount));
 					$status = $this->getStatus();
 					$privateResponse = $this->insertPrivateData($sendDate, $_POST['permission'], $status, $_POST['timeKey'], $scheduleUnixTime, $scheduleTitle, $scheduleCost, $services, $form, $emails, $currency, null, null, $accountKey, $permalink, $preparation, $taxes, $responseGuests, $coupon, $administrator, $applicantCount);
@@ -10680,10 +10628,6 @@
 				$sql_max_unixTime += 1440 * 60;
 				
 			}
-			
-			#$setting = new booking_package_setting($this->prefix, $this->pluginName);
-			#$googleCalendar = $setting->pushGC('insert', $accountKey, $calendarAccount['type'], $lastID, $calendarAccount['googleCalendarID'], $sql_start_unixTime, $sql_max_unixTime, $form);
-			#$this->updateQueueForGC($lastID, $googleCalendar);
 			
 			$iCal = false;
 			$ressponse = $this->getReservationData(intval($_POST['month']), intval($_POST['day']), intval($_POST['year']), $iCal, $public);
@@ -10868,7 +10812,7 @@
 			$selectedGuests = null;
 			if (is_array($selectedGuestsString)) {
 				
-				$selectedGuests = $json;
+				$selectedGuests = $selectedGuestsString;
 				
 			} else {
 				
@@ -11565,7 +11509,7 @@
 			$remainderTime = 0;
 			$maintenanceTime = 0;
 			$remainderBool = 'false';
-			$cancellationToken = hash('ripemd160', $timeKey.$scheduleUnixTime.microtime(true));
+			$cancellationToken = wp_generate_password(64, false, false);
 			if(($sendDate + ($remainderTime * 60)) > $scheduleUnixTime){
 				
 				$remainderBool = 'true';
@@ -12099,86 +12043,6 @@
 			
 		}
 		
-    	public function retryToSendToServer(){
-    		
-    		global $wpdb;
-    		#$calendarAccountList = $this->getCalendarAccountListData();
-    		$setting = new booking_package_setting($this->prefix, $this->pluginName);
-    		$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			$sql = $wpdb->prepare("SELECT * FROM `".$table_name."` WHERE `resultOfGoogleCalendar` = %d;", array(0));
-			$rows = $wpdb->get_results($sql, ARRAY_A);
-			if(is_null($rows) === false && count($rows) != 0){
-				
-				for($row = 0; $row < count($rows); $row++){
-					
-					
-					$form = json_decode($rows[$row]['praivateData'], true);
-					$data = $rows[$row];
-					$accountKey = $data['accountKey'];
-					$key = $data['key'];
-					$sql_start_unixTime = $data['scheduleUnixTime'];
-					$sql_max_unixTime = $sql_start_unixTime + ($data['courseTime'] * 60) + ($data['maintenanceTime'] * 60);
-					#var_dump($data);
-					$iCalID = false;
-					if(!is_null($data['iCalIDforGoogleCalendar']) && is_string($data['iCalIDforGoogleCalendar'])){
-						
-						$iCalID = $data['iCalIDforGoogleCalendar'];
-						
-					}
-					
-					$calendarAccount = $this->getCalendarAccount($accountKey);
-					
-					$googleCalendar = $setting->pushGC(
-						$data['resultModeOfGoogleCalendar'], 
-						$accountKey, 
-						$calendarAccount['type'],
-						$key, 
-						$calendarAccount['googleCalendarID'],
-						$sql_start_unixTime, 
-						$sql_max_unixTime, 
-						$form,
-						$iCalID
-					);
-					
-					$this->updateQueueForGC($key, $googleCalendar);
-					
-				}
-				
-			}
-    		
-    	}
-    	
-    	public function updateQueueForGC($key, $googleCalendar){
-    		
-    		global $wpdb;
-    		if(isset($googleCalendar->responseStatus) && isset($googleCalendar->responseMode)){
-    			
-    			$valueList = array(
-    				'resultOfGoogleCalendar' => intval($googleCalendar->responseStatus), 
-    				'resultModeOfGoogleCalendar' => sanitize_text_field($googleCalendar->responseMode)
-    			);
-    			$formatList = array('%s', '%s');
-    			if(isset($googleCalendar->id)){
-    				
-    				$valueList['iCalIDforGoogleCalendar'] = sanitize_text_field($googleCalendar->id);
-    				array_push($formatList, '%s');
-    				
-    			}
-    			
-    			$table_name = $wpdb->prefix . "booking_package_booked_customers";
-    			$bool = $wpdb->update(  
-    				$table_name,
-                    /**array('iCalIDforGoogleCalendar' => sanitize_text_field($googleCalendar->id)),**/
-					$valueList,
-					array('key' => intval($key)),
-					$formatList,
-					array('%d')
-				);
-    				
-    		}
-    		
-    	}
-		
 		public function updateBooking($administrator) {
 			
 			$accountKey = 1;
@@ -12309,8 +12173,6 @@
 				}
 				
 				if (isset($_POST['update_booking_date']) || isset($_POST['update_booking_course'])) {
-					
-					define("COURSE_KEY", $row['courseKey']);
 					
 					$table_name = $wpdb->prefix . "booking_package_schedules";
 					
@@ -12673,43 +12535,6 @@
 			$ressponse['updateSchedule'] = $updateSchedule;
 			$ressponse['response_user'] = $response_user;
 			return $ressponse;
-			
-		}
-		
-		public function serachGoogleCalendarIdOfVisitor($googleCalendarId = false){
-			
-			global $wpdb;
-			$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			if ($googleCalendarId != false) {
-				
-				$sql = $wpdb->prepare(
-					"SELECT `key`,`iCalIDforGoogleCalendar`,`resultOfGoogleCalendar`,`resultModeOfGoogleCalendar` FROM ".$table_name." WHERE `iCalIDforGoogleCalendar` = %s;", 
-					array(sanitize_text_field($googleCalendarId))
-				);
-				$row = $wpdb->get_row($sql, ARRAY_A);
-				
-				return $row;
-				
-			}
-			
-			return false;
-			
-		}
-		
-		public function updateICalIDforGoogleCalendar($id, $iCalIDforGoogleCalendar){
-			
-			global $wpdb;
-			$table_name = $wpdb->prefix . "booking_package_booked_customers";
-			$bool = $wpdb->update(  
-				$table_name,
-				array(
-					'iCalIDforGoogleCalendar' => sanitize_text_field($iCalIDforGoogleCalendar),
-					'resultOfGoogleCalendar' => 1
-				),
-				array('key' => intval($id)),
-				array('%s', '%d'),
-				array('%d')
-			);
 			
 		}
 		
@@ -14678,11 +14503,11 @@
 				
 				if (!is_null($services)) {
 					
+					$detailsListExcludedGuests = array();
+					$detailsListExcludedGuestsAndCosts = array();
+					$detailsList = array();
 					if (is_array($services)) {
 						
-						$detailsList = array();
-						$detailsListExcludedGuests = array();
-						$detailsListExcludedGuestsAndCosts = array();
 						foreach ((array) $services as $key => $service) {
 							
 							$responseCostInService = $this->getCostsInService($calendarAccount, $service, $guestsList);
@@ -14822,7 +14647,10 @@
 						
 					} else {
 						
-						$content .= '<div style="width: 100%; display: table;"><div style="width: 30%; display: table-cell; vertical-align: middle;">' . $form[$i]['name'] . '</div><div style="width: 70%; display: table-cell; vertical-align: middle;">' . $value . '</div></div>';
+						//$content .= '<div style="width: 100%; display: table;"><div style="width: 30%; display: table-cell; vertical-align: middle;">' . $form[$i]['name'] . '</div><div style="width: 70%; display: table-cell; vertical-align: middle;">' . $value . '</div></div>';
+						$safe_name = esc_html($form[$i]['name']);
+    					$safe_val  = esc_html($value);
+						$content .= '<div style="width: 100%; display: table;"><div style="width: 30%; display: table-cell; vertical-align: middle;">' . $safe_name . '</div><div style="width: 70%; display: table-cell; vertical-align: middle;">' . $safe_val . '</div></div>';
 						
 					}
 					
@@ -14860,7 +14688,7 @@
 						
 					}
 					
-					$contents = str_replace($id, $value, $contents);
+					$contents = str_replace($id, esc_html( $value ), $contents);
 					
 				}
 				
@@ -14902,7 +14730,7 @@
 			$attachICalendarInEmail = 0;
 			$notifyAdministrator = 1;
 			$calendarAccount = $this->getCalendarAccount($accountKey);
-			$to = trim( get_option($this->prefix . "email_to", null) );
+			$to = trim( get_option($this->prefix . "email_to", '') );
 			if (!empty($to) || !empty($calendarAccount['email_to'])) {
 				
 				$to = explode(',', str_replace(" ", "", $to) );
@@ -15219,7 +15047,7 @@
 							
 						}
 						$phoneNumber = preg_replace('/[^0-9]/', '', $phoneNumber);
-						var_dump($phoneNumber);
+						#var_dump($phoneNumber);
 						
 						$params = array(
 							'messaging_product' => 'whatsapp',
@@ -15244,7 +15072,7 @@
 						$response = wp_remote_request('https://graph.facebook.com/v17.0/' . $whatsApp_phoneId . '/messages', $args);
 						$statusCode = wp_remote_retrieve_response_code($response);
 						$response = json_decode(wp_remote_retrieve_body($response), true);
-						var_dump($response);
+						#var_dump($response);
 						
 					}
 					
@@ -15441,12 +15269,6 @@
 					'error' => $errors['error'],
 				);
 				
-				if (isset($errors['responseText'])) {
-					
-					$params['responseText'] = $errors['responseText'];
-					
-				}
-				
 				if (isset($params['message'])) {
 					
 					$params['msg'] = sanitize_text_field($errors['message']);
@@ -15456,12 +15278,6 @@
 				if (isset($errors['name'])) {
 					
 					$params['name'] = sanitize_text_field($errors['name']);
-					
-				}
-				
-				if (isset($errors['values'])) {
-					
-					$params['values'] = sanitize_text_field($errors['values']);
 					
 				}
 				
@@ -15754,7 +15570,7 @@
         	
         	if ($mode == 'updateIntentForStripe') {
         		
-        		$response = $this->updateIntentForStripe();
+        		#$response = $this->updateIntentForStripe();
         		
         	}
         	
@@ -15839,9 +15655,40 @@
 				$user = $this->get_user();
 				if (intval($user['status']) == 1 && intval($user['user']['current_member_id']) == intval($_POST['user_id'])) {
 					
+					$key = intval($_POST['key']);
+					$token = sanitize_text_field($_POST['token']);
+					$customer = $this->getCustomer($key);
+					
+					if ($customer && intval($customer['user_id']) === intval($user['user']['current_member_id'])) {
+						
+						$verifyCancellation = $this->verifyCancellation($customer, $this->getExtensionsValid(), intval($user['user']['current_member_id']));
+						
+						if ($verifyCancellation['cancel'] === true) {
+							
+							$response = $this->updateStatus($key, $token, 'canceled');
+							$response['reload'] = 0;
+							
+						} else {
+							
+							$response = array(
+								'status' => 'error',
+								'message' => __('Cancellation period has expired.', 'booking-package'),
+								'reload' => 0
+							);
+							
+						}
+						
+					} else {
+						
+						$response = array('status' => 'error', 'reload' => 1);
+						
+					}
+					
+					/**
 					$response = $this->updateStatus(intval($_POST['key']), $_POST['token'], 'canceled');
 					$response['reload'] = 0;
-					
+					**/
+
 				} else {
 					
 					$response = array('status' => 'error', 'reload' => 1);

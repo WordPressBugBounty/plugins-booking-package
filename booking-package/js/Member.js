@@ -1531,13 +1531,19 @@
                 object._console.log(post);
                 post.mode = object._prefix + 'sendVerificationCode';
                 post.booking_package_user_action = 1;
-                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
-                    
-                    if (response === true) {
+                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(verificationResponse){
+                    console.log(verificationResponse);
+                    if (verificationResponse.status === true) {
                         
                         delete post.booking_package_user_action;
                         post.mode = 'updateUser';
                         post.user_email = user_new_email;
+                        if (verificationResponse.verificationCode != null && verificationResponse.verificationToken != null) {
+                            
+                            post.verificationCode = verificationResponse.verificationCode;
+                            post.verificationToken = verificationResponse.verificationToken;
+                            
+                        }
                         var bookingBlockPanel = document.getElementById("bookingBlockPanel");
                         bookingBlockPanel.classList.remove("hidden_panel");
                         new Booking_App_XMLHttp(object._url, post, false, function(response){
@@ -1738,10 +1744,16 @@
                 
                 post.mode = object._prefix + 'sendVerificationCode';
                 post.booking_package_user_action = 1;
-                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(response){
+                object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, object._bookingVerificationCode, function(verificationResponse){
                     
-                    if (response === true) {
+                    if (verificationResponse.status === true) {
                         
+                        if (verificationResponse.verificationCode != null && verificationResponse.verificationToken != null) {
+                            
+                            post.verificationCode = verificationResponse.verificationCode;
+                            post.verificationToken = verificationResponse.verificationToken;
+                            
+                        }
                         post.mode = 'createUser';
                         delete post.booking_package_user_action;
                         sendToServer();

@@ -2,9 +2,9 @@
 Contributors: masaakitanaka
 Donate link: https://saasproject.net/donate/
 Tags: Booking, reservation, appointment, Booking calendar, 予約システム
-Requires at least: 3.5
+Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.7.30
+Stable tag: 1.7.31
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -106,14 +106,6 @@ By integrating PayPal and Stripe payment systems, customers can easily make paym
 * You can check the user's booking history and modify the status.
 * You can update the user's email address and password.
 * You can add and remove users.
-
-### What can I do with "Calendar Settings"?
-* Create a new booking calendar.
-* Add, edit, and delete appointment times for the created booking calendars.
-* Add and edit items for personal information entry in the created booking calendar.
-* Add and edit services to the created booking calendar.
-* Manage taxes and surcharges in the created booking calendar.
-* Set up rules for the created booking calendar.
 
 ### What can I do with "Calendar Settings"?
 * Create a new booking calendar.
@@ -321,6 +313,10 @@ If you have some technical questions please post to the [support page](https://w
 = 1.7.30 =
 * Fixed a bug.
 * Security Fix: Fixed security vulnerabilities.
+
+= 1.7.31 =
+* Fixed a bug.
+* Security Fix: Applied security updates and enhanced input validation. Special thanks to Revanth Hari Narayana Matte, Emiliano Carrizo, Md. Minaruzzaman Shovon, and Pedro Pinho for responsible disclosure.
 
 == Upgrade notice ==
 -

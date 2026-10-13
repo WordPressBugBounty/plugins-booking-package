@@ -58,8 +58,9 @@
                         
                     } else {
                         
-                        console.error('Failed to retrieve upgrade information.');
-                        window.alert('Failed to retrieve upgrade information.');
+                        const errorMessage = (data && data.message) ? data.message : 'Failed to retrieve upgrade information.';
+                        console.error('Failed to retrieve upgrade information:', errorMessage);
+                        window.alert(errorMessage);
                         
                         if (submitBtn) {
                             

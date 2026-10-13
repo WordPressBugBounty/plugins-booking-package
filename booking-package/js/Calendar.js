@@ -2330,6 +2330,7 @@
     Booking_App_ObjectsControl.prototype.sendbookingVerificationCode = function(url, action, nonce, wp_rest_nonce, plugin_name, prefix, post, bookingVerificationCode, callback) {
         
         var object = this;
+        var callbackResponse = {status: false, verificationCode: null, verificationToken: null};
         if (bookingVerificationCode === true) {
             
             post.mode = prefix + 'sendVerificationCode';
@@ -2344,8 +2345,9 @@
             new Booking_App_XMLHttp(url, post, false, function(response){
                 
                 object._console.log(response);
-                const verificationHashCode = response.verificationHashCode;
-                if (verificationHashCode == null) {
+                //const verificationHashCode = response.verificationHashCode;
+                const verificationToken = response.verificationToken;
+                if (verificationToken == null) {
                     
                     response.status = false;
                     
@@ -2375,7 +2377,7 @@
                         object._console.log(isNaN(Number(verificationCode)));
                         if (verificationCode.length == 6 && isNaN(Number(verificationCode)) === false) {
                             
-                            var checkVerificationCodePost = {booking_package_nonce: nonce, plugin_name: plugin_name, action: action, mode: prefix + 'checkVerificationCode', verificationCode: verificationCode};
+                            var checkVerificationCodePost = {booking_package_nonce: nonce, plugin_name: plugin_name, action: action, mode: prefix + 'checkVerificationCode', verificationCode: verificationCode, verificationToken: verificationToken};
                             if (wp_rest_nonce != null) {
                                 
                                 checkVerificationCodePost.booking_package_wp_rest_nonce = wp_rest_nonce;
@@ -2387,10 +2389,13 @@
                             new Booking_App_XMLHttp(url, checkVerificationCodePost, false, function(response) {
                                 
                                 object._console.log(response);
-                                if (verificationHashCode == response.verificationHashCode) {
+                                if (response.status === true) {
                                     
                                     verificationCodePanel.classList.add('hidden_panel');
-                                    callback(true);
+                                    callbackResponse.status = true;
+                                    callbackResponse.verificationCode = response.verificationCode;
+                                    callbackResponse.verificationToken = response.verificationToken;
+                                    callback(callbackResponse);
                                     
                                 } else {
                                     
@@ -2398,7 +2403,20 @@
                                     bookingBlockPanel.classList.add("hidden_panel");
                                     
                                 }
-                                
+                                /**
+                                if (verificationHashCode == response.verificationHashCode) {
+                                    
+                                    verificationCodePanel.classList.add('hidden_panel');
+                                    callbackResponse.status = true;
+                                    callback(callbackResponse);
+                                    
+                                } else {
+                                    
+                                    window.alert(response.error_message);
+                                    bookingBlockPanel.classList.add("hidden_panel");
+                                    
+                                }
+                                 */
                                 sendButton.disabled = false;
                                 //bookingBlockPanel.classList.add("hidden_panel");
                                 
@@ -2414,7 +2432,7 @@
                     
                 } else {
                     
-                    callback(false);
+                    callback(callbackResponse);
                     window.alert(response.message);
                     
                 }
@@ -2424,7 +2442,8 @@
             
         } else {
             
-            callback(true);
+            callbackResponse.status = true;
+            callback(callbackResponse);
             
         }
         

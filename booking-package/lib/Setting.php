@@ -2739,7 +2739,7 @@
                     if (isset($post[$key]) === true) {
                         
                         $value = "";
-                        if (isset($listValue['inputType']) && $listValue['inputType'] == "TEXTAREA") {
+                        if (isset($listValue[$key]['inputType']) && $listValue[$key]['inputType'] == "TEXTAREA") {
                             
                             $value = sanitize_textarea_field($post[$key]);
                             if ($key == 'booking_package_googleCalendar_json') {
@@ -2756,9 +2756,9 @@
                                 
                             }
                             
-                        } else if (isset($listValue['inputType']) && $listValue['inputType'] == "MULTIPLE_FIELDS") {
+                        } else if (isset($listValue[$key]['inputType']) && $listValue[$key]['inputType'] == "MULTIPLE_FIELDS") {
                             
-                            var_dump($listValue);
+                            #var_dump($listValue);
                             
                         } else {
                             
@@ -2819,12 +2819,17 @@
         public function refreshToken($key, $home = false){
             
             $key = sanitize_text_field($key);
-            $token = hash('ripemd160', sanitize_text_field($home));
+            $token = wp_generate_password(40, false);
             if($home === false){
                 
-                #$timezone = get_option('timezone_string');
-                #date_default_timezone_set($timezone);
-                $token = hash('ripemd160', date('U'));
+                $token = wp_generate_password(40, false);
+                
+            }
+            
+            $allowed_keys = array('booking_package_ical_token', 'booking_package_google_token');
+            if (!in_array($key, $allowed_keys, true)) {
+                
+                return array('status' => 'error', 'message' => 'Invalid key');
                 
             }
             
@@ -2879,9 +2884,9 @@
         
         public function updateUserInputFields($mode) {
             
-            function checkEnabled($json) {
+            $checkEnabled = function($json) {
                 
-                if (count($json['active']) === 0) {
+                if (empty($json['active']) || $json['active'] === 'false' || $json['active'] === false) {
                     
                     $json['active'] = 'false';
                     
@@ -2891,7 +2896,7 @@
                     
                 }
                 
-                if (count($json['required']) === 0) {
+                if (empty($json['required']) || $json['required'] === 'false' || $json['required'] === false) {
                     
                     $json['required'] = 'false';
                     
@@ -2909,9 +2914,9 @@
                 
                 return $json;
                 
-            }
+            };
             
-            function updateUserInputFields($items) {
+            $formatFields = function($items) {
                 
                 $defaultName = array('user_login' => 'Username', 'user_email' => 'Email', 'user_pass' => 'Password');
                 $userInputFields = array();
@@ -2930,43 +2935,53 @@
                 
                 return $userInputFields;
                 
-            }
+            };
             
             $userInputFields = $this->initialUserInputFields();
             if ($mode === 'addUserInput') {
                 
                 $json = json_decode(sanitize_text_field( stripslashes($_POST['jsonStr']) ), true);
-                $json = checkEnabled($json);
-                array_push($userInputFields, $json);
-                $userInputFields = updateUserInputFields($userInputFields);
-                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                if (is_array($json)) {
+                    
+                    $json = $checkEnabled($json);
+                    array_push($userInputFields, $json);
+                    $userInputFields = $formatFields($userInputFields);
+                    update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                
+                }
+                
                 
             } else if ($mode === 'editUserInput') {
                 
                 $json = json_decode(sanitize_text_field( stripslashes($_POST['jsonStr']) ), true);
-                $json = checkEnabled($json);
-                if ($json['id'] === 'user_pass') {
+                if (is_array($json)) {
                     
-                    $json['type'] = 'PASSWORD';
-                    
-                }
-                for ($i = 0; $i < count($userInputFields); $i++) {
-                    
-                    if ($userInputFields[$i]['id'] === $json['id']) {
+                    $json = $checkEnabled($json);
+                    if ($json['id'] === 'user_pass') {
                         
-                        $userInputFields[$i] = $json;
-                        break;
+                        $json['type'] = 'PASSWORD';
                         
                     }
+                    for ($i = 0; $i < count($userInputFields); $i++) {
+                        
+                        if ($userInputFields[$i]['id'] === $json['id']) {
+                            
+                            $userInputFields[$i] = $json;
+                            break;
+                            
+                        }
+                        
+                    }
+                    $userInputFields = $formatFields($userInputFields);
+                    update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
                     
                 }
-                $userInputFields = updateUserInputFields($userInputFields);
-                update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
+                
                 
             } else if ($mode === 'deleteUserInput') {
                 
                 array_splice($userInputFields, intval($_POST['index']), 1);
-                $userInputFields = updateUserInputFields($userInputFields);
+                $userInputFields = $formatFields($userInputFields);
                 update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
                 
             } else if ($mode === 'changedOrderUserInput') {
@@ -2993,7 +3008,7 @@
                     
                 }
                 
-                $userInputFields = updateUserInputFields($sortedUserInputFields);
+                $userInputFields = $formatFields($sortedUserInputFields);
                 update_option("_" . $this->prefix . "getUserInputFields", json_encode($userInputFields));
                 
             }
@@ -3347,7 +3362,6 @@
 					try {
 					    
 					    $wpdb->query("START TRANSACTION");
-					    $wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 						$bool = $wpdb->update(
 							$table_name,
 							array(
@@ -3367,12 +3381,10 @@
 						);
 					
 						$wpdb->query('COMMIT');
-						$wpdb->query('UNLOCK TABLES');
 						
 					} catch (Exception $e) {
 						
 						$wpdb->query('ROLLBACK');
-						$wpdb->query('UNLOCK TABLES');
 						
 					}/** finally {
 						
@@ -3479,7 +3491,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -3491,12 +3502,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -3513,18 +3522,19 @@
             global $wpdb;
             $table_name = $wpdb->prefix."booking_package_coupons";
             $sql = $wpdb->prepare(
-                "SELECT * FROM ".$table_name." WHERE `status` = 'active' AND `key` = %d ORDER BY `key` ASC;", 
+                "SELECT * FROM " . $table_name . " WHERE `status` = 'active' AND `key` = %d ORDER BY `key` ASC;", 
                 array(intval($_POST['key']))
             );
             $coupon = $wpdb->get_row($sql, ARRAY_A);
             if (!empty($coupon)) {
                 
+                $accountKey = (!empty($accountKey)) ? intval($accountKey) : intval($coupon['accountKey']);
                 if (!empty($_POST['id']) && $_POST['id'] != $coupon['id']) {
                     
                     $sql = $wpdb->prepare(
-                        "SELECT * FROM ".$table_name." WHERE `status` = 'active' AND `accountKey` = %d AND `id` = %s;", 
+                        "SELECT * FROM " . $table_name . " WHERE `status` = 'active' AND `accountKey` = %d AND `id` = %s;", 
                         array(
-                            intval($_POST['key']), 
+                            intval($accountKey), 
                             sanitize_text_field($_POST['id'])
                         )
                     );
@@ -3551,7 +3561,6 @@
                 try {
 					
 					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 					$wpdb->update(
                         $table_name,
                         array(
@@ -3573,12 +3582,10 @@
                     );
 					
 					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
 					
 				}/** finally {
 					
@@ -3910,7 +3917,6 @@
                     try {
 						
 						$wpdb->query("START TRANSACTION");
-						$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 						$wpdb->update(
                             $table_name,
                             array(
@@ -3931,12 +3937,10 @@
                         );
 						
 						$wpdb->query('COMMIT');
-						$wpdb->query('UNLOCK TABLES');
 						
 					} catch (Exception $e) {
 						
 						$wpdb->query('ROLLBACK');
-						$wpdb->query('UNLOCK TABLES');
 						
 					}/** finally {
 						
@@ -4108,7 +4112,6 @@
                 try {
 					
 					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 					$keyList = explode(",", $_POST['keyList']);
                     for($i = 0; $i < count($keyList); $i++){
                         
@@ -4126,12 +4129,10 @@
                     }
 					
 					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
 					
 				}/** finally {
 					
@@ -4157,8 +4158,17 @@
                     $response['expirationDateStatus'] = $_POST['expirationDateStatus'];
                     
                 }
-                $response['expirationDateFrom'] = $_POST['expirationDateFromYear'] . sprintf('%02d', $_POST['expirationDateFromMonth']) . sprintf('%02d', $_POST['expirationDateFromDay']);
-                $response['expirationDateTo'] = $_POST['expirationDateToYear'] . sprintf('%02d', $_POST['expirationDateToMonth']) . sprintf('%02d', $_POST['expirationDateToDay']);
+                
+                $fromYear  = $_POST['expirationDateFromYear'] ?? date('Y');
+                $fromMonth = $_POST['expirationDateFromMonth'] ?? 1;
+                $fromDay   = $_POST['expirationDateFromDay'] ?? 1;
+                
+                $toYear    = $_POST['expirationDateToYear'] ?? date('Y');
+                $toMonth   = $_POST['expirationDateToMonth'] ?? 1;
+                $toDay     = $_POST['expirationDateToDay'] ?? 1;
+
+                $response['expirationDateFrom'] = $fromYear . sprintf('%02d', $fromMonth) . sprintf('%02d', $fromDay);
+                $response['expirationDateTo']   = $toYear . sprintf('%02d', $toMonth) . sprintf('%02d', $toDay);
                 
             }
             
@@ -4192,6 +4202,9 @@
             global $wpdb;
             $lastKey = null;
             $email = sanitize_text_field(trim($email));
+            if (!is_email($email)) {
+                return array('status' => 'error', 'message' => __('Invalid email format.', 'booking-package'));
+            }
             $dateFormat = intval(get_option($this->prefix."dateFormat", 0));
 			$positionOfWeek = get_option($this->prefix."positionOfWeek", "before");
 			$date = date("U");
@@ -4525,7 +4538,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -4561,12 +4573,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -4581,34 +4591,30 @@
         }
         
         public function copyCourse() {
-            
-            $accountKey = 1;
-            if(isset($_POST['accountKey'])){
+
+            $accountKey = isset($_POST['accountKey']) ? intval($_POST['accountKey']) : 1;
+            $targetKey = isset($_POST['key']) ? intval($_POST['key']) : 0;
+
+            global $wpdb;
+            $table_name =$wpdb->prefix . "booking_package_services";
+
+            $sql =$wpdb->prepare('SELECT COUNT(`key`) as `count` FROM ' . $table_name . ' WHERE `accountKey` = %d', array($accountKey));
+            $row = $wpdb->get_row($sql, ARRAY_A);
+            $ranking = intval($row['count']) + 1;
+
+            $source =$wpdb->get_row($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE `accountKey` = %d AND `key` = %d;", array($accountKey, $targetKey)), ARRAY_A);
+            if ($source) {
                 
-                $accountKey = $_POST['accountKey'];
+                unset($source['key']);
+                $source['name'] = $source['name'] . ' Copy';
+                $source['ranking'] = $ranking;
+                $source['active'] = '';
+                $wpdb->insert($table_name,$source);
                 
             }
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix . "booking_package_services";
-            $tmp_table_name = $table_name."_tmp";
-            
-            $sql = $wpdb->prepare('SELECT COUNT(`key`) as `count` FROM ' . $table_name . ' WHERE `accountKey` = %d', array(intval($accountKey)));
-            $row = $wpdb->get_row($sql, ARRAY_A);
-            $ranking = $row['count'] + 1;
-            
-            $sql = $wpdb->prepare("CREATE TEMPORARY TABLE " . $tmp_table_name . " SELECT * FROM " . $table_name . " WHERE `key` = %d;", array(intval($_POST['key'])));
-    		$wpdb->query($sql);
-    		$wpdb->query("ALTER TABLE " . $tmp_table_name . " drop `key`;");
-    		$sql = $wpdb->prepare("UPDATE " . $tmp_table_name . " SET `name` = CONCAT(name, ' Copy'), `ranking` = %d, `active` = '';", array(intval($ranking)));
-    		$wpdb->query($sql);
-    		#$wpdb->query("UPDATE " . $tmp_table_name . " SET `name` = CONCAT(name, ' Copy'), `active` = '';");
-    		$wpdb->query("INSERT INTO " . $table_name . " SELECT 0," . $tmp_table_name . ".* FROM " . $tmp_table_name . ";");
-    		$wpdb->query("DROP TABLE " . $tmp_table_name . ";");
-            
-            $sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
-            $rows = $wpdb->get_results($sql, ARRAY_A);
-            return $rows;
+
+            $sql = $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE `accountKey` = %d ORDER BY ranking ASC;", array($accountKey));
+            return $wpdb->get_results($sql, ARRAY_A);
             
         }
         
@@ -4623,7 +4629,11 @@
             
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_services";
-            $wpdb->delete($table_name, array('key' => intval($_POST['key'])), array('%d'));
+            $wpdb->delete(
+                $table_name, 
+                array('key' => intval($_POST['key']), 'accountKey' => intval($accountKey)), 
+                array('%d', '%d')
+            );
             $sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
             $rows = $wpdb->get_results($sql, ARRAY_A);
             return $rows;
@@ -4694,7 +4704,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -4710,12 +4719,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -4729,11 +4736,6 @@
         
         public function deleteSubscriptions(){
             
-            global $wpdb;
-            $table_name = $wpdb->prefix."booking_package_subscriptions";
-            $wpdb->delete($table_name, array('key' => intval($_POST['key'])), array('%d'));
-            return $this->getSubscriptions();
-            
         }
         
         public function changeSubscriptionsRank(){
@@ -4746,7 +4748,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				for($i = 0; $i < count($keyList); $i++){
                     
                     $wpdb->update(
@@ -4760,12 +4761,10 @@
                 }
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -4941,7 +4940,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -4963,12 +4961,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5066,7 +5062,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -5088,12 +5083,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5108,9 +5101,14 @@
         
         public function deleteTaxes($accountKey){
             
+            $accountKey = (!empty($accountKey)) ? intval($accountKey) : 1;
             global $wpdb;
             $table_name = $wpdb->prefix."booking_package_taxes";
-            $wpdb->delete($table_name, array('key' => intval($_POST['key'])), array('%d'));
+            $wpdb->delete(
+                $table_name, 
+                array('key' => intval($_POST['key']), 'accountKey' => intval($accountKey)), 
+                array('%d', '%d')
+            );
             return $this->getTaxes($accountKey);
             
         }
@@ -5125,7 +5123,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				for ($i = 0; $i < count($keyList); $i++) {
                     
                     $wpdb->update(
@@ -5139,12 +5136,10 @@
                 }
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5332,7 +5327,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -5352,12 +5346,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5372,9 +5364,14 @@
         
         public function deleteOptionsForHotel($accountKey){
             
+            $accountKey = (!empty($accountKey)) ? intval($accountKey) : 1;
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_hotel_options";
-            $wpdb->delete($table_name, array('key' => intval($_POST['key'])), array('%d'));
+            $wpdb->delete(
+                $table_name, 
+                array('key' => intval($_POST['key']), 'accountKey' => intval($accountKey)), 
+                array('%d', '%d')
+            );
             return $this->getOptionsForHotel($accountKey);
             
         }
@@ -5389,7 +5386,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				for ($i = 0; $i < count($keyList); $i++) {
                     
                     $wpdb->update(
@@ -5403,12 +5399,10 @@
                 }
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5437,7 +5431,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				for ($i = 0; $i < count($keyList); $i++) {
                     
                     $wpdb->update(
@@ -5451,12 +5444,10 @@
                 }
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -5568,7 +5559,6 @@
                 try {
 					
 					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 					$wpdb->update(  
                         $table_name,
                         array('data' => $json),
@@ -5578,12 +5568,10 @@
                     );
 					
 					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
 					
 				}/** finally {
 					
@@ -5694,7 +5682,6 @@
                 try {
 					
 					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 					$wpdb->update(  
                         $table_name,
                         array('data' => $json),
@@ -5704,12 +5691,10 @@
                     );
 					
 					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
 					
 				}/** finally {
 					
@@ -5743,40 +5728,41 @@
                 
             } else {
                 
-                $data = json_decode($row['data']);
-                array_splice($data, intval($_POST['key']), 1);
-                $json = json_encode($data);
-                if (defined('JSON_NUMERIC_CHECK')) {
+                $data = json_decode($row['data'], true);
+                if (is_array($data)) {
                     
-                    $json = json_encode($data, JSON_NUMERIC_CHECK);
+                    array_splice($data, intval($_POST['key']), 1);
+                    $json = json_encode($data);
+                    if (defined('JSON_NUMERIC_CHECK')) {
+                        
+                        $json = json_encode($data, JSON_NUMERIC_CHECK);
+                        
+                    }
+                    
+                    try {
+                        
+                        $wpdb->query("START TRANSACTION");
+                        $wpdb->update(  
+                            $table_name,
+                            array('data' => $json),
+                            array('key' => intval($row['key'])),
+                            array('%s'),
+                            array('%d')
+                        );
+                        
+                        $wpdb->query('COMMIT');
+                        
+                    } catch (Exception $e) {
+                        
+                        $wpdb->query('ROLLBACK');
+                        
+                    }/** finally {
+                        
+                        $wpdb->query('UNLOCK TABLES');
+                        
+                    }**/
                     
                 }
-                
-                try {
-					
-					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
-					$wpdb->update(  
-                        $table_name,
-                        array('data' => $json),
-                        array('key' => intval($row['key'])),
-                        array('%s'),
-                        array('%d')
-                    );
-					
-					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
-					
-				} catch (Exception $e) {
-					
-					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
-					
-				}/** finally {
-					
-					$wpdb->query('UNLOCK TABLES');
-					
-				}**/
                 
                 return $this->getForm($accountKey, false);
                 
@@ -5811,8 +5797,12 @@
                 foreach ((array) $data as $key => $value) {
                     
                     $search = array_search($value->name, $keyList);
-                    $index = intval($indexList[$search]);
-                    $newData[$index] = $value;
+                    if ($search !== false && isset($indexList[$search])) {
+                        
+                        $index = intval($indexList[$search]);
+                        $newData[$index] = $value;
+                        
+                    }
                     
                 }
                 
@@ -5827,7 +5817,6 @@
                 try {
 					
 					$wpdb->query("START TRANSACTION");
-					$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 					$wpdb->update(
                         $table_name,
                         array('data' => $json),
@@ -5837,12 +5826,10 @@
                     );
 					
 					$wpdb->query('COMMIT');
-					$wpdb->query('UNLOCK TABLES');
 					
 				} catch (Exception $e) {
 					
 					$wpdb->query('ROLLBACK');
-					$wpdb->query('UNLOCK TABLES');
 					
 				}/** finally {
 					
@@ -5953,20 +5940,17 @@
         
         public function updateCss($fileName) {
             
+            $fileName = basename($fileName);
+            if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'css') {
+                
+                return array("status" => "error", "message" => "Invalid file extension");
+                
+            }
+        
             update_option('_' . $this->pluginName . '_css_v', date('U'));
             $upload_dir = wp_upload_dir();
             $dirname = $upload_dir['basedir'] . '/' . $this->pluginName;
             
-            /**
-            if (function_exists('get_sites') && class_exists('WP_Site_Query')) {
-                
-                $id = get_current_blog_id();
-                $dirname .= '/' . $id;
-                
-            }
-            **/
-            #$value = str_replace("\\\"", "\"", $_POST['value']);
-            #$value = str_replace("\'", "'", $value);
             $value = stripslashes($_POST['value']);
             file_put_contents($dirname . '/' . $fileName, $value);
             return array("status" => "success");
@@ -6045,14 +6029,17 @@
         
         public function updateJavaScript($fileName) {
             
+            $fileName = basename($fileName);
+            if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'js') {
+                
+                return array("status" => "error", "message" => "Invalid file extension");
+                
+            }
+            
             update_option('_' . $this->pluginName . '_javascript_v', date('U'));
             $upload_dir = wp_upload_dir();
             $dirname = $upload_dir['basedir'] . '/' . $this->pluginName;
-            $value = $_POST['value'];
-            #$value = str_replace("\\\\", "\\", $value);
-            #$value = str_replace("\\\"", "\"", $value);
-            #$value = str_replace("\'", "'", $value);
-            $value = stripslashes($value);
+            $value = isset($_POST['value']) ? stripslashes($_POST['value']) : '';
             file_put_contents($dirname . '/' . $fileName, $value);
             return array("status" => "success", 'value' => $value);
             
@@ -6061,6 +6048,13 @@
         public function updataEmailMessageForUser() {
             
             $id = sanitize_text_field($_POST['id']);
+            $userEmailData = $this->getEmailForUser();
+            $allowed_options = array_keys($userEmailData['emailMessageList']);
+            if (!in_array($id, $allowed_options, true)) {
+                
+                return $this->getEmailForUser();
+                
+            }
             $object = get_option($id, null);
             if (is_null($object) === false) {
                 
@@ -6228,7 +6222,6 @@
             try {
 				
 				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
 				$wpdb->update(
                     $table_name,
                     array(
@@ -6251,12 +6244,10 @@
                 );
 				
 				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
 				
 			} catch (Exception $e) {
 				
 				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
 				
 			}/** finally {
 				
@@ -6280,6 +6271,8 @@
                 'subscription_id' => trim(esc_html($subscription_id)),
                 'url' => get_site_url(),
                 'expiration_date' => 0,
+                'errorCode' => '',
+                'errorMessage' => '',
             );
             
             $args = array(
@@ -6294,22 +6287,44 @@
                 )
             );
             $response = wp_remote_request($url . "lookingForSubscription/", $args);
-            $statusCode = wp_remote_retrieve_response_code($response);
-            $response = json_decode(wp_remote_retrieve_body($response), true);
-            $response['url'] = $url;
-            if (intval($statusCode) == 200 && intval($response['status']) == 1) {
+            if (is_wp_error($response)) {
                 
-                unset($response['status']);
+                //error_log('Booking Package [lookingForSubscription]: Request failed: ' . $response->get_error_message());
+                return $license;
+                
+            }
+            
+            $statusCode = wp_remote_retrieve_response_code($response);
+            if (intval($statusCode) !== 200) {
+                
+                //error_log('Booking Package [lookingForSubscription]: HTTP status ' . $statusCode);
+                return $license;
+                
+            }
+            
+            $body = wp_remote_retrieve_body($response);
+            $response_data = json_decode($body, true);
+            if (!is_array($response_data)) {
+                
+                //error_log('Booking Package [lookingForSubscription]: Invalid JSON response');
+                return $license;
+                
+            }
+            
+            $response_data['url'] = $url;
+            if (isset($response_data['status']) && intval($response_data['status']) === 1) {
+                
+                unset($response_data['status']);
                 $license['status'] = 1;
-                if (isset($response['subscription_status']) === true) {
+                if (isset($response_data['subscription_status']) === true) {
                     
-                    $license['subscription_status'] = $response['subscription_status'];
+                    $license['subscription_status'] = $response_data['subscription_status'];
                     
                 }
                 
                 
                 $this->updateSubscribeSite();
-                foreach ((array) $response as $key => $value) {
+                foreach ((array) $response_data as $key => $value) {
                     
                     $value = sanitize_text_field($value);
                     if ( $key === 'expiration_date_for_subscriptions' ) {
@@ -6349,8 +6364,8 @@
                 
             } else {
                 
-                $license['errorCode'] = esc_html($response['errorCode']);
-                $license['errorMessage'] = esc_html($response['errorMessage']);
+                $license['errorCode'] = isset($response_data['errorCode']) ? esc_html($response_data['errorCode']) : '';
+                $license['errorMessage'] = isset($response_data['errorMessage']) ? esc_html($response_data['errorMessage']) : '';
                 update_option('_' . $this->prefix . 'expiration_date_for_subscriptions', 0);
                 
             }
@@ -6361,6 +6376,26 @@
         
         public function getUpgradeSubscriptionDetails($plugin_headers) {
             
+            if (!current_user_can('manage_options')) {
+                
+                return array(
+                    'status'  => false,
+                    'message' => __('You do not have permission to perform this action.', 'booking-package')
+                );
+                
+            }
+            
+            $site_url = get_site_url();
+            $parse_url = parse_url($site_url);
+            if (empty($parse_url['scheme']) || strtolower($parse_url['scheme']) !== 'https') {
+                
+                return array(
+                    'status'  => false,
+                    'message' => __('A secure connection (HTTPS) is required to subscribe to a paid plan. Please configure your site URL with HTTPS.', 'booking-package')
+                );
+                
+            }
+        
             $timezone = get_option('timezone_string', '');
 			if (is_null($timezone) || strlen($timezone) == 0) {
 				
@@ -6378,6 +6413,7 @@
 				"locale" => get_locale(), 
 				"plugin_v" => $plugin_version,
 				"getUpgradeUrl" => BOOKING_PACKAGE_EXTENSION_URL,
+                "activate_nonce" => wp_create_nonce('booking-package-activate-subscription-action'),
 			);
 			
             return $upgradeDetail;
@@ -6401,7 +6437,6 @@
                     
                     $key = $values[$i];
                     $value = get_option('_' . $this->prefix . $key, 0);
-                    
                     if (get_option($this->prefix . $key) !== false) {
                         
                         $value = get_option($this->prefix . $key);
@@ -6462,11 +6497,14 @@
                 
             } else if ($type === 'delete') {
                 
+                $customer_id = isset($_POST['customer_id']) ? sanitize_text_field($_POST['customer_id']) : '';
+                $subscriptions_id = isset($_POST['subscriptions_id']) ? sanitize_text_field(trim($_POST['subscriptions_id'])) : '';
+                
                 $params = array(
                     'mode' => 'error', 
                     'subscription_mode' => 'cancelSubscription',
-                    'customer_id' => $_POST['customer_id'],
-                    'subscriptions_id' => trim($_POST['subscriptions_id']),
+                    'customer_id' => $customer_id,
+                    'subscriptions_id' => $subscriptions_id,
                 );
                 
                 $args = array(
@@ -6476,10 +6514,32 @@
                 );
                 
                 $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelSubscription/", $args);
+                if (is_wp_error($response)) {
+                    
+                    error_log('Booking Package [cancelSubscription]: Request failed: ' . $response->get_error_message());
+                    return array('status' => 'error', 'message' => $response->get_error_message());
+                    
+                }
+                
                 $statusCode = wp_remote_retrieve_response_code($response);
-                $response = json_decode(wp_remote_retrieve_body($response), true);
+                if (intval($statusCode) !== 200) {
+                    
+                    error_log('Booking Package [cancelSubscription]: HTTP status ' . $statusCode);
+                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode);
+                    
+                }
+                
+                $body = wp_remote_retrieve_body($response);
+                $response = json_decode($body, true);
+                if (!is_array($response)) {
+                    
+                    error_log('Booking Package [cancelSubscription]: Invalid JSON response');
+                    return array('status' => 'error', 'message' => 'Invalid server response');
+                    
+                }
+                
                 $response['url'] = BOOKING_PACKAGE_EXTENSION_URL;
-                if ($statusCode == 200 && $response['status'] == 'success') {
+                if (isset($response['status']) && $response['status'] === 'success') {
                     
                     $this->updateSubscriptionStatus('Canceled');
                     $response['status'] = 'success';
@@ -6581,9 +6641,32 @@
                     'body' => $params
                 );
                 $response = wp_remote_request($url . "checkLatestInvoice/", $args);
+                if (is_wp_error($response)) {
+                    
+                    error_log('Booking Package: checkLatestInvoice request failed: ' . $response->get_error_message());
+                    return;
+                    
+                }
                 $statusCode = wp_remote_retrieve_response_code($response);
-                $response = json_decode(wp_remote_retrieve_body($response));
-                if ($response->subscription_status === 'active' && $response->invoice_status === 'open') {
+                if (intval($statusCode) !== 200) {
+                    
+                    error_log('Booking Package: checkLatestInvoice HTTP status: ' . $statusCode);
+                    return;
+                    
+                }
+                
+                $body = wp_remote_retrieve_body($response);
+                $response_obj = json_decode($body, true);
+                if (!is_array($response_obj)) {
+                    
+                    error_log('Booking Package: checkLatestInvoice invalid JSON response');
+                    return;
+                    
+                }
+                
+                $subscription_status = isset($response_obj['subscription_status']) ? $response_obj['subscription_status'] : '';
+                $invoice_status = isset($response_obj['invoice_status']) ? $response_obj['invoice_status'] : '';
+                if ($subscription_status === 'active' && $invoice_status === 'open') {
                     
                     $this->notificationSubscriptionRenewalFailed(false, __('Your paid subscription payment failed.', 'booking-package'));
                     
@@ -6603,8 +6686,8 @@
 				
 			}
 			
-			$sender = trim( get_option($this->prefix . "email_from", null) );
-			$sender_name = trim( get_option($this->prefix . "email_title_from", null) );
+			$sender = trim( get_option($this->prefix . "email_from", '') );
+			$sender_name = trim( get_option($this->prefix . "email_title_from", '') );
 			if (empty($sender)) {
 				
 				$sender = trim( get_bloginfo('admin_email') );
@@ -6631,7 +6714,7 @@
 		        $subject = __('Paid Subscription Renewal Failed.', 'booking-package');
 		        
 		    }
-            wp_mail(trim( $to ), '[Booking Packgae] ' . $subject, $text, $headers);
+            wp_mail(trim( $to ), '[Booking Package] ' . $subject, $text, $headers);
             
 		}
 		
@@ -6757,6 +6840,19 @@
         }
         
 		public function updatePaidSubscription($unique) {
+            
+            if (is_user_logged_in() === false || (current_user_can('manage_options') === false )) {
+                
+                wp_die(__('Permission denied.', 'booking-package'), '', array('response' => 403));
+                
+            }
+            
+            $nonce = isset($_GET['update_nonce']) ? sanitize_text_field($_GET['update_nonce']) : '';
+            if (!wp_verify_nonce($nonce, 'booking-package-update-subscription-action')) {
+                
+                wp_die(__('Invalid security token.', 'booking-package'), '', array('response' => 403));
+                
+            }
 		    
 		    $site = get_site_url();
 			if ($unique !== false && wp_hash($site) === $unique) {
@@ -6889,36 +6985,45 @@
                     'body' => $params
                 );
                 $response = wp_remote_request($url . "updateLicense/", $args);
-                $statusCode = wp_remote_retrieve_response_code($response);
-                $response = json_decode(wp_remote_retrieve_body($response));
-                
-                $tmp_path = sys_get_temp_dir();
-                if (intval($statusCode) == 200) {
+                if (is_wp_error($response)) {
                     
-                    if (intval($response->status) == 1) {
+                    error_log('Booking Package [updateLicense]: Request failed: ' . $response->get_error_message());
+                    return false;
+                    
+                }
+                
+                $statusCode = wp_remote_retrieve_response_code($response);
+                if (intval($statusCode) !== 200) {
+                    
+                    error_log('Booking Package [updateLicense]: HTTP status ' . $statusCode);
+                    return false;
+                    
+                }
+                
+                $body = wp_remote_retrieve_body($response);
+                $response_obj = json_decode($body);
+                if (!is_object($response_obj) || !isset($response_obj->status)) {
+                    
+                    error_log('Booking Package [updateLicense]: Invalid JSON response');
+                    return false;
+                    
+                }
+                
+                if (intval($response_obj->status) === 1) {
+                    
+                    $expiration_date = $this->encryptValue( sanitize_text_field($response_obj->expiration_date) );
+                    update_option('_' . $this->prefix . "invoice_id_for_subscriptions", sanitize_text_field($response_obj->invoice_id));
+                    $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", $expiration_date);
+                    $subscriptions = $this->upgradePlan('get');
+                    if ($countExpiration === true) {
                         
-                        $expiration_date = $this->encryptValue( sanitize_text_field($response->expiration_date) );
-                        update_option('_' . $this->prefix . "invoice_id_for_subscriptions", sanitize_text_field($response->invoice_id));
-                        $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", $expiration_date);
-                        $subscriptions = $this->upgradePlan('get');
-                        if ($countExpiration === true) {
-                            
-                            update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0);
-                            
-                        }
-                        
-                        return true;
-                        
-                    } else if (intval($response->status) == 0) {
-                        
-                        $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
-                        $this->updateSubscriptionStatus('Inactive');
-                        $this->notificationSubscriptionRenewalFailed(true);
-                        return false;
+                        update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0);
                         
                     }
                     
-                } else {
+                    return true;
+                    
+                } else if (intval($response_obj->status) === 0) {
                     
                     $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
                     $this->updateSubscriptionStatus('Inactive');
@@ -7016,379 +7121,15 @@
                 'body' => $params
             );
             $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelAtPeriodEnd/", $args);
+            if (is_wp_error($response)) {
+                
+                error_log('Booking Package [cancelPaidSubscriptionAtPeriodEnd]: Request failed: ' . $response->get_error_message());
+                return 500;
+                
+            }
+            
             $statusCode = wp_remote_retrieve_response_code($response);
-            $response = json_decode(wp_remote_retrieve_body($response), true);
-            return $statusCode;
-            
-        }
-        
-        public function updateChannelGC($calendarAccountList){
-            
-            $url_parce = parse_url(get_home_url());
-            if($url_parce['scheme'] != 'https'){
-                
-                return false;
-                
-            }
-            
-            $keyList = array();
-            $calendarIdList = array();
-            for($i = 0; $i < count($calendarAccountList); $i++){
-                
-                if($calendarAccountList[$i]['expirationForGoogleWebhook'] < date('U')){
-                    
-                    array_push($keyList, $calendarAccountList[$i]['key']);
-                    array_push($calendarIdList, $calendarAccountList[$i]['googleCalendarID']);
-                    
-                }
-                
-            }
-            
-            if(count($calendarIdList) == 0){
-                
-                return null;
-                
-            }
-            
-            $calendarIdList = implode(",", $calendarIdList);
-            
-            $googleCalendar = array();
-    		$bookingSync = $this->getBookingSyncList();
-    		$bookingSync = $bookingSync['Google_Calendar'];
-    		if(intval($bookingSync['booking_package_googleCalendar_active']['value']) == 1){
-    		    
-    		    if($this->getExtensionsValid(false) === true){
-    		        
-    		        $expiration_for_google_webhook = get_option($this->prefix."expiration_for_google_webhook", 0);
-    		        $expiration_for_google_webhook -= (1440 * 60) * 2;
-    		        #$timezone = get_option('timezone_string');
-			        date_default_timezone_set("UTC");
-			        if(date('U') < $expiration_for_google_webhook){
-			            
-			            return false;
-			            
-			        }
-    		        
-		            $host = $url_parce["host"];
-		            $address = get_home_url()."/?webhook=google";
-    		        $id = hash('ripemd160', date('U'));
-    		        $timezone = get_option('timezone_string');
-    		        $subscriptions = $this->upgradePlan('get');
-    		        
-    				$customer_id = $subscriptions['customer_id_for_subscriptions'];
-    				$params = array(
-    					'mode' => 'updateChannel',
-    					'customer_id' => $customer_id, 
-    					'calendarIdList' => $calendarIdList,
-    					/**'calendarId' => $bookingSync['booking_package_calendar_id']['value'], **/
-    					'service_account' => $bookingSync['booking_package_googleCalendar_json']['value'],
-    					'id' => $id,
-    					'token' => 'target='.hash('ripemd160', microtime()),
-    					'address' => $address,
-    					'timeZone' => get_option('timezone_string')
-    				);
-    				#var_dump($params);
-    				if(isset($bookingSync['booking_package_googleCalendar_json'])){
-    				    
-    				    $params['calendarId'] = $bookingSync['booking_package_calendar_id']['value'];
-    				    
-    				}
-    				
-    				$tmp_path = sys_get_temp_dir();
-    				
-    				$url = BOOKING_PACKAGE_EXTENSION_URL;
-    				$ch = curl_init();
-                	curl_setopt($ch, CURLOPT_URL, $url."googleCalendar/");
-                	curl_setopt($ch, CURLOPT_COOKIEJAR, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_COOKIEFILE, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-                	curl_setopt($ch, CURLOPT_POST, 1);
-                	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                	
-                	ob_start();
-                	$response = curl_exec($ch);
-                	$response = ob_get_contents();
-                	ob_end_clean();
-                	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                	curl_close ($ch);
-                	$response = json_decode($response, true);
-                	#var_dump($response);
-                	if($response['status'] != 'error'){
-                	    
-                	    for($i = 0; $i < count($response); $i++){
-                    	    
-                    	    $response[$i]['key'] = $keyList[$i];
-                    	    
-                    	}
-                    	
-                    	if(isset($response['expiration'])){
-                    	    
-                    	    $response['expiration'] /= 1000;
-                    	    $list = array('id' => 'id_for_google_webhook', 'token' => 'token_for_google_webhook', 'expiration' => 'expiration_for_google_webhook');
-                    	    foreach ((array) $list as $key => $value) {
-                    	        
-                    	        $optionKey = sanitize_text_field($this->prefix.$value);
-                    	        $optionValue = sanitize_text_field($response[$key]);
-                    	        if(get_option($optionKey) === false){
-    					            
-    	                            add_option($optionKey, $optionValue);
-    					        
-                                }else{
-    				                
-    				                update_option($optionKey, $optionValue);
-    				                
-    			                }
-                    	        
-                    	    }
-                    	    
-                    	}
-                	    
-                	}else{
-                	    
-                	    $response = array();
-                	    
-                	}
-                	
-                	
-                	
-                	#var_dump($response);
-                	
-                	return $response;
-    		        
-    		    }
-    		    
-    		}
-            
-        }
-        
-        public function listsGC($accountKey, $googleCalendarID, $timeMin){
-            
-            if(strlen($googleCalendarID) == 0){
-                
-                return array();
-                
-            }
-            
-            
-            $eventList = array();
-    		$bookingSync = $this->getBookingSyncList($accountKey);
-    		$bookingSync = $bookingSync['Google_Calendar'];
-    		#var_dump($bookingSync);
-    		if(intval($bookingSync['booking_package_googleCalendar_active']['value']) == 1){
-    			
-    			if($this->getExtensionsValid(false) === true){
-    			    
-    			    $subscriptions = $this->upgradePlan('get');
-    				$customer_id = $subscriptions['customer_id_for_subscriptions'];
-    				$params = array(
-    								'mode' => 'lists',
-    								'timeMin' => $timeMin,
-    								'customer_id' => $customer_id, 
-    								'calendarId' => $googleCalendarID, 
-    								'service_account' => $bookingSync['booking_package_googleCalendar_json']['value'],
-    								'timeZone' => get_option('timezone_string')
-    							);
-    			    
-    			    #var_dump($params);
-    			    $tmp_path = sys_get_temp_dir();
-    			    
-    			    $url = BOOKING_PACKAGE_EXTENSION_URL;
-    				$ch = curl_init();
-                	curl_setopt($ch, CURLOPT_URL, $url."googleCalendar/");
-                	#curl_setopt($ch, CURLOPT_USERPWD, $subscriptions['customer_id_for_subscriptions'].":");
-                	curl_setopt($ch, CURLOPT_COOKIEJAR, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_COOKIEFILE, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-                	curl_setopt($ch, CURLOPT_POST, 1);
-                	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			        
-                	ob_start();
-                	$response = curl_exec($ch);
-                	$response = ob_get_contents();
-                	ob_end_clean();
-                	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                	curl_close ($ch);
-                	$eventList = json_decode($response);
-                	if($eventList->status != 'error'){
-                		
-                	}
-                	
-                	return $eventList;
-    			    
-    			}
-    			
-    		}
-            
-        }
-        
-        public function pushGC($mode, $accountKey, $type, $id, $googleCalendarID, $sql_start_unixTime, $sql_end_unixTime, $form, $iCalID = false){
-    		
-    		if(strlen($googleCalendarID) == 0){
-                
-                return array();
-                
-            }
-    		
-    		$id = intval($id);
-    		$googleCalendar = array();
-    		$bookingSync = $this->getBookingSyncList($accountKey);
-    		$bookingSync = $bookingSync['Google_Calendar'];
-    		if(intval($bookingSync['booking_package_googleCalendar_active']['value']) == 1){
-    			
-    			if($this->getExtensionsValid(false) === true){
-    				
-    				if(is_null($sql_end_unixTime)){
-    					
-    					$sql_end_unixTime = $sql_start_unixTime;
-    					
-    				}
-    				$nameList = array();
-    				$addressList = array();
-    				for($i = 0; $i < count($form); $i++){
-    					
-    					if($form[$i]->isName == 'true'){
-    						
-    						array_push($nameList, $form[$i]->value);
-    						
-    					}
-    					
-    					if($form[$i]->isAddress == 'true'){
-    						
-    						array_push($addressList, $form[$i]->value);
-    						
-    					}
-    					
-    				}
-    				
-    				$subscriptions = $this->upgradePlan('get');
-    				$customer_id = $subscriptions['customer_id_for_subscriptions'];
-    				$params = array(
-    								'mode' => $mode,
-    								'customer_id' => $customer_id, 
-    								'calendarId' => $googleCalendarID, 
-    								'service_account' => $bookingSync['booking_package_googleCalendar_json']['value'],
-    								'startTime' => intval($sql_start_unixTime),
-    								'endTime' => intval($sql_end_unixTime),
-    								'form' => json_encode($form),
-    								'timeZone' => get_option('timezone_string'),
-    								'type' => $type
-    							);
-    							
-    				if($iCalID !== false){
-    				    
-    				    $params['iCalID'] = $iCalID;
-    				    
-    				}
-    				
-    				#var_dump($params);
-    				
-    				$tmp_path = sys_get_temp_dir();
-    				
-    				$url = BOOKING_PACKAGE_EXTENSION_URL;
-    				$ch = curl_init();
-                	curl_setopt($ch, CURLOPT_URL, $url."googleCalendar/");
-                	curl_setopt($ch, CURLOPT_COOKIEJAR, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_COOKIEFILE, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-                	curl_setopt($ch, CURLOPT_POST, 1);
-                	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			        
-                	ob_start();
-                	$response = curl_exec($ch);
-                	$response = ob_get_contents();
-                	ob_end_clean();
-                	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                	curl_close ($ch);
-                	#var_dump($response);
-                	$googleCalendar = json_decode($response);
-                	if($googleCalendar->status != 'error'){
-                		
-                	}
-                	
-                	#var_dump($httpCode);
-                	$googleCalendar->responseMode = $mode;
-                	if($httpCode >= 400){
-                	    
-                	    $googleCalendar->responseCode = $httpCode;
-                	    $googleCalendar->responseStatus = 0;
-                	    
-                	}else{
-                	    
-                	    $googleCalendar->responseStatus = 1;
-                	    
-                	}
-                	
-                	return $googleCalendar;
-                		
-    			}
-    			
-    		}
-    		
-    	}
-    	
-    	public function deleteGC($accountKey, $id, $googleCalendarID){
-            
-            if(strlen($googleCalendarID) == 0){
-                
-                return array();
-                
-            }
-            
-            if(is_null($id)){
-                
-                return array("id" => "No ID");
-                
-            }
-            
-            $googleCalendar = array();
-    		$bookingSync = $this->getBookingSyncList($accountKey);
-    		$bookingSync = $bookingSync['Google_Calendar'];
-    		if(intval($bookingSync['booking_package_googleCalendar_active']['value']) == 1){
-    		    
-    		    if($this->getExtensionsValid(false) === true){
-    		        
-    		        $timezone = get_option('timezone_string');
-    		        $subscriptions = $this->upgradePlan('get');
-    				$customer_id = $subscriptions['customer_id_for_subscriptions'];
-    				$params = array(
-    								'mode' => 'delete',
-    								'customer_id' => $customer_id, 
-    								'calendarId' => $googleCalendarID, 
-    								'service_account' => $bookingSync['booking_package_googleCalendar_json']['value'],
-    								'id' => $id,
-    								'timeZone' => get_option('timezone_string')
-    							);
-    				#var_dump($params);
-    				
-    				$tmp_path = sys_get_temp_dir();
-    				
-    				$url = BOOKING_PACKAGE_EXTENSION_URL;
-    				$ch = curl_init();
-                	curl_setopt($ch, CURLOPT_URL, $url."googleCalendar/");
-                	#curl_setopt($ch, CURLOPT_USERPWD, $subscriptions['customer_id_for_subscriptions'].":");
-                	curl_setopt($ch, CURLOPT_COOKIEJAR, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_COOKIEFILE, $tmp_path."/".$this->prefix."session.cookie");
-                	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-                	curl_setopt($ch, CURLOPT_POST, 1);
-                	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			        
-                	ob_start();
-                	$response = curl_exec($ch);
-                	$response = ob_get_contents();
-                	ob_end_clean();
-                	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                	curl_close ($ch);
-                	$response = json_decode($response, true);
-                	
-                	return $response;
-    		        
-    		    }
-    		    
-    		}
+            return intval($statusCode);
             
         }
         
@@ -7439,10 +7180,23 @@
                 'body' => $params
             );
             $response = wp_remote_request($url . "activation/", $args);
-            $object = json_decode(wp_remote_retrieve_body($response));
+            if (is_wp_error($response)) {
+                
+                error_log('Booking Package [activation]: Request failed: ' . $response->get_error_message());
+                return;
+                
+            }
             $statusCode = wp_remote_retrieve_response_code($response);
+            if (intval($statusCode) !== 200) {
+                
+                error_log('Booking Package [activation]: HTTP status ' . $statusCode);
+                return;
+                
+            }
 			
-			if (intval($statusCode) == 200 && $mode == 'activation') {
+            $body = wp_remote_retrieve_body($response);
+            $object = json_decode($body);
+			if ($mode == 'activation' && is_object($object) && isset($object->key)) {
 				
 				if (get_option($this->prefix."activation_id") === false) {
 					
@@ -7514,8 +7268,6 @@
 					$user = $users[$i];
 					#$user->remove_role($oldRole);
 					#$user->add_role($newRole);
-					var_dump($user->get_role_caps());
-					echo "<br>\n";
 					#break;
 					
 				}

@@ -1,7 +1,7 @@
 <?php
-    if(!defined('ABSPATH')){
-    	exit;
-	}
+    if (!defined('ABSPATH')) {
+        exit;
+    }
     
     class booking_package_iCal {
         
@@ -22,22 +22,37 @@
             
         }
         
+        private function escapeIcalText($text) {
+            
+            $text = str_replace('\\', '\\\\', (string)$text);
+            $text = str_replace(';', '\;', $text);
+            $text = str_replace(',', '\,', $text);
+            $text = str_replace(array("\r\n", "\r", "\n"), '\n', $text);
+            return $text;
+            
+        }
+        
         public function isValid($token, $siteToken, $id = 'all'){
             
             $booking_sync = $this->setting->getBookingSyncList();
-            $booking_sync = $booking_sync['iCal'];
-            if (get_option('_' . $this->prefix . 'siteToken', false) != $siteToken) {
+            $booking_sync = isset($booking_sync['iCal']) ? $booking_sync['iCal'] : array();
+            
+            $storedSiteToken = get_option('_' . $this->prefix . 'siteToken', '');
+            if (empty($storedSiteToken) || empty($siteToken) || !hash_equals((string)$storedSiteToken, (string)$siteToken)) {
                 
                 return false;
                 
             }
             
-            if ($id == 'all') {
+            if ($id === 'all') {
                 
-                if (intval($booking_sync[$this->prefix.'ical_active']['value']) == 1 && $booking_sync[$this->prefix.'ical_token']['value'] == $token) {
+                $active = isset($booking_sync[$this->prefix.'ical_active']['value']) ? intval($booking_sync[$this->prefix.'ical_active']['value']) : 0;
+                $savedToken = isset($booking_sync[$this->prefix.'ical_token']['value']) ? (string)$booking_sync[$this->prefix.'ical_token']['value'] : '';
+                
+                if ($active === 1 && !empty($savedToken) && !empty($token) && hash_equals($savedToken, (string)$token)) {
                     
-    			    $ical_data = $this->getBookingSchedules($id, null);
-    			    print $ical_data;
+                    $ical_data = $this->getBookingSchedules($id, null);
+                    print $ical_data;
                     exit;
                     
                 } else {
@@ -49,165 +64,151 @@
             } else {
                 
                 $schedule = new booking_package_schedule($this->prefix, $this->pluginName, $this->currencies);
-                $calendarAccount = $schedule->getCalendarAccount($id);
-                if (intval($calendarAccount['ical']) == 1 && $calendarAccount['icalToken'] == $token) {
+                $calendarAccount = $schedule->getCalendarAccount(intval($id));
+                
+                if (!empty($calendarAccount) && is_array($calendarAccount) && isset($calendarAccount['ical']) && intval($calendarAccount['ical']) === 1) {
                     
-                    $ical_data = $this->getBookingSchedules($id, $calendarAccount);
-                    print $ical_data;
-                    exit;
-                    
-                } else {
-                    
-                    return false;
+                    $savedToken = isset($calendarAccount['icalToken']) ? (string)$calendarAccount['icalToken'] : '';
+                    if (!empty($savedToken) && !empty($token) && hash_equals($savedToken, (string)$token)) {
+                        
+                        $ical_data = $this->getBookingSchedules($id, $calendarAccount);
+                        print $ical_data;
+                        exit;
+                        
+                    }
                     
                 }
+                
+                return false;
                 
             }
             
         }
         
-        public function getBookingSchedules($id = 'all', $calendarAccount = null){
+        public function getBookingSchedules($id = 'all', $calendarAccount = null) {
             
-            #$timezone = get_option('timezone_string');
             $timezone = get_option($this->prefix . "timezone", null);
             $syncPastCustomersForIcal = intval(get_option($this->prefix . 'syncPastCustomersForIcal', 7));
-			if (is_null($timezone)) {
-				
-				$timezone = get_option('timezone_string', 'UTC');
-				
-			}
-			
-			if ($id != 'all' && !empty($calendarAccount)) {
-			    
-			    $timezone = $calendarAccount['timezone'];
-			    $syncPastCustomersForIcal = intval($calendarAccount['syncPastCustomersForIcal']);
-			    
-			}
-			
-			header('Content-type: text/calendar; charset=utf-8');
-			header('Content-Disposition: inline; filename=WP_BOOKING_PACKAGE-' . $id . '.ics');
+            if (is_null($timezone)) {
+                
+                $timezone = get_option('timezone_string', 'UTC');
+                
+            }
             
-		    date_default_timezone_set('UTC');
-		    $unixTime = date('U') - ($syncPastCustomersForIcal * 1440 * 60);
-		    $gmtOffset = get_option('gmt_offset');
-		    $gmtOffset = date('P');
-		    $url_parce = parse_url(get_home_url());
-		    $host = $url_parce["host"];
-		    
-		    $ical_data = "BEGIN:VCALENDAR\n";
-            $ical_data .= "PRODID:-//WP_BOOKING_APP/" . $id . '/' . $host . "\n";
-            $ical_data .= "VERSION:2.0\n";
-            $ical_data .= "CALSCALE:GREGORIAN\n";
-            $ical_data .= "METHOD:PUBLISH\n";
-            $ical_data .= "X-WR-CALNAME:WP_BOOKING_PACKAGE-" . $id . "\n";
-            $ical_data .= "X-WR-TIMEZONE:".$timezone."\n";
-            $ical_data .= "X-WR-CALDESC:\n";
-		    
+            if ($id !== 'all' && !empty($calendarAccount) && is_array($calendarAccount)) {
+                
+                if (!empty($calendarAccount['timezone']) && $calendarAccount['timezone'] !== 'none') {
+                    
+                    $timezone = $calendarAccount['timezone'];
+                    
+                }
+                
+                if (isset($calendarAccount['syncPastCustomersForIcal'])) {
+                    
+                    $syncPastCustomersForIcal = intval($calendarAccount['syncPastCustomersForIcal']);
+                    
+                }
+                
+            }
+            
+            $safe_id = ($id === 'all') ? 'all' : intval($id);
+            header('Content-Type: text/calendar; charset=utf-8');
+            header('Content-Disposition: inline; filename="WP_BOOKING_PACKAGE-' . $safe_id . '.ics"');
+            header('X-Content-Type-Options: nosniff');
+            
+            date_default_timezone_set('UTC');
+            $unixTime = time() - ($syncPastCustomersForIcal * 1440 * 60);
+            $url_parce = parse_url(get_home_url());
+            $host = isset($url_parce["host"]) ? $url_parce["host"] : 'localhost';
+            
+            $ical_data  = "BEGIN:VCALENDAR\r\n";
+            $ical_data .= "PRODID:-//WP_BOOKING_APP/" . $safe_id . '/' . $host . "\r\n";
+            $ical_data .= "VERSION:2.0\r\n";
+            $ical_data .= "CALSCALE:GREGORIAN\r\n";
+            $ical_data .= "METHOD:PUBLISH\r\n";
+            $ical_data .= "X-WR-CALNAME:WP_BOOKING_PACKAGE-" . $safe_id . "\r\n";
+            $ical_data .= "X-WR-TIMEZONE:" . $timezone . "\r\n";
+            $ical_data .= "X-WR-CALDESC:\r\n";
+            
             $schedule = new booking_package_schedule($this->prefix, $this->pluginName, $this->currencies);
             
             $month = date('m', $unixTime);
-            $year = date('Y', $unixTime);
-            if ($id == 'all') {
+            $day   = date('d', $unixTime);
+            $year  = date('Y', $unixTime);
+            
+            if ($id === 'all') {
                 
                 $calendarList = $schedule->getCalendarAccountListData("`key`, `name`, `type`, `timezone`, `guestsBool`");
                 foreach ((array) $calendarList as $key => $value) {
                     
-                    $calendarTimezone = $timezone;
-                    if ($value['timezone'] != 'none') {
-                        
-                        $calendarTimezone = $value['timezone'];
-                        
-                    }
-                    
-                    $month = date('m', $unixTime);
-                    $year = date('Y', $unixTime);
+                    $calendarTimezone = (!empty($value['timezone']) && $value['timezone'] !== 'none') ? $value['timezone'] : $timezone;
                     $_POST['accountKey'] = $value['key'];
-                    $response = $schedule->getReservationData($month, date('d', $unixTime), $year, true);
+                    $response = $schedule->getReservationData($month, $day, $year, true);
                     $ical_data .= $this->createCard($value, $value['key'], $value['name'], $value['type'], $schedule, $response, $calendarTimezone, $host);
-                    $month++;
-                    if ($month > 12) {
-                        
-                        $month = 1;
-                        $year++;
-                        
-                    }
                     
                 }
                 
             } else {
                 
-                $calendar = $schedule->getCalendarAccount(intval($id));
-                $calendarTimezone = $timezone;
-                if ($calendar['timezone'] != 'none') {
+                $calendar = !empty($calendarAccount) ? $calendarAccount : $schedule->getCalendarAccount(intval($id));
+                if (!empty($calendar) && is_array($calendar)) {
                     
-                    $calendarTimezone = $calendar['timezone'];
-                    
-                }
-                $_POST['accountKey'] = $calendar['key'];
-                $response = $schedule->getReservationData($month, date('d', $unixTime), $year, true);
-                $ical_data .= $this->createCard($calendar, $calendar['key'], $calendar['name'], $calendar['type'], $schedule, $response, $calendarTimezone, $host);
-                $month++;
-                if ($month > 12) {
-                    
-                    $month = 1;
-                    $year++;
+                    $calendarTimezone = (!empty($calendar['timezone']) && $calendar['timezone'] !== 'none') ? $calendar['timezone'] : $timezone;
+                    $_POST['accountKey'] = $calendar['key'];
+                    $response = $schedule->getReservationData($month, $day, $year, true);
+                    $ical_data .= $this->createCard($calendar, $calendar['key'], $calendar['name'], $calendar['type'], $schedule,$response, $calendarTimezone,$host);
                     
                 }
                 
             }
             
-            $ical_data .= "END:VCALENDAR\n";
+            $ical_data .= "END:VCALENDAR\r\n";
             return $ical_data;
             
         }
         
-        public function createCard($calendarAccount, $calendarKey, $calendarName, $calendarType, $schedule, $response, $timezone, $host){
+        public function createCard($calendarAccount,$calendarKey, $calendarName,$calendarType, $schedule,$response, $timezone,$host) {
             
-            #date_default_timezone_set('UTC');
             date_default_timezone_set($timezone);
             $ical_data = '';
-            for ($i = 0; $i < count($response); $i++) {
+            
+            if (!is_array($response)) {
+                
+                return $ical_data;
+                
+            }
+            
+            $countResponse = count($response);
+            for ($i = 0; $i < $countResponse; $i++) {
                 
                 $bookingDetail = $response[$i];
-                if (isset($bookingDetail['status']) && $bookingDetail['status'] == 'canceled') {
+                if (isset($bookingDetail['status']) && $bookingDetail['status'] === 'canceled') {
                     
                     continue;
                     
                 }
                 $summaryList = array();
-                //DESCRIPTION
+                $descriptionList = array();$guestsList = array();
                 
-                $descriptionList = array();
-                $guestsList = array();
-                if ($calendarAccount['type'] == 'day') {
+                if (isset($calendarAccount['type']) && $calendarAccount['type'] === 'day') {
                     
-                    $guests = $bookingDetail['guests'];
-                    if (empty($guests) || is_null($guests)) {
-                        
-                        $guests = array();
-                        
-                    } else {
-                        
-                        $guests = json_decode($guests, true);
-                        
-                    }
+                    $guestsRaw = isset($bookingDetail['guests']) ? $bookingDetail['guests'] : '';
+                    $guests = (!empty($guestsRaw) && is_string($guestsRaw)) ? json_decode($guestsRaw, true) : array();
                     
-                    
-                    if (count($guests) > 0 && isset($guests['guests'])) {
+                    if (is_array($guests) && !empty($guests['guests']) && is_array($guests['guests'])) {
                         
                         $guestsList = $guests['guests'];
-                        for ($guestKey = 0; $guestKey < count($guestsList); $guestKey++) {
+                        foreach ($guestsList as $guest) {
                             
-                            $guest = $guestsList[$guestKey];
                             if (isset($guest['index'])) {
                                 
                                 $index = intval($guest['index']);
-                                if ($index > 0) {
+                                if ($index > 0 && isset($guest['json'][$index]['name'])) {
                                     
-                                    array_push($descriptionList, $guest['name'] . ": " . $guest['json'][$index]['name']);
+                                    array_push($descriptionList,$guest['name'] . ": " . $guest['json'][$index]['name']);
                                     
                                 }
-                                   
+                                
                             }
                             
                         }
@@ -218,29 +219,23 @@
                     
                 } else {
                     
-                    $accommodationDetails = json_decode($bookingDetail['accommodationDetails'], true);
-                    $descriptionList = $this->addGuestsInRooms($accommodationDetails, $descriptionList);
+                    $accommodationRaw = isset($bookingDetail['accommodationDetails']) ? $bookingDetail['accommodationDetails'] : '';
+                    $accommodationDetails = (!empty($accommodationRaw) && is_string($accommodationRaw)) ? json_decode($accommodationRaw, true) : array();
+                    $descriptionList = $this->addGuestsInRooms($accommodationDetails,$descriptionList);
                     
                 }
                 
-                
-                
-                for ($a = 0; $a < count($bookingDetail['praivateData']); $a++) {
+                $praivateDataList = (isset($bookingDetail['praivateData']) && is_array($bookingDetail['praivateData'])) ? $bookingDetail['praivateData'] : array();
+                foreach ($praivateDataList as $praivateData) {
                     
-                    $praivateData = $bookingDetail['praivateData'][$a];
-                    if (isset($praivateData['type']) && $praivateData['type'] == 'TEXTAREA') {
+                    if (isset($praivateData['isName']) && $praivateData['isName'] === 'true' && !empty($praivateData['value'])) {
                         
-                        $praivateData['value'] = str_replace(array("\r\n", "\r", "\n"), "\\n", $praivateData['value']);
+                        $nameVal = is_array($praivateData['value']) ? implode(' ', $praivateData['value']) : (string)$praivateData['value'];
+                        array_push($summaryList,$nameVal);
                         
                     }
                     
-                    if (isset($praivateData['isName']) && $praivateData['isName'] == 'true') {
-                        
-                        array_push($summaryList, $praivateData['value']);
-                        
-                    }
-                    
-                    if (isset($praivateData['active']) && $praivateData['active'] == 'true') {
+                    if (isset($praivateData['active']) &&$praivateData['active'] === 'true') {
                         
                         if (is_string($praivateData['value'])) {
                             
@@ -252,93 +247,81 @@
                             
                         }
                         
-                        
                     }
                     
                 }
                 
-                $summary = "No title";
-                if (count($summaryList) != 0) {
+                $summary = !empty($summaryList) ? implode(" ", $summaryList) : "No title";
+                $description = implode('\n', array_map(array($this, 'escapeIcalText'), $descriptionList));
+                $optionsData = (!empty($bookingDetail['options']) && is_string($bookingDetail['options'])) ? json_decode($bookingDetail['options'], true) : array();
+                $selectedOptionsObject = $schedule->getSelectedServices($calendarAccount, $optionsData,$guestsList, "options", array(), 1, false);
+                
+                $courseTime = isset($bookingDetail['courseTime']) ? intval($bookingDetail['courseTime']) : 0;
+                $services = array();
+                if (is_array($selectedOptionsObject)) {
                     
-                    $summary = implode(" ", $summaryList);
+                    $courseTime += isset($selectedOptionsObject['time']) ? intval($selectedOptionsObject['time']) : 0;
+                    $services = isset($selectedOptionsObject['object']) && is_array($selectedOptionsObject['object']) ? $selectedOptionsObject['object'] : array();
                     
                 }
                 
-                $description = implode('\n', $descriptionList);
-                $selectedOptionsObject = $schedule->getSelectedServices($calendarAccount, json_decode($bookingDetail['options'], true), $guestsList, "options", array(), 1, false);
-                $courseTime = intval($bookingDetail['courseTime']);
-                $courseTime += $selectedOptionsObject['time'];
-                $services = $selectedOptionsObject['object'];
-                
-                $serviceDetails = '';
-                $detailsList = array();
-                if (is_array($services)) {
-					
-					foreach ((array) $services as $key => $service) {
-						
-						$responseCostInService = $schedule->getCostsInService($calendarAccount, $service, $guestsList);
-						$costs = $responseCostInService['costs'];
-						$details = $service['name'];
-						
-						array_push($detailsList, $details);
-						
-						$no = 0;
-						foreach ((array) $service['options'] as $option) {
-							
-							if (intval($option['selected']) == 1) {
-								
-								$no++;
-								$details = "#".$no." ".$option['name']." ";
-								
-								array_push($detailsList, $details);
-								
-							}
-							
-						}
-						
-					}
-					
-					$serviceDetails = implode('\n', $detailsList) . '\n\n';
-					
-				}
-                
-                
-                
-                $unixTime = $bookingDetail['date']['unixTime'];
-                $ical_data .= "BEGIN:VEVENT\n";
-                $ical_data .= "UID:".$bookingDetail['key']."@".$host."\n";
-                
-                if ($calendarType == 'day') {
+                $serviceDetails = '';$detailsList = array();
+                if (!empty($services)) {
                     
-                    $ical_data .= "DTSTART;TZID=".$timezone.":".date("Ymd\THi00", $unixTime)."\n";
-                    if ($courseTime != 0) {
+                    foreach ($services as $service) {
                         
-                        $ical_data .= "DTEND;TZID=".$timezone.":".date("Ymd\THi00", ($unixTime + ($courseTime * 60)))."\n";
-                        
-                    } else {
-                        
-                        $ical_data .= "DTEND;TZID=".$timezone.":".date("Ymd\THi00", $unixTime)."\n";
+                        array_push($detailsList, $service['name']);$no = 0;
+                        if (isset($service['options']) && is_array($service['options'])) {
+                            
+                            foreach ($service['options'] as $option) {
+                                
+                                if (isset($option['selected']) && intval($option['selected']) === 1) {
+                                    
+                                    $no++;
+                                    array_push($detailsList, "#" . $no . " " . $option['name']);
+                                    
+                                }
+                                
+                            }
+                            
+                        }
                         
                     }
+                    
+                    $serviceDetails = implode('\n', array_map(array($this, 'escapeIcalText'),$detailsList)) . '\n\n';
+                    
+                }
+                
+                $unixTime = isset($bookingDetail['date']['unixTime']) ? intval($bookingDetail['date']['unixTime']) : (isset($bookingDetail['scheduleUnixTime']) ? intval($bookingDetail['scheduleUnixTime']) : time());
+                $reserveTime = isset($bookingDetail['reserveTime']) ? intval($bookingDetail['reserveTime']) : time();
+                $ical_data .= "BEGIN:VEVENT\r\n";
+                $ical_data .= "UID:" . $bookingDetail['key'] . "@" . $host . "\r\n";
+                
+                if ($calendarType === 'day') {
+                    
+                    $ical_data .= "DTSTART;TZID=" . $timezone . ":" . date("Ymd\THis", $unixTime) . "\r\n";
+                    $endTime = ($courseTime !== 0) ? ($unixTime + ($courseTime * 60)) :$unixTime;
+                    $ical_data .= "DTEND;TZID=" . $timezone . ":" . date("Ymd\THis", $endTime) . "\r\n";
                     
                 } else {
                     
-                    $accommodationDetails = json_decode($bookingDetail['accommodationDetails'], true);
-                    $ical_data .= "DTSTART;TZID=".$timezone.":".date("Ymd\T12i00", $accommodationDetails['checkIn'])."\n";
-                    $ical_data .= "DTEND;TZID=".$timezone.":".date("Ymd\T12i00", $accommodationDetails['checkOut'])."\n";
+                    $accommodationRaw = isset($bookingDetail['accommodationDetails']) ? $bookingDetail['accommodationDetails'] : '';
+                    $accommodationDetails = (!empty($accommodationRaw) && is_string($accommodationRaw)) ? json_decode($accommodationRaw, true) : array();
+                    $checkIn = !empty($accommodationDetails['checkIn']) ? intval($accommodationDetails['checkIn']) : $unixTime;
+                    $checkOut = !empty($accommodationDetails['checkOut']) ? intval($accommodationDetails['checkOut']) : $unixTime;
+                    $ical_data .= "DTSTART;VALUE=DATE:" . date("Ymd", $checkIn) . "\r\n";
+                    $ical_data .= "DTEND;VALUE=DATE:" . date("Ymd", $checkOut) . "\r\n";
                     
                 }
                 
-                $ical_data .= "DTSTAMP:".date("Ymd\THi00\Z")."\n";
-                $ical_data .= "CREATED;TZID=".$timezone.":".date("Ymd\THi00", $bookingDetail['reserveTime'])."\n";
-                $ical_data .= "STATUS:CONFIRMED\n";
-                #$ical_data .= "SEQUENCE:".($i + 1)."\n";
-                $ical_data .= "SEQUENCE:0\n";
-                $ical_data .= "SUMMARY:".$summary."\n";
-                $ical_data .= "LOCATION:".$calendarName."\n";
-                $ical_data .= "DESCRIPTION:" . $serviceDetails . $description . "\n";
-                $ical_data .= "END:VEVENT\n";
-                #var_dump($bookingDetail['praivateData']);
+                $ical_data .= "DTSTAMP:" . gmdate("Ymd\THis\Z") . "\r\n";
+                $ical_data .= "CREATED:" . gmdate("Ymd\THis\Z", $reserveTime) . "\r\n";
+                $ical_data .= "STATUS:CONFIRMED\r\n";
+                $ical_data .= "SEQUENCE:0\r\n";
+                $ical_data .= "SUMMARY:" . $this->escapeIcalText($summary) . "\r\n";
+                $ical_data .= "LOCATION:" . $this->escapeIcalText($calendarName) . "\r\n";
+                $ical_data .= "DESCRIPTION:" . $serviceDetails .$description . "\r\n";
+                $ical_data .= "END:VEVENT\r\n";
                 
             }
             
@@ -346,38 +329,34 @@
             
         }
         
-        public function addGuestsInRooms($accommodationDetails, $descriptionList) {
+        public function addGuestsInRooms($accommodationDetails,$descriptionList) {
             
-            $rooms = array();
-            if (isset($accommodationDetails['rooms'])) {
-                
-                $rooms = $accommodationDetails['rooms'];
-                
-            }
+            $rooms = (isset($accommodationDetails['rooms']) && is_array($accommodationDetails['rooms'])) ? $accommodationDetails['rooms'] : array();
             
-            for ($i = 0; $i < count($rooms); $i++) {
+            foreach ($rooms as $i => $room) {
                 
-                $room = $rooms[$i];
-                $guests = $room['guests'];
-                if (array_key_exists('guestsList', $room) === false) {
+                $person = isset($room['person']) ? $room['person'] : '';
+                array_push($descriptionList, __("Room", 'booking-package') . ' ' . ($i + 1) . ': ' . $person);$nameOfGuests = array();
+                if (isset($room['guestsList']) && is_array($room['guestsList'])) {
                     
-                    $room['guestsList'] = array();
-                    
-                }
-                array_push($descriptionList, __("Room", 'booking-package') . ' ' . ($i + 1) . ': ' . $room['person']);
-                
-                $nameOfGuests = array();
-                foreach ($room['guestsList'] as $key => $guestData) {
-                    
-                    $nameOfGuests[$key] = $guestData['name'];
-                    
-                }
-                
-                foreach ($guests as $key => $guest) {
-                    
-                    if (intval($guest['number']) > 0) {
+                    foreach ($room['guestsList'] as $key => $guestData) {
                         
-                        array_push($descriptionList, $nameOfGuests[$key] . ": " . $guest['name']);
+                        $nameOfGuests[$key] = isset($guestData['name']) ? $guestData['name'] : '';
+                        
+                    }
+                    
+                }
+                
+                if (isset($room['guests']) && is_array($room['guests'])) {
+                    
+                    foreach ($room['guests'] as $key => $guest) {
+                        
+                        if (isset($guest['number']) && intval($guest['number']) > 0) {
+                            
+                            $guestLabel = isset($nameOfGuests[$key]) ? $nameOfGuests[$key] : '';$guestVal = isset($guest['name']) ? $guest['name'] : '';
+                            array_push($descriptionList, $guestLabel . ": " . $guestVal);
+                            
+                        }
                         
                     }
                     
@@ -389,127 +368,107 @@
             
         }
         
-        public function attachICalendar($calendarAccount, $event_data, $email_id, $id, $token = null, $type = 'attach') {
+        public function attachICalendar($calendarAccount,$event_data, $email_id,$id, $token = null,$type = 'attach') {
             
-            global $wpdb;
-            $locationForIcalendar = '';
-            $emailData = array('subject' => null, 'body' => null);
+            $locationForIcalendar = isset($event_data['ical_location']) ? $event_data['ical_location'] : '';
+            $emailData = array(
+                'subject' => isset($event_data['ical_subject']) ? $event_data['ical_subject'] : '',
+                'body' => isset($event_data['ical_description']) ? $event_data['ical_description'] : ''
+            );
             
-            /**
-            $table_name = $wpdb->prefix . "booking_package_email_settings";
-            for ($i = 0; $i < count($email_id); $i++) {
-				
-				$sql = $wpdb->prepare(
-					"SELECT `subjectForIcalendar`, `locationForIcalendar`, `contentForIcalendar` FROM " . $table_name . " WHERE `accountKey` = %d AND `mail_id` = %s;", 
-					array(intval($calendarAccount['key']), $email_id[$i])
-				);
-				$row = $wpdb->get_row($sql, ARRAY_A);
-				$locationForIcalendar = $row['locationForIcalendar'];
-				$emailData['subject'] = $row['subjectForIcalendar'];
-				$emailData['body'] = $row['contentForIcalendar'];
-				break;
-				
-			}
-			**/
-			
-			$locationForIcalendar = $event_data['ical_location'];
-			$emailData['subject'] = $event_data['ical_subject'];
-			$emailData['body'] = $event_data['ical_description'];
-			
-			if (empty($emailData['subject']) === true) {
-			    
-			    return array('temp_file' => null, 'temp_file_name' => null, 'status' => false);
-			    
-			}
-            
-            $schedule = new booking_package_schedule($this->prefix, $this->pluginName, $this->currencies);
-            $customer = $schedule->getCustomer($id, $token);
-            $unixTime = $customer['scheduleUnixTime'];
-            $notificationContents = $schedule->getNotificationContents($calendarAccount, $customer, $email_id, 'visitor', $emailData, 'text');
-			$emailSubject = $notificationContents['emailSubject'];
-			$emailBody = str_replace("\n", '\n', $notificationContents['emailBody']);
-			$servicesDetails = $notificationContents['servicesDetails'];
-            
-            $timezone = $calendarAccount['timezone'];
-            $url_parce = parse_url(get_home_url());
-		    $host = $url_parce["host"];
-		    
-		    $ical_data = "BEGIN:VCALENDAR\n";
-            $ical_data .= "PRODID:-//WP_BOOKING_PACKAGE_CUSTOMER//" . $calendarAccount['key'] . '//' . $host . "\n";
-            $ical_data .= "VERSION:2.0\n";
-            $ical_data .= "CALSCALE:GREGORIAN\n";
-            $ical_data .= "METHOD:PUBLISH\n";
-            $ical_data .= "X-WR-CALNAME:WP_BOOKING_PACKAGE-" . $calendarAccount['key'] . "\n";
-            $ical_data .= "X-WR-TIMEZONE:".$timezone."\n";
-            
-            $ical_data .= "BEGIN:VEVENT\n";
-            $ical_data .= "UID:" . $id . "@" . $host . "\n";
-            
-            if ($calendarAccount['type'] == 'day') {
+            if (empty($emailData['subject'])) {
                 
-                $ical_data .= "DTSTART;TZID=" . $timezone . ":" . date("Ymd\THi00", $unixTime) . "\n";
-                #$ical_data .= "DTSTART:" . date("Ymd\THi00\Z", $unixTime) . "\n";
-                if (intval($servicesDetails['time']) != 0) {
-                    
-                    $ical_data .= "DTEND;TZID=" . $timezone . ":" . date("Ymd\THi00", ($unixTime + (intval($servicesDetails['time']) * 60))) . "\n";
-                    #$ical_data .= "DTEND:" . date("Ymd\THi00\Z", ($unixTime + ($serviceTime * 60))) . "\n";
-                    
-                } else {
-                    
-                    $ical_data .= "DTEND;TZID=" . $timezone . ":" . date("Ymd\THi00", $unixTime) . "\n";
-                    #$ical_data .= "DTEND:" . date("Ymd\THi00\Z", $unixTime) . "\n";
-                   
-                }
-                
-            } else {
-                
-                $accommodationDetails = json_decode($customer['accommodationDetails'], true);
-                #$ical_data .= "DTSTART;TZID=" . $timezone . ":" . date("Ymd\T12i00", $accommodationDetails['checkIn']) . "\n";
-                #$ical_data .= "DTEND;TZID=" . $timezone . ":" . date("Ymd\T12i00", $accommodationDetails['checkOut']) . "\n";
-                $ical_data .= "DTSTART;VALUE=DATE:" . date("Ymd", $accommodationDetails['checkIn']) . "\n";
-                $ical_data .= "DTEND;VALUE=DATE:" . date("Ymd", $accommodationDetails['checkOut']) . "\n";
+                return array('temp_file' => null, 'temp_file_name' => null, 'status' => false);
                 
             }
             
-            $ical_data .= "DTSTAMP:" . date("Ymd\THi00\Z") . "\n";
-            #$ical_data .= "CREATED;TZID=" . $timezone . ":" . date("Ymd\THi00", $bookingDetail['reserveTime']) . "\n";
-            $ical_data .= "CREATED:" . date("Ymd\THi00\Z", $customer['reserveTime']) . "\n";
-            $ical_data .= "STATUS:CONFIRMED\n";
-            $ical_data .= "SEQUENCE:0\n";
-            $ical_data .= "SUMMARY:" . trim($emailSubject) . "\n";
-            $ical_data .= "LOCATION:" . trim($locationForIcalendar) . "\n";
-            $ical_data .= "DESCRIPTION:" . trim($emailBody) . "\n";
-            $ical_data .= "END:VEVENT\n";
-            $ical_data .= "END:VCALENDAR\n";
+            $schedule = new booking_package_schedule($this->prefix, $this->pluginName,$this->currencies);
+            $customer =$schedule->getCustomer($id,$token);
             
-            $temp_file = tempnam(sys_get_temp_dir(), 'ical_')  . '.ics';
+            if (empty($customer) || !is_array($customer)) {
+                
+                return array('temp_file' => null, 'temp_file_name' => null, 'status' => false);
+                
+            }
+            
+            $unixTime = isset($customer['scheduleUnixTime']) ? intval($customer['scheduleUnixTime']) : time();
+            $notificationContents = $schedule->getNotificationContents($calendarAccount, $customer,$email_id, 'visitor', $emailData, 'text');
+            $emailSubject = isset($notificationContents['emailSubject']) ? $notificationContents['emailSubject'] : '';
+            $emailBody = isset($notificationContents['emailBody']) ? $notificationContents['emailBody'] : '';
+            $servicesDetails = isset($notificationContents['servicesDetails']) ? $notificationContents['servicesDetails'] : array();
+            
+            $timezone = (!empty($calendarAccount['timezone']) && $calendarAccount['timezone'] !== 'none') ? $calendarAccount['timezone'] : 'UTC';
+            $url_parce = parse_url(get_home_url());$host = isset($url_parce["host"]) ? $url_parce["host"] : 'localhost';
+            $accountKey = isset($calendarAccount['key']) ? $calendarAccount['key'] : 1;
+            
+            $ical_data  = "BEGIN:VCALENDAR\r\n";
+            $ical_data .= "PRODID:-//WP_BOOKING_PACKAGE_CUSTOMER//" . $accountKey . '//' .$host . "\r\n";
+            $ical_data .= "VERSION:2.0\r\n";
+            $ical_data .= "CALSCALE:GREGORIAN\r\n";
+            $ical_data .= "METHOD:PUBLISH\r\n";
+            $ical_data .= "X-WR-CALNAME:WP_BOOKING_PACKAGE-" . $accountKey . "\r\n";
+            $ical_data .= "X-WR-TIMEZONE:" . $timezone . "\r\n";
+            
+            $ical_data .= "BEGIN:VEVENT\r\n";
+            $ical_data .= "UID:" . $id . "@" . $host . "\r\n";
+            
+            if (isset($calendarAccount['type']) && $calendarAccount['type'] === 'day') {
+                
+                $ical_data .= "DTSTART;TZID=" . $timezone . ":" . date("Ymd\THis", $unixTime) . "\r\n";
+                $serviceTime = (!empty($servicesDetails) && isset($servicesDetails['time'])) ? intval($servicesDetails['time']) : 0;
+                $endTime = ($serviceTime !== 0) ? ($unixTime + ($serviceTime * 60)) : $unixTime;
+                $ical_data .= "DTEND;TZID=" . $timezone . ":" . date("Ymd\THis", $endTime) . "\r\n";
+                
+            } else {
+                
+                $accommodationRaw = isset($customer['accommodationDetails']) ? $customer['accommodationDetails'] : '';
+                $accommodationDetails = (!empty($accommodationRaw) && is_string($accommodationRaw)) ? json_decode($accommodationRaw, true) : array();
+                $checkIn = !empty($accommodationDetails['checkIn']) ? intval($accommodationDetails['checkIn']) : $unixTime;
+                $checkOut = !empty($accommodationDetails['checkOut']) ? intval($accommodationDetails['checkOut']) : $unixTime;
+                $ical_data .= "DTSTART;VALUE=DATE:" . date("Ymd", $checkIn) . "\r\n";
+                $ical_data .= "DTEND;VALUE=DATE:" . date("Ymd", $checkOut) . "\r\n";
+                
+            }
+            
+            $reserveTime = isset($customer['reserveTime']) ? intval($customer['reserveTime']) : time();
+            $ical_data .= "DTSTAMP:" . gmdate("Ymd\THis\Z") . "\r\n";
+            $ical_data .= "CREATED:" . gmdate("Ymd\THis\Z", $reserveTime) . "\r\n";
+            $ical_data .= "STATUS:CONFIRMED\r\n";
+            $ical_data .= "SEQUENCE:0\r\n";
+            $ical_data .= "SUMMARY:" . $this->escapeIcalText(trim($emailSubject)) . "\r\n";
+            $ical_data .= "LOCATION:" . $this->escapeIcalText(trim($locationForIcalendar)) . "\r\n";
+            $ical_data .= "DESCRIPTION:" . $this->escapeIcalText(trim($emailBody)) . "\r\n";
+            $ical_data .= "END:VEVENT\r\n";
+            $ical_data .= "END:VCALENDAR\r\n";
+            
+            $temp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'ical_' . wp_generate_password(16, false, false) . '.ics';
             $temp_file_name = basename($temp_file);
-            
-            file_put_contents($temp_file, $ical_data);
+            file_put_contents($temp_file,$ical_data);
             
             if ($type === 'attach') {
                 
-                return array('temp_file' => $temp_file, 'temp_file_name' => $temp_file_name, 'status' => true);
+                return array('temp_file' => $temp_file, 'temp_file_name' =>$temp_file_name, 'status' => true);
                 
             } else if ($type === 'download') {
                 
                 $file_mime_type = 'text/calendar';
-                header('Content-Type: ' . $file_mime_type);
+                header('Content-Type: ' . $file_mime_type . '; charset=utf-8');
                 header('Content-Disposition: attachment; filename="' . $temp_file_name . '"');
                 header('Content-Length: ' . filesize($temp_file));
-                
                 readfile($temp_file);
-                unlink($temp_file);
+                
+                if (file_exists($temp_file)) {
+                    
+                    unlink($temp_file);
+                    
+                }
+                
+                exit;
                 
             }
             
-            
-            
         }
         
-        
     }
-
-
-
+    
 ?>

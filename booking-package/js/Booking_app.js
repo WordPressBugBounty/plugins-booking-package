@@ -1144,9 +1144,17 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         object._console.log(myBookingDetails);
         var courseList = JSON.parse(myBookingDetails.options);
-        if (myBookingDetails.accommodationDetails != 'null') {
+        if (myBookingDetails.accommodationDetails && myBookingDetails.accommodationDetails !== 'null') {
             
-            accommodationDetails = JSON.parse(myBookingDetails.accommodationDetails);
+            try {
+                
+                accommodationDetails = JSON.parse(myBookingDetails.accommodationDetails);
+                
+            } catch (e) {
+                
+                accommodationDetails = {};
+                
+            }
             
         }
         
@@ -8990,9 +8998,16 @@ var error_hCaptcha_for_booking_package = function(response) {
         inputFormPanel.classList.remove('hidden_panel');
         inputFormPanel.appendChild(loadingPanel);
         
-        object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, JSON.parse(JSON.stringify(post_data)), sendVerificationCode, function(response){
+        object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, JSON.parse(JSON.stringify(post_data)), sendVerificationCode, function(verificationResponse){
             
-            if (response === true) {
+            if (verificationResponse.status === true) {
+                
+                if (verificationResponse.verificationCode != null && verificationResponse.verificationToken != null) {
+                    
+                    post_data.verificationCode = verificationResponse.verificationCode;
+                    post_data.verificationToken = verificationResponse.verificationToken;
+                    
+                }
                 
                 const durationStay_panel = document.getElementById('booking-package_durationStay');
                 const bookingBlockPanel = document.getElementById("bookingBlockPanel");
@@ -9150,6 +9165,8 @@ var error_hCaptcha_for_booking_package = function(response) {
         var object = this;
         var calendarAccount = object._calendarAccount;
         var valueList = {};
+        var verificationCode = null;
+        var verificationToken = null;
         const storeage = new Booking_Package_sessionStorage(object._debug, object._prefix);
         object._console.log('sendBooking');
         object._console.log(object._selectedPaymentMethod);
@@ -9169,10 +9186,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                 post.accountKey = accountKey;
                 post.plugin_name = object._plugin_name;
                 object._console.log(post);
-                object._servicesControl.sendbookingVerificationCode(url, action, nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, true, function(response){
+                object._servicesControl.sendbookingVerificationCode(url, action, nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, true, function(verificationResponse){
                     
-                    if (response === true) {
+                    if (verificationResponse.status === true) {
                         
+                        verificationCode = verificationResponse.verificationCode;
+                        verificationToken = verificationResponse.verificationToken;
                         //isReCAPTCHA();
                         object.isReCAPTCHA_v3(function() {
                             
@@ -9187,8 +9206,6 @@ var error_hCaptcha_for_booking_package = function(response) {
                     }
                     
                 });
-                
-                
                 
             } else {
                 
@@ -9234,7 +9251,16 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             var post = object.verifyForm(mode, nonce, action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             
+            
+            
             if (post !== false) {
+                
+                if (verificationCode != null && verificationToken != null) {
+                    
+                    post.verificationCode = verificationCode;
+                    post.verificationToken = verificationToken;
+                    
+                }
                 
                 if (sendBool === true) {
                     
@@ -9830,6 +9856,8 @@ var error_hCaptcha_for_booking_package = function(response) {
         payPayButton.onclick = function(event) {
             
             var valueList = {};
+            var verificationCode = null;
+            var verificationToken = null;
             var post = object.verifyForm("stripe", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
             object._console.log(formData);
             object._console.log(inputData);
@@ -9840,10 +9868,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                 if (post !== false) {
                     
                     object._console.log(post);
-                    object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, true, function(response){
+                    object._servicesControl.sendbookingVerificationCode(object._url, object._action, object._nonce, object._wp_rest_nonce, object._plugin_name, object._prefix, post, true, function(verificationResponse){
                         
-                        if (response === true) {
+                        if (verificationResponse.status === true) {
                             
+                            verificationCode = verificationResponse.verificationCode;
+                            verificationToken = verificationResponse.verificationToken;
                             object.isReCAPTCHA_v3(function() {
                                 
                                 paypay_via_stripe(post, stripe_public_key);
@@ -9904,6 +9934,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                     storeage.setObject('booking_data', result);
                     var post = object.verifyForm("sendBooking", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);
                     post.stripe_paypay = 1;
+                    if (verificationCode != null && verificationToken != null) {
+                        
+                        post.verificationCode = verificationCode;
+                        post.verificationToken = verificationToken;
+                        
+                    }
                     object.createdBookingCompletedPanel(post, 'stripe', client, formPanelList, valueList, selectedOptions);
                     
                 });
@@ -10305,7 +10341,13 @@ var error_hCaptcha_for_booking_package = function(response) {
                 
             } else {
                 
-                document.getElementById('payment-request-button').style.display = 'none';
+                //document.getElementById('payment-request-button').style.display = 'none';
+                const prButtonElem = document.getElementById('payment-request-button');
+                if (prButtonElem) {
+                    
+                    prButtonElem.style.display = 'none';
+                    
+                }
                 
             }
             

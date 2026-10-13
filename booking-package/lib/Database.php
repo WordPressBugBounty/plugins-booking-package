@@ -691,7 +691,6 @@
 						$result = $wpdb->query($alter_sql);
 						if ($result === false) {
 							
-							var_dump($wpdb->last_error);
 							$queries['columns'][$table_name] = 'Table: ' . $table_name . ', ' . $wpdb->last_error;
 							update_option('_' . $this->prefix . 'databaseUpdateErrors', json_encode($queries));
 							

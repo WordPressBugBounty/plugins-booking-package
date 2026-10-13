@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.30
+Version:     1.7.31
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -253,7 +253,6 @@ Domain Path: /languages
 			add_filter('login_headertext', array($this, 'login_headertext'));
 			add_action('wp_print_footer_scripts', array($this, 'add_footer_scripts'), 5);
 			add_action('admin_post_booking-package-activate-subscription', array($this, 'activatePaidSubscription'));
-			add_action('admin_post_nopriv_booking-package-activate-subscription', array($this, 'activatePaidSubscription'));
 			
 			if (is_admin() === false) {
 				
@@ -262,7 +261,6 @@ Domain Path: /languages
 			}
 			
 			add_filter('widget_text', 'do_shortcode');
-			#add_filter('login_errors', array($this, 'login_errors'));
 			
 			if (function_exists('wp_insert_site')) {
 				
@@ -323,12 +321,6 @@ Domain Path: /languages
 					**/
 					
 				}
-				
-			}
-			
-			if (isset($_POST['booking_package_heartbeat'])) {
-				
-				add_action('init', array($this, 'heartbeat'));
 				
 			}
 			
@@ -553,35 +545,6 @@ Domain Path: /languages
 			
 		}
 		
-		public function heartbeat() {
-			
-			if (intval($_POST['booking_package_heartbeat']) == 1) {
-				
-				$plugin_headers = get_file_data(__FILE__, array('version' => 'Version', 'Page Name' => 'Page Name'));
-				$this->plugin_version = $plugin_headers['version'];
-				$setting = $this->setting;
-				$expiration = 0;
-				$isExtensionsValid = $this->getExtensionsValid(false, false);
-				if ($isExtensionsValid === true) {
-					
-					$subscription = $setting->upgradePlan('get');
-					if ($subscription['expiration_date_for_subscriptions'] != 0) {
-						
-						$expiration = date('c', $subscription['expiration_date_for_subscriptions']);
-						
-					}
-					
-				}
-				http_response_code(200) ;
-				header('Content-type: text/json; charset=utf-8');
-				$array = array('status' => true, 'isExtensionsValid' => $isExtensionsValid, 'expiration' => $expiration, 'pluginVersion' => $this->plugin_version, 'timestamp' => date('U'));
-				echo json_encode($array);
-				die();
-				
-			}
-			
-		}
-		
 		public function update_user_profile($user_id){
 			
 			#re_once(plugin_dir_path( __FILE__ ).'lib/Schedule.php');
@@ -668,58 +631,6 @@ Domain Path: /languages
 				
 			}
 			
-		}
-		
-		public function login_errors($error) {
-			
-			if (isset($_POST['redirect_to']) && isset($_POST['pluginName']) && $_POST['pluginName'] == 'booking-package') {
-				
-				global $errors;
-				$err_codes = $errors->get_error_codes();
-				if (in_array('invalid_email', $err_codes)) {
-					
-					$error = __('E-mail or password you entered is incorrect.', 'booking-package');
-					
-				} else if (in_array('invalid_username', $err_codes)) {
-					
-					$error = __('Username or password you entered is incorrect.', 'booking-package');
-					
-				} else if (in_array('incorrect_password', $err_codes)) {
-					
-					$error = __('Username or password you entered is incorrect.', 'booking-package');
-					
-				} else {
-					
-					$error = __('Unknown error.', 'booking-package');
-					
-				}
-				
-				$query = "?".$this->prefix."login_error=".$error;
-	        	$redirect_to = $_POST['redirect_to'];
-	        	$parse = parse_url($redirect_to);
-	        	if (isset($parse['query'])) {
-	        		
-	        		$query = $parse['query']."&".$this->prefix."login_error=".$error;
-	        		$redirect_to = $parse['scheme']."://".$parse['host'].$parse['path']."?".$query;
-	        		
-	        	} else {
-	        		
-	        		$redirect_to .= $query;
-	        		
-	        	}
-	        	
-	        	if (function_exists('urldecode')) {
-	        		
-	        		$redirect_to = urldecode($redirect_to);
-	        		
-	        	}
-	        	
-				header('Location: '.$redirect_to);
-				die();
-				
-			}
-			
-			return $error;
 		}
 		
 		public function admin_toolbar(){
@@ -816,9 +727,12 @@ Domain Path: /languages
 			$response = $schedule->get_user();
 			if ($response['status'] == 1 && intval($response['user']['user_toolbar']) != 1) {
 				
-				$url = get_site_url();
-				header('Location:' . $url);
-				return null;
+				//$url = get_site_url();
+				//header('Location:' . $url);
+				//return null;
+				
+				wp_safe_redirect(get_site_url());
+    			exit;
 				
 			}
 			
@@ -989,7 +903,7 @@ Domain Path: /languages
 					$list = $schedule->getReservationUsersData($calendarAccount, date('n', $unixTime), date('j', $unixTime), date('Y', $unixTime));
 					if (empty($list) === false) {
 						
-						print "<div class='calendarName'>" . $calendarAccount['name'] . "</div>";
+						print "<div class='calendarName'>" . esc_html( $calendarAccount['name'] ) . "</div>";
 						print "<ul class=''>";
 						for ($i = 0; $i < count($list); $i++) {
 							
@@ -1077,9 +991,9 @@ Domain Path: /languages
 			?>
 			
 			<li class=''>
-				<div class='date'><?php print $date; ?></div>
-				<div onClick='changeStatusForDashboard(this, <?php print $visitor['key']; ?>, "<?php print $visitor['cancellationToken']; ?>", <?php print $visitor['accountKey']; ?>, "<?php print $visitor['status']; ?>", <?php print $visitor['date']['month']; ?>, 1, <?php print $visitor['date']['year']; ?>)' class='status <?php print $visitor['status']; ?>'><?php print __(strtoupper($visitor['status']), 'booking-package'); ?></div>
-				<div class='name'><a href='<?php print $url; ?>'><?php print $name; ?></a></div>
+				<div class='date'><?php print esc_html( $date ); ?></div>
+				<div onClick='changeStatusForDashboard(this, <?php echo intval($visitor['key']); ?>, "<?php echo esc_js($visitor['cancellationToken']); ?>", <?php echo intval($visitor['accountKey']); ?>, "<?php echo esc_js($visitor['status']); ?>", <?php echo intval($visitor['date']['month']); ?>, 1, <?php echo intval($visitor['date']['year']); ?>)' class='status <?php echo esc_attr($visitor['status']); ?>'><?php echo esc_html(__(strtoupper($visitor['status']), 'booking-package')); ?></div>
+    			<div class='name'><a href='<?php echo esc_url($url); ?>'><?php echo esc_html($name); ?></a></div>
 			</li>
 			
 			<?php
@@ -1095,8 +1009,21 @@ Domain Path: /languages
 			
 			$this->loaded_plugin = true;
 			$load_start_time = microtime(true);
-			$atts = extract(shortcode_atts(array('id' => 1, 'locale' => null, 'services' => null, 'initial_month' => null, 'initial_year' => null), $atts, "booking_package"));
-			$accountKey = intval($id);
+			#$atts = extract(shortcode_atts(array('id' => 1, 'locale' => null, 'services' => null, 'initial_month' => null, 'initial_year' => null), $atts, "booking_package"));
+			$atts = shortcode_atts(
+				array(
+					'id'            => 1,
+					'locale'        => null,
+					'services'      => null,
+					'initial_month' => null,
+					'initial_year'  => null
+				), 
+				$atts, 
+				'booking_package'
+			);
+			
+			
+			$accountKey = intval($atts['id']);
 			if ($accountKey <= 0) {
 				
 				$accountKey = 1;
@@ -1105,14 +1032,14 @@ Domain Path: /languages
 			
 			$this->upgrader_process();
 			
-			if (isset($services) && !empty($services)) {
+			if (isset($atts['services']) && !empty($atts['services'])) {
 				
-				$_REQUEST['services'] = $services;
+				$_REQUEST['services'] = $atts['services'];
 				
 			}
 			
-			$initial_month = intval($initial_month);
-			$initial_year = intval($initial_year);
+			$initial_month = isset($atts['initial_month']) ? intval($atts['initial_month']) : null;
+			$initial_year  = isset($atts['initial_year']) ? intval($atts['initial_year']) : null;
 			if ($initial_month === 0 || $initial_year === 0) {
 				
 				$initial_month = null;
@@ -1484,6 +1411,23 @@ Domain Path: /languages
 				
 			}
 			
+			$safeCalendarAccount = $calendarAccount;
+			$sensitive_keys = array(
+				'email_from', 
+				'email_to', 
+				'icalToken', 
+				'googleCalendarID', 
+				'googleCalendarName', 
+				'googleCalendarSync', 
+				'subscriptionIdForStripe'
+			);
+			
+			foreach ($sensitive_keys as $skey) {
+				
+				unset($safeCalendarAccount[$skey]);
+				
+			}
+			
 			$locale = get_locale();
 			$localize_script = $this->localizeScript("booking_package_front_end");
 			$localize_script['uniqueID'] = $this->plugin_name . '-id-' . $accountKey;
@@ -1491,7 +1435,7 @@ Domain Path: /languages
 			$localize_script['courseName'] = $calendarAccount["courseTitle"];
 			$localize_script['hasMultipleServices'] = $calendarAccount['hasMultipleServices'];
 			$localize_script['accountKey'] = $accountKey;
-			$localize_script['calendarAccount'] = $calendarAccount;
+			$localize_script['calendarAccount'] = $safeCalendarAccount;
 			$localize_script['courseList'] = $courseList;
 			$localize_script['guestsList'] = $guestsList;
 			$localize_script['formData'] = $formData;
@@ -2198,9 +2142,9 @@ Domain Path: /languages
 				print "<script id='booking_package_load_plugin'>\n";
 				print "const textOfErrorContent = '" . __('You cannot insert multiple shortcodes of the Booking Package on a single page.', 'booking-package') . "';\n";
 				print "const textOfErrorID = '" . __('The display of the calendar with ID %s has been canceled.', 'booking-package') . "';\n";
-				print 'var ' . $this->prefix . 'dictionary = ' . json_encode($this->calendarScript['dictionary']) . ";\n";
-				print 'var reservation_info = ' . json_encode($this->calendarScript['localize_script']) . ";\n";
-				print 'const booking_package_js_files = ' . json_encode($files) . ";\n";
+				print 'var ' . $this->prefix . 'dictionary = ' . wp_json_encode($this->calendarScript['dictionary']) . ";\n";
+				print 'var reservation_info = ' . wp_json_encode($this->calendarScript['localize_script']) . ";\n";
+				print 'const booking_package_js_files = ' . wp_json_encode($files) . ";\n";
 				print $load_script . "\n";
 				print "</script>\n";
 				
@@ -2545,7 +2489,8 @@ Domain Path: /languages
 											
 										}
 										$users_data['user_id_' . $user->ID] = $user;
-										print "<tr id='user_id_" . $user->ID . "' class='tr_user'><td><span class='userId'>" . $user->ID . "</span>".$priority_high."</td><td>" . $user->user_login . "</td><td>" . $user->user_email . "</td><td>" . $user->user_registered . "</td></tr>\n";
+										#print "<tr id='user_id_" . $user->ID . "' class='tr_user'><td><span class='userId'>" . $user->ID . "</span>".$priority_high."</td><td>" . $user->user_login . "</td><td>" . $user->user_email . "</td><td>" . $user->user_registered . "</td></tr>\n";
+										print "<tr id='user_id_" . intval($user->ID) . "' class='tr_user'><td><span class='userId'>" . intval($user->ID) . "</span>" . $priority_high . "</td><td>" . esc_html($user->user_login) . "</td><td>" . esc_html($user->user_email) . "</td><td>" . esc_html($user->user_registered) . "</td></tr>\n";
 										
 									}
 									
@@ -2824,7 +2769,7 @@ Domain Path: /languages
 												<td>
 													<div>
 														<button id="user_edit_change_password_button" class="w3tc-button-save button-primary"><?php _e("Change Password", 'booking-package'); ?></button>
-	                    								<input type="text" name="user_edit_pass" id="user_edit_pass" class="input hidden_panel"　autocomplete="new-password">
+	                    								<input type="text" name="user_edit_pass" id="user_edit_pass" class="input hidden_panel" autocomplete="new-password">
 													</div>
 												</td>
 											</tr>
@@ -2912,7 +2857,7 @@ Domain Path: /languages
 									
 									<div style="float: right;">
 										<button id="notification_save_button" class="w3tc-button-save button-primary"><?php _e("Save", 'booking-package'); ?></button>
-									</dvi>
+									</div>
 									
 								</div>
 							</div>
@@ -2937,21 +2882,21 @@ Domain Path: /languages
 				
 				
 				
-			</div>
-			
-			<div id="blockPanel" class="edit_modal_backdrop hidden_panel">
-				<?php
-					print $this->member_form();
-				?>
-			</div>
-			<div id="loadingPanel">
-				<div class="loader">
-					<svg viewBox="0 0 64 64" width="64" height="64">
-						<circle id="spinner" cx="32" cy="32" r="28" fill="none"></circle>
-					</svg>
+				
+				
+				<div id="blockPanel" class="edit_modal_backdrop hidden_panel">
+					<?php
+						print $this->member_form();
+					?>
+				</div>
+				<div id="loadingPanel">
+					<div class="loader">
+						<svg viewBox="0 0 64 64" width="64" height="64">
+							<circle id="spinner" cx="32" cy="32" r="28" fill="none"></circle>
+						</svg>
+					</div>
 				</div>
 			</div>
-		
 			<?php
 			wp_localize_script('Member_js', 'users_data', $users_data);
 			$load_end_time = microtime(true) - $load_start_time;
@@ -4193,7 +4138,7 @@ Domain Path: /languages
 								
 								<div class="title">CSS</div>
 								<div style="padding-bottom: 1em;"><?php _e("Change the front-end page design by defining CSS.", 'booking-package'); ?></div>
-								<textarea id="css_textarea" rows="50" style=""><?php print $front_end_css; ?></textarea>
+								<textarea id="css_textarea" rows="50" style=""><?php print esc_textarea( $front_end_css ); ?></textarea>
 								<div class="bottomButtonPanel"><button id="save_css" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 								
 							</div>
@@ -4208,7 +4153,7 @@ Domain Path: /languages
 									
 								}
 								?>
-								<textarea id="javascript_booking_package" rows="50" style=""><?php print $front_end_javascript; ?></textarea>
+								<textarea id="javascript_booking_package" rows="50" style=""><?php print esc_textarea( $front_end_javascript ); ?></textarea>
 								<div class="bottomButtonPanel"><button id="save_javascript" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 								
 							</div>
@@ -4343,13 +4288,13 @@ Domain Path: /languages
 				print '<div class="queries">';
 				foreach ((array) $queries['tables'] as $key => $value) {
 					
-					print '<code id="tables_' . $key . '" class="query">' . $value . '</code><span id="copy_tables_' . $key . '" title="Copy" class="material-icons copy_icon">content_copy</span>';
+					print '<code id="tables_' . esc_attr( $key ) . '" class="query">' . esc_html( $value ) . '</code><span id="copy_tables_' . esc_attr( $key )  . '" title="Copy" class="material-icons copy_icon">content_copy</span>';
 					
 				}
 				
 				foreach ((array) $queries['columns'] as $key => $value) {
 					
-					print '<code id="columns_' . $key . '" class="query">' . $value . '</code><span id="copy_columns_' . $key . '" title="Copy" class="material-icons copy_icon">content_copy</span>';
+					print '<code id="columns_' . esc_attr( $key )  . '" class="query">' . esc_html( $value ) . '</code><span id="copy_columns_' . esc_attr( $key )  . '" title="Copy" class="material-icons copy_icon">content_copy</span>';
 					
 				}
 				
@@ -4365,7 +4310,7 @@ Domain Path: /languages
 					
 				}
 				
-				print '<p> Last Update: ' . $queries['lastUpdate'] . '</p>';
+				print '<p> Last Update: ' . esc_html( $queries['lastUpdate'] ) . '</p>';
 				print '</div>';
 				
 			}
@@ -4493,8 +4438,10 @@ Domain Path: /languages
 		
 		public function selectedMode(){
 			
-			$response = array('status' => 'error', 'mode' => sanitize_text_field($_POST['mode']) );
-			if (is_user_logged_in() === false || (current_user_can('edit_others_posts') === false && current_user_can('booking_package_manager') === false && current_user_can('booking_package_editor') === false) ) {
+			$mode = isset($_POST['mode']) ? sanitize_text_field($_POST['mode']) : '';
+			$response = array('status' => 'error', 'mode' => $mode );
+			#if (is_user_logged_in() === false || (current_user_can('edit_others_posts') === false && current_user_can('booking_package_manager') === false && current_user_can('booking_package_editor') === false) ) {
+			if (is_user_logged_in() === false || (current_user_can('manage_options') === false && current_user_can('edit_others_posts') === false && current_user_can($this->prefix . 'manager') === false && current_user_can($this->prefix . 'editor') === false) ) {
 				
 				return $response;
 				
@@ -4827,8 +4774,23 @@ Domain Path: /languages
 			
 			if ($_POST['mode'] == 'getUpgradeSubscriptionDetails') {
 				
+				if (!current_user_can('manage_options')) {
+
+					$response = array(
+						'status'  => false,
+						'message' => __('You do not have permission to perform this action.', 'booking-package')
+					);
+					
+				} else {
+					
+					$plugin_headers = get_file_data(__FILE__, array('version' => 'Version', 'Page Name' => 'Page Name'));
+					$response = $setting->getUpgradeSubscriptionDetails($plugin_headers);
+					
+				}
+				/**
 				$plugin_headers = get_file_data(__FILE__, array('version' => 'Version', 'Page Name' => 'Page Name'));
 				$response = $setting->getUpgradeSubscriptionDetails($plugin_headers);
+				**/
 				
 			}
 			
@@ -5268,11 +5230,23 @@ Domain Path: /languages
 			
 			if ($_POST['mode'] == 'updateCss') {
 				
+				if (current_user_can('manage_options') === false) {
+						
+					return array('status' => 'error', 'message' => __('Permission denied.', 'booking-package'));
+					
+				}
+				
 				$response = $setting->updateCss('front_end.css');
 				
 			}
 			
 			if ($_POST['mode'] == 'updateJavaScript') {
+				
+				if (current_user_can('manage_options') === false) {
+						
+					return array('status' => 'error', 'message' => __('Permission denied.', 'booking-package'));
+					
+				}
 				
 				$response = $setting->updateJavaScript('front_end.js');
 				
@@ -5346,10 +5320,23 @@ Domain Path: /languages
 		
 		public function activatePaidSubscription() {
 			
-			if (isset($_POST['mode']) && $_POST['mode'] == 'booking-package-activate-subscription' && isset($_POST['customer_id_for_subscriptions']) && isset($_POST['subscriptions_id_for_subscriptions'])) {
+			if (is_user_logged_in() === false || !current_user_can('manage_options')) {
+				
+				wp_die(__('Permission denied.', 'booking-package'), '', array('response' => 403));
+				
+			}
+			
+			$nonce = isset($_REQUEST['activate_nonce']) ? sanitize_text_field($_REQUEST['activate_nonce']) : '';
+			if (!wp_verify_nonce($nonce, 'booking-package-activate-subscription-action')) {
+				
+				wp_die(__('Invalid security token.', 'booking-package'), '', array('response' => 403));
+				
+			}
+			
+			if (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'booking-package-activate-subscription' && isset($_REQUEST['customer_id_for_subscriptions']) && isset($_REQUEST['subscriptions_id_for_subscriptions'])) {
 				
 				$setting = $this->setting;
-				$setting->lookingForSubscription( sanitize_text_field($_POST['customer_id_for_subscriptions']), sanitize_text_field($_POST['subscriptions_id_for_subscriptions']) );
+				$setting->lookingForSubscription( sanitize_text_field($_REQUEST['customer_id_for_subscriptions']), sanitize_text_field($_REQUEST['subscriptions_id_for_subscriptions']) );
 				header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
 				die();
 				
@@ -5359,8 +5346,16 @@ Domain Path: /languages
 		
 		public function updatePaidSubscription() {
 			
+			if (is_user_logged_in() === false || (current_user_can('manage_options') === false) ) {
+				
+				wp_die(__('Permission denied.', 'booking-package'), '', array('response' => 403));
+				
+			}
+			
+			$unique = isset($_GET['unique']) ? sanitize_text_field(wp_unslash($_GET['unique'])) : '';
 			$setting = $this->setting;
-			$setting->updatePaidSubscription(sanitize_text_field(esc_html($_GET['unique'])));
+			$setting->updatePaidSubscription($unique);
+			
 			header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
 			die();
 			
@@ -5465,28 +5460,6 @@ Domain Path: /languages
 			if ($valid !== false) {
 				
 				die();
-				
-			}
-			
-		}
-		
-		public function webhook(){
-			
-			$target = sanitize_text_field($_GET["weebhook"]);
-			$HTTP_X_GOOG_CHANNEL_ID = sanitize_text_field($_SERVER['HTTP_X_GOOG_CHANNEL_ID']);
-			$HTTP_X_GOOG_CHANNEL_TOKEN = sanitize_text_field($_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN']);
-			
-			$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
-			$googleCalendarDeteils = $schedule->lookingForGoogleCalendarId($HTTP_X_GOOG_CHANNEL_ID);
-			
-			#lookingForGoogleCalendarId
-			#if(get_option($this->prefix."id_for_google_webhook") == $HTTP_X_GOOG_CHANNEL_ID && get_option($this->prefix."token_for_google_webhook") == $HTTP_X_GOOG_CHANNEL_ID){
-			
-			if($googleCalendarDeteils['idForGoogleWebhook'] == $HTTP_X_GOOG_CHANNEL_ID){
-				
-				$webhook = new booking_package_webhook($this->prefix, $this->plugin_name);
-				$webhook->catchWebhook($target, $HTTP_X_GOOG_CHANNEL_ID, $_POST);
-				exit;
 				
 			}
 			
@@ -5837,6 +5810,7 @@ Domain Path: /languages
 					array(
 						'mode' => 'booking-package-update-paid-subscription',
 						'unique' => get_option('_' . $this->prefix . 'unique', false),
+						'update_nonce' => wp_create_nonce('booking-package-update-subscription-action'),
 					)
 				);
 				
@@ -6056,13 +6030,6 @@ Domain Path: /languages
 			$screen->add_help_tab(array(
 				'id' => $this->prefix . 'displayBookingCalendar',
 				'title' => __('How to Display the Booking Calendar', 'booking-package'),
-				'content' => $content,
-			));
-			
-			$content = $document->weeklyScheduleTemplates();
-			$screen->add_help_tab(array(
-				'id' => $this->prefix . 'weeklyScheduleTemplates',
-				'title' => __('Weekly Schedule Templates', 'booking-package'),
 				'content' => $content,
 			));
 			
@@ -6514,78 +6481,6 @@ Domain Path: /languages
 			
 		}
 		
-		public function ms_site_check(){
-			
-			if (function_exists('get_sites') && class_exists('WP_Site_Query')) {
-				
-				$bool = ms_site_check();
-				if ($bool === true) {
-					
-					include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-					include_once( ABSPATH . 'wp-includes/ms-functions.php' );
-					if (is_plugin_active_for_network('booking-package/index.php') === true) {
-						
-						$response = array();
-						$id = get_current_blog_id();
-						$response['id'] = $id;
-						
-						if (intval($id) != intval(SITE_ID_CURRENT_SITE)) {
-							
-							$isExtensionsValid = false;
-							$subscription = array();
-							$sites = get_sites();
-							foreach ((array) $sites as $site) {
-								
-								if (intval($site->id) == intval(SITE_ID_CURRENT_SITE)) {
-									
-									#var_dump($site->blog_id);
-									switch_to_blog($site->blog_id);
-									$setting = $this->setting;
-									$isExtensionsValid = $this->getExtensionsValid(false, false);
-									if ($isExtensionsValid === true) {
-										
-										$subscription = $setting->upgradePlan('get');
-										
-									}
-									break;
-									
-								}
-								
-							}
-							
-							#switch_to_blog($id);
-							$response['isExtensionsValid'] = $isExtensionsValid;
-							$response['subscription'] = $subscription;
-							restore_current_blog();
-							
-							return $response;
-							
-						} else {
-							
-							return false;
-							
-						}
-						
-					} else {
-						
-						return false;
-						
-					}
-					
-				} else {
-					
-					return false;
-					
-				}
-				
-			} else {
-				
-				return false;
-				
-			}
-			
-		}
-		
 		public function changeTimeFormat($timeFormat) {
 			
 			if (!is_numeric($timeFormat)) {
@@ -6935,7 +6830,6 @@ Domain Path: /languages
 				$dictionary['Payment Method'] = __('Payment Method', 'booking-package');
 				$dictionary['Stop'] = __('Stop', 'booking-package');
 				$dictionary['You can use the following shortcodes in the content editor.'] = __('You can use the following shortcodes in the content editor.', 'booking-package');
-				$doctionary['This calendar shares the schedules of the "%s".'] = __('This calendar shares the schedules of the "%s".', 'booking-package');
 				$dictionary['Weekly Schedule Templates'] = __('Weekly Schedule Templates', 'booking-package');
 				$dictionary['Select Multiple Days'] = __('Select Multiple Days', 'booking-package');
 				$dictionary['Multiple Days'] = __('Multiple Days', 'booking-package');
@@ -7113,8 +7007,17 @@ Domain Path: /languages
 		
 		public $prefix = 'booking_package_';
 		
+		public $userRoleName = 'booking_package_' . 'member';
+		
+		public $setting = null;
+		
+		public $currencies = null;
+		
 		public function __construct() {
 			
+			$this->setting = new booking_package_setting($this->prefix, $this->plugin_name, $this->userRoleName);
+			
+			$this->currencies = $this->setting->getCurrencies();
 			#var_dump($locale);
 			$textdomain = load_plugin_textdomain($this->plugin_name, false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
 			$widget_options = array(
@@ -7148,7 +7051,7 @@ Domain Path: /languages
 		        	
 		        } else {
 		        	
-			        $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $booking_package->userRoleName);
+			        $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
 			        $accountList = $schedule->getCalendarAccountListData();
 			        foreach ((array) $accountList as $key => $value) {
 			        	
@@ -7178,7 +7081,7 @@ Domain Path: /languages
 	        	
 	        }
 	        
-	        $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $booking_package->userRoleName);
+			$schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
 	        $accountList = $schedule->getCalendarAccountListData();
 	        echo '<p style="">';
 	        echo _e('Booking Calendar :', $this->plugin_name);
@@ -7187,11 +7090,11 @@ Domain Path: /languages
 	        	
 	        	if ($calendarKey == intval($value['key'])) {
 	        		
-	        		echo '<option value="'.intval($value['key']).'" selected>'.$value['name'].'</option>';
+	        		echo '<option value="'.intval($value['key']).'" selected>' . esc_html( $value['name'] ) . '</option>';
 	        		
 	        	} else {
 	        		
-	        		echo '<option value="'.intval($value['key']).'">'.$value['name'].'</option>';
+	        		echo '<option value="'.intval($value['key']).'">' . esc_html( $value['name'] ) . '</option>';
 	        		
 	        	}
 	        	
@@ -7203,7 +7106,6 @@ Domain Path: /languages
 		
 	    public function update($new_instance, $old_instance){
 	        
-	        echo "update";
 	        $instance = $old_instance;
 	        $instance['calendarKey'] = sanitize_text_field($new_instance['calendarKey']);
 			return $instance;

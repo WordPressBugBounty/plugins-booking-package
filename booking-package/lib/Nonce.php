@@ -52,7 +52,21 @@
             }
             
             $unique = get_site_url();
-            list($hash, $timestamp) = explode('|', $nonce);
+            if (empty($nonce) || !is_string($nonce)) {
+                
+                return false;
+                
+            }
+            
+            $parts = explode('|', $nonce);
+            if (count($parts) !== 2) {
+                
+                return false;
+                
+            }
+            
+            list($hash, $timestamp) = $parts;
+            $timestamp = intval($timestamp);
             $expiration = 1440 * 60;
             if ((time() - $timestamp) > $expiration) {
                 
