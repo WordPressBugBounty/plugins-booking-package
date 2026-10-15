@@ -556,7 +556,7 @@
             
         }
         
-        public function commitStripe($payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate){
+        public function commitStripe($payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate) {
             
             $message = array();
             #$params = array('source' => $token, 'amount' => $amont, 'currency' => $currency, 'description' => "Key: " . $key . " Name: " . $name);
@@ -592,52 +592,34 @@
             **/
             
             #$id = $response['charges']['data'][0]['id'];
-            $id = $response['id'];
+            $id = isset($response['id']) ? $response['id'] : null;
             #var_dump($response);
             
             if ($httpCode < 400) {
                 
-                if (isset($id) && ($response['status'] == 'succeeded' || $response['status'] == 'requires_capture' || $stripe_konbini == 1 || $stripe_paypay == 1)) {
+                $status = isset($response['status']) ? $response['status'] : '';
+                $payment_method_types = (isset($response['payment_method_types']) && is_array($response['payment_method_types'])) ? $response['payment_method_types'] : array();
+                $is_konbini_intent = (intval($stripe_konbini) === 1 && in_array('konbini', $payment_method_types, true));
+                $is_paypay_intent = (intval($stripe_paypay) === 1 && in_array('paypay', $payment_method_types, true) && ($status === 'succeeded' || $status === 'requires_capture'));
+                if (!empty($id) && ($status === 'succeeded' || $status === 'requires_capture' || $is_konbini_intent || $is_paypay_intent)) {
                     
                     $message['cardToken'] = $id;
                     
                 } else {
                     
-                    if($httpCode == 400){
+                    if (isset($response['last_payment_error']['message']) && !empty($response['last_payment_error']['message'])) {
                         
-                        $message['error'] = "The request was unacceptable, often due to missing a required parameter.";
+                        $message['error'] = $response['last_payment_error']['message'] . " (" . $httpCode . ")";
                         
-                    }else if($httpCode == 401){
+                    } else if (isset($response['error']['message']) && !empty($response['error']['message'])) {
                         
-                        $message['error'] = "No valid API key provided.";
+                        $message['error'] = $response['error']['message'] . " (" . $httpCode . ")";
                         
-                    }else if($httpCode == 402){
+                    } else {
                         
-                        $message['error'] = "The parameters were valid but the request failed.";
-                        
-                    }else if($httpCode == 404){
-                        
-                        $message['error'] = "The requested resource doesn't exist.";
-                        
-                    }else if($httpCode == 409){
-                        
-                        $message['error'] = "The request conflicts with another request (perhaps due to using the same idempotent key).";
-                        
-                    }else if($httpCode == 429){
-                        
-                        $message['error'] = "Too many requests hit the API too quickly. We recommend an exponential backoff of your requests.";
-                        
-                    }else if($httpCode == 500 || $httpCode == 502 || $httpCode == 503 || $httpCode == 504){
-                        
-                        $message['error'] = "Something went wrong on Stripe's end.";
-                        
-                    }else{
-                        
-                        $message['error'] = "8007";
+                        $message['error'] = __('Payment processing failed. Please try again.', 'booking-package') . " (" . $httpCode . ")";
                         
                     }
-                    
-                    #$message['error'] = $response['message'];
                 
                 }
             
@@ -721,24 +703,7 @@
             $httpCode = wp_remote_retrieve_response_code($response);
             $response = json_decode(wp_remote_retrieve_body($response), true);
             
-            /**
-            $response = null;
-            $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_USERPWD, $public_key.":".$secret);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			curl_setopt($ch, CURLOPT_POST, 1);
-			
-			ob_start();
-			$response = curl_exec($ch);
-			$response = ob_get_contents();
-			ob_end_clean();
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close ($ch);
-            $response = json_decode($response, true);
-            **/
-            return $response['access_token'];
+            return isset($response['access_token']) ? $response['access_token'] : null;
             
         }
         
@@ -840,12 +805,20 @@
             
         }
         
-        public function getPaymentDetailsPayPal($id, $token, $payment_live, $bookingId, $name, $email, $bookingDate){
+        public function getPaymentDetailsPayPal($id, $token, $payment_live, $bookingId, $name, $email, $bookingDate) {
+            
+            $message = array();
+            if (empty($token)) {
+                
+                $message['error'] = 'Payment through PayPal failed.';
+                return $message;
+                
+            }
             
             $this->addBookingIdOnPayPal($id, 'Booking ID: ' . $bookingId . ', Name: ' . $name, $token, $payment_live);
             $this->capturePayPal($id, $token, $payment_live);
             $sandbox = '';
-            if(intval($payment_live) == 0){
+            if (intval($payment_live) == 0) {
                 
                 $sandbox = 'sandbox.';
                 
@@ -853,7 +826,6 @@
             
             $url = "https://api.". $sandbox ."paypal.com/v1/payments/payment/".$id;
             $url = "https://api." . $sandbox . "paypal.com/v2/checkout/orders/" . $id;
-            $message = array();
             $headers = array('content-type: application/json', 'Authorization: Bearer '.$token);
             
             $args = array(
@@ -868,9 +840,9 @@
             $httpCode = wp_remote_retrieve_response_code($response);
             $response = json_decode(wp_remote_retrieve_body($response), true);
             
-            if ($response['status'] == 'COMPLETED') {
+            if ($httpCode < 400 && isset($response['status']) && $response['status'] == 'COMPLETED') {
                 
-                $message['cardToken'] = $response['id'];
+                $message['cardToken'] = isset($response['id']) ? $response['id'] : $id;
                 if (isset($response['purchase_units'][0]['payments']['captures'][0]['id'])) {
                     
                     $message['cardToken'] = $response['purchase_units'][0]['payments']['captures'][0]['id'];

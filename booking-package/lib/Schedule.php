@@ -9785,11 +9785,20 @@
 			#$from = $calendarAccount['email_from'];
 			if (isset($_POST['booking_package_user_action']) === false) {
 				
-				$bookingVerificationCode = $calendarAccount['bookingVerificationCode'];
+				$bookingVerificationCode = isset($calendarAccount['bookingVerificationCode']) ? $calendarAccount['bookingVerificationCode'] : 'false';
 				$user = $this->get_user();
-				if (intval($user['status']) == 1) {
+				if (intval($user['status']) == 1 && isset($calendarAccount['bookingVerificationCodeToUser'])) {
 					
 					$bookingVerificationCode = $calendarAccount['bookingVerificationCodeToUser'];
+					
+				}
+				
+				if ($bookingVerificationCode === 'false') {
+					
+					return array(
+						'status'  => false,
+						'message' => __('Verification code is not enabled for this calendar.', 'booking-package')
+					);
 					
 				}
 				
@@ -9802,7 +9811,55 @@
 				$response_user = $this->get_user_id($administrator, $_POST['userId']);
 				$userValues = $this->getUserValues($accountKey, 'add', $administrator, null, $response_user['user_id']);
 				
+				if (empty($userValues['emails']) && empty($userValues['sms'])) {
+					
+					return array(
+						'status'  => false,
+						'message' => __('No valid email address or phone number found in the booking details.', 'booking-package')
+					);
+					
+				}
+				
 			} else {
+				
+				$check_email_for_member = intval(get_option($this->prefix . 'check_email_for_member', 0));
+				$function_for_member    = intval(get_option($this->prefix . 'function_for_member', 0));
+				$is_logged_in           = is_user_logged_in();
+				
+				if ($is_logged_in === false) {
+					
+					$visitors_registration = intval(get_option($this->prefix . 'visitors_registration_for_member', 0));
+					
+					if ($function_for_member !== 1 || $visitors_registration !== 1 || $check_email_for_member !== 1) {
+						
+						return array(
+							'status'  => false,
+							'message' => __('User registration email verification is not allowed.', 'booking-package')
+						);
+						
+					}
+					
+					if (empty($_POST['user_login']) || empty($_POST['user_pass'])) {
+						
+						return array(
+							'status'  => false,
+							'message' => __('Registration credentials are required.', 'booking-package')
+						);
+						
+					}
+					
+				} else {
+					
+					if ($function_for_member !== 1 || $check_email_for_member !== 1) {
+						
+						return array(
+							'status'  => false,
+							'message' => __('Email verification is not enabled for profile updates.', 'booking-package')
+						);
+						
+					}
+					
+				}
 				
 				$raw_email = isset($_POST['user_email']) ? sanitize_email(trim($_POST['user_email'])) : '';
 				if (!is_email($raw_email)) {
@@ -9811,20 +9868,10 @@
 					
 				}
 				
-				$ip_address = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : 'unknown';
-				$rate_key = 'bp_rate_' . md5($ip_address . '_' . $raw_email);
-				$send_count = intval(get_transient($rate_key));
-				
-				if ($send_count >= 5) {
-					return array('status' => false, 'message' => __('Too many requests. Please try again later.', 'booking-package'));
-				}
-				
-				set_transient($rate_key, $send_count + 1, HOUR_IN_SECONDS);
-				
 				$bookingVerificationCode = 'email';
 				$userValues = array(
-					'emails' => array($_POST['user_email']),
-					'sms' => array(),
+					'emails' => array($raw_email),
+					'sms'    => array(),
 				);
 				
 			}
@@ -9837,6 +9884,8 @@
 			if ($bookingVerificationCode != 'false') {
 				
 				$all_destinations = array_merge($userValues['emails'], $userValues['sms']);
+				$ip_address = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : 'unknown';
+				$rate_keys = array();
 				foreach ($all_destinations as $dest) {
 					
 					if (empty($dest)) {
@@ -9849,11 +9898,24 @@
 					if (get_transient($limit_key)) {
 						
 						return array(
-							'status' => false,
+							'status'  => false,
 							'message' => __('Please wait a moment before requesting another code.', 'booking-package')
 						);
 						
 					}
+					
+					$rate_key = 'bp_rate_' . md5($ip_address . '_' . $dest);
+					$send_count = intval(get_transient($rate_key));
+					if ($send_count >= 5) {
+						
+						return array(
+							'status'  => false,
+							'message' => __('Too many requests. Please try again later.', 'booking-package')
+						);
+						
+					}
+					
+					$rate_keys[] = array('key' => $rate_key, 'count' => $send_count);
 					
 				}
 				
@@ -9864,6 +9926,14 @@
 						set_transient('bp_code_limit_' . md5($dest), true, 60);
 						
 					}
+					
+				}
+				
+				$rate_key_names = array();
+				foreach ($rate_keys as $rk) {
+					
+					set_transient($rk['key'], $rk['count'] + 1, HOUR_IN_SECONDS);
+					$rate_key_names[] = $rk['key'];
 					
 				}
 				
@@ -9912,6 +9982,13 @@
 					$verificationToken = wp_generate_password(32, false);
 					
 					set_transient('bp_verify_' . $verificationToken, wp_hash($verificationCode), 15 * MINUTE_IN_SECONDS);
+					
+					if (!empty($rate_key_names)) {
+						
+						set_transient('bp_rate_keys_' . $verificationToken, $rate_key_names, 15 * MINUTE_IN_SECONDS);
+						
+					}
+					
 					$response['status'] = true;
 					$response['verificationToken'] = $verificationToken;
 					$response['twilio'] = $twilio;
@@ -9952,6 +10029,18 @@
 				
 				delete_transient('bp_verify_' . $token);
 				set_transient('bp_verified_' . $token, true, 10 * MINUTE_IN_SECONDS);
+				
+				$rate_keys = get_transient('bp_rate_keys_' . $token);
+				if (is_array($rate_keys)) {
+					
+					foreach ($rate_keys as $rk) {
+						
+						delete_transient($rk);
+						
+					}
+					delete_transient('bp_rate_keys_' . $token);
+					
+				}
 
 				$response['status'] = true;
 				$response['verificationToken'] = $token;
@@ -10434,6 +10523,226 @@
 						
 					}
 					
+					// 改修コードここから
+					//$_POST['payToken'] = 'test';
+					
+					$onlinePaymentStatus = true;
+					$cardToken = null;
+					$payMode = "";
+					$payId = "";
+					$payName = "";
+					$public_key = null;
+					$secret_key = null;
+					$payment_live = 0;
+					$stripe_konbini = 0;
+					$stripe_paypay = 0;
+					$onlinePaymentErrorResponse = array();
+					$available_methods = array_filter(array_map('trim', explode(",", strtolower($calendarAccount['paymentMethod']))));
+					$online_methods = array('stripe', 'stripe_paypay', 'stripe_konbini', 'paypal');
+					$has_online_method = !empty(array_intersect($available_methods, $online_methods));
+					$allows_locally = in_array('locally', $available_methods, true);
+					
+					$selected_pay_type = isset($_POST['payType']) ? strtolower(sanitize_text_field($_POST['payType'])) : 'locally';
+					$amount = $this->getAmount(null, $calendarAccount, $accommodationDetails, $services, $responseGuests, $taxes, $coupon);
+					$is_admin_booking = ($administrator === true && $has_permission);
+					$requires_online = false;
+					
+					if (!$is_admin_booking && $has_online_method && $amount > 0) {
+						
+						if ($allows_locally === false) {
+							
+							// オンライン決済のみ許可されているカレンダーの場合
+							$requires_online = true;
+							if (!in_array($selected_pay_type, $online_methods, true)) {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Online payment is required to complete this booking.', 'booking-package') );
+								
+							}
+							
+						} else {
+							
+							// 現地決済・オンライン決済の両対応カレンダーの場合
+							if (in_array($selected_pay_type, $online_methods, true)) {
+								
+								$requires_online = true;
+								
+							} else if ($selected_pay_type !== 'locally') {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Please select a valid payment method.', 'booking-package') );
+								
+							}
+							
+						}
+						
+					}
+					
+					// オンライン決済が必須の場合、DB登録および在庫減算の「前」に決済を完了・検証する
+					if ($onlinePaymentStatus === true && $requires_online === true) {
+						
+						if (!isset($_POST['payToken']) || empty(trim($_POST['payToken']))) {
+							
+							$onlinePaymentStatus = false;
+							$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Payment information is required to complete this booking.', 'booking-package') );
+							
+						} else if ($selected_pay_type === 'stripe') {
+							
+							$secret_key = get_option($this->prefix . "stripe_secret_key", null);
+							if (empty($secret_key)) {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Stripe payment is not properly configured.', 'booking-package') );
+								
+							}
+							
+							if (isset($_POST['stripe_konbini']) && intval($_POST['stripe_konbini']) === 1) {
+								
+								if (in_array('stripe_konbini', $available_methods, true)) {
+									
+									$stripe_konbini = 1;
+									
+								} else {
+									
+									$onlinePaymentStatus = false;
+									$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Invalid payment method.', 'booking-package') );
+									
+								}
+								
+							} else if (isset($_POST['stripe_paypay']) && intval($_POST['stripe_paypay']) === 1) {
+								
+								if (in_array('stripe_paypay', $available_methods, true)) {
+									
+									$stripe_paypay = 1;
+									
+								} else {
+									
+									$onlinePaymentStatus = false;
+									$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Invalid payment method.', 'booking-package') );
+									
+								}
+								
+							} else if (in_array('stripe', $available_methods, true) === false) {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Invalid payment method.', 'booking-package') );
+								
+							}
+							
+						} else if ($selected_pay_type === 'paypal') {
+							
+							$payment_live = get_option($this->prefix . "paypal_live", "0");
+							$public_key   = get_option($this->prefix . "paypal_client_id", null);
+							$secret_key   = get_option($this->prefix . "paypal_secret_key", null);
+							if (!in_array('paypal', $available_methods, true)) {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Invalid payment method.', 'booking-package') );
+								
+							} else if (empty($secret_key) || empty($public_key)) {
+								
+								$onlinePaymentStatus = false;
+								$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('PayPal payment is not properly configured.', 'booking-package') );
+								
+							}
+							
+						} else {
+							
+							$onlinePaymentStatus = false;
+							$onlinePaymentErrorResponse = array( 'status'  => 'error', 'message' => __('Invalid payment method.', 'booking-package') );
+							
+						}
+						
+						$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
+						$currency   = get_option($this->prefix . "currency", "usd");
+						
+						if ( $onlinePaymentStatus === true ) {
+							
+							$payResponse = $creditCard->pay( $selected_pay_type, $stripe_konbini, $stripe_paypay, $public_key, $secret_key, $_POST['payToken'], $payment_live, $amount, $currency, 0, $visitorName, $visitorEmail, $visitorBookingDate );
+							
+							// 決済が失敗した場合はDB登録も在庫減算も行わずに中断
+							if (isset($payResponse['error']) || empty($payResponse['cardToken'])) {
+								
+								$onlinePaymentStatus = false;
+								$err_msg = isset($payResponse['error']) ? $payResponse['error'] : __('Payment processing failed. Please try again.', 'booking-package');
+								$onlinePaymentErrorResponse = array( 'status'    => 'error', 'action' => 'pay', 'message'   => $err_msg, 'totalCost' => $totalCost, 'currency'  => $currency );
+								
+							} else {
+								
+								$cardToken = $payResponse['cardToken'];
+								$payMode   = "CreditCard";
+								$payId     = $selected_pay_type;
+								$payName   = ($selected_pay_type === 'paypal') ? 'PayPal' : 'Stripe';
+								if ($stripe_konbini == 1) {
+									
+									$payId   = "stripe_konbini";
+									$payMode = "stripeKonbini";
+									
+								} else if ($stripe_paypay == 1) {
+									
+									$payId   = "stripe_paypay";
+									$payMode = "stripePayPay";
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+					if ($onlinePaymentStatus === false) {
+						
+						$souce = array( array("mode" => "reduce", "sql" => $account_sql, "values" => $valueArray), );
+						$this->updateRemainderSeart($souce, $applicantCount);
+						$this->cancelPayment();
+						return $onlinePaymentErrorResponse;
+						
+					}
+					
+					// 決済が成功した（またはオンライン決済不要な）場合のみ、在庫枠を減算し予約データをDBに保存する
+					$this->updateBookingCount('add', intval($_POST['timeKey']), intval($applicantCount));
+					$status = $this->getStatus();
+					$privateResponse = $this->insertPrivateData( $sendDate, $_POST['permission'], $status, $_POST['timeKey'], $scheduleUnixTime, $scheduleTitle, $scheduleCost, $services, $form, $emails, $currency, $selected_pay_type, $cardToken, $accountKey, $permalink, $preparation, $taxes, $responseGuests, $coupon, $administrator, $applicantCount );
+					$lastID = $privateResponse['lastID'];
+					
+					if (empty($lastID)) {
+						
+						if (!empty($cardToken)) {
+							
+							$creditCard->cancel($selected_pay_type, $public_key, $secret_key, $payment_live, $cardToken);
+								
+						}
+						
+						$souce = array( array("mode" => "reduce", "sql" => $account_sql, "values" => $valueArray), );
+						$this->updateRemainderSeart($souce, $applicantCount);
+						$this->cancelPayment();
+						return array('status' => 'error', 'message' => __('Failed to persist booking data.', 'booking-package'));
+						
+					}
+					
+					if (!empty($cardToken)) {
+						
+						$wpdb->update(
+							$wpdb->prefix . "booking_package_booked_customers", 
+							array(
+								'payMode'  => $payMode,
+								'payId'    => $payId,
+								'payName'  => $payName,
+								'payToken' => sanitize_text_field($cardToken),
+							),
+							array('key' => intval($lastID)),
+							array('%s', '%s', '%s', '%s'),
+							array('%d')
+						);
+						
+					}
+					
+					// 改修コードここまで
+					
+					
+					/** 削除予定ここから */
+					/**
 					$available_methods = array_filter(array_map('trim', explode(",", strtolower($calendarAccount['paymentMethod']))));
 					$online_methods = array('stripe', 'stripe_paypay', 'stripe_konbini', 'paypal');
 					$has_online_method = !empty(array_intersect($available_methods, $online_methods));
@@ -10465,7 +10774,7 @@
 					#$privateResponse = $this->insertPrivateData($sendDate, $_POST['permission'], $status, $_POST['timeKey'], $scheduleUnixTime, $scheduleTitle, $scheduleCost, $courseKey, $courseName, $courseTime, $courseCost, $selectedOptions, $form, $currency, $_POST['payType'], $cardToken, $accountKey, $permalink, $preparation, $taxes, $applicantCount);
 					$lastID = $privateResponse['lastID'];
 					
-					/** Stripe and PayPal **/
+					// Stripe and PayPal
 					$payment_active = 0;
 					$payment_mode = 0;
 					$payment_live = 0;
@@ -10587,7 +10896,9 @@
 						}
 						
 					}
-					/** Stripe and PayPal **/
+					// Stripe and PayPal
+					 */
+					/** 削除予定ここまで */
 					
 					$userInformation = $this->setUserInformation($form);
 					if(isset($userInformation['values'])){

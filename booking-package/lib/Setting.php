@@ -6984,6 +6984,7 @@
                     'timeout' => $this->request_timeout,
                     'body' => $params
                 );
+                
                 $response = wp_remote_request($url . "updateLicense/", $args);
                 if (is_wp_error($response)) {
                     

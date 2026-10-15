@@ -4,7 +4,7 @@ Donate link: https://saasproject.net/donate/
 Tags: Booking, reservation, appointment, Booking calendar, 予約システム
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.7.31
+Stable tag: 1.7.32
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -317,6 +317,10 @@ If you have some technical questions please post to the [support page](https://w
 = 1.7.31 =
 * Fixed a bug.
 * Security Fix: Applied security updates and enhanced input validation. Special thanks to Revanth Hari Narayana Matte, Emiliano Carrizo, Md. Minaruzzaman Shovon, and Pedro Pinho for responsible disclosure.
+
+= 1.7.32 =
+* Fixed a bug.
+* Security Fix: Applied additional security updates and enhanced validation.
 
 == Upgrade notice ==
 -
