@@ -208,7 +208,7 @@
                 'Username'                                          => __("Username", 'booking-package'),
                 'Email'                                             => __("Email", 'booking-package'),
                 'Password'                                          => __("Password", 'booking-package'),
-                'Registration confirmation will be emailed to you.' => '',
+                'Registration confirmation will be emailed to you.' => __("Registration confirmation will be emailed to you.", 'booking-package'),
                 'Register'                                          => __("Register", 'booking-package'),
                 'Return'                                            => __("Return", 'booking-package'),
                 'Profile'                                           => __("Profile", 'booking-package'),

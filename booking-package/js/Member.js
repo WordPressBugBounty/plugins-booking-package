@@ -713,7 +713,24 @@
                 booking_calendar.classList.add("hidden_panel");
                 register.classList.add("hidden_panel");
                 login.classList.add("hidden_panel");
-                document.getElementById("user_login").textContent = memberSetting.activation.user_login;
+                if (document.getElementById("user_login") != null) {
+                    
+                    document.getElementById("user_login").value = memberSetting.activation.user_login;
+                    
+                }
+                
+                object.lockBooking(false, null, 'ReCAPTCHA');
+                if (object._googleReCAPTCHA.key != null && object._googleReCAPTCHA.key.length > 0) {
+                    
+                    object.lockBooking(true, null, 'ReCAPTCHA');
+                    
+                }
+                
+                if (object._hCaptcha.status === true) {
+                    
+                    object.lockBooking(true, null, 'hCaptcha');
+                    
+                }
                 
             }
             
@@ -1774,6 +1791,11 @@
                     bookingBlockPanel.classList.add("hidden_panel");
                     if (response.status == 'success') {
                         
+                        if (parseInt(response.activation) === 0 && response.message != null && response.message.length > 0) {
+                            
+                            window.alert(response.message);
+                            
+                        }
                         window.location.reload();
                         
                     } else {
@@ -1808,7 +1830,7 @@
             if (registering == true) {
                 
                 object._console.log(post);
-                user_regist_error_message.textContent.textContent = null;
+                user_regist_error_message.textContent = null;
                 
                 if (object._googleReCAPTCHA.key != null && object._googleReCAPTCHA.key.length > 0) {
                     
@@ -1817,8 +1839,7 @@
                         if (object._lockBookingButton === false) {
                             
                             post.googleReCaptchaToken = object._googleReCAPTCHA_token;
-                            //sendToServer();
-                            sendbookingVerificationCode();
+                            sendToServer();
                             
                         }
                         
@@ -1830,8 +1851,7 @@
                                 
                                 object._console.log(token);
                                 post.googleReCaptchaToken = token;
-                                //sendToServer();
-                                sendbookingVerificationCode();
+                                sendToServer();
                                 
                             });
                         });
@@ -1843,15 +1863,13 @@
                     if (object._lockBookingButton === false) {
                         
                         post.hCaptcha = object._hCaptcha_token;
-                        //sendToServer();
-                        sendbookingVerificationCode();
+                        sendToServer();
                         
                     }
                     
                 } else {
                     
-                    //sendToServer();
-                    sendbookingVerificationCode();
+                    sendToServer();
                     
                 }
                 

@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.32
+Version:     1.7.33
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -1125,11 +1125,12 @@ Domain Path: /languages
 			$wq_login_form = '';
 			$wp_register = '';
 			$userId = 0;
+			$activation_result = null;
 			if (isset($_GET['k']) && isset($_GET['u']) && isset($_GET['mode']) && $_GET['mode'] == 'activation') {
 				
-				$key = sanitize_text_field($_GET['k']);
-				$user_login = sanitize_text_field($_GET['u']);
-				$memberSetting['activation'] = $schedule->setActivationUser($key, $user_login, 1);
+				$key = sanitize_text_field(wp_unslash($_GET['k']));
+				$user_login = sanitize_user(wp_unslash($_GET['u']));
+				$activation_result = $schedule->setActivationUser($key, $user_login, 1);
 				
 			}
 			
@@ -1147,6 +1148,12 @@ Domain Path: /languages
 					$member_login_error = $user['user']['message'];
 					
 				}
+				
+			}
+			
+			if (!is_null($activation_result)) {
+				
+				$memberSetting['activation'] = $activation_result;
 				
 			}
 			do_action('booking_package_login_user_on_front_end_page_as_action', $user);

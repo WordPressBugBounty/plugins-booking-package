@@ -336,6 +336,13 @@
         public function pay($payId, $stripe_konbini, $stripe_paypay, $public_key, $secret, $token, $payment_live, $amont, $currency, $key, $name, $email, $bookingDate){
             
             $response = array('error' => "8001");
+            
+            if (intval($amont) <= 0) {
+                
+                return array('error' => __('Online payment is required to complete this booking.', 'booking-package'));
+                
+            }
+            
 		    if ($payId == 'stripe') {
                 
                 $capture_method = get_option($this->prefix . 'stripe_capture_method', 'automatic');
@@ -598,10 +605,11 @@
             if ($httpCode < 400) {
                 
                 $status = isset($response['status']) ? $response['status'] : '';
+                $stripe_amount = isset($response['amount']) ? intval($response['amount']) : 0;
                 $payment_method_types = (isset($response['payment_method_types']) && is_array($response['payment_method_types'])) ? $response['payment_method_types'] : array();
                 $is_konbini_intent = (intval($stripe_konbini) === 1 && in_array('konbini', $payment_method_types, true));
                 $is_paypay_intent = (intval($stripe_paypay) === 1 && in_array('paypay', $payment_method_types, true) && ($status === 'succeeded' || $status === 'requires_capture'));
-                if (!empty($id) && ($status === 'succeeded' || $status === 'requires_capture' || $is_konbini_intent || $is_paypay_intent)) {
+                if (!empty($id) && $stripe_amount > 0 && $stripe_amount === intval($amont) && ($status === 'succeeded' || $status === 'requires_capture' || $is_konbini_intent || $is_paypay_intent)) {
                     
                     $message['cardToken'] = $id;
                     
