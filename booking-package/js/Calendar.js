@@ -1085,10 +1085,14 @@
             
         }
         
+        var startOfWeek = (this._startOfWeek != null && !isNaN(parseInt(this._startOfWeek))) ? parseInt(this._startOfWeek) : 0;
+        var prevDaysCount = (startWeek - startOfWeek + 7) % 7;
+        var nextDaysCount = 6 - ((lastWeek - startOfWeek + 7) % 7);
+        
         var lasttMonthDate = new Date(lastYear, lastMonth, 0);
         var lastMonthDay = lasttMonthDate.getDate();
         //startWeek = 1;
-        for (var i = startWeek; i > 0; i--) {
+        for (var i = prevDaysCount; i > 0; i--) {
             
             var day = (parseInt(lastMonthDay) - i) + 1;
             var lastDate = new Date(lastYear, lastMonth - 1, day);
@@ -1103,7 +1107,7 @@
                 count: null,
                 status: 1,
                 
-            }
+            };
             
         }
         
@@ -1120,7 +1124,7 @@
                 count: null,
                 status: 1,
                 
-            }
+            };
             
         }
         
@@ -1136,7 +1140,7 @@
         var nextMonthDate = new Date(nextYear, nextMonth + 1, 0);
         var nextMonthDay = nextMonthDate.getDate();
         var nextDay = 0;
-        for (var i = lastWeek; i < 6; i++) {
+        for (var i = 0; i < nextDaysCount; i++) {
             
             nextDay++;
             var lastDate = new Date(nextYear, nextMonth, nextDay);
@@ -1151,10 +1155,10 @@
                 count: null,
                 status: 1,
                 
-            }
+            };
             
         }
-        
+
         object._console.log(calendarData);
         return calendarData;
         
@@ -1227,75 +1231,44 @@
         
         if (service.stopServiceUnderFollowingConditions == "isNotEqual") {
             
-            var startKey = 0;
+            // 第1パス：予約が入っている枠（capacity != remainder）とその前方durationTime分を停止
             for (var i = 0; i < schedules.length; i++) {
                 
                 var schedule = schedules[i];
-                //object._console.log(schedule);
-                if (schedule.select == true && parseInt(schedule.remainder) >= 0) {
+                if (parseInt(schedule.remainder) >= 0 && parseInt(schedule.capacity) != parseInt(schedule.remainder)) {
                     
-                    if (service.stopServiceUnderFollowingConditions == "isNotEqual") {
+                    schedule.select = false;
+                    var startUnixTime = parseInt(schedule.unixTime) - (durationTime * 60);
+                    var endUnixTime = parseInt(schedule.unixTime);
+                    for (var j = 0; j < i; j++) {
                         
-                        if (parseInt(schedule.capacity) != parseInt(schedule.remainder)) {
+                        if (parseInt(schedules[j].unixTime) > startUnixTime && parseInt(schedules[j].unixTime) < endUnixTime) {
                             
-                            schedule.select = false;
-                            var startUnixTime = parseInt(schedule.unixTime) - (durationTime * 60);
-                            var endUnixTime = parseInt(schedule.unixTime);
-                            (function(schedules, startKey, endKey, startUnixTime, endUnixTime, service, callback) {
-                                
-                                object._console.log('startKey = ' + startKey);
-                                object._console.log(schedules[startKey]);
-                                object._console.log(startUnixTime);
-                                object._console.log(endUnixTime);
-                                if (startKey == null) {
-                                    
-                                    return false;
-                                    
-                                }
-                                
-                                for (var i = startKey; i < endKey; i++) {
-                                    
-                                    if (parseInt(schedules[i].unixTime) > startUnixTime && parseInt(schedules[i].unixTime) < endUnixTime) {
-                                        
-                                        object._console.log(schedules[i]);
-                                        callback(i);
-                                        
-                                    }
-                                    
-                                }
-                                
-                            }) (schedules, startKey, i, startUnixTime, endUnixTime, service, function(key) {
-                                
-                                schedules[key].select = false;
-                                
-                            });
-                            
-                            startKey = null;
-                            
-                        } else {
-                            
-                            if (startKey == null) {
-                                
-                                startKey = i;
-                                
-                            }
+                            schedules[j].select = false;
                             
                         }
                         
-                        if (service.stopServiceUnderFollowingConditions == "isNotEqual" && service.doNotStopServiceAsException == "sameServiceIsNotStopped") {
+                    }
+                    
+                }
+                
+            }
+            
+            // 第2パス：例外設定（sameServiceIsNotStopped）が有効な場合、同一サービスの開始時刻のみ許可
+            if (service.doNotStopServiceAsException == "sameServiceIsNotStopped") {
+                
+                for (var i = 0; i < schedules.length; i++) {
+                    
+                    var schedule = schedules[i];
+                    if (parseInt(schedule.remainder) > 0 && schedule.stop != 'true') {
+                        
+                        var bookedServicesOnDay = bookedServices[parseInt(schedule.ymd)];
+                        var time = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
+                        if (bookedServicesOnDay != null && bookedServicesOnDay[time] != null) {
                             
-                            var bookedServicesOnDay = bookedServices[parseInt(schedule.ymd)];
-                            var time = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                            if (bookedServicesOnDay != null && bookedServicesOnDay[time] != null) {
+                            if (bookedServicesOnDay[time][service.key] != null && bookedServicesOnDay[time][service.key].count != null && parseInt(bookedServicesOnDay[time][service.key].count) > 0) {
                                 
-                                if (bookedServicesOnDay[time][service.key] != null && bookedServicesOnDay[time][service.key].count != null && parseInt(bookedServicesOnDay[time][service.key].count) > 0) {
-                                    
-                                    object._console.log("time = " + time);
-                                    object._console.log(bookedServicesOnDay[time]);
-                                    object._console.log(bookedServicesOnDay[time][service.key]);
-                                    schedules[i].select = true;
-                                    
-                                }
+                                schedules[i].select = true;
                                 
                             }
                             
@@ -1310,61 +1283,37 @@
         } else if (service.stopServiceUnderFollowingConditions == "isEqual") {
             
             for (var i = 0; i < schedules.length; i++) {
-                    
+                
                 var schedule = schedules[i];
                 if (schedule.select == true && parseInt(schedule.remainder) >= 0) {
                     
                     if (parseInt(schedule.capacity) != parseInt(schedule.remainder)) {
                         
-                        var time = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                        var startSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) /** - (durationTime * 60) **/;
-                        var endSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) + (durationTime * 60);
-                        object._console.log(schedule);
-                        (function(schedules, time, service, startSec, endSec, callback) {
+                        var startSec = ((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60;
+                        var endSec = startSec + (durationTime * 60);
+                        var block = false;
+                        for (var j = i; j < schedules.length; j++) {
                             
-                            object._console.log(time);
-                            object._console.log(service);
-                            object._console.log('startSec = ' + startSec);
-                            object._console.log('endSec = ' + endSec);
-                            var block = false;
-                            var blockScedules = {};
-                            for (var i = 0; i < schedules.length; i++) {
+                            var targetSchedule = schedules[j];
+                            var sec = ((parseInt(targetSchedule.hour) * 60) + parseInt(targetSchedule.min)) * 60;
+                            if (sec >= startSec && sec < endSec) {
                                 
-                                var schedule = schedules[i];
-                                var scheduleTime = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2)
-                                var sec = ((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60;
-                                
-                                if (sec >= startSec && sec < endSec) {
+                                if (parseInt(targetSchedule.capacity) == parseInt(targetSchedule.remainder)) {
                                     
-                                    blockScedules[i] = schedule;
-                                    if (parseInt(schedule.capacity) == parseInt(schedule.remainder)) {
-                                        
-                                        block = true;
-                                        break;
-                                        
-                                    }
+                                    block = true;
+                                    break;
                                     
                                 }
                                 
                             }
                             
-                            if (block === true) {
-                                
-                                for (var key in blockScedules) {
-                                    
-                                    var schedule = blockScedules[key];
-                                    object._console.log(schedule.hour + ' : ' + schedule.min);
-                                    callback(key, false);
-                                    
-                                }
-                                
-                            }
+                        }
+                        
+                        if (block === true) {
                             
-                        }) (schedules, time, service, startSec, endSec, function(key, bool) {
+                            schedule.select = false;
                             
-                            schedules[key].select = bool;
-                            
-                        });
+                        }
                         
                     } else {
                         
@@ -1373,7 +1322,7 @@
                     }
                     
                 }
-                    
+                
             }
             /**
             for (var i = 0; i < schedules.length; i++) {
@@ -1392,90 +1341,61 @@
             
             if (service.stopServiceForDayOfTimes == 'startTimeSlot') {
                 
-                for (var i = 0; i < schedules.length; i++) {
+                var ymd = parseInt(year + ("0" + month).slice(-2) + ("0" + day).slice(-2));
+                var bookedServicesOnDay = bookedServices[ymd];
+                var serviceKey = parseInt(service.key);
+                var limit = parseInt(service.stopServiceForSpecifiedNumberOfTimes);
+                var serviceDuration = parseInt(durationTime);
+                
+                if (bookedServicesOnDay != null) {
                     
-                    var schedule = schedules[i];
-                    if (schedule.select == true && parseInt(schedule.remainder) >= 0) {
+                    for (var i = 0; i < schedules.length; i++) {
                         
-                        if (parseInt(schedule.capacity) != parseInt(schedule.remainder)) {
+                        var schedule = schedules[i];
+                        if (schedule.select == true && parseInt(schedule.remainder) >= 0) {
                             
-                            var bookedServicesOnDay = bookedServices[parseInt(schedule.ymd)];
-                            var time = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                            if (bookedServicesOnDay != null && bookedServicesOnDay[time] != null) {
-                                console.log('StartTime' + time);
-                                var bookedServicesTimes = bookedServicesOnDay[time];
-                                object._console.error(bookedServicesTimes);
-                                if (bookedServicesTimes[service.key] != null) {
+                            var reqStartMin = (parseInt(schedule.hour) * 60) + parseInt(schedule.min);
+                            var reqEndMin = reqStartMin + serviceDuration;
+                            var sameStartTimeCount = 0;
+                            var isOverlappedOtherStartTime = false;
+                            
+                            for (var time in bookedServicesOnDay) {
+                                
+                                var timeServices = bookedServicesOnDay[time];
+                                if (timeServices[serviceKey] != null) {
                                     
-                                    var startSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) - (durationTime * 60);
-                                    /**
-                                    var startHour = Math.floor(startSec / 3600);
-                                    var startMin = Math.floor(startSec % 3600 / 60);
-                                    var startTime = ("0" + startHour).slice(-2) + ("0" + startMin).slice(-2);
-                                    **/
+                                    var serviceInfo = timeServices[serviceKey];
+                                    var existStartMin = (parseInt(time.substring(0, 2)) * 60) + parseInt(time.substring(2, 4));
+                                    var existEndMin = existStartMin + parseInt(serviceInfo.maximumDurationTime);
+                                    var count = parseInt(serviceInfo.count);
                                     
-                                    var endSec = (((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60) + (bookedServicesTimes[service.key].maximumDurationTime * 60);
-                                    /**
-                                    var endHour = Math.floor(endSec / 3600);
-                                    var endMin = Math.floor(endSec % 3600 / 60);
-                                    var endTime = ("0" + endHour).slice(-2) + ("0" + endMin).slice(-2);
-                                    **/
-                                    
-                                    (function(schedules, time, service, bookedServicesTimes, startSec, endSec, callback) {
+                                    if (reqStartMin < existEndMin && existStartMin < reqEndMin) {
                                         
-                                        object._console.log(time);
-                                        object._console.log(service);
-                                        object._console.log(bookedServicesTimes);
-                                        object._console.log('startSec = ' + startSec);
-                                        object._console.log('endSec = ' + endSec);
-                                        for (var i = 0; i < schedules.length; i++) {
+                                        if (existStartMin === reqStartMin) {
                                             
-                                            var schedule = schedules[i];
-                                            var scheduleTime = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                                            var sec = ((parseInt(schedule.hour) * 60) + parseInt(schedule.min)) * 60;
-                                            if (sec > startSec && sec < endSec) {
-                                                
-                                                console.log('調査対象' + scheduleTime);
-                                                if (scheduleTime == time && bookedServicesTimes.count < parseInt(service.stopServiceForSpecifiedNumberOfTimes)) {
-                                                    
-                                                    
-                                                    callback(i, true);
-                                                    
-                                                } else {
-                                                    
-                                                    console.log(time);
-                                                    callback(i, false);
-                                                    
-                                                }
-                                                
-                                            }
+                                            sameStartTimeCount += count;
+                                            
+                                        } else {
+                                            
+                                            isOverlappedOtherStartTime = true;
                                             
                                         }
                                         
-                                    }) (schedules, time, service, bookedServicesTimes[service.key], startSec, endSec, function(key, bool) {
-                                        
-                                        schedules[key].select = bool;
-                                        
-                                    });
-                                    
-                                    object._console.log(bookedServicesOnDay);
+                                    }
                                     
                                 }
+                                
+                            }
+                            
+                            if (isOverlappedOtherStartTime === true || sameStartTimeCount >= limit) {
+                                
+                                schedule.select = false;
                                 
                             }
                             
                         }
                         
                     }
-                    
-                }
-                
-                
-                for (var i = 0; i < schedules.length; i++) {
-                    
-                    var schedule = schedules[i];
-                    var scheduleTime = ("0" + schedule.hour).slice(-2) + ("0" + schedule.min).slice(-2);
-                    console.log(scheduleTime + ' ' + schedule.select);
                     
                 }
                 
@@ -1919,17 +1839,17 @@
         object._console.log(requestGuests);
         object._console.log(limitNumberOfGuests);
         var response = {isGuests: true, errorMessage: null};
-        if (type == 'day') {
+        if (type == 'day' && limitNumberOfGuests != null) {
             
             var minimumGuests = limitNumberOfGuests.minimumGuests;
-            if (minimumGuests.enabled == 1 && minimumGuests.number > 0) {
+            if (minimumGuests != null && minimumGuests.enabled == 1 && minimumGuests.number > 0) {
                 
                 if (minimumGuests.included == 1 && minimumGuests.number > (requestGuests.requiredTotalNumberOfGuests + requestGuests.unrequiredTotalNumberOfGuests)) {
                     
                     response.isGuests = false;
                     response.errorMessage = object._i18n.get('The total number of people must be %s or more.', [minimumGuests.number]);
                     
-                } else if (minimumGuests.number > requestGuests.requiredTotalNumberOfGuests) {
+                } else if (minimumGuests.included == 0 && minimumGuests.number > requestGuests.requiredTotalNumberOfGuests) {
                     
                     response.isGuests = false;
                     response.errorMessage = object._i18n.get('The required total number of people must be %s or more.', [minimumGuests.number]);
@@ -1945,14 +1865,14 @@
             }
             
             var maximumGuests = limitNumberOfGuests.maximumGuests;
-            if (maximumGuests.enabled == 1 && maximumGuests.number > 0) {
+            if (maximumGuests != null && maximumGuests.enabled == 1 && maximumGuests.number > 0) {
                 
                 if (maximumGuests.included == 1 && maximumGuests.number < (requestGuests.requiredTotalNumberOfGuests + requestGuests.unrequiredTotalNumberOfGuests)) {
                     
                     response.isGuests = false;
                     response.errorMessage = object._i18n.get('The total number of people must be %s or less.', [maximumGuests.number]);
                     
-                } else if (maximumGuests.number < requestGuests.requiredTotalNumberOfGuests) {
+                } else if (maximumGuests.included == 0 && maximumGuests.number < requestGuests.requiredTotalNumberOfGuests) {
                     
                     response.isGuests = false;
                     response.errorMessage = object._i18n.get('The required total number of people must be %s or less.', [maximumGuests.number]);
@@ -1985,19 +1905,29 @@
             
         }
         
+        let hasReflectServices = [];
+        //let hasMultipleCosts = 0;
         //var costs = [parseInt(service.cost_1), parseInt(service.cost_2), parseInt(service.cost_3), parseInt(service.cost_4), parseInt(service.cost_5), parseInt(service.cost_6)];
-        var costsWithKey = {cost_1: parseInt(service.cost_1), cost_2: parseInt(service.cost_2), cost_3: parseInt(service.cost_3), cost_4: parseInt(service.cost_4), cost_5: parseInt(service.cost_5), cost_6: parseInt(service.cost_6)};
+        var costsWithKey = { cost_1: parseInt(service.cost_1), cost_2: parseInt(service.cost_2), cost_3: parseInt(service.cost_3), cost_4: parseInt(service.cost_4), cost_5: parseInt(service.cost_5), cost_6: parseInt(service.cost_6) };
+        var costId = null;
         var costs = [];
         if (isGuests == 1 && guests != null && guests.length > 0) {
             
             for (var key in guests) {
                 
                 var guest = guests[key];
+                costId = guest.costInServices;
                 object._console.log(guest);
                 var costInServices = guest.costInServices;
                 if (costsWithKey[costInServices] != null && parseInt(guest.reflectService) == 1) {
                     
                     costs.push(costsWithKey[costInServices]);
+                    
+                }
+                
+                if (hasReflectServices.indexOf(guest.costInServices) < 0) {
+                    
+                    hasReflectServices.push(guest.costInServices);
                     
                 }
                 
@@ -2018,6 +1948,7 @@
         if (hasReflectService === false) {
             
             costs.push(parseInt(service.cost_1));
+            //costs = [service[costId]];
             
         }
         
@@ -2028,34 +1959,10 @@
         var min = costs.reduce(arrayMin);
         if (hasReflectService === false) {
             
-            max = service.cost_1;
-            min = service.cost_1;
+            max = parseInt(service.cost_1);
+            min = parseInt(service.cost_1);
             
         }
-        
-        /**
-        if (min == 0) {
-            
-            var sortCosts = [parseInt(service.cost_1), parseInt(service.cost_2), parseInt(service.cost_3), parseInt(service.cost_4), parseInt(service.cost_5), parseInt(service.cost_6)];
-            sortCosts.sort(function (a, b) {
-                
-                return a - b;
-                
-            });
-            
-            for (var i = 0; i < sortCosts.length; i++) {
-                
-                if (sortCosts[i] > 0) {
-                    
-                    min = sortCosts[i];
-                    break;
-                    
-                }
-                
-            }
-            
-        }
-        **/
         
         if (max != min && isExtensionsValid == 1) {
             
@@ -2069,7 +1976,7 @@
             
         }
         
-        var response = {hasMultipleCosts: hasMultipleCosts, max: max, min: min, costs: costs, costsWithKey: costsWithKey};
+        var response = { hasMultipleCosts: hasMultipleCosts, max: max, min: min, costs: costs, costsWithKey: costsWithKey };
         return response;
         
     }

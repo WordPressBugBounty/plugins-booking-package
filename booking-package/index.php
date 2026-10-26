@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.33
+Version:     1.7.34
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -92,7 +92,7 @@ Domain Path: /languages
 		
 		public $expirationDateForTax = 0;
 		
-		public $maxAndMinNumberOfGuests = 0;
+		public $limitNumberOfGuests = 0;
 		
 		public $stopService = 0;
 		
@@ -353,21 +353,18 @@ Domain Path: /languages
 		
 		public function plugin_localized($locale) {
 			
-			if (isset($_POST['locale'])) {
-				
-				$this->locale = sanitize_text_field( esc_html($_POST['locale']) );
-				return $this->locale;
-				
+			$raw_locale = $locale;
+			if (isset($_POST['locale']) === true) {
+
+				$raw_locale = wp_unslash($_POST['locale']);
+
+			} elseif (isset($_GET['locale']) === true) {
+
+				$raw_locale = wp_unslash($_GET['locale']);
+
 			}
-			
-			if (isset($_GET['locale'])) {
-				
-				$this->locale = sanitize_text_field( esc_html($_GET['locale']) );
-				return $this->locale;
-				
-			}
-			
-			$this->locale = sanitize_text_field( esc_html($locale) );
+
+			$this->locale = preg_replace('/[^a-zA-Z0-9_\-]/', '', $raw_locale);
 			return $this->locale;
 			
 		}
@@ -418,7 +415,6 @@ Domain Path: /languages
 			
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			
-			add_option($this->prefix."javascriptSyntaxErrorNotification", 1);
 			$database = new booking_package_database($this->prefix, $this->db_version);
 			$queries = $database->create();
 			if ($activation === true) {
@@ -1383,9 +1379,9 @@ Domain Path: /languages
 				
 			}
 			
+			date_default_timezone_set($calendarAccount['timezone']);
 			$schedule->deleteOldDaysInSchedules();
 			$schedule->insertAccountSchedule(date('m'), date('d'), date('Y'), $accountKey);
-			date_default_timezone_set($calendarAccount['timezone']);
 			
 			if ($calendarAccount['status'] == 'close' || $calendarAccount['status'] == 'closed') {
 				
@@ -1881,17 +1877,20 @@ Domain Path: /languages
 			
 			if (intval($calendarAccount['customizeButtonsBool']) === 1) {
 				
-				$customizeButtons = $calendarAccount['customizeButtons'];
+				$customizeButtons = (array) $calendarAccount['customizeButtons'];
 				$id = $this->plugin_name . '-id-' .  $calendarAccount['key'];
 				$customizeClass = '';
 				foreach ($customizeButtons as $key => $classObject) {
 					
 					$customizeClass .= (function($id, $key, $classObject) {
 						
-						$class = '#' . $id . ' .' . $key . " {\n";
-						foreach ($classObject as $name => $value) {
+						$safe_key = preg_replace('/[^a-zA-Z0-9_\-]/', '', $key);
+						$class = '#' . $id . ' .' . $safe_key . " {\n";
+						foreach ((array) $classObject as $name => $value) {
 							
-							$class .= "\t" . $name . ': ' . $value . ";\n";
+							$safe_name  = preg_replace('/[^a-zA-Z0-9_\-]/', '', $name);
+							$safe_value = wp_strip_all_tags($value);
+							$class .= "\t" . $safe_name . ': ' . $safe_value . ";\n";
 							
 						}
 						$class .= "}\n";
@@ -2147,8 +2146,8 @@ Domain Path: /languages
 				print $html;
 				print $this->calendarScript['style'];
 				print "<script id='booking_package_load_plugin'>\n";
-				print "const textOfErrorContent = '" . __('You cannot insert multiple shortcodes of the Booking Package on a single page.', 'booking-package') . "';\n";
-				print "const textOfErrorID = '" . __('The display of the calendar with ID %s has been canceled.', 'booking-package') . "';\n";
+				print "const textOfErrorContent = '" . esc_js( __('You cannot insert multiple shortcodes of the Booking Package on a single page.', 'booking-package') ) . "';\n";
+				print "const textOfErrorID = '" . esc_js( __('The display of the calendar with ID %s has been canceled.', 'booking-package') ) . "';\n";
 				print 'var ' . $this->prefix . 'dictionary = ' . wp_json_encode($this->calendarScript['dictionary']) . ";\n";
 				print 'var reservation_info = ' . wp_json_encode($this->calendarScript['localize_script']) . ";\n";
 				print 'const booking_package_js_files = ' . wp_json_encode($files) . ";\n";
@@ -2170,7 +2169,7 @@ Domain Path: /languages
 		
 		public function member_form($user = null, $member_login_error = 0, $dictionary = null) {
 			
-			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);
+			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);	
 			$htmlElement->setManagementUsersV2($this->managementUsersV2);
 			$htmlElement->setVisitorSubscriptionForStripe($this->visitorSubscriptionForStripe);
 			$member_form = $htmlElement->member_form($user, $member_login_error, $dictionary);
@@ -4409,7 +4408,7 @@ Domain Path: /languages
 			
 		}
 		
-		public function wp_ajax_booking_package(){
+		public function wp_ajax_booking_package() {
 			
 		    $has_permission = current_user_can('manage_options') || current_user_can('edit_others_posts') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
 			if ($has_permission === false) {
@@ -4452,6 +4451,13 @@ Domain Path: /languages
 				
 				return $response;
 				
+			}
+
+			$admin_only_modes = array('setting', 'updateMemberSetting', 'deleteUser', 'resetSubscription', 'deleteCalendarAccount');
+			if (in_array($mode, $admin_only_modes, true)) {
+				if (current_user_can('manage_options') === false && current_user_can($this->prefix . 'manager') === false) {
+					return array('status' => 'error', 'message' => __('Permission denied.', 'booking-package'));
+				}
 			}
 			
 			$setting = $this->setting;
@@ -4822,12 +4828,6 @@ Domain Path: /languages
 			if ($_POST['mode'] == 'getEmailMessageList' && isset($_POST['accountKey'])) {
 				
 				$response = $setting->getEmailMessageList($_POST['accountKey']);
-				
-			}
-			
-			if ($_POST['mode'] == 'scriptError') {
-				
-				$response = $schedule->scriptError($_POST);
 				
 			}
 			
@@ -5359,6 +5359,13 @@ Domain Path: /languages
 				
 			}
 			
+			$nonce = isset($_GET['update_nonce']) ? sanitize_text_field($_GET['update_nonce']) : '';
+            if (!wp_verify_nonce($nonce, 'booking-package-update-subscription-action')) {
+                
+                wp_die(__('Invalid security token.', 'booking-package'), '', array('response' => 403));
+                
+            }
+			
 			$unique = isset($_GET['unique']) ? sanitize_text_field(wp_unslash($_GET['unique'])) : '';
 			$setting = $this->setting;
 			$setting->updatePaidSubscription($unique);
@@ -5491,7 +5498,6 @@ Domain Path: /languages
             $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
             $setting = $this->setting;
             $locale = get_locale();
-            $javascriptSyntaxErrorNotification = get_option($this->prefix."javascriptSyntaxErrorNotification", 1);
             $clockFormat = get_option($this->prefix . "clock", "24");
             $dateFormat = get_option($this->prefix . "dateFormat", "0");
 			$positionOfWeek = get_option($this->prefix . "positionOfWeek", "before");
@@ -5583,7 +5589,6 @@ Domain Path: /languages
 					'dashboardRequest' => $dashboardRequest,
 					'bookingBool' => 1,
 					'emailEnable' => $emailMessageList,
-					'javascriptSyntaxErrorNotification' => $javascriptSyntaxErrorNotification,
 					'javascriptFileslist' => $javascriptFileslist,
 					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'startOfWeek' => $startOfWeek,
@@ -5694,7 +5699,7 @@ Domain Path: /languages
 					
 				}
 				
-				if ($this->maxAndMinNumberOfGuests == 0) {
+				if ($this->limitNumberOfGuests == 0) {
 					
 					unset($elementForCalendarAccount['minimum_guests']);
 					unset($elementForCalendarAccount['maximum_guests']);
@@ -5746,7 +5751,6 @@ Domain Path: /languages
 					'guestsInputType' => $guestsInputType,
 					'couponsInputType' => $couponsInputType,
 					'is_mobile' => $this->is_mobile,
-					'javascriptSyntaxErrorNotification' => $javascriptSyntaxErrorNotification,
 					'javascriptFileslist' => $javascriptFileslist,
 					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'timestamp' => $timestamp,
@@ -5842,7 +5846,6 @@ Domain Path: /languages
 					'emailMessageList' => $emailMessageList,
 					**/
 					'is_mobile' => $this->is_mobile,
-					'javascriptSyntaxErrorNotification' => $javascriptSyntaxErrorNotification,
 					'javascriptFileslist' => $javascriptFileslist,
 					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'regularHolidays' => $schedule->getRegularHolidays(date('m'), date('Y'), 'share', $startOfWeek, false),
@@ -5929,7 +5932,6 @@ Domain Path: /languages
 					'formData' => array(),
 					'locale' => $locale,
 					'is_mobile' => $this->is_mobile,
-					'javascriptSyntaxErrorNotification' => $javascriptSyntaxErrorNotification,
 					'javascriptFileslist' => $javascriptFileslist,
 					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'startOfWeek' => $startOfWeek,
@@ -5947,7 +5949,7 @@ Domain Path: /languages
 					'numberFormatter' => $numberFormatter,
 					'managementUsersV2' => intval($this->managementUsersV2),
 					'userFormFields' => $setting->getUserInputFields(),
-					'ajaxUrl' => $this->ajaxUrl,
+					'ajaxUrl' => $this->ajaxUrl, 
 				);
 				
 			} else if ($mode == 'member') {
@@ -5959,7 +5961,6 @@ Domain Path: /languages
 					'action' => $this->action_control, 
 					'nonce' => wp_create_nonce($this->action_control."_ajax"), 
 					'prefix' => $this->prefix,
-					'javascriptSyntaxErrorNotification' => $javascriptSyntaxErrorNotification,
 					'javascriptFileslist' => $javascriptFileslist,
 					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'currency' => $list['General']['booking_package_currency']['value'],
@@ -6737,6 +6738,7 @@ Domain Path: /languages
 				'Custom Fields' => __('Custom Fields', 'booking-package'),
 				'Local Payment' => __('Local Payment', 'booking-package'),
 				'Type' => __('Type', 'booking-package'),
+				'Please select at least one guest.' => __('Please select at least one guest.', 'booking-package'),
 				'Options' => __('Options', 'booking-package'),
 			);
 			

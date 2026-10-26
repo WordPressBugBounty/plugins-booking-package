@@ -32,18 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-window.addEventListener('error', function(event) {
-    
-    if (schedule_data != null) {
-        
-        var error = new scriptError(schedule_data, booking_package_dictionary, event.message, event.filename, event.lineno, event.colno, event.error, false);
-        error.setResponseText(booking_manage.getResponseText());
-        error.send();
-        
-    }
-    
-}, false);
-
 var changeStatusForDashboard = function(button, key, cancellationToken, accountKey, status, month, day, year){
     
     var visitor = {key: key, cancellationToken: cancellationToken, accountKey: accountKey, status: status, date: {month: month, day: day, year: year}};
@@ -7058,7 +7046,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     guestsList[key].id = 'guests_' + guests.key
                     guestsList[key].values = values;
                     guestsList[key].type = "SELECT";
-                    guestsList[key].value = 0;
+                    guestsList[key].value = null;
                     guestsList[key].index = 0;
                     guestsList[key].number = 0;
                     guestsList[key].person = 0;
@@ -7196,6 +7184,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         if (responseLimitGuests.isGuests === true) {
                             
                             totalNumberOfGuestsPanel.classList.remove('error_empty_value');
+                            totalNumberOfGuestsPanel.removeAttribute("data-errorInput");
                             totalNumberOfGuestsErrorPanel.classList.add('hidden_panel');
                             totalNumberOfGuestsErrorPanel.textContent = null;
                             
@@ -7216,7 +7205,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             
                             var responseTaxes = taxes.getTaxes();
                             var reflectAdditional = 1;
-                            if (responseGuests != null) {
+                            if (responseGuests != null && responseGuests.reflectAdditional > 0) {
                                 
                                 reflectAdditional = responseGuests.reflectAdditional;
                                 
@@ -8016,10 +8005,23 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             
             if (object._calendarAccount.type == 'day' && guestsList.length > 0) {
                 
+                var hasIncludedGuest = false;
+                var includedGuestCount = 0;
                 for (var key in guestsList) {
                     
                     var guest = guestsList[key];
                     object._console.log(guest);
+                    if (guest.guestsInCapacity == 'included') {
+                        
+                        hasIncludedGuest = true;
+                        if (guest.number != null && parseInt(guest.number) > 0) {
+                            
+                            includedGuestCount += parseInt(guest.number);
+                            
+                        }
+                        
+                    }
+                    
                     var guestPanel = document.getElementById(object._prefix + guest.id);
                     if (parseInt(guest.required) == 1 && parseInt(guest.index) == 0) {
                         
@@ -8052,6 +8054,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
                 var responseLimitGuests = object._servicesControl.verifyToLimitGuests(responseGuests, object._calendarAccount.limitNumberOfGuests, object._calendarAccount.type);
                 object._console.log(responseLimitGuests);
+                if (responseLimitGuests.isGuests === true && hasIncludedGuest === true && includedGuestCount <= 0) {
+                    
+                    responseLimitGuests.isGuests = false;
+                    responseLimitGuests.errorMessage = object._i18n.get('Please select at least one guest.');
+                    
+                }
+                
                 if (responseLimitGuests.isGuests === true) {
                     
                     totalNumberOfGuestsPanel.classList.remove('error_empty_value');
@@ -8433,7 +8442,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         object._console.log('reflectAdditional = ' + reflectAdditional);
         object._console.log(reflectServiceTitle);
         object._console.log('guestsBool = ' + guestsBool)
-        
+        /*
         if (parseInt(guestsBool) == 1) {
             
             for (var guestKey in guestsList) {
@@ -8448,7 +8457,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             
         }
-        
+        */
         const getSelectedName = function(guest) {
             
             const options = guest.json;
@@ -8497,14 +8506,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     }
                     courseCostPanel.textContent = cost;
                     
-                    var amount1 = parseInt(service.cost_1);
-                    var amount2 = parseInt(service.cost_1);
+                    var amount1 = 0;
+                    var amount2 = 0;
+                    var hasSelectedReflectService = false;
+                    let hasSelectedReflectServices = [];
                     if (reflectService > 0) {
                         
-                        //amount1 = 0;
                         if (guestsBool == 1) {
                             
-                            amount1 = 0;
                             for (var guestKey in guestsList) {
                                 
                                 var guest = guestsList[guestKey];
@@ -8522,8 +8531,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                         guest.selectedName = getSelectedName(guest);
                                         
                                     }
-                                    //hasReflectService = true;
-                                    amount1 += costsWithKey[guest.costInServices] * guest.number;
+                                    
+                                    if (guest.number > 0) {
+                                        
+                                        hasSelectedReflectServices.push(1);
+                                        hasSelectedReflectService = true;
+                                        amount1 += costsWithKey[guest.costInServices] * guest.number;
+                                        
+                                    }
                                     
                                     if (defaultAmountForService == 0) {
                                         
@@ -8541,15 +8556,21 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     
                                 } else {
                                     
-                                    if (guest.number != null && guest.number > 0) {
+                                    if (guest.number == null) {
                                         
+                                        guest.number = parseInt(guest.json[guest.index].number);
+                                        
+                                    }
+                                    
+                                    if (guest.number != null && guest.number >= 0) {
+                                        
+                                        hasSelectedReflectServices.push(0);
                                         if (guest.selectedName == null) {
                                             
                                             guest.selectedName = getSelectedName(guest);
                                             
                                         }
                                         
-                                        //amount2 += costsWithKey[guest.costInServices];
                                         amount2 = costsWithKey['cost_1'];
                                         if (defaultAmountForService == 0) {
                                             
@@ -8557,7 +8578,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                             
                                         }
                                         var costInService = document.createElement('div');
-                                        costInService.textContent = guest.name + ': ' + /**object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' * ' +**/ guest.selectedName;
+                                        costInService.textContent = guest.name + ': ' + guest.selectedName;
                                         costPerGuests.appendChild(costInService);
                                         
                                     }
@@ -8568,24 +8589,37 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             
                         } else {
                             
-                            //amount1 = costsWithKey['cost_1'];
-                            //amount2 = 0;
+                            amount1 = parseInt(costsWithKey['cost_1']);
                             
                         }
                         
                     } else {
                         
-                        amount2 = 0;
+                        amount1 = parseInt(costsWithKey['cost_1']);
                         
                     }
                     
-                    object._console.log('hasReflectService = ' + hasReflectService);
-                    if (hasReflectService === true) {
+                    object._console.log('hasSelectedReflectService = ' + hasSelectedReflectService);
+                    if (hasSelectedReflectServices.length > 0 && hasSelectedReflectServices.indexOf(0) < 0) {
                         
                         amount2 = 0;
                         
+                    } else if (amount1 == 0 && amount2 == 0 && costsWithKey['cost_1'] != null) {
+                        
+                        amount2 = parseInt(costsWithKey['cost_1']);
+                        
                     }
-                    
+                    /*
+                    if (hasSelectedReflectService === true) {
+                        
+                        amount2 = 0;
+                        
+                    } else if (amount1 == 0 && amount2 == 0 && costsWithKey['cost_1'] != null) {
+                        
+                        amount2 = parseInt(costsWithKey['cost_1']);
+                        
+                    }
+                    */
                     object._console.log('amount1 = ' + amount1);
                     object._console.log('amount2 = ' + amount2);
                     var goods = {label: service.name, amount: amount1 + amount2, applicantCount: applicantCount};
@@ -8706,11 +8740,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     optionPricePanel.textContent = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
                                     
                                 }
-                                var amount1 = parseInt(responseCosts.max);
+                                
+                                var amount1 = 0;
                                 var amount2 = 0;
-                                if (reflectService > 1) {
+                                var hasSelectedReflectOptions = [];
+                                var hasSelectedReflectOption = false;
+                                if (reflectService > 0) {
                                     
-                                    amount1 = 0;
                                     if (guestsBool == 1) {
                                         
                                         for (var guestKey in guestsList) {
@@ -8718,13 +8754,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                             var guest = guestsList[guestKey];
                                             if (parseInt(guest.reflectService) == 1) {
                                                 
-                                                if (guest.selectedName == null) {
+                                                if (guest.number == null) {
                                                     
-                                                    if (guest.number == null) {
-                                                        
-                                                        guest.number = 0;
-                                                        
-                                                    }
+                                                    guest.number = parseInt(guest.json[guest.index].number);
+                                                    
+                                                }
+                                                
+                                                if (guest.selectedName == null) {
                                                     
                                                     guest.selectedName = getSelectedName(guest);
                                                     
@@ -8736,7 +8772,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                     
                                                 }
                                                 
-                                                amount1 += costsWithKey[guest.costInServices] * guest.number;
+                                                if (guest.number > 0) {
+                                                    
+                                                    hasSelectedReflectOptions.push(1);
+                                                    hasSelectedReflectOption = true;
+                                                    amount1 += costsWithKey[guest.costInServices] * guest.number;
+                                                    
+                                                }
                                                 var costInOption = document.createElement('div');
                                                 costInOption.textContent = guest.name + ': ' + object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' * ' + guest.selectedName;
                                                 if (guest.number > 0) {
@@ -8747,7 +8789,13 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                 
                                             } else {
                                                 
-                                                if (guest.number != null && guest.number > 0) {
+                                                if (guest.number == null) {
+                                                    
+                                                    guest.number = parseInt(guest.json[guest.index].number);
+                                                    
+                                                }
+                                                
+                                                if (guest.number != null && guest.number >= 0) {
                                                     
                                                     if (guest.selectedName == null) {
                                                         
@@ -8761,11 +8809,15 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                         
                                                     }
                                                     
-                                                    //amount2 += costsWithKey[guest.costInServices];
+                                                    hasSelectedReflectOptions.push(0);
                                                     amount2 = costsWithKey['cost_1'];
-                                                    var costInOption = document.createElement('div');
-                                                    costInOption.textContent = guest.name + ': ' + /**object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' * ' +**/ guest.selectedName;
-                                                    costPerOptions.appendChild(costInOption);
+                                                    if (guest.number > 0) {
+                                                        
+                                                        var costInOption = document.createElement('div');
+                                                        costInOption.textContent = guest.name + ': ' + guest.selectedName;
+                                                        costPerOptions.appendChild(costInOption);
+                                                        
+                                                    }
                                                     
                                                 }
                                                 
@@ -8775,8 +8827,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                         
                                     } else {
                                         
-                                        //amount1 = costsWithKey['cost_1'];
-                                        //amount2 = 0;
+                                        amount1 = parseInt(costsWithKey['cost_1']);
                                         
                                     }
                                     
@@ -8799,13 +8850,17 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     
                                 } else {
                                     
-                                    amount2 = 0;
+                                    amount1 = parseInt(costsWithKey['cost_1']);
                                     
                                 }
                                 
-                                if (hasReflectService === true) {
+                                if (hasSelectedReflectOptions.length > 0 && hasSelectedReflectOptions.indexOf(0) < 0) {
                                     
                                     amount2 = 0;
+                                    
+                                } else if (amount1 == 0 && amount2 == 0 && costsWithKey['cost_1'] != null) {
+                                    
+                                    amount2 = parseInt(costsWithKey['cost_1']);
                                     
                                 }
                                 
@@ -8818,7 +8873,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                     
                                     if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
                                         
-                                        var cost = object._format.formatCost(costsWithKey.cost_1, object._currency) + ' ';
+                                        var cost = object._format.formatCost(responseCosts.max, object._currency) + ' ';
                                         if (responseCosts.hasMultipleCosts === true) {
                                             
                                             //cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);

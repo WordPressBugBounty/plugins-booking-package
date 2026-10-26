@@ -223,7 +223,7 @@
 				}
 				
 				var optionBox = object.createInputElement('option', null, null, list[key], list[key], null, null, null, null, {optionsKey: key} );
-				if (list[key] == input['value']) {
+				if (list[key] === input['value']) {
 					
 					object._console.log("value = " + input['value']);
 					optionBox.selected = true;

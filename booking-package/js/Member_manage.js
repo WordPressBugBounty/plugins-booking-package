@@ -19,13 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
     });
     
-    window.addEventListener('error', function(event) {
-        
-        var error = new scriptError(setting_data, booking_package_dictionary, event.message, event.filename, event.lineno, event.colno, event.error, false);
-        error.send();
-        
-    }, false);
-    
 });
 
 function Member_manage(setting_data, users_data, booking_package_dictionary){

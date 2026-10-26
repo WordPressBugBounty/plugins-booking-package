@@ -135,19 +135,6 @@
             
         });
         
-        window.addEventListener('error', function(event) {
-            
-            var script_error = new scriptError(reservation_info, booking_package_dictionary, event.message, event.filename, event.lineno, event.colno, event.error, true);
-            if (booking_Package.getFunction() != null) {
-                
-                script_error.setFunction(booking_Package.getFunction());
-                script_error.setResponseText(booking_Package.getResponseText());
-                script_error.send();
-                
-            }
-            
-        }, false);
-        
         return true;
 		
 	};

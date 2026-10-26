@@ -27,13 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-window.addEventListener('error', function(event) {
-    
-    var error = new scriptError(schedule_data, booking_package_dictionary, event.message, event.filename, event.lineno, event.colno, event.error, false);
-    error.setResponseText(calendarSetting.getResponseText());
-    error.send();
-    
-}, false);
 
     function SCHEDULE(schedule_data, booking_package_dictionary, webApp) {
         
@@ -2513,7 +2506,8 @@ window.addEventListener('error', function(event) {
             object.bookAndSaveDays(account, addedPublishingDate, function(publishingDate) {
                 
                 object._console.log(publishingDate);
-                object.updateAccountSchedule(object.template_schedule_list, "updateAccountSchedule", account, null, publishingDate.date, null, function(response) {
+                var targetPublishingDate = (publishingDate != null) ? publishingDate.date : "0";
+                object.updateAccountSchedule(object.template_schedule_list, "updateAccountSchedule", account, null, targetPublishingDate, null, function(response) {
                     
                     object._console.log(response);
                     if (response.status != null && response.status == 'success') {
@@ -2532,7 +2526,8 @@ window.addEventListener('error', function(event) {
         
         saveButton.onclick = function(event) {
             
-            object.updateAccountSchedule(object.template_schedule_list, "updateAccountSchedule", account, null, null, null, function(response) {
+            var existingPublishingDate = (addedPublishingDate != null && addedPublishingDate.key != null) ? addedPublishingDate.key : null;
+            object.updateAccountSchedule(object.template_schedule_list, "updateAccountSchedule", account, null, existingPublishingDate, null, function(response) {
                 
                 object._console.log(response);
                 if (response.status != null && response.status == 'success') {
@@ -2608,7 +2603,12 @@ window.addEventListener('error', function(event) {
             deleteForBookingDateButton.classList.remove('hidden_panel');
             saveForBookingDateButton.textContent = object._i18n.get('Apply');
             
+        } else if (addedPublishingDate != null) {
+            
+            deleteForBookingDateButton.classList.remove('hidden_panel');
+            
         }
+        
         if (object._isExtensionsValid === 0) {
             
             saveForBookingDateButton.disabled = true;
@@ -3218,14 +3218,14 @@ window.addEventListener('error', function(event) {
                 
                 timePanel.setAttribute("class", "hidden_panel");
                 
-                hourBlock.textContent = (0 + scheduleData[i]['hour']).slice(-2);
+                hourBlock.textContent = ("0" + scheduleData[i]['hour']).slice(-2);
                 hourBlock.setAttribute("data-key", scheduleData[i]['hour']);
                 hourBlock.setAttribute("data-default", scheduleData[i]['hour']);
                 hourBlock.setAttribute("class", "hour");
                 
                 dot.setAttribute("class", "dot");
                 
-                minBlock.textContent = (0 + scheduleData[i]['min']).slice(-2);
+                minBlock.textContent = ("0" + scheduleData[i]['min']).slice(-2);
                 minBlock.setAttribute("data-key", scheduleData[i]['min']);
                 minBlock.setAttribute("data-default", scheduleData[i]['min']);
                 minBlock.setAttribute("class", "min");
@@ -3263,13 +3263,20 @@ window.addEventListener('error', function(event) {
                     
                     if (scheduleData[i]['delete'] != null && scheduleData[i]['delete'] == 'true') {
                     
-                        checkBox.checked = true;
+                        deletekBox.checked = true;
                     
                     }
                     
                     if (scheduleData[i]['key'] != null) {
                         
                         schedule_data['key'] = scheduleData[i]['key'];
+                        
+                        hourBlock.onclick = null;
+                        minBlock.onclick = null;
+                        timePanel.onclick = null;
+                        hourBlock.style.cursor = 'default';
+                        minBlock.style.cursor = 'default';
+                        timePanel.style.cursor = 'default';
                         
                     }
                     
@@ -3749,6 +3756,13 @@ window.addEventListener('error', function(event) {
                 let [hours, minutes] = input_time.value.split(':');
                 schedule.hours = hours;
                 schedule.minutes = minutes;
+                
+                if (schedule.remainders != null && parseInt(schedule.remainders) > parseInt(schedule.capacitys)) {
+                    
+                    schedule.remainders = schedule.capacitys;
+                    
+                }
+                
                 callback(schedule);
                 
             }
@@ -12010,7 +12024,6 @@ window.addEventListener('error', function(event) {
         
         function create_tr(tr_index, table, input, account, valueList){
             
-            console.error(account);
             if (typeof valueList == "string") {
                 
                 valueList = [valueList];

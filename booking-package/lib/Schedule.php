@@ -57,7 +57,7 @@
             $this->payWithPayPay = $payWithPayPay;
             
         }
-        
+		
         public function defaultLabels($type = 'day', $subDirectory = false) {
 			
 			$userLabels = array(
@@ -3224,6 +3224,11 @@
 					
 				}
 				
+				if (array_key_exists('limitNumberOfGuests', $row)) {
+					
+					$rows[$key]['limitNumberOfGuests'] = $this->updateLimitNumberOfGuests('set', $rows[$key]['limitNumberOfGuests']);
+					
+				}
 				
 				/**
 				if ($columns === '*') {
@@ -3235,21 +3240,6 @@
 				if (isset($row['icalToken']) && intval($row['icalToken']) == 0) {
 					
 					$this->refreshIcalToken($row['key']);
-					
-				}
-				
-				if (isset($row['limitNumberOfGuests'])) {
-					
-					$limitNumberOfGuests = json_decode($row['limitNumberOfGuests'], true);
-					if (empty($limitNumberOfGuests)) {
-						
-						$limitNumberOfGuests = array(
-							'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-							'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-						);
-						
-					}
-					$rows[$key]['limitNumberOfGuests'] = $limitNumberOfGuests;
 					
 				}
 				
@@ -3314,25 +3304,11 @@
 				
 			}
 			
-			if (isset($row['limitNumberOfGuests'])) {
-				
-				$limitNumberOfGuests = json_decode($row['limitNumberOfGuests'], true);
-				if (empty($limitNumberOfGuests)) {
-					
-					$limitNumberOfGuests = array(
-						'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-						'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-					);
-					
-				}
-				$row['limitNumberOfGuests'] = $limitNumberOfGuests;
-				
-			}
-			
 			$row['customizeLabels'] = $this->setCustomizeLabels($row, $row['customizeLabels'], false);
 			$row['customizeButtons'] = $this->setCustomizeButtons($row, $row['customizeButtons']);
 			$row['customizeLayouts'] = $this->setCustomizeLayouts($row, $row['customizeLayouts']);
 			$row['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('set', $row['maxBookingSlotsPerDay']);
+			$row['limitNumberOfGuests'] = $this->updateLimitNumberOfGuests('set', $row['limitNumberOfGuests']);
 			
 			/**
 			if (isset($row['minimumGuests'])) {
@@ -3487,6 +3463,76 @@
 			return $response;
 
         }
+		
+		public function updateLimitNumberOfGuests($mode, $limitNumberOfGuests) {
+			
+			if (is_null($limitNumberOfGuests) === true || empty($limitNumberOfGuests) === true) {
+				
+				$limitNumberOfGuests = '{}';
+				
+			}
+			
+			if (is_array($limitNumberOfGuests) === false) {
+				
+				$limitNumberOfGuests = json_decode($limitNumberOfGuests, true);
+				
+			}
+			
+			if (empty($limitNumberOfGuests) === true || is_array($limitNumberOfGuests) === false) {
+				
+				$limitNumberOfGuests = array();
+				
+			}
+
+			$defaultLimits = array(
+				'minimumGuests' => array(
+					'enabled'  => array('postKey' => 'minimumGuests',          'default' => 0),
+					'included' => array('postKey' => 'minimumGuestsIncludeNo', 'default' => 0),
+					'number'   => array('postKey' => 'minimumGuestsOfValue',   'default' => 2),
+				),
+				'maximumGuests' => array(
+					'enabled'  => array('postKey' => 'maximumGuests',          'default' => 0),
+					'included' => array('postKey' => 'maximumGuestsIncludeNo', 'default' => 0),
+					'number'   => array('postKey' => 'maximumGuestsOfValue',   'default' => 6),
+				),
+			);
+
+			foreach ($defaultLimits as $groupKey => $fields) {
+				
+				if (isset($limitNumberOfGuests[$groupKey]) === false || is_array($limitNumberOfGuests[$groupKey]) === false) {
+					
+					$limitNumberOfGuests[$groupKey] = array();
+					
+				}
+				
+				foreach ($fields as $fieldKey => $config) {
+					
+					$postKey = $config['postKey'];
+					if ($mode === 'add') {
+						
+						if (isset($_POST[$postKey])) {
+							
+							$limitNumberOfGuests[$groupKey][$fieldKey] = intval($_POST[$postKey]);
+							
+						} else {
+							
+							$limitNumberOfGuests[$groupKey][$fieldKey] = ($fieldKey === 'number' && isset($_POST[$postKey])) ? intval($_POST[$postKey]) : 0;
+							
+						}
+						
+					} else if (array_key_exists($fieldKey, $limitNumberOfGuests[$groupKey]) === false) {
+						
+						$limitNumberOfGuests[$groupKey][$fieldKey] = $config['default'];
+						
+					}
+					
+				}
+				
+			}
+
+			return $limitNumberOfGuests;
+			
+		}
         
         public function updateMaxBookingSlotsPerDay($mode, $maxBookingSlotsPerDay) {
         	
@@ -3683,32 +3729,12 @@
 				
 			}
 			
-			$limitNumberOfGuests = array(
-				'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-				'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-			);
-			
-			if (isset($_POST['minimumGuests'])) {
-				
-				$limitNumberOfGuests['minimumGuests']['enabled'] = intval($_POST['minimumGuests']);
-				$limitNumberOfGuests['minimumGuests']['included'] = intval($_POST['minimumGuestsRequiredNo']);
-				$limitNumberOfGuests['minimumGuests']['number'] = intval($_POST['minimumGuestsOfValue']);
-				
-			}
-			
-			if (isset($_POST['maximumGuests'])) {
-				
-				$limitNumberOfGuests['maximumGuests']['enabled'] = intval($_POST['maximumGuests']);
-				$limitNumberOfGuests['maximumGuests']['included'] = intval($_POST['maximumGuestsRequiredNo']);
-				$limitNumberOfGuests['maximumGuests']['number'] = intval($_POST['maximumGuestsOfValue']);
-				
-			}
-			
 			$_POST['displayRemainingCapacityHasMoreThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasMoreThenThreshold']);
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
 			
 			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
+			$limitNumberOfGuests = $this->updateLimitNumberOfGuests('add', '[]');
 			
 			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
@@ -4129,31 +4155,11 @@
 				
 			}
 			
-			$limitNumberOfGuests = array(
-				'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-				'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-			);
-			
-			if (isset($_POST['minimumGuests'])) {
-				
-				$limitNumberOfGuests['minimumGuests']['enabled'] = intval($_POST['minimumGuests']);
-				$limitNumberOfGuests['minimumGuests']['included'] = intval($_POST['minimumGuestsRequiredNo']);
-				$limitNumberOfGuests['minimumGuests']['number'] = intval($_POST['minimumGuestsOfValue']);
-				
-			}
-			
-			if (isset($_POST['maximumGuests'])) {
-				
-				$limitNumberOfGuests['maximumGuests']['enabled'] = intval($_POST['maximumGuests']);
-				$limitNumberOfGuests['maximumGuests']['included'] = intval($_POST['maximumGuestsRequiredNo']);
-				$limitNumberOfGuests['maximumGuests']['number'] = intval($_POST['maximumGuestsOfValue']);
-				
-			}
-			
 			$_POST['displayRemainingCapacityHasMoreThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasMoreThenThreshold']);
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
 			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
+			$limitNumberOfGuests = $this->updateLimitNumberOfGuests('add', '[]');
 			
 			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
@@ -4627,43 +4633,44 @@
 				}
 				
 				$table_name = $wpdb->prefix . "booking_package_schedules";
-				$sql = $wpdb->prepare(
-					"SELECT year,month,day,accountKey,stop,MAX(publishingDate),SUM(capacity),SUM(remainder),COUNT(day) FROM `" . $table_name . "` GROUP BY `year`,`month`,`day`,`holiday`,`accountKey`,`publishingDate`,`status` HAVING `accountKey` = %d AND `year` = %d AND `month` = %d AND (`day` >= %d AND `day` <= %d) AND `status` = 'open' AND `publishingDate` >= 0;", 
-					array(intval($accountKey), intval($value['year']), intval($value['month']), intval($value['startDay']), intval($value['lastDay']))
-				);
-				$calendarList[$key]['sql'] = $sql;
-				$rows = $wpdb->get_results($sql, ARRAY_A);
-				foreach ((array) $rows as $row) {
-					
-					$key = $row['year'].sprintf("%02d%02d", $row['month'], $row['day']);
-					$list[$key]['stop'] = 0;
-					if ($row['stop'] === 'true') {
+					$sql = $wpdb->prepare(
+						"SELECT `year`, `month`, `day`, `accountKey`, MIN(`stop`) as `min_stop`, MAX(`publishingDate`) as `max_publishingDate`, SUM(`capacity`), SUM(`remainder`), COUNT(`day`) FROM `" . $table_name . "` GROUP BY `year`, `month`, `day`, `accountKey`, `status` HAVING `accountKey` = %d AND `year` = %d AND `month` = %d AND (`day` >= %d AND `day` <= %d) AND `status` = 'open';", 
+						array(intval($accountKey), intval($value['year']), intval($value['month']), intval($value['startDay']), intval($value['lastDay']))
+					);
+					$calendarList[$key]['sql'] = $sql;
+					$rows = $wpdb->get_results($sql, ARRAY_A);
+					foreach ((array) $rows as $row) {
 						
-						$list[$key]['stop'] = 1;
+						$key = $row['year'].sprintf("%02d%02d", $row['month'], $row['day']);
+						$list[$key]['stop'] = 0;
+						
+						if ($row['min_stop'] === 'true') {
+							
+							$list[$key]['stop'] = 1;
+							
+						}
+						
+						if (isset($list[$key])) {
+							
+							$list[$key]['status'] = 1;
+							
+						}
+						
+						if (intval($row['max_publishingDate']) > 0) {
+							
+							$list[$key]['publishingDate'] = array(
+								'key' => date('YmdHi', $row['max_publishingDate']),
+								'date' => $this->dateFormat($dateFormat, $positionOfWeek, $row['max_publishingDate'], '', true, true, 'text'),
+								'month' => date('n', $row['max_publishingDate']),
+								'day' => date('j', $row['max_publishingDate']),
+								'year' => date('Y', $row['max_publishingDate']),
+								'hour' => date('H', $row['max_publishingDate']),
+								'min' => date('i', $row['max_publishingDate']),
+							);
+							
+						}
 						
 					}
-					
-					if (isset($list[$key])) {
-						
-						$list[$key]['status'] = 1;
-						
-					}
-					
-					if (intval( $row['MAX(publishingDate)']) > 0) {
-						
-						$list[$key]['publishingDate'] = array(
-							'key' => date('YmdHi', $row['MAX(publishingDate)']),
-							'date' => $this->dateFormat($dateFormat, $positionOfWeek, $row['MAX(publishingDate)'], '', true, true, 'text'),
-							'month' => date('n', $row['MAX(publishingDate)']),
-							'day' => date('j', $row['MAX(publishingDate)']),
-							'year' => date('Y', $row['MAX(publishingDate)']),
-							'hour' => date('H', $row['MAX(publishingDate)']),
-							'min' => date('i', $row['MAX(publishingDate)']),
-						);
-						
-					}
-					
-				}
 				
 				if ($getDeletedDate === true) {
 					
@@ -5502,18 +5509,28 @@
 							
 							if ($isExtensionsValid === true) {
 								
-								if ($calendarAccount['type'] === 'hotel' && intval($calendarAccount['autoPublish']) === 1 && $row->stop === 'auto_publish') {
-									
-									$table_name = $wpdb->prefix . "booking_package_schedules";
-									$bool = $wpdb->update(
-										$table_name,
-										array(
-											'stop' => 'false',
-										),
-										array('key' => intval($row->key)),
-										array('%s'),
-										array('%d')
-									);
+								if ($calendarAccount['type'] === 'hotel' && intval($calendarAccount['autoPublish']) === 1) {
+										
+									$targetDayKey = $year . sprintf('%02d', $month) . sprintf('%02d', $day);
+									if (isset($addedSchedules[$targetDayKey]) && isset($addedSchedules[$targetDayKey]['stop']) && $addedSchedules[$targetDayKey]['stop'] === 'auto_publish') {
+										
+										$table_name = $wpdb->prefix . "booking_package_schedules";
+										$wpdb->update(
+											$table_name,
+											array(
+												'stop' => 'false',
+											),
+											array(
+												'accountKey' => intval($accountKey),
+												'year'       => intval($year),
+												'month'      => intval($month),
+												'day'        => intval($day),
+											),
+											array('%s'),
+											array('%d', '%d', '%d', '%d')
+										);
+										
+									}
 									
 								}
 								
@@ -5660,227 +5677,304 @@
 		}
 		
 		public function updateAccountSchedule(){
-			
-			$accountKey = 1;
-            if (isset($_POST['accountKey'])) {
-                
-                $accountKey = $_POST['accountKey'];
-                
-            }
-			
-			global $wpdb;
-			$sql = '';
-			$courseTime = 0;
-			$maintenanceTime = 0;
-			$publishingDate = 0;
-			if (isset($_POST['publishingDate']) === true) {
 				
-				$publishingDate = strtotime($_POST['publishingDate']);
+				$accountKey = 1;
+	            if (isset($_POST['accountKey'])) {
+	                
+	                $accountKey = $_POST['accountKey'];
+	                
+	            }
 				
-			}
-			
-			$array = array();
-			$value_array = array();
-			$rpeatList = array();
-			$schedules = array();
-			$prepareForRpeatReservation = array();
-			
-			$table_name = $wpdb->prefix . "booking_package_services";
-			$sql = "SELECT `key`,max(`time`) FROM `".$table_name."` WHERE `accountKey` = %d;";
-			$row = $wpdb->get_row(
-				$wpdb->prepare(
-					$sql, 
-					array(intval($accountKey))
-				), 
-				ARRAY_A
-			);
-			if (is_null($row)) {
+				global $wpdb;
+				$sql = '';
 				
-				$courseTime = 0;
-				
-			} else {
-				
-				$courseTime = intval($row["max(`time`)"]);
-				
-			}
-			
-			#$wpdb->query("START TRANSACTION");
-			$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_schedules" . "` WRITE, `" . $wpdb->prefix . "booking_package_booked_customers" . "` WRITE");
-			try {
-				
-				for ($i = 0; $i < $_POST['timeCount']; $i++) {
+				$updatePublishingDate = false;
+				$publishingDate = 0;
+				if (isset($_POST['publishingDate']) === true && $_POST['publishingDate'] !== '') {
 					
-					$updateBool = false;
-					$sql = null;
-					$updateArray = array();
-					#$schedule = json_decode(str_replace("\\", "", $_POST['schedule' . $i]), true);
-					$schedule = json_decode(stripslashes($_POST['schedule' . $i]), true);
-					$unixTime = intval(date('U', mktime($schedule['hour'], $schedule['min'], 0, $_POST['month'], $_POST['day'], $_POST['year'])));
-					$weekKey = intval(date('w', mktime($schedule['hour'], $schedule['min'], 0, $_POST['month'], $_POST['day'], $_POST['year'])));
-					
-					$deadlineTime = 0;
-					if (isset($schedule['deadlineTime'])) {
+					$updatePublishingDate = true;
+					if ($_POST['publishingDate'] === '0' || intval($_POST['publishingDate']) === 0) {
 						
-						$deadlineTime = intval($schedule['deadlineTime']);
+						$publishingDate = 0;
+						
+					} else {
+						
+						$publishingDate = strtotime($_POST['publishingDate']);
 						
 					}
 					
-					if (isset($schedule['key'])) {
+				}
+				
+				$array = array();
+				$value_array = array();
+				$schedules = array();
+				
+				#$wpdb->query("START TRANSACTION");
+				$wpdb->query("LOCK TABLES `" . $wpdb->prefix . "booking_package_schedules" . "` WRITE, `" . $wpdb->prefix . "booking_package_booked_customers" . "` WRITE, `" . $wpdb->prefix . "booking_package_calendar_accounts" . "` READ");
+				try {
+					
+					for ($i = 0; $i < $_POST['timeCount']; $i++) {
 						
-						$table_name = $wpdb->prefix . "booking_package_schedules";
-						$sql = "SELECT * FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';";
-						$row = $wpdb->get_row(
-							$wpdb->prepare($sql, array(intval($schedule['key']))), 
-							ARRAY_A
-						);
+						$updateBool = false;
+						$sql = null;
+						$updateArray = array();
+						$schedule = json_decode(stripslashes($_POST['schedule' . $i]), true);
+						$unixTime = intval(date('U', mktime($schedule['hour'], $schedule['min'], 0, $_POST['month'], $_POST['day'], $_POST['year'])));
+						$weekKey = intval(date('w', mktime($schedule['hour'], $schedule['min'], 0, $_POST['month'], $_POST['day'], $_POST['year'])));
 						
-						if (!is_null($row)) {
+						$deadlineTime = 0;
+						if (isset($schedule['deadlineTime'])) {
 							
-							$updateBool = true;
-							if ($schedule['delete'] == 'true') {
+							$deadlineTime = intval($schedule['deadlineTime']);
+							
+						}
+						
+						if (isset($schedule['key'])) {
+							
+							$table_name = $wpdb->prefix . "booking_package_schedules";
+							$sql = "SELECT * FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';";
+							$row = $wpdb->get_row(
+								$wpdb->prepare($sql, array(intval($schedule['key']))), 
+								ARRAY_A
+							);
+							
+							if (!is_null($row)) {
 								
-								/**
-								$sql = "DELETE FROM `".$table_name."` WHERE `capacity` = `remainder` AND `key` = %d;";
-								$updateArray = array(intval($schedule['key']));
-								**/
-								$sql = "UPDATE `".$table_name."` SET `status` = %s WHERE `capacity` = `remainder` AND `key` = %d;";
-								$updateArray = array('deleted', intval($schedule['key']));
+								$updateBool = true;
+								if ($schedule['delete'] == 'true') {
+									
+									$sql = "UPDATE `".$table_name."` SET `status` = %s WHERE `capacity` = `remainder` AND `key` = %d;";
+									$updateArray = array('deleted', intval($schedule['key']));
+									
+								} else {
+									
+									$capacity = intval($schedule['capacity']);
+									$remainder = intval($schedule['remainder']);
+									
+									if ($remainder > $capacity) {
+										
+										$remainder = $capacity;
+										
+									}
+									
+									$originalUnixTime = intval($row['unixTime']);
+									$originalHour = intval($row['hour']);
+									$originalMin = intval($row['min']);
+									$unixTime = $originalUnixTime;
+									
+									if ($updatePublishingDate === true) {
+										
+										$sql = "UPDATE `".$table_name."` SET `unixTime` = %d, `year` = %d, `month` = %d, `day` = %d, ";
+										$sql .= "`hour` = %d, `min` = %d, `title` = %s, `capacity` = %d, `remainder` = %d, `stop` = %s, `cost` = %d, `deadlineTime` = %d, `publishingDate` = %d ";
+										$sql .= "WHERE `key` = %d;";
+										$updateArray = array(
+											$originalUnixTime,
+											intval($_POST['year']),
+											intval($_POST['month']),
+											intval($_POST['day']),
+											$originalHour,
+											$originalMin,
+											sanitize_text_field($schedule['title']),
+											$capacity,
+											$remainder,
+											sanitize_text_field($schedule['stop']),
+											intval(0),
+											intval($deadlineTime),
+											intval($publishingDate),
+											intval($schedule['key'])
+										);
+										
+									} else {
+										
+										$sql = "UPDATE `".$table_name."` SET `unixTime` = %d, `year` = %d, `month` = %d, `day` = %d, ";
+										$sql .= "`hour` = %d, `min` = %d, `title` = %s, `capacity` = %d, `remainder` = %d, `stop` = %s, `cost` = %d, `deadlineTime` = %d ";
+										$sql .= "WHERE `key` = %d;";
+										$updateArray = array(
+											$originalUnixTime,
+											intval($_POST['year']),
+											intval($_POST['month']),
+											intval($_POST['day']),
+											$originalHour,
+											$originalMin,
+											sanitize_text_field($schedule['title']),
+											$capacity,
+											$remainder,
+											sanitize_text_field($schedule['stop']),
+											intval(0),
+											intval($deadlineTime),
+											intval($schedule['key'])
+										);
+										
+									}
+									
+								}
+								
+							}
+								
+						} else {
+							
+							$remainder = intval($schedule['capacity']);
+							$reserveRemainder = 0;
+							
+							$accountKeys = array(intval($accountKey));
+							$sharingAccounts = $this->getCalendarAccountsWithHavingSchedulesSharing($accountKey);
+							foreach ((array) $sharingAccounts as $sharingAcc) {
+								
+								$accountKeys[] = intval($sharingAcc['key']);
+								
+							}
+							$accountPlaceholders = implode(',', array_fill(0, count($accountKeys), '%d'));
+							
+							$dayStartUnix = mktime(0, 0, 0, intval($_POST['month']), intval($_POST['day']), intval($_POST['year'])) - (24 * 3600);
+							$dayEndUnix = mktime(23, 59, 59, intval($_POST['month']), intval($_POST['day']), intval($_POST['year']));
+							
+							$table_booked = $wpdb->prefix . "booking_package_booked_customers";
+							$query_params = array_merge($accountKeys, array($dayStartUnix, $dayEndUnix));
+							$search_sql = "SELECT `scheduleUnixTime`, `courseTime`, `options`, `maintenanceTime`, `preparation`, `applicantCount` FROM `{$table_booked}` WHERE `accountKey` IN ({$accountPlaceholders}) AND (`scheduleUnixTime` >= %d AND `scheduleUnixTime` <= %d) AND `status` != 'canceled';";
+							$booked_rows = $wpdb->get_results($wpdb->prepare($search_sql, $query_params), ARRAY_A);
+							
+							foreach ((array) $booked_rows as $bRow) {
+								$bkStart = intval($bRow['scheduleUnixTime']);
+								
+								$bkDuration = intval($bRow['courseTime']);
+								if ($bkDuration <= 0 && !empty($bRow['options'])) {
+									
+									$bkServices = json_decode($bRow['options'], true);
+									if (is_array($bkServices)) {
+										
+										foreach ($bkServices as $bkSvc) {
+											
+											$bkDuration += isset($bkSvc['time']) ? intval($bkSvc['time']) : 0;
+											if (isset($bkSvc['options']) && is_array($bkSvc['options'])) {
+												
+												foreach ($bkSvc['options'] as $bkOpt) {
+													
+													if (isset($bkOpt['selected']) && intval($bkOpt['selected']) === 1) {
+														
+														$bkDuration += isset($bkOpt['time']) ? intval($bkOpt['time']) : 0;
+														
+													}
+													
+												}
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+								$bkMaintenance = intval($bRow['maintenanceTime']);
+								$bkPreparation = 0;
+								if (!empty($bRow['preparation'])) {
+									$prep = json_decode($bRow['preparation'], true);
+									if (isset($prep['time'])) {
+										$bkPreparation = intval($prep['time']);
+									}
+								}
+								
+								$bkEnd = $bkStart + (($bkDuration + $bkMaintenance + $bkPreparation) * 60);
+								if ($unixTime >= $bkStart && $unixTime < $bkEnd) {
+									$appCount = (isset($bRow['applicantCount']) && intval($bRow['applicantCount']) > 0) ? intval($bRow['applicantCount']) : 1;
+									$remainder -= $appCount;
+									$reserveRemainder++;
+								}
+							}
+							
+							if ($remainder < 0) {
+								
+								$updateBool = false;
 								
 							} else {
 								
-								$capacity = $schedule['capacity'];
-								$remainder = $schedule['remainder'];
+								$updateBool = true;
 								
-								$sql = "UPDATE `".$table_name."` SET `unixTime` = %d, `year` = %d, `month` = %d, `day` = %d, ";
-								$sql .= "`hour` = %d, `min` = %d, `title` = %s, `capacity` = %d, `remainder` = %d, `stop` = %s, `cost` = %d , `deadlineTime` = %d, `publishingDate` = %d ";
-								$sql .= "WHERE `key` = %d;";
-								$updateArray = array(
-									$unixTime,
-									intval($_POST['year']),
-									intval($_POST['month']),
-									intval($_POST['day']),
-									intval($schedule['hour']),
-									intval($schedule['min']),
-									sanitize_text_field($schedule['title']),
-									intval($capacity),
-									intval($remainder),
-									sanitize_text_field($schedule['stop']),
-									intval(0),
-									intval($deadlineTime),
-									intval($publishingDate),
-									intval($schedule['key'])
-								);
+							}
+							
+							if ($updateBool == true) {
+								
+								if ($schedule['delete'] == 'true') {
+									
+									continue;
+									
+								}
+								
+								// 1対応：新規枠の公開日時は指定値、未指定時は既存枠から引き継ぎ
+								$targetPublishingDate = ($updatePublishingDate === true) ? intval($publishingDate) : 0;
+								if ($updatePublishingDate === false) {
+									$existSlot = $wpdb->get_row($wpdb->prepare("SELECT `publishingDate` FROM `".$wpdb->prefix."booking_package_schedules` WHERE `accountKey` = %d AND `year` = %d AND `month` = %d AND `day` = %d AND `status` = 'open' LIMIT 1;", array(intval($accountKey), intval($_POST['year']), intval($_POST['month']), intval($_POST['day']))), ARRAY_A);
+									if (!empty($existSlot)) {
+										$targetPublishingDate = intval($existSlot['publishingDate']);
+									}
+								}
+								
+								$table_name = $wpdb->prefix . "booking_package_schedules";
+								$sql = "SELECT * FROM `".$table_name."` WHERE `accountKey` = %d AND `unixTime` = %d AND `status` = 'open';";
+								$row = $wpdb->get_row($wpdb->prepare($sql, array(intval($accountKey), $unixTime)), ARRAY_A);
+								if (is_null($row)) {
+									
+									$sql = "INSERT INTO `".$table_name."` (`accountKey`,`unixTime`,`year`,`month`,`day`, `weekKey`, `hour`,`min`,`title`,`capacity`,`remainder`,`stop`,`holiday`,`cost`,`deadlineTime`, `publishingDate`) ";
+									$sql .= "VALUES (%d, %d, %d, %d, %d, %d, %d, %d, %s, %d, %d, %s, %s, %d, %d, %d);";
+									$updateArray = array(
+										intval($accountKey),
+										$unixTime,
+										intval($_POST['year']),
+										intval($_POST['month']),
+										intval($_POST['day']),
+										intval($weekKey),
+										intval($schedule['hour']),
+										intval($schedule['min']),
+										sanitize_text_field($schedule['title']),
+										intval($schedule['capacity']),
+										intval($remainder),
+										sanitize_text_field($schedule['stop']),
+										"false",
+										intval(0),
+										intval($deadlineTime),
+										intval($targetPublishingDate),
+									);
+									
+								} else {
+									
+									// 2A対応：同一時刻の枠が既に存在する場合は追加せずスキップ（SELECT文の誤追加を防止）
+									$updateBool = false;
+									
+								}
 								
 							}
 							
 						}
-							
-					} else {
 						
-						$remainder = $schedule['capacity'];
-						$remainder = $schedule['remainder'];
-						$reserveRemainder = 0;
-						
-						$table_name = $wpdb->prefix . "booking_package_booked_customers";
-						$serch_sql = "SELECT * FROM `".$table_name."` WHERE `scheduleUnixTime` > %d AND `scheduleUnixTime` < %d AND `accountKey` = %d;";
-						$valueArray = array(($unixTime - ($courseTime * 60) - ($maintenanceTime * 60)), $unixTime, intval($accountKey));
-						#var_dump($valueArray);
-						$sql = $wpdb->prepare($serch_sql, $valueArray);
-						$rows = $wpdb->get_results($sql, ARRAY_A);
-						foreach ((array) $rows as $row) {
+						if ($updateBool == true && !isset($schedules[$unixTime])) {
 							
-							$reserveUnixTime = $row['scheduleUnixTime'] + ($row['courseTime'] * 60);
-							if($unixTime < $reserveUnixTime){
-								$remainder--;
-								$reserveRemainder++;
-							}
+							array_push($array, $sql);
+							array_push($value_array, $updateArray);
 							
 						}
 						
-						if ($remainder < 0) {
-							
-							$updateBool = false;
-							
-						} else {
-							
-							$updateBool = true;
-							
-						}
-						
-						if ($updateBool == true) {
-							
-							if ($schedule['delete'] == 'true') {
-								
-								continue;
-								
-							}
-							
-							$table_name = $wpdb->prefix . "booking_package_schedules";
-							$sql = "SELECT * FROM `".$table_name."` WHERE `accountKey` = %d AND `unixTime` = %d AND `status` = 'open';";
-							$row = $wpdb->get_row($wpdb->prepare($sql, array(intval($accountKey), $unixTime)), ARRAY_A);
-							if (is_null($row)) {
-								
-								$sql = "INSERT INTO `".$table_name."` (`accountKey`,`unixTime`,`year`,`month`,`day`, `weekKey`, `hour`,`min`,`title`,`capacity`,`remainder`,`stop`,`holiday`,`cost`,`deadlineTime`, `publishingDate`) ";
-								$sql .= "VALUES (%d, %d, %d, %d, %d, %d, %d, %d, %s, %d, %d, %s, %s, %d, %d, %d);";
-								$updateArray = array(
-									intval($accountKey),
-									$unixTime,
-									intval($_POST['year']),
-									intval($_POST['month']),
-									intval($_POST['day']),
-									intval($weekKey),
-									intval($schedule['hour']),
-									intval($schedule['min']),
-									sanitize_text_field($schedule['title']),
-									intval($schedule['capacity']),
-									intval($remainder),
-									sanitize_text_field($schedule['stop']),
-									"false",
-									intval(0),
-									intval($deadlineTime),
-									intval($publishingDate),
-								);
-								
-							}
-							
-						}
+						$schedules[$unixTime] = $schedule;
 						
 					}
 					
-					if ($updateBool == true && !isset($schedules[$unixTime])) {
-						
-						array_push($array, $sql);
-						array_push($value_array, $updateArray);
+					for ($i = 0; $i < count($array); $i++) {
+							
+						$sql = $wpdb->prepare($array[$i], $value_array[$i]);
+						$wpdb->query($sql);
 						
 					}
 					
-					$schedules[$unixTime] = $schedule;
+					#$wpdb->query('COMMIT');
+					$wpdb->query('UNLOCK TABLES');
+					
+				} catch (Exception $e) {
+					
+					#$wpdb->query('ROLLBACK');
+					$wpdb->query('UNLOCK TABLES');
 					
 				}
 				
-				for ($i = 0; $i < count($array); $i++) {
-						
-					$sql = $wpdb->prepare($array[$i], $value_array[$i]);
-					$wpdb->query($sql);
-					
-				}
-				
-				#$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
-				
-				
-			} catch (Exception $e) {
-				
-				#$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
-				
-			}/** finally {
-				
-				$wpdb->query('UNLOCK TABLES');
-				
-			}**/
-			
-		}
+			}
 		
 		public function deletePerfectPublicSchedule(){
 			
@@ -5928,7 +6022,7 @@
 				}
 				
 				$unixTime_from = date('U', mktime(0, 0, 0, $_POST['deletePublishedSchedules_from_month'], $_POST['deletePublishedSchedules_from_day'], $_POST['deletePublishedSchedules_from_year']));
-				$unixTime_to = date('U', mktime(23, 59, 0, $_POST['deletePublishedSchedules_to_month'], $_POST['deletePublishedSchedules_to_day'], $_POST['deletePublishedSchedules_to_year']));
+				$unixTime_to = date('U', mktime(23, 59, 59, $_POST['deletePublishedSchedules_to_month'], $_POST['deletePublishedSchedules_to_day'], $_POST['deletePublishedSchedules_to_year']));
 				global $wpdb;
 				$accountKeys = array($accountKey);
 				$calendarAccounts = $this->getCalendarAccountsWithHavingSchedulesSharing($accountKey);
@@ -5964,7 +6058,7 @@
 						if ($_POST['period'] == 'period_within') {
 							
 							$schedulesSQL = $wpdb->prepare(
-								"DELETE FROM `" . $schedules_table_name . "` WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` < %d);", 
+								"DELETE FROM `" . $schedules_table_name . "` WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` <= %d);", 
 								array($accountKey, intval($unixTime_from), intval($unixTime_to))
 							);
 							
@@ -5989,7 +6083,7 @@
 						if ($_POST['period'] == 'period_within') {
 							
 							$schedulesSQL = $wpdb->prepare(
-								"UPDATE `" . $schedules_table_name . "` SET `status` = 'deleted' WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` < %d);", 
+								"UPDATE `" . $schedules_table_name . "` SET `status` = 'deleted' WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` <= %d);", 
 								array($accountKey, intval($unixTime_from), intval($unixTime_to))
 							);
 							
@@ -6007,7 +6101,7 @@
 						if ($_POST['period'] == 'period_after') {
 							
 							$SQL = $wpdb->prepare(
-								"UPDATE `" . $customer_table_name . "` SET `status`= 'canceled' WHERE `accountKey` = %d AND `scheduleUnixTime` > %d;", 
+								"UPDATE `" . $customer_table_name . "` SET `status`= 'canceled' WHERE `accountKey` = %d AND `scheduleUnixTime` >= %d;", 
 								array($accountKeys[$i], intval($unixTime_from))
 							);
 							
@@ -6023,7 +6117,7 @@
 						} else if ($_POST['period'] == 'period_within') {
 							
 							$SQL = $wpdb->prepare(
-								"UPDATE `" . $customer_table_name . "` SET `status`= 'canceled' WHERE `accountKey` = %d AND (`scheduleUnixTime` > %d AND `scheduleUnixTime` < %d);", 
+								"UPDATE `" . $customer_table_name . "` SET `status`= 'canceled' WHERE `accountKey` = %d AND (`scheduleUnixTime` >= %d AND `scheduleUnixTime` <= %d);", 
 								array($accountKeys[$i], intval($unixTime_from), intval($unixTime_to))
 							);
 							
@@ -6100,22 +6194,22 @@
 						);
 						
 						if ($_POST['period'] == 'period_after') {
+								
+								$schedulesSQL = $wpdb->prepare(
+									"UPDATE `" . $schedules_table_name . "` SET `stop` = 'true' WHERE `accountKey` = %d AND `unixTime` >= %d;", 
+									array($accountKey, intval($unixTime_from))
+								);
+								
+							}
 							
-							$schedulesSQL = $wpdb->prepare(
-								"UPDATE `" . $schedules_table_name . "` SET `stop` = 'true' WHERE `accountKey` = %d AND `unixTime` > %d;", 
-								array($accountKey, intval($unixTime_from))
-							);
-							
-						}
-						
-						if ($_POST['period'] == 'period_within') {
-							
-							$schedulesSQL = $wpdb->prepare(
-								"UPDATE `".$schedules_table_name."` SET `stop` = 'true' WHERE `accountKey` = %d AND (`unixTime` > %d AND `unixTime` < %d);", 
-								array($accountKey, intval($unixTime_from), intval($unixTime_to))
-							);
-							
-						}
+							if ($_POST['period'] == 'period_within') {
+								
+								$schedulesSQL = $wpdb->prepare(
+									"UPDATE `".$schedules_table_name."` SET `stop` = 'true' WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` <= %d);", 
+									array($accountKey, intval($unixTime_from), intval($unixTime_to))
+								);
+								
+							}
 						
 						$wpdb->query($schedulesSQL);
 						#$wpdb->query('COMMIT');
@@ -7835,9 +7929,11 @@
 			$timeSlots = array();
 			$bookingIDs = array();
 			$original_timezone = null;
+			$sameStartTimeCount = 0;
+			$isOverlappedOtherStartTime = false;
 			$table_name =$wpdb->prefix . "booking_package_booked_customers";
 			
-			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && ($requestService['stopServiceForDayOfTimes'] == 'timeSlot' || $requestService['stopServiceForDayOfTimes'] == 'day')) {
+			if ($requestService['stopServiceUnderFollowingConditions'] == 'specifiedNumberOfTimes' && ($requestService['stopServiceForDayOfTimes'] == 'timeSlot' || $requestService['stopServiceForDayOfTimes'] == 'day' || $requestService['stopServiceForDayOfTimes'] == 'startTimeSlot')) {
 				
 				$calendarAccount = $this->getCalendarAccount($accountKey);
 				$accountCalendarKey = (!empty($calendarAccount) && intval($calendarAccount['schedulesSharing']) == 1) ? intval($calendarAccount['targetSchedules']) : null;
@@ -7978,17 +8074,74 @@
 						
 					}
 					
+				}else if ($requestService['stopServiceForDayOfTimes'] == 'startTimeSlot') {
+					
+					$serviceDuration = intval($servicesDetails['time']);
+					$reqStart = intval($schedule['unixTime']);
+					$reqStartMin = (intval(date('H', $reqStart)) * 60) + intval(date('i', $reqStart));
+					$reqEndMin = $reqStartMin + $serviceDuration;
+					
+					$sameStartTimeCount = 0;
+					$isOverlappedOtherStartTime = false;
+					
+					$dayOffsets = array(
+						$prevDayKey => -1440,
+						$dayKey     => 0,
+						$nextDayKey => 1440,
+					);
+					
+					foreach ($dayOffsets as $dKey => $offsetMin) {
+						
+						if (!empty($bookedServices[$dKey])) {
+							
+							foreach ($bookedServices[$dKey] as $timeStr => $servicesInTime) {
+								
+								if (isset($servicesInTime[$targetServiceKey])) {
+									
+									$serviceInfo = $servicesInTime[$targetServiceKey];
+									$existStartMin = (intval(substr($timeStr, 0, 2)) * 60) + intval(substr($timeStr, 2, 2)) + $offsetMin;
+									$existEndMin = $existStartMin + intval($serviceInfo['maximumDurationTime']);
+									$count = intval($serviceInfo['count']);
+									
+									if ($reqStartMin < $existEndMin && $existStartMin < $reqEndMin) {
+										
+										if ($existStartMin === $reqStartMin) {
+											
+											$sameStartTimeCount += $count;
+											
+										} else {
+											
+											$isOverlappedOtherStartTime = true;
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+					if (!empty($bookingID) && $sameStartTimeCount > 0) {
+						
+						$sameStartTimeCount--;
+						
+					}
+
 				}
 				
 			} else {
 				
-				$sql =$wpdb->prepare(
+				$sql = $wpdb->prepare(
 					"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `scheduleKey` = %d AND `status` != 'canceled';", 
 					array(intval($scheduleKey))
 				);
 				
 				if (is_null($bookingID) === false) {
-					$sql =$wpdb->prepare(
+					$sql = $wpdb->prepare(
 						"SELECT `key`, `accountKey`, `status`, `options` FROM `" . $table_name . "` WHERE `key` != %d AND `scheduleKey` = %d AND `status` != 'canceled';", 
 						array(intval($bookingID), intval($scheduleKey))
 					);
@@ -7999,19 +8152,21 @@
 					
 					array_push($bookingIDs, intval($row['key']));
 					$services = json_decode($row['options'], true);
-					for ($i = 0; $i < count($services); $i++) {
-						
-						$serviceKey = intval($services[$i]['key']);
-						if (isset($hasServices[$serviceKey])) {
+					if (is_array($services)) {
+						for ($i = 0; $i < count($services); $i++) {
 							
-							$hasServices[$serviceKey]++;
-							
-						} else {
-							
-							$hasServices[$serviceKey] = 1;
+							$serviceKey = intval($services[$i]['key']);
+							if (isset($hasServices[$serviceKey])) {
+								
+								$hasServices[$serviceKey]++;
+								
+							} else {
+								
+								$hasServices[$serviceKey] = 1;
+								
+							}
 							
 						}
-						
 					}
 					
 				}
@@ -8027,12 +8182,97 @@
 			
 			if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual' || $requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
 				
+				$serviceDuration = (isset($servicesDetails['time']) && intval($servicesDetails['time']) > 0) ? intval($servicesDetails['time']) : intval($requestService['time']);
+				$reqStartUnixTime = intval($schedule['unixTime']);
+				$reqEndUnixTime = $reqStartUnixTime + ($serviceDuration * 60);
+				$scheduleAccountKey = intval($schedule['accountKey']);
+				
+				$schedules_table = $wpdb->prefix . "booking_package_schedules";
+				$scheduleSql = $wpdb->prepare(
+					"SELECT `key`, `unixTime`, `capacity`, `remainder` FROM `" . $schedules_table . "` WHERE `accountKey` = %d AND (`unixTime` >= %d AND `unixTime` < %d) AND `status` = 'open' ORDER BY `unixTime` ASC;",
+					array($scheduleAccountKey, $reqStartUnixTime, $reqEndUnixTime)
+				);
+				$targetSchedules = $wpdb->get_results($scheduleSql, ARRAY_A);
+				
+				
+				$oldStartUnix = 0;
+				$oldEndUnix = 0;
+				$oldApplicantCount = 0;
+				if (!empty($bookingID)) {
+					
+					$currentBookingSql = $wpdb->prepare(
+						"SELECT `scheduleUnixTime`, `courseTime`, `options`, `applicantCount` FROM `" . $table_name . "` WHERE `key` = %d AND `status` != 'canceled';",
+						array(intval($bookingID))
+					);
+					$currentBooking = $wpdb->get_row($currentBookingSql, ARRAY_A);
+					if (!is_null($currentBooking)) {
+						
+						$oldDuration = intval($currentBooking['courseTime']);
+						if ($oldDuration <= 0 && !empty($currentBooking['options'])) {
+							
+							$oldServices = json_decode($currentBooking['options'], true);
+							if (is_array($oldServices)) {
+								foreach ($oldServices as $oldService) {
+									
+									$oldDuration += isset($oldService['time']) ? intval($oldService['time']) : 0;
+									if (isset($oldService['options']) && is_array($oldService['options'])) {
+										
+										foreach ($oldService['options'] as $oldOpt) {
+											
+											if (isset($oldOpt['selected']) && intval($oldOpt['selected']) === 1) {
+												
+												$oldDuration += isset($oldOpt['time']) ? intval($oldOpt['time']) : 0;
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						$oldStartUnix = intval($currentBooking['scheduleUnixTime']);
+						$oldEndUnix = $oldStartUnix + ($oldDuration * 60);
+						$oldApplicantCount = intval($currentBooking['applicantCount']);
+						
+					}
+					
+				}
+				
+				$hasBookedSlot = false;
+				$hasEmptySlot = false;
+				foreach ((array) $targetSchedules as $slot) {
+					
+					$slotUnix = intval($slot['unixTime']);
+					$capacity = intval($slot['capacity']);
+					$remainder = intval($slot['remainder']);
+					if ($oldApplicantCount > 0 && $slotUnix >= $oldStartUnix && $slotUnix < $oldEndUnix) {
+						
+						$remainder = min($capacity, $remainder + $oldApplicantCount);
+						
+					}
+					
+					if ($capacity !== $remainder) {
+						
+						$hasBookedSlot = true;
+						
+					} else {
+						
+						$hasEmptySlot = true;
+						
+					}
+					
+				}
+				
 				if ($requestService['stopServiceUnderFollowingConditions'] == 'isNotEqual') {
 					
-					if (count($rows) != 0) {
+					if ($hasBookedSlot === true) {
 						
 						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') . ': ' . sprintf( __("When the '%s' and '%s' values for the time slot do not match.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
 						
 					}
 					if ($requestService['doNotStopServiceAsException'] == 'sameServiceIsNotStopped') {
@@ -8040,7 +8280,7 @@
 						if (isset($hasServices[intval($requestService['key'])])) {
 							
 							$response['status'] = true;
-							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Allow booking this service if its start time overlaps with the start time of an existing booking for the same service.', 'booking-package');
+							$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') . ': ' . __('Allow booking this service if its start time overlaps with the start time of an existing booking for the same service.', 'booking-package');
 							
 						}
 						
@@ -8048,9 +8288,10 @@
 					
 				} else if ($requestService['stopServiceUnderFollowingConditions'] == 'isEqual') {
 					
-					if (count($rows) == 0) {
+					if (empty($targetSchedules) || $hasEmptySlot === true) {
+						
 						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . sprintf( __("When the '%s' and '%s' values for the time slot are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') . ': ' . sprintf( __("When the '%s' and '%s' values for the time slot are equal.", 'booking-package'), __('Available Slots', 'booking-package'), __('Remaining Slots', 'booking-package') );
 						
 					}
 					
@@ -8060,10 +8301,11 @@
 				
 				if ($requestService['stopServiceForDayOfTimes'] == 'startTimeSlot') {
 					
-					if (isset($hasServices[intval($requestService['key'])]) && $hasServices[intval($requestService['key'])] >= intval($requestService['stopServiceForSpecifiedNumberOfTimes'])) {
+					$limit = intval($requestService['stopServiceForSpecifiedNumberOfTimes']);
+					if ($isOverlappedOtherStartTime === true || $sameStartTimeCount >= $limit) {
 						
 						$response['status'] = false;
-						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') .': ' . __('Target', 'booking-package') . ' > ' . __('Maximum bookings per start time slot', 'booking-package');
+						$response['message'] = __('Stop Offering This Service Under the Following Conditions', 'booking-package') . ': ' . __('Target', 'booking-package') . ' > ' . __('Maximum bookings per start time slot', 'booking-package');
 						
 					}
 					
@@ -10466,7 +10708,7 @@
 				if ($applicantCount <= 0) {
 					
 					$this->cancelPayment();
-					return array('status' => 'error', 'message' => __("Invalid booking request.", 'booking-package'));
+					return array('status' => 'error', 'message' => "Invalid number of applicants.");
 					
 				}
 				$startTime = $row['unixTime'];
@@ -10561,7 +10803,7 @@
 							}
 							
 							$postedCourseList = isset($_POST['selectedCourseList']) ? $_POST['selectedCourseList'] : null;
-							$servicesDetails = $this->getSelectedServices($calendarAccount, $postedCourseList, $guests, "selectedOptionsList", $coupon, $applicantCount, $verifyServices);
+							$servicesDetails = $this->getSelectedServices($calendarAccount, $postedCourseList, $guests, "selectedOptionsList", array(), $applicantCount, $verifyServices);
 							if ($servicesDetails['status'] === false) {
 								
 								return array('status' => 'error', 'message' => $servicesDetails['message']);
@@ -10580,12 +10822,10 @@
 								
 								}
 								
-								
 							}
 							
 							$courseTime += intval($servicesDetails['time']);
 							$courseCost += intval($servicesDetails['cost']);
-							#$totalCost += intval($servicesDetails['cost']) * $applicantCount;
 							$totalCost += intval($servicesDetails['cost']);
 							$sql_max_unixTime = $sql_start_unixTime + ($courseTime * 60) + ($maintenanceTime * 60);
 							
@@ -10650,7 +10890,9 @@
 							
 						}
 						
-						$taxes = $this->createTaxesDetails($accountKey, 'day', $totalCost, $bookingYMD, $applicantCount, null);
+						$totalCost = $this->getDiscountCostByCoupon($coupon, $totalCost);
+						$reflectAdditional = (isset($responseGuests['reflectAdditional']) && intval($responseGuests['reflectAdditional']) > 0) ? intval($responseGuests['reflectAdditional']) : 1;
+						$taxes = $this->createTaxesDetails($accountKey, 'day', $totalCost, $bookingYMD, $reflectAdditional, null);
 						$accommodationDetails['taxes'] = $taxes;
 						for ($i = 0; $i < count($taxes); $i++) {
 							
@@ -10661,7 +10903,7 @@
 								
 							} else if ($tax['type'] == 'surcharge') {
 								
-								$totalCost += $tax['taxValue'] * $applicantCount;
+								$totalCost += $tax['taxValue'] * $reflectAdditional;
 								
 							}
 							
@@ -10743,6 +10985,10 @@
 								}
 								
 							}
+							
+						}else if ($allows_locally === false && empty($coupon)) {
+							
+							$requires_online = true;
 							
 						}
 						
@@ -11192,7 +11438,7 @@
 			
 			if (!is_array($selectedGuests) || empty($selectedGuests)) {
 				
-				$response['message'] = __('Invalid booking request.', 'booking-package');
+				$response['message'] = "Guest information is required.";
 				return $response;
 				
 			}
@@ -11207,7 +11453,7 @@
 			$active_guests_rows = $wpdb->get_results($active_guests_sql, ARRAY_A);
 			if (count($selectedGuests) !== count($active_guests_rows)) {
 				
-				$response['message'] = __('Invalid booking request.', 'booking-package');
+				$response['message'] = "The number of guest categories does not match.";
 				return $response;
 				
 			}
@@ -11224,7 +11470,7 @@
 				
 				if (in_array($current_guest_key, $processed_guest_keys, true)) {
 					
-					$response['message'] = __('Invalid booking request.', 'booking-package');
+					$response['message'] = "Duplicate guest information.";
 					return $response;
 					
 				}
@@ -11238,7 +11484,7 @@
 				$row = $wpdb->get_row($sql, ARRAY_A);
 				if (is_null($row)) {
 					
-					$response['message'] = __('Invalid booking request.', 'booking-package');
+					$response['message'] = "The specified guest was not found.";
 					return $response;
 					
 				} else {
@@ -11308,7 +11554,7 @@
 					
 					if (intval($row['required']) === 1 && intval($row['index']) <= 0) {
 						
-						$response['message'] = __('Invalid booking request.', 'booking-package');
+						$response['message'] = sprintf('%s is required.', $row['name']);
 						return $response;
 						
 					}
@@ -11355,54 +11601,70 @@
 			
 			}
 			
-			if (intval($calendarAccount['courseBool']) === 0 && ($response['requiredTotalNumberOfGuests'] + $response['unrequiredTotalNumberOfGuests']) <= 0) {
+			$hasIncludedGuest = false;
+			foreach ((array) $response['guests'] as $gRow) {
 				
-				$response['message'] = __('Invalid booking request.', 'booking-package');
+				if (isset($gRow['guestsInCapacity']) && $gRow['guestsInCapacity'] === 'included') {
+					
+					$hasIncludedGuest = true;
+					break;
+					
+				}
+				
+			}
+			
+			if ($hasIncludedGuest === true && $response['applicantCount'] <= 0) {
+				
+				$response['message'] = "Please select at least one guest.";
 				return $response;
 				
 			}
 			
 			$response['isGuests'] = true;
 			
-			$minimumGuests = $limitNumberOfGuests['minimumGuests'];
-            if ($minimumGuests['enabled'] == 1 && $minimumGuests['number'] > 0) {
-                
-                if ($minimumGuests['included'] == 1 && $minimumGuests['number'] > ($response['requiredTotalNumberOfGuests'] + $response['unrequiredTotalNumberOfGuests'])) {
-                    
-                    $response['isGuests'] = false;
-                    $response['message'] = sprintf(__('The total number of people must be %s or more.', 'booking-package'), $minimumGuests['number']);
-                    
-                } else if ($minimumGuests['number'] > $response['requiredTotalNumberOfGuests']) {
-                    
-                    $response['isGuests'] = false;
-                    $response['message'] = sprintf(__('The required total number of people must be %s or more.', 'booking-package'), $minimumGuests['number']);
-                    
-                }
-                
-                if ($response['isGuests'] === false) {
-                    
-                    return $response;
-                    
-                }
-                
-            }
-            
-            $maximumGuests = $limitNumberOfGuests['maximumGuests'];
-            if ($maximumGuests['enabled'] == 1 && $maximumGuests['number'] > 0) {
-                
-                if ($maximumGuests['included'] == 1 && $maximumGuests['number'] < ($response['requiredTotalNumberOfGuests'] + $response['unrequiredTotalNumberOfGuests'])) {
-                    
-                    $response['isGuests'] = false;
-                    $response['message'] = sprintf(__('The total number of people must be %s or less.', 'booking-package'), $maximumGuests['number']);
-                    
-                } else if ($maximumGuests['number'] < $response['requiredTotalNumberOfGuests']) {
-                    
-                    $response['isGuests'] = false;
-                    $response['message'] = sprintf(__('The required total number of people must be %s or less.', 'booking-package'), $maximumGuests['number']);
-                    
-                }
-                
-            }
+			if ($calendarAccount['type'] == 'day' && $isExtensionsValid === true) {
+				
+				$minimumGuests = $limitNumberOfGuests['minimumGuests'];
+				if ($minimumGuests['enabled'] == 1 && $minimumGuests['number'] > 0) {
+					
+					if ($minimumGuests['included'] == 1 && $minimumGuests['number'] > ($response['requiredTotalNumberOfGuests'] + $response['unrequiredTotalNumberOfGuests'])) {
+						
+						$response['isGuests'] = false;
+						$response['message'] = sprintf(__('The total number of people must be %s or more.', 'booking-package'), $minimumGuests['number']);
+						
+					} else if ($minimumGuests['included'] == 0 && $minimumGuests['number'] > $response['requiredTotalNumberOfGuests']) {
+						
+						$response['isGuests'] = false;
+						$response['message'] = sprintf(__('The required total number of people must be %s or more.', 'booking-package'), $minimumGuests['number']);
+						
+					}
+					
+					if ($response['isGuests'] === false) {
+						
+						return $response;
+						
+					}
+					
+				}
+				
+				$maximumGuests = $limitNumberOfGuests['maximumGuests'];
+				if ($maximumGuests['enabled'] == 1 && $maximumGuests['number'] > 0) {
+					
+					if ($maximumGuests['included'] == 1 && $maximumGuests['number'] < ($response['requiredTotalNumberOfGuests'] + $response['unrequiredTotalNumberOfGuests'])) {
+						
+						$response['isGuests'] = false;
+						$response['message'] = sprintf(__('The total number of people must be %s or less.', 'booking-package'), $maximumGuests['number']);
+						
+					} else if ($maximumGuests['included'] == 0 && $maximumGuests['number'] < $response['requiredTotalNumberOfGuests']) {
+						
+						$response['isGuests'] = false;
+						$response['message'] = sprintf(__('The required total number of people must be %s or less.', 'booking-package'), $maximumGuests['number']);
+						
+					}
+					
+				}
+				
+			}
 			
 			return $response;
 			
@@ -11623,7 +11885,7 @@
 								} else {
 									
 									$service[sanitize_text_field($key)] = sanitize_text_field($jsonList[$i][$key]);
-									if ($key === 'int') {
+									if ($value === 'int') {
 										
 										if (is_null($jsonList[$i][$key]) === true) {
 											
@@ -11760,17 +12022,11 @@
 				}
 				
 			}
-			
+			//start
 			if (intval($calendarAccount['guestsBool']) === 1 && is_array($guests)) {
 				
 				$countActives = 0;
 				foreach ($guests as $key => $guest) {
-					
-					if (intval($guest['reflectService']) === 1) {
-						
-						$hasReflectService = true;
-						
-					}
 					
 					if ($guest['active'] === 'true') {
 						
@@ -11790,11 +12046,11 @@
 			
 			#$costs = array(intval($service['cost_1']), intval($service['cost_2']), intval($service['cost_3']), intval($service['cost_4']), intval($service['cost_5']), intval($service['cost_6']));
 			$costsWithKey = array('cost_1' => intval($service['cost_1']), 'cost_2' => intval($service['cost_2']), 'cost_3' => intval($service['cost_3']), 'cost_4' => intval($service['cost_4']), 'cost_5' => intval($service['cost_5']), 'cost_6' => intval($service['cost_6']));
-			$response = array('hasReflectService' => $hasReflectService, 'hasMultipleCosts' => $hasMultipleCosts, 'max' => 0, 'min' => 0, 'costs' => array(), 'costsWithKey' => $costsWithKey, 'totalCost' => 0, 'guests' => null);
 			$costs = array();
 			if (intval($calendarAccount['guestsBool']) == 1 && is_array($guests)) {
 				
 				$hasSelectedReflectService = false;
+				$hasSelectedReflectServices = array();
 				foreach ($guests as $key => $guest) {
 					
 					if (isset($guest['costInServices']) === false) {
@@ -11825,17 +12081,31 @@
 					
 					if ($number > 0 && intval($guest['reflectService']) == 1) {
 						
+						array_push($hasSelectedReflectServices, 1);
 						$hasSelectedReflectService = true;
-						if (intval($costsWithKey[$costKey]) != 0) {
+						if ($number > 0) {
 							
-							$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'] . ' * ' . $this->formatCost($costsWithKey[$costKey], $currency);
-							$totalCost1 += $costsWithKey[$costKey] * $number;
+							if (intval($costsWithKey[$costKey]) != 0) {
+								
+								$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'] . ' * ' . $this->formatCost($costsWithKey[$costKey], $currency);
+								$totalCost1 += $costsWithKey[$costKey] * $number;
+								
+							} else {
+								
+								$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'];
+								
+							}
 							
 						}
 						
-					} else if ($number > 0 && intval($costsWithKey[$costKey]) != 0 && intval($guest['reflectService']) == 0) {
+					} else if ($number >= 0 && intval($guest['reflectService']) == 0) {
 						
-						$guests[$key]['content'] = $guest['name'] . ': ' . /**$this->formatCost($costsWithKey[$costKey], $currency) . ' * ' .**/ $option['name'];
+						array_push($hasSelectedReflectServices, 0);
+						if ($number > 0) {
+							
+							$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'];
+							
+						}
 						if ($totalCost2 == 0) {
 							
 							$totalCost2 = $costsWithKey['cost_1'];
@@ -11846,7 +12116,7 @@
 					
 				}
 				
-				if ($hasSelectedReflectService === true) {
+				if (count($hasSelectedReflectServices) > 0 && in_array(0, $hasSelectedReflectServices, true) === false) {
 					
 					$totalCost2 = 0;
 					
@@ -11862,17 +12132,31 @@
 					
 				}
 				
-				$response['costs'] = $costs;
-				$response['totalCost'] = $totalCost1 + $totalCost2;
-				$response['guests'] = $guests;
+				$response = array(
+					'hasReflectService' => $hasSelectedReflectService, 
+					'hasMultipleCosts' => $hasMultipleCosts, 
+					'max' => 0, 
+					'min' => 0, 
+					'costs' => $costs, 
+					'costsWithKey' => $costsWithKey, 
+					'totalCost' => $totalCost1 + $totalCost2, 
+					'guests' => $guests
+				);
 				
 			} else {
 				
 				$costs = array($costsWithKey['cost_1']);
-				$response['costs'] = $costs;
 				$totalCost += $costsWithKey['cost_1'];
-				$response['totalCost'] = $totalCost;
-				$response['guests'] = $guests;
+				$response = array(
+					'hasReflectService' => false, 
+					'hasMultipleCosts' => $hasMultipleCosts, 
+					'max' => 0, 
+					'min' => 0, 
+					'costs' => $costs, 
+					'costsWithKey' => $costsWithKey, 
+					'totalCost' => $totalCost, 
+					'guests' => $guests
+				);
 				
 			}
 			
@@ -12649,7 +12933,7 @@
 					$courseCost = $row['courseCost'];
 					#$responseGuests = json_decode($row['guests'], true);
 					$responseGuests = $this->jsonDecodeForGuests($row['guests']);
-					$servicesDetails1 = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", $coupon, $applicantCount, false);
+					$servicesDetails1 = $this->getSelectedServices($calendarAccount, json_decode($row['options'], true), $responseGuests['guests'], "options", array(), $applicantCount, false);
 					$services = $servicesDetails1['object'];
 					$courseTime = $servicesDetails1['time'];
 					$deleteSql = null;
@@ -12745,7 +13029,7 @@
 							
 						}
 						
-						$servicesDetails2 = $this->getSelectedServices($calendarAccount, $_POST['options'], $responseGuests['guests'], "options", $coupon, $applicantCount, false);
+						$servicesDetails2 = $this->getSelectedServices($calendarAccount, $_POST['options'], $responseGuests['guests'], "options", array(), $applicantCount, false);
 						$selectedServices = $servicesDetails2['object'];
 						$courseTime = $servicesDetails2['time'];
 						$totalCost = intval($servicesDetails2['cost']);
@@ -12757,7 +13041,9 @@
 						}
 						
 						$totalCost += $this->getSelectedGuestTotalAmount($calendarAccount, $responseGuests['guests'], true);
-						$taxes = $this->createTaxesDetails($accountKey, 'day', $totalCost, $bookingYMD, $applicantCount, null);
+						$totalCost = $this->getDiscountCostByCoupon($coupon, $totalCost);
+						$reflectAdditional = (isset($responseGuests['reflectAdditional']) && intval($responseGuests['reflectAdditional']) > 0) ? intval($responseGuests['reflectAdditional']) : 1;
+						$taxes = $this->createTaxesDetails($accountKey, 'day', $totalCost, $bookingYMD, $reflectAdditional, null);
 						for ($i = 0; $i < count($taxes); $i++) {
 							
 							$tax = $taxes[$i];
@@ -12767,7 +13053,7 @@
 								
 							} else if ($tax['type'] == 'surcharge') {
 								
-								$totalCost += $tax['taxValue'] * $applicantCount;
+								$totalCost += $tax['taxValue'] * $reflectAdditional;
 								
 							}
 							
@@ -14914,6 +15200,11 @@
 							$details = $tax['name'] . ': ' . $reflectAdditionalTitle . ' * ' . $cost;
 							array_push($surchargesDetails, $details);
 							
+						} else {
+							
+							$details = $tax['name'] . ' ' . $cost;
+    						array_push($surchargesDetails, $details);
+							
 						}
 						
 					}
@@ -15670,102 +15961,6 @@
 			
 		}
 		
-		
-		
-		public function scriptError($errors) {
-			
-			global $wpdb;
-			$params = array();
-			$date = date('U') - (1440 * 60);
-			
-			if (isset($errors['source']) === false) {
-				
-				$errors['source'] = '';
-				
-			}
-			
-			$table_name = $wpdb->prefix . "booking_package_error";
-			$sql = $wpdb->prepare(
-                "SELECT `key` FROM `" . $table_name . "` WHERE `date` > %d AND `message` = %s;", 
-                array(intval($date), sanitize_textarea_field($errors['msg']))
-            );
-			$row = $wpdb->get_row($sql, ARRAY_A);
-			
-			if (is_null($row)) {
-				
-				$wpdb->insert(
-                    $table_name, 
-                    array(
-                        'file' => sanitize_text_field($errors['file']), 
-                        'url' => sanitize_text_field($errors['url']), 
-                        'line' => intval($errors['line']), 
-                        'col' => intval($errors['col']), 
-                        'code' => sanitize_text_field($errors['code']), 
-                        'version' => sanitize_text_field($errors['version']), 
-                        'browser' => sanitize_text_field($errors['browser']), 
-                        'message' => sanitize_textarea_field($errors['msg']), 
-                        'date' => intval(date('U')),
-                    ), 
-                    array('%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d')
-                );
-				
-				$url = BOOKING_PACKAGE_EXTENSION_URL;
-				$response = array('status' => 'success', 'url' => $url);
-				
-				$params = array(
-					'mode' => 'scriptError',
-					'type' => sanitize_text_field($errors['type']), 
-					'url' => sanitize_text_field($errors['url']), 
-					'file' => sanitize_text_field($errors['file']), 
-					'msg' => sanitize_text_field($errors['msg']),
-					'line' => sanitize_text_field($errors['line']), 
-					'col' => sanitize_text_field($errors['col']),
-					'version' => sanitize_text_field($errors['version']),
-					'code' => sanitize_text_field($errors['code']),
-					'browser' => sanitize_text_field($errors['browser']),
-					'source' => sanitize_text_field($errors['source']),
-					'page' => $errors['page'],
-					'error' => $errors['error'],
-				);
-				
-				if (isset($params['message'])) {
-					
-					$params['msg'] = sanitize_text_field($errors['message']);
-					
-				}
-				
-				if (isset($errors['name'])) {
-					
-					$params['name'] = sanitize_text_field($errors['name']);
-					
-				}
-				
-				if (intval($params['line']) > 0 && empty($params['file']) === false) {
-					
-					$response['params'] = $params;
-					
-					$args = array(
-	                    'method' => 'POST',
-	                    'timeout' => $this->request_timeout, 
-	                    'body' => $params
-	                );
-	                $response = wp_remote_request("https://saasproject.net/lib/scriptError.php", $args);
-	                $statusCode = wp_remote_retrieve_response_code($response);
-					$response = json_decode(wp_remote_retrieve_body($response), true);
-					$params['sendStatus'] = true;
-					
-				}
-				
-			} else {
-				
-				$params['sendStatus'] = false;
-				
-			}
-			
-    		return $params;
-    		
-    	}
-    	
     	public function changeMaxAccountScheduleDay(){
     		
 			global $wpdb;
@@ -16039,12 +16234,6 @@
         		
         	}
         	
-        	if ($mode == 'scriptError') {
-				
-				$response = $this->scriptError($_POST);
-				
-			}
-			
 			if ($mode == 'createUser') {
 				
 				$response = $this->createUser(0, intval($_POST['accountKey']));

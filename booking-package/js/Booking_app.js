@@ -11,147 +11,6 @@
 /*globals Booking_Package_Input */
 /*globals Booking_App_ObjectsControl */
 
-/**
-var reservation_info = reservation_info;
-var booking_package_dictionary = booking_package_dictionary;
-
-var booking_Package = null;
-var bookingPackageUserFunction = null;
-
-document.addEventListener('DOMContentLoaded', function() {
-    
-    window.addEventListener('load', function(){
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        if (typeof reservation_info.googleAnalytics == 'string') {
-            
-            gtag('js', new Date());
-            gtag('config', reservation_info.googleAnalytics);
-            
-        }
-        
-        booking_Package = new Booking_Package(reservation_info, {status: 0}, booking_package_dictionary);
-        booking_Package.setGtag(gtag);
-        var judge = booking_Package.getJudge();
-        if (judge == true) {
-            
-            var locale_calendar = document.getElementById(reservation_info.locale_id);
-            if (booking_Package._myBookingDetailsBool == true) {
-                
-                if (parseInt(booking_Package._memberSetting.function_for_member) == 1 && parseInt(booking_Package._memberSetting.reject_non_membder) == 1 && parseInt(booking_Package._memberSetting.login) == 0) {
-                    
-                    locale_calendar.classList.remove('hidden_panel');
-                    return null;
-                    
-                }
-                
-                locale_calendar.classList.remove('hidden_panel');
-                booking_Package.myBookingDetails();
-                
-            } else {
-                
-                if (parseInt(booking_Package._memberSetting.function_for_member) == 1 && parseInt(booking_Package._memberSetting.reject_non_membder) == 1 && parseInt(booking_Package._memberSetting.login) == 0) {
-                    
-                    locale_calendar.classList.remove('hidden_panel');
-                    return null;
-                    
-                }
-                
-                booking_Package.getReservationData(parseInt(reservation_info['month']), parseInt(reservation_info['day']), parseInt(reservation_info['year']), parseInt(reservation_info['accountKey']), false, true, true, null);
-                
-            }
-            
-        }
-        
-        bookingPackageUserFunction = new Booking_package_user_function(reservation_info.accountKey);
-        booking_Package.setBookingPackageUserFunction(bookingPackageUserFunction);
-        try {
-            
-            var bookingPackageUserFunctionEvent = new Event('bookingPackageUserFunction');
-            window.dispatchEvent(bookingPackageUserFunctionEvent);
-            
-        } catch (e) {
-            
-        }
-        
-        window.addEventListener('resize', function(event) {
-            
-            if (typeof booking_Package == 'object') {
-                
-                var top = booking_Package.getHeaderHeight(false);
-                booking_Package.changeElementTop(top);
-                
-            }
-            
-        });
-        
-        window.addEventListener('scroll', function(event) {
-            
-            if (typeof booking_Package == 'object') {
-                
-                var top = booking_Package.getHeaderHeight(false);
-                booking_Package.changeElementTop(top);
-                
-            }
-            
-        });
-        
-        window.addEventListener('error', function(event) {
-            
-            var script_error = new scriptError(reservation_info, booking_package_dictionary, event.message, event.filename, event.lineno, event.colno, event.error, true);
-            if (booking_Package.getFunction() != null) {
-                
-                script_error.setFunction(booking_Package.getFunction());
-                script_error.setResponseText(booking_Package.getResponseText());
-                script_error.send();
-                
-            }
-            
-        }, false);
-        
-    });
-    
-});
-
-
-var reCAPTCHA_by_google_for_booking_package = function(token) {
-    
-    booking_Package.lockBooking(false, token, 'ReCAPTCHA');
-    
-};
-
-var expired_reCAPTCHA_by_google_for_booking_package = function() {
-    
-    booking_Package.lockBooking(true, null, 'ReCAPTCHA');
-    
-};
-
-var error_reCAPTCHA_by_google_for_booking_package = function(response) {
-    
-    booking_Package.lockBooking(true, null, 'ReCAPTCHA');
-    
-};
-
-var hCaptcha_for_booking_package = function(token) {
-    
-    booking_Package.lockBooking(false, token, 'hCaptcha');
-    
-};
-
-var expired_hCaptcha_for_booking_package = function() {
-    
-    booking_Package.lockBooking(true, null, 'hCaptcha');
-    
-};
-
-var error_hCaptcha_for_booking_package = function(response) {
-    
-    booking_Package.lockBooking(true, null, 'hCaptcha');
-    
-};
-**/
-
     function Booking_Package(reservation_info, booking_package_subscriptions, booking_package_dictionary) {
         
         var object = this;
@@ -2064,13 +1923,45 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
+            } else {
+                
+                let hasReflectServices = [];
+                let hasMultipleCosts = 0;
+                let guestsList = object.getGuestsList();
+                for (var i = 0; i < guestsList.length; i++) {
+                    
+                    const guestData = guestsList[i];
+                    if (guestData.active !== 'true') {
+                        
+                        continue;
+                        
+                    }
+                    const guests = JSON.parse(guestData.json);
+                    const reflectService = parseInt(guestData.reflectService);
+                    if ( reflectService === 1 ) {
+                        
+                        hasMultipleCosts++;
+                        
+                    }
+                    
+                    if (hasReflectServices.indexOf(guestData.costInServices) < 0) {
+                        
+                        hasReflectServices.push(guestData.costInServices);
+                        
+                    }
+                    
+                }
+                
+                if (hasMultipleCosts > 0 || hasReflectServices.length > 1) {
+                    
+                    totalCost = 0;
+                    
+                }
+                
             }
             
-            
-            
-            
             object._console.log("totalCost = " + totalCost);
-            if(totalCost != 0){
+            if (totalCost != 0) {
                 
                 var formatPrice = object._format.formatCost(totalCost, object._currency);
                 var rowPanel = object.createRowPanel(object._i18n.get("Total Amount"), formatPrice, null, null, null, null);
@@ -2166,7 +2057,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         object._console.log('reflectService = ' + reflectService);
         object._console.log('reflectAdditional = ' + reflectAdditional);
         object._console.log(reflectServiceTitle);
-        
+        /*
         var hasReflectService = false;
         if (parseInt(object._calendarAccount.guestsBool) == 1) {
             
@@ -2182,7 +2073,7 @@ var error_hCaptcha_for_booking_package = function(response) {
             }
             
         }
-        
+        */
         for (var key in services) {
             
             if (services[key].selected == 1) {
@@ -2207,11 +2098,13 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
+                let hasSelectedReflectServices = [];
                 if (reflectService > 0) {
                     
                     amount1 = 0;
                     amount2 = 0;
-                    //amount *= reflectService;
+                    
+                    var hasSelectedReflectService = false;
                     if (parseInt(object._calendarAccount.guestsBool) == 1) {
                         
                         for (var guestKey in guestsList) {
@@ -2223,7 +2116,8 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 object._console.log(guest.number);
                                 if (guest.number != null && guest.number > 0) {
                                     
-                                    hasReflectService = true;
+                                    hasSelectedReflectServices.push(1);
+                                    hasSelectedReflectService = true;
                                     amount1 += costsWithKey[guest.costInServices] * guest.number;
                                     object._console.log(costsWithKey[guest.costInServices]);
                                     
@@ -2234,19 +2128,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                                     defaultAmountForService[key] = costsWithKey[guest.costInServices];
                                     
                                 }
-                                /**
-                                if (defaultAmountForService == 0) {
-                                    
-                                    defaultAmountForService = costsWithKey[guest.costInServices];
-                                    
-                                }
-                                **/
                                 object._console.log('amount1 = ' + amount1);
                                 var costInService = document.createElement('div');
                                 costInService.textContent = guest.name + ': ' + guest.selectedName + ' * ' + object._format.formatCost(costsWithKey[guest.costInServices], object._currency);
                                 if (parseInt(costsWithKey[guest.costInServices]) == 0) {
                                     
-                                    costInService.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
+                                    costInService.textContent = guest.name + ': ' + guest.selectedName;
                                     
                                 }
                                 
@@ -2260,14 +2147,17 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 
                                 if (guest.number != null && guest.number >= 0) {
                                     
+                                    hasSelectedReflectServices.push(0);
+                                    hasSelectedReflectService = false;
                                     object._console.log(guest);
                                     object._console.log(costsWithKey);
-                                    //amount = costsWithKey[guest.costInServices];
-                                    amount2 = costsWithKey['cost_1'];
-                                    if (guest.selectedName != null && guest.number > 0) {
+                                    if (amount2 == 0) {
+                                        amount2 = costsWithKey['cost_1'];
+                                    }
+                                    if (guest.selectedName != null && guest.number >= 0) {
                                         
                                         var costInService = document.createElement('div');
-                                        costInService.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
+                                        costInService.textContent = guest.name + ': ' + guest.selectedName;
                                         costPerGuests.appendChild(costInService);
                                         
                                     }
@@ -2276,18 +2166,10 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 
                                 if (defaultAmountForService[key] == null) {
                                     
-                                    defaultAmountForService = costsWithKey['cost_1'];
+                                    defaultAmountForService[key] = costsWithKey['cost_1'];
                                     
                                 }
-                                /**
-                                if (defaultAmountForService == 0) {
-                                    
-                                    defaultAmountForService = costsWithKey['cost_1'];
-                                    
-                                }
-                                **/
                                 object._console.log('amount2 = ' + amount2);
-                                
                                 
                             }
                             
@@ -2301,12 +2183,26 @@ var error_hCaptcha_for_booking_package = function(response) {
                     
                 }
                 
-                object._console.error('hasReflectService = ' + hasReflectService);
-                if (hasReflectService === true) {
+                if (hasSelectedReflectServices.length > 0 &&  hasSelectedReflectServices.indexOf(0) < 0) {
                     
                     amount2 = 0;
                     
+                } else if (amount2 == 0 && costsWithKey['cost_1'] != null) {
+                    
+                    amount2 = parseInt(costsWithKey['cost_1']);
+                    
                 }
+                /*
+                if (hasSelectedReflectService === true) {
+                    
+                    amount2 = 0;
+                    
+                } else if (amount2 == 0 && costsWithKey['cost_1'] != null) {
+                    
+                    amount2 = parseInt(costsWithKey['cost_1']);
+                    
+                }
+                */
                 
                 var goods = {id: service.key, label: services[key].name, amount: amount1 + amount2, applicantCount: applicantCount, type: 'services'};
                 goodsList.push(goods);
@@ -2422,11 +2318,13 @@ var error_hCaptcha_for_booking_package = function(response) {
                             }
                             
                             var amount = parseInt(costsWithKey.cost_1);
+                            var hasSelectedReflectOptions = [];
                             if (reflectService > 0) {
                                 
                                 //amount *= reflectService;
                                 subtotal1 = 0;
                                 subtotal2 = 0;
+                                var hasSelectedReflectOption = false;
                                 if (parseInt(object._calendarAccount.guestsBool) == 1) {
                                     
                                     for (var guestKey in guestsList) {
@@ -2441,7 +2339,14 @@ var error_hCaptcha_for_booking_package = function(response) {
                                                 number = 0;
                                                 
                                             }
-                                            subtotal1 += costsWithKey[guest.costInServices] * number;
+                                            
+                                            if (number > 0) {
+                                                
+                                                hasSelectedReflectOptions.push(1);
+                                                hasSelectedReflectOption = true;
+                                                subtotal1 += costsWithKey[guest.costInServices] * number;
+                                                
+                                            }
                                             
                                             var costInOption = document.createElement('div');
                                             costInOption.textContent = guest.name + ': ' + object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' * ' + guest.selectedName;
@@ -2467,9 +2372,10 @@ var error_hCaptcha_for_booking_package = function(response) {
                                             
                                         } else {
                                             
-                                            if (guest.number != null && guest.number > 0) {
+                                            if (guest.number != null && guest.number >= 0) {
                                                 
                                                 //subtotal2 += costsWithKey[guest.costInServices];
+                                                hasSelectedReflectOptions.push(0);
                                                 subtotal2 = costsWithKey['cost_1'];
                                                 var costInOption = document.createElement('div');
                                                 costInOption.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
@@ -2519,9 +2425,13 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 
                             }
                             
-                            if (hasReflectService === true) {
+                            if (hasSelectedReflectOptions.length > 0 && hasSelectedReflectOptions.indexOf(0) < 0) {
                                 
                                 subtotal2 = 0;
+                                
+                            } else if (subtotal2 == 0 && costsWithKey['cost_1'] != null) {
+                                
+                                subtotal2 = parseInt(costsWithKey['cost_1']);
                                 
                             }
                             
@@ -2542,7 +2452,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                                 
                                 if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
                                     
-                                    var cost = object._format.formatCost(costsWithKey.cost_1, object._currency) + ' ';
+                                    var cost = object._format.formatCost(responseCosts.max, object._currency) + ' ';
                                     if (responseCosts.hasMultipleCosts === true) {
                                         
                                         object.createmMximumAndMinimumElements(responseCosts, optionPricePanel);
@@ -5556,7 +5466,7 @@ var error_hCaptcha_for_booking_package = function(response) {
         
         let fromPriceToPrice = document.createElement('span');
         fromPriceToPrice.classList.add('fromPriceToPrice');
-        fromPriceToPrice.textContent = object._i18n.get('From %s to %s', [object._format.formatCost(responseCosts.max, object._currency), object._format.formatCost(responseCosts.min, object._currency)]);
+        fromPriceToPrice.textContent = object._i18n.get('From %s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
         panel.appendChild(fromPriceToPrice);
         
     }
@@ -7402,7 +7312,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                     guestsList[key].id = 'guests_' + guests.key
                     guestsList[key].values = values;
                     guestsList[key].type = "SELECT";
-                    guestsList[key].value = 0;
+                    guestsList[key].value = null;
                     guestsList[key].index = 0;
                     guestsList[key].person = 0;
                     guestsList[key].number = 0;
@@ -7507,7 +7417,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         }
                         
                         var responseGuests = object._servicesControl.getValueReflectGuests(guestsList);
-                        if (responseGuests.reflectService == 0) {
+                        if (responseGuests.reflectService == 0 && responseGuests.reflectAdditional == 0) {
                             
                             selectedGuest = false;
                             
@@ -7576,6 +7486,7 @@ var error_hCaptcha_for_booking_package = function(response) {
                         if (responseLimitGuests.isGuests === true) {
                             
                             totalNumberOfGuestsPanel.classList.remove('error_empty_value');
+                            totalNumberOfGuestsPanel.removeAttribute("data-errorInput");
                             totalNumberOfGuestsErrorPanel.classList.add('hidden_panel');
                             totalNumberOfGuestsErrorPanel.textContent = null;
                             
@@ -9709,24 +9620,37 @@ var error_hCaptcha_for_booking_package = function(response) {
             
             createOrder: function(data, actions) {
                 
+               var total = 0;
                 var goodsList = object.getGoodsList();
-                var total = 0;
-                for (var i = 0; i < goodsList.length; i++) {
+                
+                if (calendarAccount.type == "hotel") {
                     
-                    total += goodsList[i].amount;
+                    for (var i = 0; i < goodsList.length; i++) {
+                        total += goodsList[i].amount;
+                    }
+                    
+                } else {
+                    
+                    var amount = 0;
+                    var taxes = 0;
+                    for (var i = 0; i < goodsList.length; i++) {
+                        if (goodsList[i].type == 'services' || goodsList[i].type == 'options') {
+                            amount += goodsList[i].amount;
+                        } else {
+                            taxes += goodsList[i].amount;
+                        }
+                    }
+                    
+                    if (parseInt(object._calendarAccount.guestsBool) == 1) {
+                        var guestsList = object.getGuestsList();
+                        const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
+                        amount += totalAmountForGuests.totalAmount;
+                    }
+                    
+                    amount = object.getDiscountCostByCoupon(amount);
+                    total = amount + taxes;
                     
                 }
-                
-                if (calendarAccount.type === 'day' && parseInt(object._calendarAccount.guestsBool) == 1) {
-                    
-                    var guestsList = object.getGuestsList();
-                    const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guestsList);
-                    //console.log(totalAmountForGuests);
-                    total += totalAmountForGuests.totalAmount;
-                    
-                }
-                
-                total = object.getDiscountCostByCoupon(total);
                 
                 if (currency.toLocaleUpperCase() != 'JPY') {
                     
@@ -10762,10 +10686,23 @@ var error_hCaptcha_for_booking_package = function(response) {
             var guestsList = object.getGuestsList();
             if (object._calendarAccount.type == 'day' && guestsList.length > 0) {
                 
+                var hasIncludedGuest = false;
+                var includedGuestCount = 0;
                 for (var key in guestsList) {
                     
                     var guest = guestsList[key];
                     object._console.log(guest);
+                    if (guest.guestsInCapacity == 'included') {
+                        
+                        hasIncludedGuest = true;
+                        if (guest.number != null && parseInt(guest.number) > 0) {
+                            
+                            includedGuestCount += parseInt(guest.number);
+                            
+                        }
+                        
+                    }
+                    
                     var guestPanel = document.getElementById(object._prefix + guest.id);
                     if (parseInt(guest.required) == 1 && parseInt(guest.index) == 0) {
                         
@@ -10793,6 +10730,12 @@ var error_hCaptcha_for_booking_package = function(response) {
                 var totalNumberOfGuestsErrorPanel = totalNumberOfGuestsPanel.getElementsByClassName('errorMessage')[0];
                 //totalNumberOfGuestsValuePanel.textContent = responseGuests.totalNumberOfGuestsTitle;
                 var responseLimitGuests = object._servicesControl.verifyToLimitGuests(responseGuests, object._calendarAccount.limitNumberOfGuests, object._calendarAccount.type);
+                if (responseLimitGuests.isGuests === true && hasIncludedGuest === true && includedGuestCount <= 0) {
+                    
+                    responseLimitGuests.isGuests = false;
+                    responseLimitGuests.errorMessage = object._i18n.get('Please select at least one guest.');
+                    
+                }
                 object._console.log(responseLimitGuests);
                 
                 const totalGuestsLabel = document.createElement('div');
