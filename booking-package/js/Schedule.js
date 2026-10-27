@@ -6141,7 +6141,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                         }
                         
-                        saveButton.disabled = false;
+                        if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && object._isExtensionsValid == 1) {
+                            
+                            saveButton.disabled = false;
+                            
+                        }
+                        
                         addButton.disabled = false;
                         for (var formKey in columns) {
                             
@@ -6196,7 +6201,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 editBool = true;
                 if (action == "close") {
                     
-                    saveButton.disabled = false;
+                    if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && object._isExtensionsValid == 1) {
+                        
+                        saveButton.disabled = false;
+                        
+                    }
                     addButton.disabled = false;
                     
                 } else {
@@ -6231,9 +6240,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 taxes = object.changeRank('key', 'dnd_column', taxes, panel, 'changeTaxesRank', account, function(json){
                     
                     taxes = json;
-                    saveButton.disabled = true;
-                    var panelList = panel.getElementsByClassName('dnd_column');
-                    object.reviewPanels(panelList);
+                    object.taxPanel(taxes, account);
                     
                 });
                 
@@ -6900,7 +6907,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	table.setAttribute("class", "form-table");
     	addPanel.appendChild(table);
     	
-    	if (account.enableFixCalendar != null && account.monthForFixCalendar != null && account.yearForFixCalendar) {
+    	if (account.enableFixCalendar != null && account.monthForFixCalendar != null && account.yearForFixCalendar != null) {
     	    
     	    account.fixCalendar = {enableFixCalendar: account.enableFixCalendar, monthForFixCalendar: account.monthForFixCalendar, yearForFixCalendar: account.yearForFixCalendar};
     	    
@@ -6999,8 +7006,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (inputTypeList.maxBookingSlotsPerDay != null) {
             
-            console.error(inputTypeList.maxBookingSlotsPerDay);
-            console.error(account.maxBookingSlotsPerDay);
             inputTypeList.maxBookingSlotsPerDay.valueList[0].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsPerDayStatus);
             inputTypeList.maxBookingSlotsPerDay.valueList[1].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnMonday);
             inputTypeList.maxBookingSlotsPerDay.valueList[2].value = parseInt(account.maxBookingSlotsPerDay.maxBookingSlotsOnTuesday);
@@ -7511,8 +7516,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             inputTypeList.type.value = calendarType;
+            if (inputTypeList.paymentMethod != null) {
+                
+                inputTypeList.paymentMethod.value = 'locally';
+                
+            }
+            
+            if (inputTypeList.unavailableDaysFromToday != null) {
+                
+                inputTypeList.unavailableDaysFromToday.value = 0;
+                
+            }
+            
+            if (inputTypeList.startOfWeek != null) {
+                
+                inputTypeList.startOfWeek.value = object._startOfWeek;
+                
+            }
+            
+            if (inputTypeList.fixCalendar != null) {
+                
+                inputTypeList.fixCalendar.value = { enableFixCalendar: 0, monthForFixCalendar: parseInt(object.schedule_data.month) - 1, yearForFixCalendar: parseInt(object.schedule_data.year) };
+                
+            }
+            
+            if (inputTypeList.hotelCharges != null && inputTypeList.hotelCharges.valueList != null) {
+                
+                for (var i = 0; i < inputTypeList.hotelCharges.valueList.length; i++) {
+                    
+                    inputTypeList.hotelCharges.valueList[i].value = 0;
+                    
+                }
+                
+            }
+            
             if (inputTypeList.cost != null) {
+                
                 inputTypeList.cost.value = 0;
+                
             }
             
             if (inputTypeList.messagingService != null) {
@@ -7870,6 +7911,8 @@ document.addEventListener('DOMContentLoaded', function() {
             inputTypeList.active.value = "true";
             inputTypeList.type.value = "tax";
             inputTypeList.tax.value = "tax_exclusive";
+            inputTypeList.tax.disabled = 0;
+            inputTypeList.method.disabled = 0;
             inputTypeList.target.value = "room";
             inputTypeList.method.value = "addition";
             inputTypeList.scope.value = "day";
@@ -8330,7 +8373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             
-            if ((mode == object._prefix + 'addCourse' || mode == 'addCoupons') && key == 'expirationDate' && object._locale == 'ja') {
+            if ((mode == object._prefix + 'addCourse' || mode == 'addCoupons' || mode == 'addTaxes' || mode == 'addTax' || mode == 'addExtraCharge') && key == 'expirationDate' && object._locale == 'ja') {
                 
                 object._console.log(inputPanel);
                 var expirationDateFrom = inputPanel.getElementsByClassName('expirationDateFrom');
@@ -9084,9 +9127,9 @@ document.addEventListener('DOMContentLoaded', function() {
     		
     		object._console.log(key);
             var data = inputTypeList[key];
-            if ( (mode == 'updateTaxes' || mode == 'updateExtraCharge') && account.type == 'day' && (key == 'target' || key == 'scope') ) {
+            if ( (mode == 'updateTaxes' || mode == 'updateTax' || mode == 'updateExtraCharge') && account.type == 'day' && (key == 'target' || key == 'scope') ) {
                 
-                //continue;
+                continue;
                 
             }
             
@@ -9315,7 +9358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                
             }
             
-            if ((mode == object._prefix + 'updateCourse' || mode == 'updateCoupons') && key == 'expirationDate' && object._locale == 'ja') {
+            if ((mode == object._prefix + 'updateCourse' || mode == 'updateCoupons' || mode == 'updateTaxes' || mode == 'updateTax' || mode == 'updateExtraCharge') && key == 'expirationDate' && object._locale == 'ja') {
                 
                 object._console.log(inputPanel);
                 var expirationDateFrom = inputPanel.getElementsByClassName('expirationDateFrom');

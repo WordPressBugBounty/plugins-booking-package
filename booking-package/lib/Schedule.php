@@ -3835,6 +3835,7 @@
 					'displayRemainingCapacityHasMoreThenThreshold' => sanitize_text_field($_POST['displayRemainingCapacityHasMoreThenThreshold']),
 					'displayRemainingCapacityHasLessThenThreshold' => sanitize_text_field($_POST['displayRemainingCapacityHasLessThenThreshold']),
 					'displayRemainingCapacityHas0' => sanitize_text_field($_POST['displayRemainingCapacityHas0']),
+					'startOfWeek' => isset($_POST['startOfWeek']) ? intval($_POST['startOfWeek']) : 0,
 					'icalToken' => hash('ripemd160', date('U')),
 					'cancellationOfBooking' => intval($_POST['cancellationOfBooking']),
 					'allowCancellationVisitor' => intval($_POST['allowCancellationVisitor']),
@@ -3887,15 +3888,15 @@
 					'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($maxBookingSlotsPerDay) ),
 				), 
 				array(
-					'%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', 
-					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', 
-					'%s', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s',
-					'%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%d',
-					'%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', 
-					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-					'%d', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d',
-					'%s', '%s', '%d', '%d', '%d', '%d', '%s', '%d', '%s', 
-				)
+						'%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', 
+						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', 
+						'%s', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', 
+						'%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', 
+						'%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', 
+						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
+						'%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%s', 
+						'%d', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%d', '%s', 
+					)
 			);
 			
 			$accountKey = $wpdb->insert_id;
@@ -4308,13 +4309,13 @@
 					array('key' => intval($_POST['accountKey'])),
 					array(
 						'%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', 
-						'%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d',
+						'%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d', 
+						'%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d',
 						'%d', '%s', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', 
 						'%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
 						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
 						'%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', '%d', 
-						'%s', '%d', '%s', 
+						'%s', '%d', '%s',
 					),
 					array('%d')
 				);
@@ -4333,13 +4334,13 @@
 				
 			}**/
 			
-			if ($bool === 1) {
+			if ($bool !== false) {
 				
 				return $this->getCalendarAccountListData();
 				
 			} else {
 				
-				return array("status" => $bool);
+				return array("status" => 0);
 				
 			}
 			
@@ -4472,6 +4473,15 @@
 				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
 				
 				$table_name = $wpdb->prefix . "booking_package_subscriptions";
+				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
+				
+				$table_name = $wpdb->prefix . "booking_package_hotel_options";
+				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
+				
+				$table_name = $wpdb->prefix . "booking_package_coupons";
+				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
+				
+				$table_name = $wpdb->prefix . "booking_package_regular_holidays";
 				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
 				
 				$response = $this->getCalendarAccountListData();
@@ -12125,7 +12135,7 @@
 					} else if ($number >= 0 && intval($guest['reflectService']) == 0) {
 						
 						array_push($hasSelectedReflectServices, 0);
-						if ($number > 0) {
+						if ($index > 0 && $number >= 0) {
 							
 							$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'];
 							

@@ -1528,8 +1528,7 @@
                 
                 'messagingService' => array('key' => 'messagingService', 'name' => __('Messaging Services', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Disabled', 'booking-package'), /**'facebookMessenger' => 'Facebook Messenger',**/ 'whatsApp' => 'WhatsApp', /**'line' => 'LINE',**/ 'twilio' => 'Twilio SMS')),
                 
-                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'stripe_paypay' => sprintf( __('Pay with %s', 'booking-package'), 'PayPay' ), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'))),
-                'subscriptionIdForStripe' => array('key' => 'subscriptionIdForStripe', 'name' => 'Product ID of subscription for Stripe', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('subscriptionIdForStripe' => array('title' => 'Product ID', 'inputType' => 'TEXT'), 'enableSubscriptionForStripe' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableSubscriptionForStripe" => "")),
+                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'locally', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'stripe_paypay' => sprintf( __('Pay with %s', 'booking-package'), 'PayPay' ), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'))),                'subscriptionIdForStripe' => array('key' => 'subscriptionIdForStripe', 'name' => 'Product ID of subscription for Stripe', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('subscriptionIdForStripe' => array('title' => 'Product ID', 'inputType' => 'TEXT'), 'enableSubscriptionForStripe' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableSubscriptionForStripe" => "")),
                 'termsOfServiceForSubscription' => array('key' => 'termsOfServiceForSubscription', 'name' => 'The terms of service for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('termsOfServiceForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enableTermsOfServiceForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableTermsOfServiceForSubscription" => "")),
                 'privacyPolicyForSubscription' => array('key' => 'privacyPolicyForSubscription', 'name' => 'The privacy policy for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('privacyPolicyForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enablePrivacyPolicyForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enablePrivacyPolicyForSubscription" => "")),
                 #'subscriptionIdForPayPal' => array('key' => 'subscriptionIdForPayPal', 'name' => 'Subscription ID for PayPal', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0),
@@ -4851,7 +4850,7 @@
                 $table_name, 
                 array(
                     'accountKey'    => intval($accountKey), 
-                    'name'          => sanitize_text_field($_POST['name']),  
+                    'name'          => sanitize_text_field( stripslashes($_POST['name']) ),  
                     'ranking'       => intval($_POST['rank']),
                     'active'        => sanitize_text_field($_POST['active']),
                     'type'          => sanitize_text_field($_POST['type']),
@@ -4939,7 +4938,7 @@
 				$wpdb->update(
                     $table_name,
                     array(
-                        'name'          => sanitize_text_field($_POST['name']),  
+                        'name'          => sanitize_text_field( stripslashes($_POST['name']) ),  
                         'active'        => sanitize_text_field($_POST['active']),
                         'type'          => sanitize_text_field($_POST['type']),
                         'tax'          => sanitize_text_field($_POST['tax']),
@@ -5061,7 +5060,7 @@
 				$wpdb->update(
                     $table_name,
                     array(
-                        'name'          => sanitize_text_field($_POST['name']),  
+                        'name'          => sanitize_text_field( stripslashes($_POST['name']) ),  
                         'active'        => sanitize_text_field($_POST['active']),
                         'type'          => sanitize_text_field($_POST['type']),
                         'tax'          => sanitize_text_field($_POST['tax']),

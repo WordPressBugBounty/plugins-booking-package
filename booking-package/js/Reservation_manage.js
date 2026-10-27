@@ -8585,9 +8585,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                             defaultAmountForService = costsWithKey[guest.costInServices];
                                             
                                         }
-                                        var costInService = document.createElement('div');
-                                        costInService.textContent = guest.name + ': ' + guest.selectedName;
-                                        costPerGuests.appendChild(costInService);
+                                        
+                                        if (parseInt(guest.index) > 0 && guest.number >= 0) {
+                                            
+                                            var costInService = document.createElement('div');
+                                            costInService.textContent = guest.name + ': ' + guest.selectedName;
+                                            costPerGuests.appendChild(costInService);
+                                            
+                                        }
                                         
                                     }
                                     
@@ -8819,7 +8824,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                                                     
                                                     hasSelectedReflectOptions.push(0);
                                                     amount2 = costsWithKey['cost_1'];
-                                                    if (guest.number > 0) {
+                                                    if (parseInt(guest.index) > 0 && guest.number >= 0) {
                                                         
                                                         var costInOption = document.createElement('div');
                                                         costInOption.textContent = guest.name + ': ' + guest.selectedName;

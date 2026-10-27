@@ -2154,7 +2154,7 @@
                                     if (amount2 == 0) {
                                         amount2 = costsWithKey['cost_1'];
                                     }
-                                    if (guest.selectedName != null && guest.number >= 0) {
+                                    if (guest.selectedName != null && parseInt(guest.index) > 0 && guest.number >= 0) {
                                         
                                         var costInService = document.createElement('div');
                                         costInService.textContent = guest.name + ': ' + guest.selectedName;
@@ -2377,9 +2377,13 @@
                                                 //subtotal2 += costsWithKey[guest.costInServices];
                                                 hasSelectedReflectOptions.push(0);
                                                 subtotal2 = costsWithKey['cost_1'];
-                                                var costInOption = document.createElement('div');
-                                                costInOption.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
-                                                costPerOptions.appendChild(costInOption);
+                                                if (guest.selectedName != null && parseInt(guest.index) > 0 && guest.number >= 0) {
+                                                    
+                                                    var costInOption = document.createElement('div');
+                                                    costInOption.textContent = guest.name + ': ' + /** object._format.formatCost(costsWithKey[guest.costInServices], object._currency) + ' = ' + **/ guest.selectedName;
+                                                    costPerOptions.appendChild(costInOption);
+                                                    
+                                                }
                                                 
                                             }
                                             
@@ -9396,7 +9400,6 @@
             for (var i = 0; i < guests.length; i++) {
                 
                 var guest = guests[i];
-                guest.number = 0;
                 var guestPanel = document.getElementById(object._prefix + 'guests_' + guest.key);
                 object._console.log(guest);
                 object._console.log(guestPanel);
