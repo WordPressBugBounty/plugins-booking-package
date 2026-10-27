@@ -2873,10 +2873,10 @@
                                     }
                                     
                                     //taxValue = (amount + optionsAmount + (additionalFee * nights)) * (value / (100 + value));
-                                    taxValue = (visitorsDetails.amount + personAmount + optionsAmount) * (value / (100 + value));
-                                    if (personAmount > 0) {
+                                    taxValue = (amount + personAmount + optionsAmount) * (value / (100 + value));
+                                    if (this._courseBool == true) {
                                         
-                                        taxValue = (visitorsDetails.amount + personAmount + optionsAmount) * (value / (100 + value));
+                                        taxValue = (amount + personAmount + courseAmount + optionsAmount) * (value / (100 + value));
                                         
                                     }
                                     taxValue = Math.floor(taxValue);
@@ -2911,11 +2911,6 @@
                             
                         }
                         
-                        if (tax.method == 'addition' && tax.type == 'tax' && tax.tax == 'tax_inclusive') {
-                            
-                            visitorsDetails.amount -= taxValue;
-                            
-                        }
                         
                     } else if (tax.target == 'guest') {
                         
@@ -3076,11 +3071,11 @@
                         
                         if (tax.method === 'multiplication' && tax.tax === 'tax_inclusive') {
                             
-                            taxValue = ((visitorsDetails.amount * applicantCount) + (visitorsDetails.extraChargeAmount * applicantCount) + personAmount + optionsAmount) * (value / (100 + value));
+                            taxValue = ((visitorsDetails.amount * applicantCount) + visitorsDetails.extraChargeAmount + personAmount + optionsAmount) * (value / (100 + value));
                             
                         } else if (tax.method === 'multiplication' && tax.tax === 'tax_exclusive') {
                             
-                            taxValue =  (value / 100) * ((visitorsDetails.amount * applicantCount) + (visitorsDetails.extraChargeAmount * applicantCount) + personAmount + optionsAmount);
+                            taxValue =  (value / 100) * ((visitorsDetails.amount * applicantCount) + visitorsDetails.extraChargeAmount + personAmount + optionsAmount);
                             
                         } else if (tax.method === 'addition' && tax.target === 'room') {
                             

@@ -7717,6 +7717,14 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         }
         /** Select guests with Hotel **/
         
+        /** Empty guests and options with Hotel **/
+        if (hotelOptions.length == 0 && guestsList.length == 0) {
+            
+            object._hotel.emptyGuestsAndOptions(roomNo);
+            
+        }
+        /** Empty guests and options with Hotel **/
+        
         return roomPanel;
         
     };

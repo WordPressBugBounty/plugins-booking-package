@@ -4372,8 +4372,8 @@
                 $table_name, 
                 array(
                     'accountKey'            => intval($accountKey), 
-                    'name'                  => sanitize_text_field($_POST['name']), 
-                    'description'           => sanitize_textarea_field($_POST['description']),
+                    'name'                  => sanitize_text_field( stripslashes($_POST['name']) ), 
+                    'description'           => sanitize_textarea_field( stripslashes($_POST['description']) ),
                     'cost_1'                => intval($_POST['cost_1']), 
                     'cost_2'                => intval($_POST['cost_2']), 
                     'cost_3'                => intval($_POST['cost_3']), 
@@ -4610,9 +4610,8 @@
                 $wpdb->insert($table_name,$source);
                 
             }
-
-            $sql = $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE `accountKey` = %d ORDER BY ranking ASC;", array($accountKey));
-            return $wpdb->get_results($sql, ARRAY_A);
+            
+            return $this->getCourseList($accountKey);
             
         }
         
@@ -4632,9 +4631,8 @@
                 array('key' => intval($_POST['key']), 'accountKey' => intval($accountKey)), 
                 array('%d', '%d')
             );
-            $sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
-            $rows = $wpdb->get_results($sql, ARRAY_A);
-            return $rows;
+            
+            return $this->getCourseList($accountKey);
             
         }
         
@@ -5016,7 +5014,7 @@
                 $table_name, 
     			array(
                     'accountKey'    => intval($accountKey), 
-    				'name'          => sanitize_text_field($_POST['name']),  
+    				'name'          => sanitize_text_field( stripslashes($_POST['name']) ),  
     				'ranking'       => intval($_POST['rank']),
     				'active'        => sanitize_text_field($_POST['active']),
     				'type'          => sanitize_text_field($_POST['type']),
@@ -5453,9 +5451,7 @@
 				
 			}**/
             
-            $sql = $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
-            $rows = $wpdb->get_results($sql, ARRAY_A);
-            return $rows;
+            return $this->getCourseList($accountKey);
             
         }
         
@@ -5500,9 +5496,13 @@
                 
                 foreach ($options as $key => $value) {
                     
-                    if (is_null($value) || empty($value) || $value == 'null') {
+                    if (is_null($value) || trim((string) $value) === '' || $value === 'null') {
                         
                         unset($options[$key]);
+                        
+                    } else {
+                            
+                        $options[$key] = strval($value);
                         
                     }
                     
@@ -5522,11 +5522,11 @@
                 }
                 
                 $item = array(
-                    "id"                => $id, 
-                    "name"              => sanitize_text_field($_POST["name"]), 
-                    "description"       => sanitize_textarea_field($_POST["description"]),
+                    "id"                => sanitize_text_field($id), 
+                    "name"              => sanitize_text_field( stripslashes($_POST["name"]) ), 
+                    "description"       => sanitize_textarea_field( stripslashes($_POST["description"]) ),
                     "value"             => "", 
-                    "uri"               => sanitize_textarea_field($_POST["uri"]),
+                    "uri"               => sanitize_textarea_field( stripslashes($_POST["uri"]) ),
                     "type"              => sanitize_text_field($_POST["type"]), 
                     "active"            => sanitize_text_field($_POST["active"]), 
                     "options"           => $options, 
@@ -5537,7 +5537,7 @@
                     "isAddress"         => sanitize_text_field($_POST["isAddress"]),
                     "isTerms"           => sanitize_text_field($_POST["isTerms"]),
                     "isAutocomplete"    => sanitize_text_field($_POST["isAutocomplete"]),
-                    "placeholder"        => sanitize_text_field($_POST["placeholder"]),
+                    "placeholder"        => sanitize_text_field( stripslashes($_POST["placeholder"]) ),
                 );
                 
                 if (isset($_POST['targetCustomers'])) {
@@ -5627,9 +5627,13 @@
                 
                 foreach ($options as $key => $value) {
                     
-                    if (is_null($value) || empty($value) || $value == 'null') {
+                    if (is_null($value) || trim((string) $value) === '' || $value === 'null') {
                         
                         unset($options[$key]);
+                        
+                    } else {
+                            
+                        $options[$key] = strval($value);
                         
                     }
                     
@@ -5643,9 +5647,9 @@
                     
                     if (intval($i) == intval($_POST['key']) && $value->id == $id) {
                         
-                        $value->name                = sanitize_text_field($_POST['name']);
-                        $value->description         = sanitize_textarea_field($_POST['description']);
-                        $value->uri                 = sanitize_text_field($_POST['uri']);
+                        $value->name                = sanitize_text_field( stripslashes($_POST['name']) );
+                        $value->description         = sanitize_textarea_field( stripslashes($_POST['description']) );
+                        $value->uri                 = sanitize_text_field( stripslashes($_POST['uri']) );
                         $value->active              = sanitize_text_field($_POST['active']);
                         $value->type                = sanitize_text_field($_POST['type']);
                         $value->options             = $options;
@@ -5656,7 +5660,7 @@
                         $value->isSMS               = sanitize_text_field($_POST['isSMS']);
                         $value->isTerms             = sanitize_text_field($_POST['isTerms']);
                         $value->isAutocomplete      = sanitize_text_field($_POST['isAutocomplete']);
-                        $value->placeholder         = sanitize_text_field($_POST["placeholder"]);
+                        $value->placeholder         = sanitize_text_field( stripslashes($_POST["placeholder"]) );
                         if (isset($_POST['targetCustomers'])) {
                             
                             $value->targetCustomers = sanitize_text_field($_POST['targetCustomers']);
@@ -5794,7 +5798,7 @@
                 $data = json_decode($row['data']);
                 foreach ((array) $data as $key => $value) {
                     
-                    $search = array_search($value->name, $keyList);
+                    $search = array_search($value->id, $keyList);
                     if ($search !== false && isset($indexList[$search])) {
                         
                         $index = intval($indexList[$search]);
@@ -5805,6 +5809,7 @@
                 }
                 
                 ksort($newData);
+                $newData = array_values($newData);
                 $json = json_encode($newData);
                 if (defined('JSON_NUMERIC_CHECK')) {
                     
@@ -6057,10 +6062,10 @@
             if (is_null($object) === false) {
                 
                 $object = json_decode($object, true);
-                $object['subject'] = sanitize_text_field($_POST['subject']);
-                $object['content'] = sanitize_textarea_field(htmlspecialchars($_POST['content'], ENT_QUOTES|ENT_HTML5));
-                $object['subjectForAdmin'] = sanitize_text_field($_POST['subjectForAdmin']);
-                $object['contentForAdmin'] = sanitize_textarea_field(htmlspecialchars($_POST['contentForAdmin'], ENT_QUOTES|ENT_HTML5));
+                $object['subject'] = sanitize_text_field( stripslashes($_POST['subject']) );
+                $object['content'] = sanitize_textarea_field( htmlspecialchars( stripslashes($_POST['content']), ENT_QUOTES|ENT_HTML5 ) );
+                $object['subjectForAdmin'] = sanitize_text_field( stripslashes($_POST['subjectForAdmin']) );
+                $object['contentForAdmin'] = sanitize_textarea_field( htmlspecialchars( stripslashes($_POST['contentForAdmin']), ENT_QUOTES|ENT_HTML5) );
                 $object['enable'] = intval($_POST['enableEmail']);
                 $object['enableSMS'] = 0;
                 $object['format'] = sanitize_text_field($_POST['format']);
@@ -6201,15 +6206,15 @@
             $accountKey = intval($_POST['accountKey']);
             $mail_id = sanitize_text_field($_POST['mail_id']);
             
-            $subject = sanitize_text_field($_POST['subject']);
-            $content = sanitize_textarea_field(htmlspecialchars($_POST['content'], ENT_QUOTES|ENT_HTML5));
+            $subject = sanitize_text_field( stripslashes($_POST['subject']) );
+            $content = sanitize_textarea_field( htmlspecialchars( stripslashes($_POST['content']), ENT_QUOTES|ENT_HTML5) );
             
-            $subjectForAdmin = sanitize_text_field($_POST['subjectForAdmin']);
-            $contentForAdmin = sanitize_textarea_field(htmlspecialchars($_POST['contentForAdmin'], ENT_QUOTES|ENT_HTML5));
+            $subjectForAdmin = sanitize_text_field(stripslashes($_POST['subjectForAdmin']));
+            $contentForAdmin = sanitize_textarea_field( htmlspecialchars( stripslashes($_POST['contentForAdmin']), ENT_QUOTES|ENT_HTML5)  );
             
-            $subjectForIcalendar = sanitize_text_field($_POST['subjectForIcalendar']);
-            $locationForIcalendar = sanitize_text_field($_POST['locationForIcalendar']);
-            $contentForIcalendar = sanitize_textarea_field(htmlspecialchars($_POST['contentForIcalendar'], ENT_QUOTES|ENT_HTML5));
+            $subjectForIcalendar = sanitize_text_field( stripslashes($_POST['subjectForIcalendar']) );
+            $locationForIcalendar = sanitize_text_field( stripslashes($_POST['locationForIcalendar']) );
+            $contentForIcalendar = sanitize_textarea_field( htmlspecialchars( stripslashes($_POST['contentForIcalendar']), ENT_QUOTES|ENT_HTML5) );
             
             $enable = intval($_POST['enableEmail']);
             $enableSMS = intval($_POST['enableSms']);

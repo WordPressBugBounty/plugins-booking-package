@@ -592,7 +592,8 @@
     
     Booking_Package_Hotel.prototype.addOptions = function(key, options, room) {
         
-        this._options[key] = options;
+        var clonedOptions = JSON.parse(JSON.stringify(options));
+        this._options[key] = clonedOptions;
         /** Rooms **/
         if (this._rooms[room] == null) {
             
@@ -600,7 +601,7 @@
             
         }
         this._roomNumber.push(room);
-        this._rooms[room]['options'][key] = options;
+        this._rooms[room]['options'][key] = clonedOptions;
         this._console.log('room = ' + room);
         this._console.log(this._rooms);
         /** Rooms **/
@@ -615,7 +616,8 @@
     
     Booking_Package_Hotel.prototype.addGuests = function(key, guests, room){
         
-        this._guestsList[key] = guests;
+        var clonedGuests = JSON.parse(JSON.stringify(guests));
+        this._guestsList[key] = clonedGuests;
         /** Rooms **/
         if (this._rooms[room] == null) {
             
@@ -623,7 +625,7 @@
             
         }
         this._roomNumber.push(room);
-        this._rooms[room]['guests'][key] = guests;
+        this._rooms[room]['guests'][key] = clonedGuests;
         this._console.log('room = ' + room);
         this._console.log(this._rooms);
         /** Rooms **/
@@ -643,10 +645,11 @@
         object._console.log("key " + key + " index = " + index + " room = " + room);
         object._console.log(object._options);
         object._console.log(this._rooms);
-        if (this._options[key] != null) {
+        var options = this._rooms[room]['options'];
+        if (options[key] != null) {
             
-            this._options[key].index = parseInt(index);
-            object._console.log(this._options[key]);
+            options[key].index = parseInt(index);
+            object._console.log(options[key]);
             
             
             this._responseGuests = object.checkGuestsAndOptions(room);
@@ -779,13 +782,13 @@
         object._console.log(this._calendarAccount);
         object._console.log(this._guestsList);
         object._console.log(this._rooms);
-        
-        if (this._guestsList[key] != null) {
+        var guests = this._rooms[room]['guests'];
+        if (guests[key] != null) {
             
-            this._guestsList[key].index = parseInt(index);
-            this._guestsList[key].person = parseInt(person);
-            object._console.log(this._guestsList[key]);
-            
+            guests[key].index = parseInt(index);
+            guests[key].person = parseInt(person);
+            object._console.log(guests[key]);
+            this._rooms[room]['guests'] = guests;
             
             this._responseGuests = object.checkGuestsAndOptions(room);
             
@@ -1065,13 +1068,47 @@
         
         this._responseGuests.status = true;
         this._responseGuests.applicantCount = applicantCount;
-        this._responseGuests.requiredGuests = requiredGuests;
-        this._responseGuests.additionalFee = amount;
-        this._responseGuests.person = person;
         this._responseGuests.guestsList = guests;
         this._responseGuests.rooms[room] = details;
-        this._responseGuests.adult = adult;
-        this._responseGuests.children = children;
+        
+        this._responseGuests.booking = true;
+        this._responseGuests.requiredGuests = true;
+        this._responseGuests.requiredOptions = true;
+        this._responseGuests.adult = 0;
+        this._responseGuests.children = 0;
+        this._responseGuests.person = 0;
+        this._responseGuests.additionalFee = 0;
+        this._responseGuests.personAmount = 0;
+        this._responseGuests.optionsAmount = 0;
+
+        for (var roomKey in this._responseGuests.rooms) {
+            
+            var roomData = this._responseGuests.rooms[roomKey];
+            this._responseGuests.adult += roomData.adult;
+            this._responseGuests.children += roomData.children;
+            this._responseGuests.person += roomData.person;
+            this._responseGuests.additionalFee += roomData.additionalFee;
+            this._responseGuests.personAmount += roomData.personAmount;
+            this._responseGuests.optionsAmount += roomData.optionsAmount;
+            if (roomData.booking == false) {
+                
+                this._responseGuests.booking = false;
+                
+            }
+            
+            if (roomData.requiredGuests == false) {
+                
+                this._responseGuests.requiredGuests = false;
+                
+            }
+            
+            if (roomData.requiredOptions == false) {
+                
+                this._responseGuests.requiredOptions = false;
+                
+            }
+            
+        }
         
         this._subtotals = object.updateSubTotals(this._responseGuests);
         
@@ -1456,9 +1493,9 @@
                             
                         } else if (options.range == 'allDays' && options.target == 'guests') {
                             
-                            price = nights * (room.adult * parseInt(selectedOption.adult)) + (room.children * parseInt(selectedOption.child));
+                            price = nights * ((room.adult * parseInt(selectedOption.adult)) + (room.children * parseInt(selectedOption.child)));
                             
-                        } else if (options.range == 'allDays' && options.target == 'room') {
+}                        else if (options.range == 'allDays' && options.target == 'room') {
                             
                             price = nights * parseInt(selectedOption.room);
                             

@@ -4973,7 +4973,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         addButton.disabled = false;
-                        saveButton.disabled = false;
+                        if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false) {
+                            
+                            saveButton.disabled = false;
+                            
+                        }
+                        
                         for (var formKey in columns) {
                             
                             columns[formKey].classList.remove("hidden_panel");
@@ -5026,8 +5031,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     editBool = true;
                     if (action == "close") {
                         
-                        saveButton.disabled = false;
                         addButton.disabled = false;
+                        if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false) {
+                            
+                            saveButton.disabled = false;
+                            
+                        }
                         
                     } else {
                         
@@ -5056,7 +5065,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         saveButton.onclick = function(event){
             
-            formDataList = object.changeRank('name', 'dnd_column', formDataList, panel, 'changeFormRank', account, function(json){
+            formDataList = object.changeRank('id', 'dnd_column', formDataList, panel, 'changeFormRank', account, function(json){
                 
                 formData = json;
                 saveButton.disabled = true;
@@ -5453,12 +5462,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         saveButton.onclick = function(event){
             
-                courseList = object.changeRank('key', 'dnd_column', courseList, panel, 'changeCourseRank', account, function(json){
+            courseList = object.changeRank('key', 'dnd_column', courseList, panel, 'changeCourseRank', account, function(json){
+
                 courseList = json;
                 saveButton.disabled = true;
                 var panelList = panel.getElementsByClassName('dnd_column');
                 object.reviewPanels(panelList);
-                
+                object.createCoursePanel(courseList, account, callback);
+
             });
             
             object._console.log(courseList);
@@ -7378,6 +7389,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (mode == object._prefix + 'addCourse') {
             
+            inputTypeList.active.value = 'true';
+            if (inputTypeList.selectOptions != null) {
+                
+                inputTypeList.selectOptions.value = '0';
+                
+            }
+            
             var courseTimeList = {};
             for (var i = 5; i < 1440; i += 5) {
                 
@@ -7385,6 +7403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             inputTypeList['time']['valueList'] = courseTimeList;
+            inputTypeList['time']['value'] = 5;
             
             if (inputTypeList.options != null) {
                 
@@ -7399,15 +7418,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             
-        	if (inputTypeList.expirationDate != null) {
+            if (inputTypeList.expirationDate != null) {
                 
+                var nowDate = new Date();
                 inputTypeList.expirationDate.valueList[0].value = 0;
+                inputTypeList.expirationDate.valueList[1].value = nowDate.getMonth() + 1;
+                inputTypeList.expirationDate.valueList[2].value = nowDate.getDate();
+                inputTypeList.expirationDate.valueList[3].value = nowDate.getFullYear();
+                inputTypeList.expirationDate.valueList[4].value = nowDate.getMonth() + 1;
+                inputTypeList.expirationDate.valueList[5].value = nowDate.getDate();
+                inputTypeList.expirationDate.valueList[6].value = nowDate.getFullYear();
                 
             }
             
             if (inputTypeList.cost != null) {
                 
                 inputTypeList.cost.value = 0;
+                
+            }
+            
+            if (inputTypeList.costs != null) {
+                
+                for (var i = 0; i < inputTypeList.costs.valueList.length; i++) {
+                    
+                    inputTypeList.costs.valueList[i].value = 0;
+                    
+                }
                 
             }
             
@@ -7451,9 +7487,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     inputTypeList[key].value = "customersAndUsers";
                     
-                } else if (key == 'isAutocomplete') {
+                } else if (key == 'isAutocomplete' || key == 'active') {
                     
                     inputTypeList[key].value = "true";
+                    
+                } else if (key == 'id' || key == 'name' || key == 'description' || key == 'uri' || key == 'placeholder' || key == 'options' || key == 'value') {
+                    
+                    inputTypeList[key].value = '';
                     
                 }
                 
@@ -8416,12 +8456,22 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (mode == 'addForm') {
                 
                 response = object.getInputData(inputTypeList, inputData);
+                if (typeof response.id == 'string') {
+                    
+                    response.id = response.id.replace(/[^0-9a-zA-Z_-]/g, '');
+                    if (response.id.length === 0) {
+                        
+                        response.id = false;
+                        
+                    }
+                    
+                }
                 object._console.log(response);
                 let nullNum = 0;
                 let options = JSON.parse(response.options);
                 for (let i = 0; i < options.length; i++) {
                     
-                    if (options[i] === null) {
+                    if (options[i] == null || String(options[i]).trim().length === 0) {
                         
                         nullNum++;
                         
@@ -8433,7 +8483,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     window.alert(object._i18n.get("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", [object._i18n.get('Type'), object._i18n.get('Options')]));
                     return false;
-                    response.options = false;
                     
                 }
                 
@@ -8457,17 +8506,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         var guest = guests[key];
                         object._console.log(guest);
-                        if (guest.price.length == 0) {
+                        if (guest.price == null || String(guest.price).trim().length === 0) {
                             
                             guest.price = 0;
                             
                         }
-                        if (guest.number.length == 0 || guest.price.length == 0 || guest.name.length == 0) {
+                        
+                        if (guest.number == null || String(guest.number).trim().length === 0 || guest.name == null || String(guest.name).trim().length === 0) {
                             
                             response.json = false;
                             break;
                             
                         }
+
+                    }
+                    
+                    if (response.json !== false) {
+                        
+                        response.json = JSON.stringify(guests);
                         
                     }
                     
@@ -9584,7 +9640,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let options = JSON.parse(response.options);
                 for (let i = 0; i < options.length; i++) {
                     
-                    if (options[i] === null) {
+                    if (options[i] == null) {
                         
                         nullNum++;
                         
@@ -9614,29 +9670,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     
                     var guests = JSON.parse(response.json);
-                    object._console.log(guests);
                     for (var key in guests) {
                         
                         var guest = guests[key];
                         object._console.log(guest);
-                        if (guest.price == null) {
+                        if (guest.price == null || String(guest.price).trim().length === 0) {
                             
                             guest.price = 0;
                             
                         }
                         
-                        if (guest.price.length == 0) {
-                            
-                            guest.price = 0;
-                            
-                        }
-                        if (guest.number.length == 0 || guest.price.length == 0 || guest.name.length == 0) {
+                        if (guest.number == null || String(guest.number).trim().length === 0 || guest.name == null || String(guest.name).trim().length === 0) {
                             
                             response.json = false;
                             break;
                             
                         }
+
+                    }
                     
+                    if (response.json !== false) {
+                        
+                        response.json = JSON.stringify(guests);
+                        
                     }
                 
                 }
@@ -9996,7 +10052,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var edit_icalendar_message = document.getElementById('edit_icalendar_message');
                 var attachICalendar = document.getElementById('attachICalendar');
                 attachICalendar.checked = false;
-                if (id === 'mail_canceled_by_visitor_user' || id === 'mail_deleted') {
+                if (id === 'booking_cancellation_notification' || id === 'booking_deleted_notification') {
                     
                     attachICalendar.disabled = true;
                     for_icalendar.classList.add('hidden_panel');
@@ -10310,7 +10366,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     let attachCancellationURL = false;
-                    var content = [value, valueForAdmin, contentForIcalendar];
+                    var content = [value, valueForAdmin, valueForIcalendar];
                     for (var i = 0; i < content.length; i++) {
                         
                         attachCancellationURL = content[i].includes("[bookingCancellationUrl]");
@@ -10341,7 +10397,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         var slipRemainder = true;
                         let message = object._i18n.get('Please enable the "%s" item in the "Settings" tab.', [ object._i18n.get('Booking reminder') ] );
-                        if (mailMessageData.key === 'mail_reminder' && object._isExtensionsValid === 0 && (enableEmail === 1 || enableSms === 1)) {
+                        if (mailMessageData.key === 'booking_reminder_notification' && (object._isExtensionsValid === 0 || parseInt(account.bookingReminder) === 0) && (enableEmail === 1 || enableSms === 1)) {
                             
                             slipRemainder = false;
                             object._console.log(slipRemainder);
@@ -11029,7 +11085,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 }
                 
-                if (input.value != null) {
+                if (input.value != null && typeof input.value.split == 'function') {
                     
                     var checkValues = input.value.split(",");
                     if (checkValues.length > 1) {
@@ -12024,10 +12080,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function create_tr(tr_index, table, input, account, valueList){
             
-            if (typeof valueList == "string") {
+            if (typeof valueList == "string" || typeof valueList == "number") {
                 
-                valueList = [valueList];
-                
+                valueList = [String(valueList)];
+
             }
             object._console.log(valueList);
             
@@ -12102,10 +12158,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         textBox.setAttribute("data-type", type.type);
                         textBox.setAttribute("class", "regular-text dayOfTheWeekValue");
                         textBox.type = "text";
-                        if (valueList[option.key] != null) {
+                        if (valueList[option.key] != null && String(valueList[option.key]).length > 0) {
                             
                             textBox.value = valueList[option.key];
                             inputData[inputName][tr_index][option.key] = valueList[option.key];
+                            
+                        } else {
+                            
+                            textBox.value = 0;
+                            valueList[option.key] = 0;
+                            inputData[inputName][tr_index][option.key] = 0;
                             
                         }
                         filedTd.appendChild(textBox);
@@ -12266,18 +12328,39 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             var dataKey = this.getAttribute("data-key");
                             var value = this.value;
-                            for (var key in valueList) {
+                            var currentList = JSON.parse(inputData[inputName][dataKey].json);
+                            for (var key in currentList) {
                                 
+                                if (document.getElementById(tr_index + "_" + key) == null) {
+                                    
+                                    continue;
+                                    
+                                }
                                 var textValue = document.getElementById(tr_index + "_" + key).value;
-                                valueList[key] = textValue;
+                                if (key == 'cost' || key == 'cost_1' || key == 'cost_2' || key == 'cost_3' || key == 'cost_4' || key == 'cost_5' || key == 'cost_6') {
+                                    
+                                    textValue = parseInt(textValue);
+                                    if (isNaN(textValue)) {
+                                        
+                                        textValue = 0;
+                                        
+                                    }
+                                    document.getElementById(tr_index + "_" + key).value = textValue;
+                                    
+                                } else {
+                                    
+                                    textValue = textValue.replace(/\"/g, "'");
+                                    
+                                }
+                                currentList[key] = textValue;
                                 object._console.log("textValue = " + textValue);
                                 
                             }
                             
-                            var json = JSON.stringify(valueList);
+                            var json = JSON.stringify(currentList);
                             inputData[inputName][dataKey].json = json;
                             inputData[inputName][dataKey].value = value;
-                            object._console.log(valueList);
+                            object._console.log(currentList);
                             object._console.log(json);
                             object._console.log("dataKey = " + dataKey + " value = " + value);
                             

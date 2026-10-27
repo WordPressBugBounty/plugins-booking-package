@@ -2177,7 +2177,7 @@
                         
                     } else {
                         
-                        amount1 = costsWithKey['cost_1'];
+                        amount1 = parseInt(costsWithKey['cost_1']);
                         
                     }
                     
@@ -2187,7 +2187,7 @@
                     
                     amount2 = 0;
                     
-                } else if (amount2 == 0 && costsWithKey['cost_1'] != null) {
+                } else if (amount1 == 0 && amount2 == 0 && costsWithKey['cost_1'] != null) {
                     
                     amount2 = parseInt(costsWithKey['cost_1']);
                     
@@ -2397,7 +2397,7 @@
                                     
                                 } else {
                                     
-                                    subtotal1 = costsWithKey['cost_1'];
+                                    subtotal1 = parseInt(costsWithKey['cost_1']);
                                     
                                 }
                                 
@@ -2429,7 +2429,7 @@
                                 
                                 subtotal2 = 0;
                                 
-                            } else if (subtotal2 == 0 && costsWithKey['cost_1'] != null) {
+                            } else if (subtotal1 == 0 && subtotal2 == 0 && costsWithKey['cost_1'] != null) {
                                 
                                 subtotal2 = parseInt(costsWithKey['cost_1']);
                                 
@@ -4690,7 +4690,7 @@
         /** Empty guests and options with Hotel **/
         if (hotelOptions.length == 0 && guestsList.length == 0) {
             
-            console.error(hotelOptions);
+            
             object._hotel.emptyGuestsAndOptions(roomNo);
             
         }

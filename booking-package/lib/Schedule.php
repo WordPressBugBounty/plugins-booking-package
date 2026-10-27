@@ -4777,6 +4777,30 @@
 						
 						$unixTime = date('U', mktime(0, 0, 0, intval($date['month']), $date['day'], intval($date['year'])));
 						$week = date('w', mktime(0, 0, 0, intval($date['month']), $date['day'], intval($date['year'])));
+						$weekKey = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+						$defaultCost = intval($account['cost']);
+						if ($account['type'] == 'hotel') {
+							
+							$chargeKey = 'hotelChargeOn' . $weekKey[intval($week)];
+							if (isset($account[$chargeKey])) {
+								
+								$defaultCost = intval($account[$chargeKey]);
+								
+							}
+							$nextDayUnixTime = $unixTime + 1440 * 60;
+							if (isset($nationalHoliday[$nextDayUnixTime]) && intval($nationalHoliday[$nextDayUnixTime]['status']) == 1) {
+								
+								$defaultCost = intval($account['hotelChargeOnDayBeforeNationalHoliday']);
+								
+							}
+							if (isset($nationalHoliday[$unixTime]) && intval($nationalHoliday[$unixTime]['status']) == 1) {
+								
+								$defaultCost = intval($account['hotelChargeOnNationalHoliday']);
+								
+							}
+							
+						}
+						
 						$scheduleList[$key] = array(
 							"accountKey" => $accountKey, 
 							"unixTime" => $unixTime,
@@ -4794,7 +4818,7 @@
 							"uploadDate" => 0,
 							"publishingDate" => 0,
 							"publishingDateObjects" => null,
-							"cost" => $account['cost'],
+							"cost" => $defaultCost,
 							"capacity" => $account['numberOfRoomsAvailable'],
 							"remainder" => $account['numberOfRoomsAvailable'],
 						);
@@ -13227,11 +13251,12 @@
 						array(
 							'praivateData' => sanitize_text_field( json_encode($form) ), 
 							'accommodationDetails' => sanitize_text_field( json_encode($accommodationDetails) ), 
+							'taxes' => serialize($accommodationDetails['taxes']),
 							'checkIn' => intval($checkIn), 
 							'checkOut' => intval($checkOut)
 						),
 						array('key' => intval($_POST['updateKey'])),
-						array('%s', '%s', '%d', '%d'),
+						array('%s', '%s', '%s', '%d', '%d'),
 						array('%d')
 					);
 					
@@ -14433,7 +14458,7 @@
 			$rooms = $accommodationDetails['rooms'];
 			foreach ((array) $rooms as $room) {
 				
-				$personAmount += intval($accommodationDetails['personAmount']);
+				$personAmount += intval($room['personAmount']);
 				$optionsAmount += intval($room['optionsAmount']);
 				$additionalFee += intval($room['additionalFee']) * intval($accommodationDetails['nights']);
 				$people += intval($room['person']);
@@ -15029,17 +15054,22 @@
 					
 				}
 				
-				if (isset($_POST['receivedUri'])) {
+				$receivedUrl = '';
+				if (!empty($customer['permalink'])) {
 					
-					$contents = str_replace('[receivedUri]', $_POST['receivedUri'], $contents);
+					$receivedUrl = $customer['permalink'];
+					
+				} else if (isset($_POST['receivedUri'])) {
+					
+					$receivedUrl = sanitize_url(stripslashes($_POST['receivedUri']));
+					
+				} else if (isset($_POST['receivedUrl'])) {
+					
+					$receivedUrl = sanitize_url(stripslashes($_POST['receivedUrl']));
 					
 				}
-				
-				if (isset($_POST['receivedUrl'])) {
-					
-					$contents = str_replace('[receivedUrl]', $_POST['receivedUri'], $contents);
-					
-				}
+				$contents = str_replace('[receivedUri]', $receivedUrl, $contents);
+				$contents = str_replace('[receivedUrl]', $receivedUrl, $contents);
 				
 				$guestsDetails = array();
 				$optionsDetails = array();
@@ -15529,8 +15559,12 @@
 				array(intval($accountKey), $email_id)
 			);
 			$row = $wpdb->get_row($sql, ARRAY_A);
-			$event_data = array('ical_subject' => '', 'ical_location' => '', 'ical_description' => '');
-			$string_array = array('customer_email_subject' => $row['subject'], 'customer_email_body' => $row['content'], 'admin_email_subject' => $row['subjectForAdmin'], 'admin_email_body' => $row['contentForAdmin'], 'ical_subject' => $row['subjectForIcalendar'], 'ical_location' => $row['locationForIcalendar'], 'ical_description' => $row['contentForIcalendar'],  'options' => array() );
+			$event_data = array(
+				'ical_subject' => !empty($row['subjectForIcalendar']) ? $row['subjectForIcalendar'] : $row['subject'],
+				'ical_location' => $row['locationForIcalendar'],
+				'ical_description' => htmlspecialchars_decode($row['contentForIcalendar'], ENT_QUOTES|ENT_HTML5),
+			);
+			$string_array = array('customer_email_subject' => $row['subject'], 'customer_email_body' => $row['content'], 'admin_email_subject' => $row['subjectForAdmin'], 'admin_email_body' => $row['contentForAdmin'], 'ical_subject' => $event_data['ical_subject'], 'ical_location' => $row['locationForIcalendar'], 'ical_description' => $row['contentForIcalendar'],  'options' => array() );
 			$translated_texts = apply_filters('booking_package_get_translate_text', $string_array, 'notification', $row['mail_id'], intval($accountKey), $local);
             if (is_array($translated_texts) && array_key_exists('customer_email_subject', $translated_texts) && array_key_exists('customer_email_body', $translated_texts) && array_key_exists('admin_email_subject', $translated_texts) && array_key_exists('admin_email_body', $translated_texts) && array_key_exists('ical_subject', $translated_texts) && array_key_exists('ical_location', $translated_texts) && array_key_exists('ical_description', $translated_texts) ) {
 				
@@ -15539,12 +15573,11 @@
 				$row['subjectForAdmin'] = $translated_texts['admin_email_subject'];
 				$row['contentForAdmin'] = $translated_texts['admin_email_body'];
 				
-				$event_data['ical_subject'] = $translated_texts['ical_subject'];
+				$event_data['ical_subject'] = !empty($translated_texts['ical_subject']) ? $translated_texts['ical_subject'] : $row['subject'];
 				$event_data['ical_location'] = $translated_texts['ical_location'];
-				$event_data['ical_description'] = $translated_texts['ical_description'];
+				$event_data['ical_description'] = htmlspecialchars_decode($translated_texts['ical_description'], ENT_QUOTES|ENT_HTML5);
 				
             }
-            
             
 			$emailSubject = $row['subject'];
 			$emailBody = $row['content'];
@@ -15637,6 +15670,7 @@
 				
 			}
 			
+			$responseList = array('body' => null, 'to' => $to, 'from' => $from, 'sendVisitor' => null, 'sendControl' => null, 'headers' => array(), 'visitorEmail' => array(), 'response' => array(), 'params' => array(), 'enabledSMS' => $enableSMS);
 			foreach ((array) $sendEamilList as $emailKey => $target) {
 				
 				$emailSubject = $target['subject'];
@@ -15644,12 +15678,6 @@
 				$emailBody = $target['content'];
 				
 				$emailBody = htmlspecialchars_decode($emailBody, ENT_QUOTES|ENT_HTML5);
-				if ($emailFormat != "text") {
-					
-					$emailBody = str_replace(PHP_EOL, '', $emailBody);
-					
-				}
-				
 				if (strpos($emailBody, '[stop_email]') !== false) {
 					
 					continue;
@@ -15663,15 +15691,15 @@
 				$emailBody = $notificationContents['emailBody'];
 				$visitorEmail = $notificationContents['visitorEmail'];
 				$visitorSMS = $notificationContents['visitorSMS'];
+				$smsBody = strip_tags($emailBody);
 				
 				$emailSubject = str_replace(array("\r\n", "\r", "\n"), '', $emailSubject);
 				
-				$headers = array("From: " . $from . "\r\n", "Return-Path: " . $from . "\r\n", "Reply-To: " . $from . "\r\n");
+				$headers = array("From: " . $from . "\r\n", "Reply-To: " . $from . "\r\n");
 				$attachments = array();
 				$attachICalendar = array();
-				if ($attachICalendarInEmail === 1) {
+				if ($attachICalendarInEmail === 1 && $email_id !== 'booking_cancellation_notification' && $email_id !== 'booking_deleted_notification') {
 					
-					#array_push($headers, 'Content-Disposition: attachment; filename=' . $attachICalendar['temp_file_name']);
 					$ical = new booking_package_iCal($this->prefix, $this->pluginName, $this->currencies);
 					$attachICalendar = $ical->attachICalendar($calendarAccount, $event_data, $email_id, $bookingID, null, 'attach');
 					if ($attachICalendar['status'] === true) {
@@ -15689,15 +15717,13 @@
 				} else {
 					
 					array_push($headers, "Content-Type: text/html; charset=UTF-8");
-					$bodyStyle = 'word-wrap: break-word; white-space: pre;';
-					$header = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-					$header .= '<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Booking email</title></head>';
-					$header .= '<body style="'.$bodyStyle.'">';
-					#$emailBody = $header.$emailBody."</body></html>";
+					$emailBody = nl2br($emailBody);
 					
 				}
 				
-				$responseList = array('body' => $emailBody, 'to' => $to, 'from' => $from, 'sendVisitor' => null, 'headers' => $headers, 'visitorEmail' => $visitorEmail, 'response' => array(), 'params' => array(), 'enabledSMS' => $enableSMS);
+				$responseList['body'] = $emailBody;
+				$responseList['headers'] = $headers;
+				$responseList['visitorEmail'] = $visitorEmail;
 				if (function_exists('mb_language')) {
 					
 					mb_language("uni");
@@ -15712,7 +15738,6 @@
 				
 				if ($enableEmail == 1) {
 					
-					$sendVisitor = false;
 					if (count($visitorEmail) != 0 && $emailKey == 'visitor') {
 						
 						$sendVisitor = wp_mail($visitorEmail, $emailSubject, $emailBody, $headers, $attachments);
@@ -15729,10 +15754,9 @@
 						
 					}
 					
-					
 				}
 				
-				if ($attachICalendarInEmail === 1 && $attachICalendar['status'] === true) {
+				if ($attachICalendarInEmail === 1 && isset($attachICalendar['status']) && $attachICalendar['status'] === true) {
 					
 					unlink($attachICalendar['temp_file']);
 					
@@ -15740,8 +15764,7 @@
 				
 				if ($enableSMS == 1 && $emailKey == 'visitor') {
 					
-					#$this->sendMessagingServices($calendarAccount, $visitorSMS, '', $emailBody);
-					$responseList['twilioSMS'] = $this->twilioSMS($visitorSMS, $emailBody);
+					$responseList['twilioSMS'] = $this->twilioSMS($visitorSMS, $smsBody);
 					
 				}
 				
@@ -16036,7 +16059,7 @@
 					"SELECT * FROM `" . $table_name . "` WHERE `status` = 'approved' AND `bookingReminder` = 0 AND `accountKey` = %d AND `scheduleUnixTime` >= %d AND `scheduleUnixTime` <= %d;", 
 					array(
 						intval($calendarAccount['key']),
-						intval(mktime($hour, 0, 0, $month, $day, $year)),
+						intval(date('U')),
 						intval(mktime($hour, 59, 59, $month, $day, $year)),
 					)
 				);
