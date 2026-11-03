@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Booking_Package"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 05:09+0000\n"
+"POT-Creation-Date: 2026-11-03 17:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: MASAAKI_TANAKA"
@@ -71,11 +71,11 @@ msgstr ""
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:103
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:143
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:241
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2141
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2435
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2538
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2579
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2614
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2441
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2544
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2585
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:54
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:167
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:210
@@ -99,30 +99,30 @@ msgstr ""
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:808
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:814
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:820
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1348
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1372
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1468
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1503
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1504
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1505
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1517
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1518
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1519
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1660
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1681
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1704
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1747
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1895
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2072
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2141
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2297
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2363
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2435
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2463
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2538
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2579
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2580
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2614
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1354
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1378
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1474
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1509
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1510
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1511
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1523
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1524
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1525
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1666
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1687
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1710
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1753
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1901
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2078
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2147
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2303
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2369
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2441
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2469
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2544
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2585
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2586
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2499
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2506
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2693
@@ -150,15 +150,15 @@ msgstr ""
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:808
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:814
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:820
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1348
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1372
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1506
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1520
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1354
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1378
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1512
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1526
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1660
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1681
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1792
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1895
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1532
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1666
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1687
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1798
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1901
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5849
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6811
 msgid "Disabled"
@@ -189,9 +189,9 @@ msgid "Last name"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:128
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1504
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1518
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2617
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1510
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1524
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2623
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:48
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2381
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2472
@@ -226,42 +226,42 @@ msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:141
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:239
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2139
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2385
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2434
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2536
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2575
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2607
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2616
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2145
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2391
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2440
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2542
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2581
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2613
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6925
 msgid "Name"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:142
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:240
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2140
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2537
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2578
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2613
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2146
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2543
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2584
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2619
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6926
 msgid "Description"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:144
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2580
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2615
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2586
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6931
 msgid "Required"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:144
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2539
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2616
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2617
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2619
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2545
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2623
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2625
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2626
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2627
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:810
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2206
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2220
@@ -272,14 +272,14 @@ msgid "Yes"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:144
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2539
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2615
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2616
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2617
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2619
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2545
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2623
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2625
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2626
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2627
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:811
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2207
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2221
@@ -294,32 +294,32 @@ msgid "Applicable Price Level"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:145
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2219
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2387
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2225
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2393
 msgid "Base Price"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:145
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2229
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2239
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2249
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2259
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2269
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2388
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2389
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2390
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2391
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2392
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2235
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2245
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2255
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2265
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2275
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2394
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2395
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2396
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2397
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2398
 #, php-format
 msgid "Price %s"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:146
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:242
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2142
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2181
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2439
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2148
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2187
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2445
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2628
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7699
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7710
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7722
@@ -340,14 +340,14 @@ msgid "Count Total Guests Toward Availability"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:147
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1602
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1608
 msgid "Excluded"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:147
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1602
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1714
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1757
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1608
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1720
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1763
 msgid "Included"
 msgstr ""
 
@@ -360,10 +360,10 @@ msgid "Enable Quantity-Based Price Adjustment for Extra Charges"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:152
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2365
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2543
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2582
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2371
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2549
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2588
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2630
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:133
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2933
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6776
@@ -373,70 +373,70 @@ msgid "Options"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:166
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1376
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1542
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1382
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1548
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6733
 msgid "Monday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:167
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1385
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1548
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1391
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1554
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6734
 msgid "Tuesday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:168
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1394
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1554
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1400
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1560
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6735
 msgid "Wednesday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:169
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1403
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1560
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1409
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1566
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6736
 msgid "Thursday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:170
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1412
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1566
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1418
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1572
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6737
 msgid "Friday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:171
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1421
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1572
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1427
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1578
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6738
 msgid "Saturday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:172
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1430
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1578
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1436
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1584
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13327
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6732
 msgid "Sunday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:173
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1584
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1590
 msgid "Day Before Public Holiday"
 msgstr ""
 
@@ -445,22 +445,22 @@ msgid "National Holiday"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:180
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1718
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1761
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3893
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3977
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1724
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1767
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3899
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3983
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7009
 msgid "Number of Guests"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:181
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2559
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2565
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3021
 msgid "Display Text"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:182
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2436
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2442
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5813
 msgid "Extra Charge"
 msgstr ""
@@ -470,40 +470,40 @@ msgid "Costs"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:208
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2109
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2404
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2115
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2410
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6720
 msgid "Jan"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:209
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2110
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2405
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2116
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2411
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6721
 msgid "Feb"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:210
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2111
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2406
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2117
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2412
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6722
 msgid "Mar"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:211
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2112
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2407
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2118
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2413
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6723
 msgid "Apr"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:212
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2113
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2408
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2119
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2414
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13326
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3210
@@ -514,56 +514,56 @@ msgid "May"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:213
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2114
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2409
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2120
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2415
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6725
 msgid "Jun"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:214
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2115
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2410
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2121
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2416
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6726
 msgid "Jul"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:215
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2116
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2411
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2122
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2417
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6727
 msgid "Aug"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:216
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2117
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2412
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2123
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2418
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6728
 msgid "Sep"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:217
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2118
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2413
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2124
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2419
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6729
 msgid "Oct"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:218
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2119
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2414
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2125
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2420
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6730
 msgid "Nov"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:219
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2120
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2415
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2126
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2421
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13332
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6731
 msgid "Dec"
@@ -574,15 +574,15 @@ msgid "Coupon Code"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:242
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2142
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2148
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2628
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2178
 msgid "Customers"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:242
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2142
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2148
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2628
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:622
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:702
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2354
@@ -604,21 +604,21 @@ msgid "One-Time Use Per User"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:246
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2281
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2444
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2287
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2450
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7064
 msgid "Expiration Date"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:266
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2301
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2467
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2307
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2473
 msgid "From"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:296
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2331
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2497
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2337
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2503
 msgid "To"
 msgstr ""
 
@@ -635,8 +635,8 @@ msgid "Percentage Discount"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:327
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2441
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2608
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2447
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2614
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6930
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7060
 msgid "Value"
@@ -647,23 +647,23 @@ msgid "Site Name"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:519
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1305
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1311
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6911
 msgid "Email Address"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:530
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1316
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1322
 msgid "Recipient Email Address"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:539
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1325
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1331
 msgid "Sender Name"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:548
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1334
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1340
 msgid "Sending Email Address"
 msgstr ""
 
@@ -1000,165 +1000,165 @@ msgstr ""
 msgid "Compact"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1029
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1035
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2381
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2574
 msgid "Registered"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1030
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1032
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1036
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1038
 msgid "Registration Complete"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1031
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1033
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1037
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1039
 msgid "Your registration is complete."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1040
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1046
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6942
 msgid "Updated"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1041
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1043
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1047
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1049
 msgid "User Information Updated"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1042
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1044
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1048
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1050
 msgid "Your user information has been updated."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1051
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1057
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6945
 msgid "Deleted"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1052
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1054
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1058
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1060
 msgid "Account Deletion Notification"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1053
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1055
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1059
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1061
 msgid "Your account has been deleted."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1246
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1531
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1252
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1537
 msgid "Rates"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1247
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1253
 msgid "Extra Charges & Taxes"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1248
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1254
 msgid "Expiration Date for Convenience Store Payments"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1261
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1267
 #, php-format
 msgid "%s minutes"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1348
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1354
 msgid "Calendar Status"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1349
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1355
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6220
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6959
 msgid "Number of Available Days From Today"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1350
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1356
 msgid "Number of Unavailable Days From Today"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1353
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1359
 msgid "Max Booking Slots per Weekday"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1439
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1590
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1445
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1596
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6966
 msgid "Public Holiday"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1445
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1451
 msgid ""
 "To disable the maximum booking slots for a specific weekday, please enter "
 "\"0\"."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1452
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1458
 msgid "Share Available Time Slots Across Calendars"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1472
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1478
 msgid "Target Calendar"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1482
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1488
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6879
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6987
 msgid "Timezone"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1483
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1489
 msgid "Week Starts On"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1486
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1492
 msgid "Send Booking Verification Code"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1497
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1503
 msgid "For Customers"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1503
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1517
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1509
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1523
 msgid "Email and SMS"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1505
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1519
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1511
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1525
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2478
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3087
 msgid "SMS"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1511
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1517
 msgid "For Users"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1526
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1532
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2475
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3084
 msgid "Messaging Services"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 msgid "Payment Methods"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:98
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:14249
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6869
 msgid "Local Payment"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7021
 msgid "Pay with Stripe"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:100
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:14249
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6828
@@ -1166,11 +1166,11 @@ msgstr ""
 msgid "Pay with %s"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 msgid "Pay at a convenience store with Stripe"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1528
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1534
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:103
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:14249
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6831
@@ -1178,85 +1178,85 @@ msgstr ""
 msgid "Pay with PayPal"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1598
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1604
 msgid "Minimum Stay (Nights)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1599
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1605
 msgid "Maximum Stay (Nights)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1600
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
 msgid "Number of Available Rooms"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1601
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1607
 msgid "Maximum Guests per Room"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1602
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1608
 msgid "Include Children in Maximum Guest Count"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1604
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1610
 msgid "Total Stay Display Format"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1604
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1610
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13704
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13705
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6771
 msgid "nights"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1604
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1610
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:13708
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6769
 #, php-format
 msgid "%s nights %s days"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1612
 msgid "Arrival/Departure Display Format"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1612
 msgid "Arrival (Check-in) & Departure (Check-out)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1612
 msgid "Arrival & Departure"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1606
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1612
 msgid "Check-in & Check-out"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1607
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1613
 msgid "Allow Booking of Multiple Rooms"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1611
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1617
 msgid "Preparation Time"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1631
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1637
 msgid "Position"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1637
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1643
 msgid "Before and after the booking time slot"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1637
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1643
 msgid "Before the booking time slot"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1637
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1643
 msgid "After the booking time slot"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1644
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1650
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:112
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:3239
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:3616
@@ -1266,108 +1266,102 @@ msgstr ""
 msgid "Service"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1664
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1670
 msgid "Booking Flow on Front-End"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1670
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1676
 msgid "Start with date selection"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1670
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1676
 msgid "Start with service selection"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1674
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1680
 msgid "Allow Selecting Multiple Services"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1688
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1694
 msgid "Minimum Guests per Booking"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1708
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1751
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1714
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1757
 msgid "Non-required guests"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1731
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1737
 msgid "Maximum Guests per Booking"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1775
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1781
 msgid "Display Remaining Slots on Calendar"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1783
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1789
 msgid ""
 "Use <a href=\"https://material.io/tools/icons/?style=baseline\" "
 "target=\"_blank\">Material icons</a> web font."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1787
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1793
 msgid "Display Method"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1792
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1798
 msgid "Show numbers"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1792
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1798
 msgid "Show text/symbols"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1796
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1802
 msgid "Remaining Slots Threshold"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1815
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1821
 msgid "When slots exceed threshold"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1825
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1831
 msgid "When slots are below threshold"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1835
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1841
 msgid "When no slots remain (0%)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1846
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1852
 msgid "Display Remaining Slots per Time Slot"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1847
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1853
 msgid "Fixed Calendar"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1848
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1854
 msgid "Insert Booking Confirmation Page Before Completion Page"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1849
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1855
 msgid "Prevent Multiple Bookings"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1851
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1857
 msgid "Reminder Notification Time"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1851
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1857
 msgid "Reminders are sent only for 'Approved' bookings."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1853
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1859
 #, php-format
 msgid "About %d hour before"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1854
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1855
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1856
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1857
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1858
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1859
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1860
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1861
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1862
@@ -1382,51 +1376,51 @@ msgstr ""
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1871
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1872
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1873
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1874
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1875
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1876
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1877
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1878
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1879
 #, php-format
 msgid "About %d hours before"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1876
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1882
 msgid "Show Canceled Booking Details on \"Booked Customers\""
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1879
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1885
 msgid "Allow Customer Cancellations"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1899
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1905
 msgid "Allow Cancellation Up To"
-msgstr ""
-
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1907
-#, php-format
-msgid "%s minutes before"
-msgstr ""
-
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1908
-#, php-format
-msgid "%s hour before"
-msgstr ""
-
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1909
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1910
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1911
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1912
-#, php-format
-msgid "%s hours before"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1913
 #, php-format
-msgid "%s day before"
+msgid "%s minutes before"
 msgstr ""
 
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1914
+#, php-format
+msgid "%s hour before"
+msgstr ""
+
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1915
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1916
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1917
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1918
+#, php-format
+msgid "%s hours before"
+msgstr ""
+
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1919
+#, php-format
+msgid "%s day before"
+msgstr ""
+
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1920
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1921
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1922
@@ -1434,41 +1428,47 @@ msgstr ""
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1924
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1925
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1926
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1927
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1928
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1929
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1930
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1931
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1932
 #, php-format
 msgid "%s days before"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1931
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1937
 msgid "Applicable Booking Status"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1937
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1943
 msgid "Pending and Approved"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1938
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1944
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6941
 msgid "Pending"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1939
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1945
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:55
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2663
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6940
 msgid "Approved"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1956
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1962
 msgid "Insert Custom Page at Each Step"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1964
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1970
 msgid ""
 "To add custom pages to the select box, add a custom field named \"booking-"
 "package\" with the value \"front-end\" to the page."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1968
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1974
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Html.php:166
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:81
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3506
@@ -1477,78 +1477,78 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1978
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1984
 msgid "Time Slot Selection"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1991
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:1997
 msgid "Service Selection"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2004
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2010
 msgid "Booking Form"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2017
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2023
 msgid "Booking Confirmation Form"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2030
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2036
 msgid "Booking Completion Form"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2046
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2052
 msgid "Redirect After Booking"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2062
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2066
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2068
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2072
 msgid "Page"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2062
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2077
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2068
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2083
 msgid "URL"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2073
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2079
 msgid ""
 "To add custom pages to the select box, you need to add a custom field named "
 "\"booking-package\" to the page, with a value of \"front-end.\"."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2142
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2148
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2628
 msgid "Customers and Users"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2145
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2151
 msgid "Service Availability"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2150
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2156
 #, php-format
 msgid ""
 "If any restriction other than '%s' is selected, the '%s' feature will be "
 "disabled."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2150
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2160
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2156
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2166
 msgid "Always available"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2150
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2156
 msgid "Allow selecting multiple services"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2161
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
 #, php-format
 msgid "Stop when '%s' and '%s' do not match."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2161
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2162
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2168
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7666
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7685
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3022
@@ -1559,8 +1559,8 @@ msgstr ""
 msgid "Available Slots"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2161
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2162
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2167
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2168
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7666
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7685
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3023
@@ -1570,266 +1570,266 @@ msgstr ""
 msgid "Remaining Slots"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2162
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2168
 #, php-format
 msgid "Stop when '%s' and '%s' are equal."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2163
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2169
 msgid "When the booking limit is reached."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2175
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2181
 msgid ""
 "Exception: Allow booking if the start time matches an existing booking for "
 "the same service."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2187
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2193
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:7722
 msgid "Total bookings per day"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2188
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2194
 msgid "Bookings per time slot (Concurrent)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2189
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2195
 msgid "Bookings with the same start time"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2195
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2201
 msgid "Limit"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2207
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2213
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7008
 msgid "Prices"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2361
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2367
 msgid "Service Duration"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2362
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2368
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6979
 msgid "Specify the Time Slots for Each Day of the Week"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2363
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2369
 msgid "Allow Selecting Multiple Options"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2383
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2389
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3461
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6919
 #, php-format
 msgid "%s min"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2394
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2400
 msgid "Additional Duration"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2436
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2581
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2623
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2442
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2587
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2629
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6870
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6932
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7061
 msgid "Type"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2436
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2437
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2442
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2443
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6799
 msgid "Tax"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2437
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2443
 msgid "Tax-exclusive pricing"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2437
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2443
 msgid "Tax-inclusive pricing"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2438
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2444
 msgid "Calculation Method"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2438
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2444
 msgid "Add Fixed Amount"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2438
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2444
 msgid "Apply Percentage"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2439
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2541
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2445
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2547
 msgid "Per Room"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2439
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2541
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2445
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2547
 msgid "Per Guest"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2440
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2540
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2446
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2546
 msgid "Pricing Basis"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2440
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2446
 msgid "Per Day"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2440
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2446
 msgid "Per Booking"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2440
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2446
 msgid "Per Booking (Multiply by Total Guests)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2540
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2546
 msgid "Charge per Day"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2540
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2546
 msgid "Charge Once per Booking"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2541
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2547
 msgid "Calculation Basis"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2560
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2566
 msgid "Extra Charge per Adult"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2561
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2567
 msgid "Extra Charge per Child"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2562
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2568
 msgid "Extra Charge per Room"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2574
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2606
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2580
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2612
 msgid "Unique ID"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2577
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2612
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2583
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
 msgid "Placeholder Text"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2615
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
 msgid "Yes - Front-end and Dashboard"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2615
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
 msgid "Yes - Front-end only"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2616
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2617
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2619
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2622
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2623
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2625
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2626
 #, php-format
 msgid "Use as %s Field"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
 #, php-format
 msgid ""
 "If you select \"%s,\" you will need to change the value of \"Messaging "
 "Services\" in the %s tab."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2618
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2624
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2357
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:2943
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3849
 msgid "Settings"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2619
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2625
 msgid "Location"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2620
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2626
 msgid "Agreement (Terms/Privacy)"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2621
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2627
 msgid "Save User Input Values"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2819
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2825
 msgid "First Name"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2820
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:2826
 msgid "Last Name"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3756
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4952
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3762
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4962
 #: /var/www/html/wp/wp-content/plugins/booking-package/lib/Schedule.php:10905
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:6800
 msgid "Select"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3893
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3977
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3899
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:3983
 #, php-format
 msgid ""
 "The value for '%s' in the options must be a unique number that does not "
 "duplicate values from other settings."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4131
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4137
 msgid "Invalid email format."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4161
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:4167
 #, php-format
 msgid "You have already added the \"%s\"."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6187
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6197
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:4664
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6198
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6208
 msgid ""
 "A secure connection (HTTPS) is required to subscribe to a paid plan. Please "
 "configure your site URL with HTTPS."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6555
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6586
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6565
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6604
 msgid "Paid Subscription Renewal Failed."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6590
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6608
 msgid "Your paid subscription payment failed."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6593
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6611
 #, php-format
 msgid ""
 "Please check the status in the WordPress dashboard under %s > %s > %s to "
 "find the reason and proceed with renewal."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6593
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6611
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:642
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:704
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:1640
@@ -1837,41 +1837,41 @@ msgstr ""
 msgid "General Settings"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6593
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6611
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:3857
 msgid "Paid Subscription"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6596
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6614
 msgid ""
 "If the status shows an issue, payment for your subscription may have failed. "
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6599
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6617
 #, php-format
 msgid ""
 "Please check your payment status on the \"%s\" page and complete the payment "
 "if necessary. "
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6599
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6617
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7057
 msgid "My billing"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6602
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6620
 #, php-format
 msgid ""
 "After completing the payment, or if the status is not updated even without a "
 "payment issue, click the \"%s\" button to manually update your subscription."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6602
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6620
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:7059
 msgid "Update My Subscription"
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6737
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6755
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:4329
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5082
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5094
@@ -1882,7 +1882,7 @@ msgstr ""
 msgid "Permission denied."
 msgstr ""
 
-#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6744
+#: /var/www/html/wp/wp-content/plugins/booking-package/lib/Setting.php:6762
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5460
 #: /var/www/html/wp/wp-content/plugins/booking-package/index.php:5528
 msgid "Invalid security token."

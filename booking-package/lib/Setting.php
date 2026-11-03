@@ -959,7 +959,13 @@
             
         }
         
-        public function getMemberSetting($extension = false){
+        public function getMemberSetting($extension = null){
+            
+            if (is_null($extension)) {
+                
+                $extension = $this->getExtensionsValid();
+                
+            }
             
             $userFunctions = $this->userFunctions();
             foreach ((array) $userFunctions as $key => $input) {
@@ -4273,7 +4279,9 @@
                 }
                 
             }
-
+            
+            $_POST['options'] = $options;
+            $_POST['timeToProvide'] = $timeToProvide;
             $_POST = $this->verifyService($_POST, $this->getExtensionsValid(), 1);
             
             global $wpdb;
@@ -4422,6 +4430,8 @@
                 
             }
             
+            $_POST['options'] = $options;
+            $_POST['timeToProvide'] = $timeToProvide;
             $_POST = $this->verifyService($_POST, $this->getExtensionsValid(), 1);
             
             global $wpdb;
@@ -6576,6 +6586,14 @@
                 
             }
 		     */
+            
+            $subscriptions = $this->upgradePlan('get');
+			if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) ) {
+                
+				return '';
+                
+			}
+            
 			$status = $this->getSubscriptionStatus();
 			$text = '';
 			if ($status === 'Inactive' || $checkStatusText === false) {
@@ -6842,6 +6860,19 @@
             $statusCode = 0;
             $subscriptions = $this->upgradePlan('get');
             $expiration_date = intval($subscriptions['expiration_date_for_subscriptions']);
+            
+            if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) ) {
+                
+                if ($this->getSubscriptionStatus() !== 'Not subscribed') {
+                    
+                    $this->deleteSubscriptionData();
+                    $this->updateSubscriptionStatus('Not subscribed');
+                    
+                }
+                
+                return false;
+                
+            }
             
             if ( intval($subscriptions['expiration_date_for_subscriptions']) == 0 && $countExpiration === false ) {
                 

@@ -2840,7 +2840,7 @@
 				
 			} else if ($apply === 0) {
 				
-				$values = array('hasMultipleServices' => 0, 'preparationTime' => 0, 'displayRemainingCapacity' => '0', 'displayRemainingCapacityInCalendar' => 0, 'blockSameTimeBookingByUser' => '0',  'insertConfirmedPage' => '0', 'bookingVerificationCode' => 'false', 'bookingVerificationCodeToUser' => 'false', 'bookingReminder' => '0', 'cancellationOfBooking' => '0', 'cancellation_of_booking' => '0', 'refuseCancellationOfBooking' => '0', 'maximumNights' => 0, 'minimumNights' => 0, 'hotelChargeOnDayBeforeNationalHoliday' => 0, 'hotelChargeOnNationalHoliday' => 0, 'targetSchedules' => 0, 'autoPublish' => 0, 'isExtensionsValid' => 0, 'paymentMethod' => 'locally', 'schedulesSharing' => 0);
+				$values = array('hasMultipleServices' => 0, 'preparationTime' => 0, 'displayRemainingCapacity' => '0', 'blockSameTimeBookingByUser' => '0',  'insertConfirmedPage' => '0', 'bookingVerificationCode' => 'false', 'bookingVerificationCodeToUser' => 'false', 'bookingReminder' => 60, 'cancellationOfBooking' => '0', 'cancellation_of_booking' => '0', 'refuseCancellationOfBooking' => 'not_refuse', 'maximumNights' => 0, 'minimumNights' => 0, 'hotelChargeOnDayBeforeNationalHoliday' => 0, 'hotelChargeOnNationalHoliday' => 0, 'targetSchedules' => 0, 'autoPublish' => 0, 'isExtensionsValid' => 0, 'paymentMethod' => 'locally', 'schedulesSharing' => 0, 'allowCancellationVisitor' => 0, 'allowCancellationUser' => 0);
 				
 				$calendarAccount['isExtensionsValid'] = 0;
 				foreach ($values as $key => $value) {

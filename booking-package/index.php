@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.37
+Version:     1.7.41
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -2345,7 +2345,7 @@ Domain Path: /languages
             wp_add_inline_style("Control.css", $this->getFontFaceStyle());
 			$this->install_panel();
 			?>
-			<div id="booking_pacage_users" class="wrap">
+			<div id="booking_pacage_users">
 				
 				
 				<div id="tabFrame">
@@ -3841,7 +3841,7 @@ Domain Path: /languages
 			$this->install_panel();
 			?>
 				
-				<div id="booking_package_general_settings" class="wrap">
+				<div id="booking_package_general_settings">
 					
 					<div id="tabFrame">
 						<div style="overflow-x: auto;">
@@ -5189,7 +5189,7 @@ Domain Path: /languages
 			$redirect_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
 			echo '<div class="notice notice-warning" style="padding: 15px 20px; border-left: 4px solid #2271b1; background: #fff; margin: 15px 0;">';
 			echo '<h3 style="margin-top: 0; color: #1d2327;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName ) ) . '</h3>';
-			echo '<p style="font-size: 14px; line-height: 1.6;">' . esc_html( sprintf( $this->_text('To continue using advanced features (such as premium pricing, online payments, and notifications) after upcoming updates, please install and activate the official "%s".'), $this->addonName ) ) . '</p>';
+			echo '<p style="font-size: 14px; line-height: 1.6;">' . esc_html( sprintf( $this->_text('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.'), $this->addonName ) ) . '</p>';
 			echo $this->render_addon_install_form($redirect_url);
 			echo '</div>';
 		}
@@ -5498,7 +5498,7 @@ Domain Path: /languages
 					echo '</head><body class="wp-core-ui" style="background: #f0f0f1; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">';
 					echo '<div style="max-width: 600px; background: #fff; padding: 30px 35px; border-left: 4px solid #2271b1; box-shadow: 0 1px 3px rgba(0,0,0,0.13); border-radius: 4px;">';
 					echo '<h2 style="margin-top: 0; color: #1d2327; font-size: 20px;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName) ) . '</h2>';
-					echo '<p style="font-size: 14px; line-height: 1.7; color: #3c434a; margin-bottom: 24px;">' . esc_html( sprintf( $this->_text('To continue using advanced features (such as premium pricing, online payments, and notifications) after upcoming updates, please install and activate the official "%s".'), $this->addonName ) ) . '</p>';
+					echo '<p style="font-size: 14px; line-height: 1.7; color: #3c434a; margin-bottom: 24px;">' . esc_html( sprintf( $this->_text('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.'), $this->addonName ) ) . '</p>';
 					$this->render_addon_install_form($setting_page_url);
 					echo '</div>';
 					wp_print_scripts('booking_package_download_addon');
@@ -5544,7 +5544,7 @@ Domain Path: /languages
 			$setting->validateWpSite($validate);
 			if (is_null($this->isExtensionsValid)) {
 				
-				$this->isExtensionsValid = $setting->getSiteStatus($countExpiration);
+				$this->isExtensionsValid = $setting->getSiteStatus();
 				if ($this->isExtensionsValid === true) {
 					
 					$this->setting->updateRolesOfPlugin();
