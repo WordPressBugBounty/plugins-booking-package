@@ -1887,7 +1887,7 @@
         
     };
     
-    Booking_App_ObjectsControl.prototype.getCostsInService = function(service, guests, isGuests, isExtensionsValid) {
+    Booking_App_ObjectsControl.prototype.getCostsInService = function(service, guests, isGuests) {
         
         var object = this;
         object._console.log(service);
@@ -1964,15 +1964,9 @@
             
         }
         
-        if (max != min && isExtensionsValid == 1) {
+        if (max != min) {
             
             hasMultipleCosts = true;
-            
-        }
-        
-        if (isExtensionsValid != 1) {
-            
-            max = costs[0];
             
         }
         

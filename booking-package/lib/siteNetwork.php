@@ -1,4 +1,8 @@
 <?php
+    
+    if (!defined('ABSPATH')) {
+        exit;
+    }
 
     class Booking_package_siteNetwork {
         

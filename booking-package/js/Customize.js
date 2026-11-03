@@ -16,7 +16,6 @@
         this._console.log = this._debug.getConsoleLog();
         this._console.error = this._debug.getConsoleError();
         this._properties = properties;
-        this._isExtensionsValid = parseInt(properties.isExtensionsValid);
         this._webApp = false;
         this._url = properties['url'];
         this._nonce = properties['nonce'];
@@ -25,7 +24,6 @@
         this._clockFormat = properties.clockFormat;
         this._positionOfWeek = properties.positionOfWeek;
         this._positionTimeDate = properties.positionTimeDate;
-        this._isExtensionsValid = parseInt(properties.isExtensionsValid);
         this._startOfWeek = properties.startOfWeek;
         this._currency = properties.currency;
         this._i18n = new I18n(properties.locale);
@@ -89,7 +87,7 @@
                     object._console.log(inputObject);
                     var td_name = object.create('td', inputObject.name, null, null, null, null, null);
                     td_name.setAttribute("scope", "row");
-                    var inputPanel = object.createInput(key, inputObject, inputData, account, disabled, null, object._isExtensionsValid);
+                    var inputPanel = object.createInput(key, inputObject, inputData, account, disabled, null, parseInt(account.isExtensionsValid));
                     var td = object.create('td', null, [inputPanel], null, null, null, null);
                     if (directory === true) {
                         
@@ -1654,51 +1652,6 @@
         }
         object._console.log(inputPanel);
         **/
-        
-        require.config({
-            paths: {
-                'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs'
-            }
-        });
-        
-        require(['vs/editor/editor.main'], function () {
-            
-            for (var i = 0; i < classNames.length; i++) {
-                
-                var className = classNames[i];
-                var value = '';
-                if (customizeLayouts[id][className] != null) {
-                    
-                    value = (function(styles) {
-                        
-                        var style = '';
-                        for (var name in styles) {
-                            
-                            style += name + ': ' + styles[name] + ";\n";
-                            
-                        }
-                        return style;
-                        
-                    })(customizeLayouts[id][className]);
-                    
-                }
-                var classNamePanel = object.create('div', object._i18n.get('CSS class selector:') + ' .' + className, null, null, 'margin: 0.5em;', null, null);
-                textareas[i] = object.createInputElement('div', null, null, value, null, null, 'editCss_' + className, 'height: 15vh; padding: 0 1em;', null, null);
-                inputPanel.appendChild(classNamePanel);
-                inputPanel.appendChild(textareas[i]);
-                editors[i] = monaco.editor.create(document.getElementById('editCss_' + className), {
-                    value: value,
-                    language: 'css',
-                    theme: 'vs-light'
-                });
-                
-            
-                
-            }
-            object._console.log(inputPanel);
-            
-        });
-        
         
         document.getElementById("closeCssPanelButton").onclick = function() {
             

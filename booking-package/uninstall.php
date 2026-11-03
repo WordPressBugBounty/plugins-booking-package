@@ -85,7 +85,7 @@
 			delete_option('booking_package_home_path');
 			delete_option('widget_booking_package_widget');
 			
-			// for site options in Multisite
+			/**
 			delete_site_option($option_name);
 			
 			$subscriptions = $setting->upgradePlan("get");
@@ -97,6 +97,7 @@
 			}
 			
 			$setting->deleteRolesOfPlugin();
+			 */
 			
 		}
 		

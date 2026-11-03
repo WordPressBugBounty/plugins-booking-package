@@ -77,7 +77,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
     this._blockPanel = document.getElementById("blockPanel");
     this._loadingPanel = document.getElementById("loadingPanel");
     
-    this._isExtensionsValid = parseInt(schedule_data.isExtensionsValid);
+    this._function_for_member = parseInt(schedule_data.function_for_member) || 0;
     this._prefix = schedule_data.prefix;
     this._url = schedule_data.url;
     this._nonce = schedule_data.nonce;
@@ -523,14 +523,6 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 console.error(calendarData);
                 return null;
-                
-            }
-            
-            if (object._isExtensionsValid != 1) {
-                
-                calendarData.account.maximumNights = 0;
-                calendarData.account.minimumNights = 0;
-                calendarData.hotelOptions = [];
                 
             }
             
@@ -3361,17 +3353,16 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         
         bookingTimeChange.onclick = function(){
             
-            options = reservationData.options;
-            object.setVisitorServices(options);
-            object._console.log(options);
-            //if(typeof ExtensionsFunction != "function"){
-            if (object._isExtensionsValid == 0) {
+            if (parseInt(object._calendarAccount['isExtensionsValid']) === 0) {
                 
                 confirm.alertPanelShow(object._i18n.get("Warning"), object._i18n.get("Paid plan subscription required."), false, null);
                 return null;
                 
             }
             
+            options = reservationData.options;
+            object.setVisitorServices(options);
+            object._console.log(options);
             var data_status = parseInt(bookingTimeChange.getAttribute("data-status"));
             if(data_status == 1){
                 
@@ -3433,20 +3424,19 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         }
         
         
-        courseChange.onclick = function(){
+        courseChange.onclick = function () {
             
-            options = reservationData.options;
-            object.setVisitorServices(options);
-            object._console.log(options);
-            object._console.log(object.getVisitorServices());
-            //if(typeof ExtensionsFunction != "function"){
-            if (object._isExtensionsValid == 0) {
+            if (parseInt(object._calendarAccount['isExtensionsValid']) === 0) {
                 
                 confirm.alertPanelShow(object._i18n.get("Warning"), object._i18n.get("Paid plan subscription required."), false, null);
                 return null;
                 
             }
             
+            options = reservationData.options;
+            object.setVisitorServices(options);
+            object._console.log(options);
+            object._console.log(object.getVisitorServices());
             var data_status = parseInt(courseChange.getAttribute("data-status"));
             if(data_status == 1){
                 
@@ -4810,7 +4800,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                     
                 }
                 
-                var responseCosts = object._servicesControl.getCostsInService(courseData, guests, isGuests, object._isExtensionsValid);
+                var responseCosts = object._servicesControl.getCostsInService(courseData, guests, isGuests );
                 object._console.log(responseCosts);
                 object._console.log(courseData);
                 courseData["select"] = true;
@@ -5687,7 +5677,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                         
                     }
                     **/
-                    var responseCosts = object._servicesControl.getCostsInService(course, calendarData.guestsList, parseInt(calendarData.account.guestsBool), object._isExtensionsValid);
+                    var responseCosts = object._servicesControl.getCostsInService(course, calendarData.guestsList, parseInt(calendarData.account.guestsBool) );
                     object._console.log(responseCosts);
                     if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
                         
@@ -5891,7 +5881,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         for(var i = 0; i < options.length; i++){
             
             var option = options[i];
-            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, isGuests, object._isExtensionsValid);
+            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, isGuests );
             object._console.log(responseCosts);
             object._console.log(typeof option.selected);
             if (option.selected == null) {
@@ -6662,7 +6652,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
         object._calendar.setClock(object._clock);
         var calendarKey = object._calendar.getDateKey(month, day, year);
         
-        if (parseInt(object._isExtensionsValid) == 1) {
+        if (parseInt(object._function_for_member) == 1) {
             
             var lookForUserIcon = document.createElement('div');
             lookForUserIcon.textContent = 'search';
@@ -8493,7 +8483,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 
                 if (parseInt(service.selected) == 1) {
                     
-                    var responseCosts = object._servicesControl.getCostsInService(services[key], guestsList, isGuests, object._isExtensionsValid);
+                    var responseCosts = object._servicesControl.getCostsInService(services[key], guestsList, isGuests );
                     object._console.log(responseCosts);
                     var costsWithKey = responseCosts.costsWithKey;
                     var costPerGuests = document.createElement('div');
@@ -8725,7 +8715,7 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                             
                             var option = options[i];
                             var optionAmount = 0;
-                            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, isGuests, object._isExtensionsValid);
+                            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, isGuests );
                             object._console.log(responseCosts);
                             var costsWithKey = responseCosts.costsWithKey;
                             if (parseInt(option.selected) == 1) {

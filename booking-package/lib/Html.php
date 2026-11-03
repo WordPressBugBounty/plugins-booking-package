@@ -11,8 +11,6 @@
         
         public $accountKey = null;
         
-        public $visitorSubscriptionForStripe = null;
-        
         public $currencies = array();
         
         public $managementUsersV2 = 1;
@@ -22,164 +20,12 @@
             $this->prefix = $prefix;
             $this->plugin_name = $pluginName;
             $this->currencies = $currencies;
-            $this->visitorSubscriptionForStripe = 1;
             
         }
         
         public function setManagementUsersV2($managementUsersV2) {
             
             $this->managementUsersV2 = $managementUsersV2;
-            
-        }
-        
-        public function setVisitorSubscriptionForStripe($visitorSubscriptionForStripe) {
-            
-            $this->visitorSubscriptionForStripe = $visitorSubscriptionForStripe;
-            
-        }
-        
-        public function subscription_form($calendarAccount, $memberSetting) {
-            
-            global $wpdb;
-            $pluginName = $this->plugin_name;
-            $stripe_active = intval(get_option($this->prefix . "stripe_active", 0));
-            $enableSubscription = isset($calendarAccount['enableSubscriptionForStripe']) ? intval($calendarAccount['enableSubscriptionForStripe']) : 0;
-            
-            if ($stripe_active == 0 || $enableSubscription == 0) {
-                
-                $html = '<script type="text/javascript">' . "\n";
-                $html .= 'var ' . $this->prefix . 'subscriptions = ' . json_encode(array('status' => 0)) . ';' . "\n";
-                $html .= '</script>' . "\n";
-                return $html;
-                
-            }
-            
-            $product = isset($calendarAccount["subscriptionIdForStripe"]) ? $calendarAccount["subscriptionIdForStripe"] : '';
-            $secret = get_option($this->prefix . "stripe_secret_key", 0);
-            
-            $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies);
-            $subscription = $schedule->getProductForStripe($secret, explode(",", $product));
-            
-            $items = array();
-            if (isset($memberSetting['subscription_list']) && is_array($memberSetting['subscription_list'])) {
-                
-                $items = $memberSetting['subscription_list'];
-                
-            }
-            
-            if (is_array($subscription)) {
-                
-                foreach ((array) $items as $key => $value) {
-                    
-                    $item = isset($items[$key]) ? $items[$key] : null;
-                    if (isset($subscription['product']) && $subscription['product'] == $key && $subscription['product'] == $product) {
-                        
-                        $plans = (isset($item['items']) && is_array($item['items'])) ? $item['items'] : array();
-                        for ($i = 0; $i < count($plans); $i++) {
-                            
-                            if (isset($plans[$i]['id']) && isset($subscription['planKeys']) && is_array($subscription['planKeys'])) {
-                                
-                                if (array_search($plans[$i]['id'], $subscription['planKeys']) !== false) {
-                                    
-                                    $subscription['subscribed'] = 1;
-                                    break;
-                                    
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
-            
-            $name = '';
-            $amount = '';
-            $html = '';
-            if (is_array($subscription)) {
-                
-                $name = isset($subscription['name']) ? $subscription['name'] : '';
-                $amount = isset($subscription['amount']) ? $subscription['amount'] : '';
-                $html .= '<script type="text/javascript">' . "\n";
-                $html .= 'var ' . $this->prefix . 'subscriptions = ' . json_encode($subscription) . ';' . "\n";
-                $html .= '</script>' . "\n";
-                
-            } else {
-                
-                $html .= '<script type="text/javascript">' . "\n";
-                $html .= 'var ' . $this->prefix . 'subscriptions = ' . json_encode(array('status' => 0)) . ';' . "\n";
-                $html .= '</script>' . "\n";
-                
-            }
-            
-            $text = array(
-                "Subscription"     => 'Subscription',
-                "Subscribed_items" => 'Subscribed items',
-                "agreeToOur1"      => 'By proceeding you agree to our %s.',
-                "agreeToOur2"      => 'By proceeding you agree to our %s and %s.',
-                "termsOfService"   => 'Terms of Service',
-                "privacyPolicy"    => 'Privacy Policy',
-                "amount"           => '%s per month',
-                "Return"           => 'Return',
-            );
-            
-            $enableTerms = isset($calendarAccount['enableTermsOfServiceForSubscription']) ? intval($calendarAccount['enableTermsOfServiceForSubscription']) : 0;
-            $enablePrivacy = isset($calendarAccount['enablePrivacyPolicyForSubscription']) ? intval($calendarAccount['enablePrivacyPolicyForSubscription']) : 0;
-            $termsUrl = isset($calendarAccount['termsOfServiceForSubscription']) ? $calendarAccount['termsOfServiceForSubscription'] : '';
-            $privacyUrl = isset($calendarAccount['privacyPolicyForSubscription']) ? $calendarAccount['privacyPolicyForSubscription'] : '';
-            
-            $agree = "";
-            if ($enableTerms == 1 && $enablePrivacy == 0) {
-                
-                $termsOfService = '<a target="_blank" href="' . esc_url($termsUrl) . '">' . esc_html($text['termsOfService']) . '</a>';
-                $agree = sprintf($text['agreeToOur1'], $termsOfService);
-                
-            } else if ($enableTerms == 0 && $enablePrivacy == 1) {
-                
-                $privacyPolicy = '<a target="_blank" href="' . esc_url($privacyUrl) . '">' . esc_html($text['privacyPolicy']) . '</a>';
-                $agree = sprintf($text['agreeToOur1'], $privacyPolicy);
-                
-            } else if ($enableTerms == 1 && $enablePrivacy == 1) {
-                
-                $termsOfService = '<a target="_blank" href="' . esc_url($termsUrl) . '">' . esc_html($text['termsOfService']) . '</a>';
-                $privacyPolicy = '<a target="_blank" href="' . esc_url($privacyUrl) . '">' . esc_html($text['privacyPolicy']) . '</a>';
-                $agree = sprintf($text['agreeToOur2'], $termsOfService, $privacyPolicy);
-                
-            }
-            
-            $escaped_name = esc_html($name);
-            $escaped_amount = esc_attr($amount);
-            $amount_text = esc_html($text['amount']);
-            $subscription_title = esc_html($text["Subscription"]);
-            $subscribed_items_title = esc_html($text["Subscribed_items"]);
-            
-            $html .= '<div id="booking-package-subscription_form" class="hidden_panel">' . "\n";
-            $html .= '    <div class="subscription">' . $subscription_title . '</div>' . "\n";
-            $html .= '    <div id="booking-package-select_subscription">' . "\n";
-            $html .= '        <div class="name">' . $escaped_name . '</div>' . "\n";
-            $html .= '        <div id="booking-package-subscription_amount" class="amount" data-amount="' . $escaped_amount . '">' . $amount_text . '</div>' . "\n";
-            $html .= '    </div>' . "\n";
-            $html .= '    <div id="booking-package-subscription_input_form"></div>' . "\n";
-            $html .= '    <div id="booking-package-agree">' . $agree . '</div>' . "\n";
-            $html .= '</div>' . "\n";
-            
-            $html .= '<div id="booking-package-subscribed_panel" class="hidden_panel">' . "\n";
-            $html .= '    <div class="titlePanel subscription">' . "\n";
-            $html .= '        <div class="title">' . $subscribed_items_title . '</div>' . "\n";
-            $html .= '        <div id="booking-package-subscribed_return_button" class="material-icons closeButton" style="font-family: \'Material Icons\' !important;">close</div>' . "\n";
-            $html .= '    </div>' . "\n";
-            $html .= '    <div>' . "\n";
-            $html .= '        <table>' . "\n";
-            $html .= '            <tbody id="booking-package-subscribed_items"></tbody>' . "\n";
-            $html .= '        </table>' . "\n";
-            $html .= '    </div>' . "\n";
-            $html .= '    <div></div>' . "\n";
-            $html .= '</div>' . "\n";
-            
-            return $html;
             
         }
         
@@ -191,13 +37,6 @@
                 
                 $user_login = $user['user_login'];
                 $user_email = $user['user_email'];
-                
-            }
-            
-            $hidden_panel = "";
-            if ($this->visitorSubscriptionForStripe != 1) {
-                
-                $hidden_panel = "hidden_panel";
                 
             }
             
@@ -217,7 +56,6 @@
                 'Change Password'                                   => __("Change Password", 'booking-package'),
                 'Update Profile'                                    => __("Update Profile", 'booking-package'),
                 'Delete'                                            => __("Delete", 'booking-package'),
-                'Subscribed items'                                  => __("Subscribed items", 'booking-package'),
             );
             
             if (!empty($dictionary) && is_array($dictionary)) {
@@ -256,14 +94,7 @@
             $editUserPanel .= '         <div class="title">' . esc_html($text["Profile"]) . '</div>';
             $editUserPanel .= '         <div id="booking-package-edit_user_return_button" class="material-icons closeButton" style="font-family: \'Material Icons\' !important">close</div>';
             $editUserPanel .= '     </div>';
-            
-            $editUserPanel .= '     <div id="booking-package-tabFrame" class="tabFrame hidden_panel">';
-            $editUserPanel .= '         <div class="menuList ' . esc_attr($hidden_panel) . '">';
-            $editUserPanel .= '             <div id="booking-package-user_profile_tab" class="menuItem active">' . esc_html($text["Profile"]) . '</div>';
-            $editUserPanel .= '             <div id="booking-package-user_subscribed_tab" class="menuItem">' . esc_html($text["Subscribed items"]) . '</div>';
-            $editUserPanel .= '         </div>';
-            $editUserPanel .= '     </div>';
-            
+                        
             $editUserPanel .= '      <div id="editCustomFormFieldPanel" class=""></div>';
             
             $editUserPanel .= '     <div id="booking-package-user-profile" class="inputPanel">';
@@ -280,9 +111,6 @@
             $editUserPanel .= '         </div>';
             $editUserPanel .= '     </div>';
             
-            $editUserPanel .= '     <div id="booking-package-user-subscribed" class="inputPanel hidden_panel">';
-            $editUserPanel .= '         <table> <tbody id="booking-package-user_subscribed_tbody"></tbody> </table>';
-            $editUserPanel .= '     </div>';
             $editUserPanel .= '     <div>';
             $editUserPanel .= '         <button id="booking-package-edit_user_button" class="update_user_button">' . esc_html($text["Update Profile"]) . '</button>';
             $editUserPanel .= '         <button id="booking-package-edit_user_delete_button" class="delete_user_button">' . esc_html($text["Delete"]) . '</button>';

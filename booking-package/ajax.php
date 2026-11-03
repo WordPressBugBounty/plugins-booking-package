@@ -6,9 +6,6 @@
 		
 	}
     
-    /** Load WordPress Bootstrap */
-	require_once dirname( __DIR__, 3 ) . '/wp-load.php';
-	
     define('WP_USE_THEMES', false);
 	
     class BOOKING_PACKAGE_AJAX {

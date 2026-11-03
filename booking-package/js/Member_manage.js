@@ -2413,12 +2413,7 @@ Member_manage.prototype.editForm = function(tr, user){
     var object = this;
     object._console.log('editForm');
     object._console.log(user);
-    var tabFrame = document.getElementById("booking-package-tabFrame");
-    var user_profile_tab = document.getElementById("booking-package-user_profile_tab");
-    var user_subscribed_tab = document.getElementById("booking-package-user_subscribed_tab");
     var user_profile = document.getElementById("booking-package-user-profile");
-    var user_subscribed = document.getElementById("booking-package-user-subscribed");
-    var user_subscribed_tbody = document.getElementById("booking-package-user_subscribed_tbody");
     
     var user_edit_form = document.getElementById("booking-package-user-edit-form");
     var user_login = document.getElementById("booking-package-user_edit_login");
@@ -2439,11 +2434,7 @@ Member_manage.prototype.editForm = function(tr, user){
     buttonPanel.classList.remove('hidden_panel');
     email_edit_panel.classList.add('hidden_panel');
     notificationButton.classList.add('hidden_panel');
-    tabFrame.classList.remove("hidden_panel");
-    user_profile_tab.classList.add("active");
-    user_subscribed_tab.classList.remove("active");
     user_profile.classList.remove("hidden_panel");
-    user_subscribed.classList.add("hidden_panel");
     user_form_close.classList.remove("hidden_panel");
     user_edit_form_close.classList.remove("hidden_panel");
     
@@ -2453,46 +2444,6 @@ Member_manage.prototype.editForm = function(tr, user){
     user_pass_change_button.classList.remove("hidden_panel");
     
     delete_button.setAttribute("class", "w3tc-button-save button-primary return_button");
-    
-    var tabs = {user_profile_tab: {tab: user_profile_tab, panel: user_profile, options: [upload_button, delete_button]}, user_subscribed_tab: {tab: user_subscribed_tab, panel: user_subscribed, options: []}};
-    for(var key in tabs){
-        
-        var menu = tabs[key];
-        menu.tab.onclick = function(){
-            
-            var id = this.id;
-            object._console.log(id);
-            for(var key in tabs){
-                
-                var menu = tabs[key];
-                var options = menu.options;
-                if(menu.tab.id == id){
-                    
-                    menu.tab.classList.add("active");
-                    menu.panel.classList.remove("hidden_panel");
-                    for(var i = 0; i < options.length; i++){
-                        
-                        options[i].classList.remove("hidden_panel");
-                        
-                    }
-                    
-                }else{
-                    
-                    menu.tab.classList.remove("active");
-                    menu.panel.classList.add("hidden_panel");
-                    for(var i = 0; i < options.length; i++){
-                        
-                        options[i].classList.add("hidden_panel");
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        };
-        
-    }
     
     user_login.value = user.user_login;
     user_email.value = user.user_email;
@@ -2506,120 +2457,7 @@ Member_manage.prototype.editForm = function(tr, user){
         
     }
     
-    user_subscribed_tbody.textContent = null;
     var cost = new FORMAT_COST(object._i18n, object._debug, object._numberFormatter, object._currency_info);
-    var subscription_list = user.subscription_list;
-    if(subscription_list == null){
-        
-        subscription_list = {};
-        
-    }
-    object._console.log(subscription_list);
-    if(Object.keys(subscription_list).length == 0){
-        
-        user_subscribed_tbody.textContent = object._i18n.get("There are no items subscribed.");
-        
-    }
-    
-    for (var key in subscription_list) {
-        
-        var product = subscription_list[key];
-        var items = product.items;
-        var currency = null;
-        var amount = 0;
-        object._console.log(product);
-        for (var i = 0; i < items.length; i++) {
-            
-            var item = items[i];
-            currency = item.currency;
-            amount += parseInt(item.amount);
-            object._console.log(item);
-            
-        }
-        
-        amount = cost.formatCost(amount, currency);
-        var amountPanel = object.create('div', object._i18n.get("%s per month", [amount]), null, null, null, null);
-        var expirationDate = object.create('div', object._i18n.get("Expiration date: %s", [product.period_end_date]), null, null, null, null, null);
-        var itemPanel = object.create('div', product.name, null, null, null, null, null);
-        var itemTd = object.create('td', null, [itemPanel, amountPanel, expirationDate], null, null, null, null);
-        var deleteTd = object.create('td', 'delete', null, null, "font-family: 'Material Icons' !important;", 'material-icons delete_icon', {key: key} );
-        var tr = object.create('tr', null, [itemTd, deleteTd], object._prefix + key, null, null, null);
-        if (product.canceled != null && parseInt(product.canceled) == 1) {
-            
-            tr.classList.add("canceled");
-            deleteTd.setAttribute("style", "cursor: not-allowed; font-family: 'Material Icons' !important;");
-            
-        }
-        
-        
-        user_subscribed_tbody.appendChild(tr);
-        
-        deleteTd.onclick = function(){
-            
-            var deleteTd = this;
-            var key = this.getAttribute("data-key");
-            var product = subscription_list[key];
-            object._console.log(product);
-            if(product.canceled != null && parseInt(product.canceled) == 1){
-                
-                return null;
-                
-            }
-            
-            if(window.confirm(object._i18n.get('If you cancel the "%s" subscription, you can not make a reservation after the deadline of %s. Do you really want to cancel the subscription?', [product.name, product.period_end_date]))){
-                
-                deleteSubscription(user, product, function(response){
-                    
-                    var tr = document.getElementById(object._prefix + key);
-                    if(response.status == 1){
-                        
-                        subscription_list[key]['canceled'] = 1;
-                        tr.classList.add("canceled");
-                        deleteTd.setAttribute("style", "cursor: not-allowed; font-family: 'Material Icons' !important;");
-                        
-                    }else{
-                        
-                        window.alert(response.error);
-                        delete subscription_list[key];
-                        user_subscribed_tbody.removeChild(tr);
-                        
-                    }
-                    
-                });
-                
-            }
-            
-        };
-        
-    }
-    
-    var deleteSubscription = function(user, product, callback){
-        
-        object._console.log(user);
-        object._console.log(product);
-        
-        var post = {mode: 'deleteSubscription', nonce: object._nonce, action: object._action, userId: user.ID, product: product.product};
-        object._console.log(post);
-        
-        object.loadingPanel(1);
-        new Booking_App_XMLHttp(object._url, post, false, function(response){
-            
-            object._console.log(response);
-            if(parseInt(response.status) == 1){
-                
-                callback({stats: 1, error: null});
-                
-            }else{
-                
-                callback({stats: 0, error: response.error});
-                
-            }
-            
-            object.loadingPanel(0);
-            
-        });
-        
-    };
     
     user_pass_change_button.onclick = function(event){
         

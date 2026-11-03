@@ -21,8 +21,6 @@
         this._calendarAccount = calendarAccount;
         this._setting = setting;
         this._reservation_info = reservation_info;
-        this._subscriptions = subscription;
-        //this._subscriptions = null;
         this._url = url;
         this._nonce = nonce;
         this._wp_rest_nonce = null;
@@ -130,12 +128,6 @@
         
     }
     
-    Booking_Package_Member.prototype.setSubscription = function(subscriptions){
-        
-        this._subscriptions = subscriptions;
-        
-    }
-    
     Booking_Package_Member.prototype.setNewNonce = function(data) {
         
         if (data.new_nonce != null) {
@@ -188,10 +180,8 @@
         object._top = top;
         var calendarAccount = object._calendarAccount;
         var memberSetting = object._setting;
-        var subscriptions = object._subscriptions;
         object._console.log(memberSetting);
         object._console.log(calendarAccount);
-        object._console.log(subscriptions);
         object.hiddenLoginErrorMessage();
         
         if (parseInt(memberSetting.function_for_member) == 1) {
@@ -210,13 +200,10 @@
             var edit = document.getElementById("booking-package-edit");
             var bookingHistory = document.getElementById("booking-package-bookedHistory");
             var delete_button = document.getElementById("booking-package-edit_user_delete_button");
-            var subscribed = document.getElementById("booking-package-subscribed");
             
             var edit_form = document.getElementById('booking-package-user-edit-form');
             var login_form = document.getElementById("booking-package-loginform");
             var user_form = document.getElementById("booking-package-user-form");
-            var subscription_form = document.getElementById("booking-package-subscription_form");
-            var subscribed_panel = document.getElementById("booking-package-subscribed_panel");
             var booking_calendar = document.getElementById("booking-package");
             var myBookingHistory = document.getElementById("booking-package_myBookingHistory");
             var myBookingDetails = document.getElementById("booking-package_myBookingDetails");
@@ -395,20 +382,6 @@
                 pluginName.name = "pluginName";
                 pluginName.value = "booking-package";
                 login_form.appendChild(pluginName);
-                
-            }
-            
-            if(parseInt(subscriptions.subscribed) == 1){
-                
-                subscription_form = null;
-                //subscribed_panel = null;
-                
-            }
-            
-            if(subscriptions.status == 0){
-                
-                subscribed.classList.add("hidden_panel");
-                subscribed = document.createElement("div");
                 
             }
             
@@ -619,28 +592,10 @@
             edit_user_return_button.classList.remove("hidden_panel");
             edit_user_return_button.onclick = function(){
                 
-                if (subscription_form != null) {
-                    
-                    
-                    if(parseInt(subscriptions.subscribed) == 1){
-                        
-                        subscription_form.classList.add("hidden_panel");
-                        booking_calendar.classList.remove("hidden_panel");
-                        
-                    }else{
-                        
-                        
-                        subscription_form.classList.remove("hidden_panel");
-                        
-                    }
-                    
-                }
-                
                 var edit_form = document.getElementById("booking-package-user-edit-form");
                 booking_calendar.classList.remove("hidden_panel");
                 bookingHistory.classList.remove("hidden_panel");
                 edit.classList.remove("hidden_panel");
-                subscribed.classList.remove("hidden_panel");
                 edit_form.classList.add("hidden_panel");
                 myBookingDetailsFroVisitor.classList.add('hidden_panel');
                 document.getElementById("booking-package_myBookingDetails_panel").textContent = null;
@@ -666,7 +621,6 @@
                 logout.classList.remove("hidden_panel");
                 register.classList.add("hidden_panel");
                 edit.classList.remove("hidden_panel");
-                subscribed.classList.remove("hidden_panel");
                 bookingHistory.classList.remove("hidden_panel");
                 /**
                 console.error(object._userFormFields);
@@ -681,7 +635,6 @@
                 login.classList.remove("hidden_panel");
                 logout.classList.add("hidden_panel");
                 edit.classList.add("hidden_panel");
-                subscribed.classList.add("hidden_panel");
                 bookingHistory.classList.add("hidden_panel");
                 
                 if (parseInt(memberSetting.visitors_registration_for_member) == 1) {
@@ -823,21 +776,7 @@
                     var edit_form = document.getElementById("booking-package-user-edit-form");
                     var edit_user_button = document.getElementById("booking-package-edit_user_button");
                     
-                    if (subscription_form != null) {
-                        
-                        subscription_form.classList.add("hidden_panel");
-                        
-                    }
-                    
-                    object._console.log(subscribed_panel);
-                    if (subscribed_panel != null) {
-                        
-                        subscribed_panel.classList.add("hidden_panel");
-                        
-                    }
-                    
                     booking_calendar.classList.add("hidden_panel");
-                    subscribed.classList.add("hidden_panel");
                     edit.classList.add("hidden_panel");
                     bookingHistory.classList.remove("hidden_panel");
                     myBookingHistory.classList.add("hidden_panel");
@@ -858,18 +797,6 @@
                 delete_button.onclick = function() {
                     
                     object.delete_member();
-                    
-                };
-                
-                subscribed.onclick = function() {
-                    
-                    
-                    booking_calendar.classList.add("hidden_panel");
-                    object.subscribed_form(booking_calendar, function(response) {
-                        
-                        
-                        
-                    });
                     
                 };
                 
@@ -1240,172 +1167,6 @@
             myBookingDetails.classList.add("hidden_panel");
             
         };
-        
-    }
-    
-    Booking_Package_Member.prototype.subscribed_form = function(booking_calendar, callback){
-        
-        var object = this;
-        var memberSetting = object._setting;
-        var subscriptions = object._subscriptions;
-        object._console.log(memberSetting);
-        object._console.log(subscriptions);
-        var subscription_form = document.getElementById("booking-package-subscription_form");
-        var subscribed_panel = document.getElementById("booking-package-subscribed_panel");
-        var return_button = document.getElementById("booking-package-subscribed_return_button");
-        var edit = document.getElementById("booking-package-edit");
-        var subscribed = document.getElementById("booking-package-subscribed");
-        edit.classList.add("hidden_panel");
-        subscribed.classList.add("hidden_panel");
-        subscribed_panel.classList.remove("hidden_panel");
-        subscription_form.classList.add("hidden_panel");
-        
-        var cost = new FORMAT_COST(object._i18n, object._debug, object._numberFormatter, this._currency_info);
-        var tbody = document.getElementById("booking-package-subscribed_items");
-        tbody.textContent = null;
-        var subscription_list = memberSetting.subscription_list;
-        for(var key in subscription_list){
-            
-            var product = subscription_list[key];
-            var items = product.items;
-            var currency = null;
-            var amount = 0;
-            object._console.log(product);
-            for(var i = 0; i < items.length; i++){
-                
-                var item = items[i];
-                currency = item.currency;
-                amount += parseInt(item.amount);
-                object._console.log(item);
-                
-            }
-            
-            amount = cost.formatCost(amount, currency);
-            
-            var amountPanel = document.createElement("div");
-            amountPanel.textContent = object._i18n.get("%s per month", [amount]);
-            
-            var expirationDate = document.createElement("div");
-            expirationDate.textContent = object._i18n.get("Expiration date: %s", [product.period_end_date]);
-            
-            var itemPanel = document.createElement("div");
-            itemPanel.textContent = product.name;
-            
-            var itemTd = document.createElement("td");
-            itemTd.appendChild(itemPanel);
-            itemTd.appendChild(amountPanel);
-            itemTd.appendChild(expirationDate);
-            
-            var deleteTd = document.createElement("td");
-            deleteTd.setAttribute("data-key", key);
-            deleteTd.setAttribute("style", "font-family: 'Material Icons' !important;");
-            deleteTd.setAttribute("class", "material-icons delete_icon");
-            deleteTd.textContent = "delete";
-            
-            var tr = document.createElement("tr");
-            tr.id = object._prefix + key;
-            tr.appendChild(itemTd);
-            tr.appendChild(deleteTd);
-            if(product.canceled != null && parseInt(product.canceled) == 1){
-                
-                tr.classList.add("canceled");
-                deleteTd.setAttribute("style", "cursor: not-allowed; font-family: 'Material Icons' !important;");
-                
-            }
-            
-            
-            tbody.appendChild(tr);
-            
-            deleteTd.onclick = function(){
-                
-                var deleteTd = this;
-                var key = this.getAttribute("data-key");
-                var product = subscription_list[key];
-                object._console.log(product);
-                if(product.canceled != null && parseInt(product.canceled) == 1){
-                    
-                    return null;
-                    
-                }
-                
-                if(window.confirm(object._i18n.get('If you cancel the "%s" subscription, you can not make a reservation after the deadline of %s. Do you really want to cancel the subscription?', [product.name, product.period_end_date]))){
-                    
-                    object.deleteSubscription(product, function(response){
-                        
-                        var tr = document.getElementById(object._prefix + key);
-                        if(response.status == 1){
-                            
-                            subscription_list[key]['canceled'] = 1;
-                            tr.classList.add("canceled");
-                            deleteTd.setAttribute("style", "cursor: not-allowed; font-family: 'Material Icons' !important;");
-                            
-                        }else{
-                            
-                            tbody.removeChild(tr);
-                            
-                        }
-                        
-                    });
-                    
-                }
-                
-            }
-            
-        }
-        
-        
-        return_button.onclick = function(){
-            
-            edit.classList.remove("hidden_panel");
-            subscribed.classList.remove("hidden_panel");
-            subscribed_panel.classList.add("hidden_panel");
-            
-            if(parseInt(subscriptions.subscribed) == 1){
-                
-                booking_calendar.classList.remove("hidden_panel");
-                
-            }else{
-                
-                subscription_form.classList.remove("hidden_panel");
-                
-                
-            }
-            
-        }
-        
-    }
-    
-    Booking_Package_Member.prototype.deleteSubscription = function(product, callback){
-        
-        var object = this;
-        var post = {mode: 'deleteSubscription', booking_package_nonce: object._nonce, booking_package_wp_rest_nonce: object._wp_rest_nonce, plugin_name: object._plugin_name, action: object._action, product: product.product};
-        var bookingBlockPanel = document.getElementById("bookingBlockPanel");
-        bookingBlockPanel.classList.remove("hidden_panel");
-        new Booking_App_XMLHttp(object._url, post, false, function(response){
-            
-            object._console.log(response);
-            object.setNewNonce(response);
-            if(parseInt(response.status) == 1){
-                
-                callback({stats: 1, error: null});
-                
-            }else{
-                
-                if(response.reload != null && parseInt(response.reload) == 1){
-                    
-                    window.location.reload();
-                    
-                }else{
-                    
-                    callback({stats: 0, error: response.error});
-                    
-                }
-                
-            }
-            
-            bookingBlockPanel.classList.add("hidden_panel");
-            
-        });
         
     }
     

@@ -22,319 +22,12 @@
             
         }
         
-	    public function createCustomer($payId, $public_key, $secret, $token, $calendarAccount, $subscription, $user, $payment_live, $payment_active){
-	        
-	        $response = array("customer" => array(), "subscription" => array());
-	        if($payId == "stripe"){
-	            
-	            /*
-	            $createCustomer = true;
-	            if(isset($user['subscription_list']['customer_id_for_stripe'])){
-	                
-	                $customer = $this->getCustomerForStripe($user['subscription_list']['customer_id_for_stripe'], $secret);
-	                if(is_array($customer)){
-	                    #var_dump($customer);
-	                    $createCustomer = false;
-	                    
-	                }
-	                
-	            }
-	            
-	            if($createCustomer === true){
-	                
-	                $response = $this->createCustomerForStripe($payId, $public_key, $secret, $token, $calendarAccount, $subscription, $user);
-	                
-	            }else{
-	                
-	                $response['subscription'] = $this->createSubscriptionsForStripe($user['subscription_list']['customer_id_for_stripe'], $secret, $subscription, $user);
-	                
-	            }
-	            **/
-	            
-	            $response = $this->createCustomerForStripe($payId, $public_key, $secret, $token, $calendarAccount, $subscription, $user);
-	            
-	        }
-	        
-	        return $response;
-	        
-	    }
-	    
-	    public function createCustomerForStripe($payId, $public_key, $secret, $token, $calendarAccount, $subscription, $user){
-	        
-	        $params = array('source' => $token, 'email' => $user['user_email'], 'description' => 'User: '.$user['user_login'].' Calendar: '.$calendarAccount['name']);
-            $response = null;
-            
-            $args = array(
-				'method' => 'POST',
-				'timeout' => $this->request_timeout, 
-				'body' => $params,
-				'headers' => array(
-					'Authorization' => 'Basic ' . base64_encode($secret . ':')
-				)
-			);
-			$response = wp_remote_request("https://api.stripe.com/v1/customers", $args);
-			$httpCode = wp_remote_retrieve_response_code($response);
-			$customer = json_decode(wp_remote_retrieve_body($response), true);
-			
-            /**
-            $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/customers");
-			curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			curl_setopt($ch, CURLOPT_POST, 1);
-			
-			ob_start();
-			$response = curl_exec($ch);
-			$response = ob_get_contents();
-			ob_end_clean();
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close ($ch);
-			$customer = json_decode($response, true);
-			**/
-			
-			if ($httpCode < 400) {
-			    
-			    $subscription = $this->createSubscriptionsForStripe($customer['id'], $secret, $subscription, $user);
-                $stripe = array("customer" => $customer, "subscription" => $subscription);
-                return $stripe;
-			    
-			} else {
-			    
-			    $message = $this->httpCodeError($httpCode, $payId);
-			    return $message;
-			    
-			}
-            
-	    }
-	    
-	    public function getCustomerForStripe($id, $secret){
-	        
-	        $args = array(
-				'method' => 'GET',
-				'timeout' => $this->request_timeout, 
-				'headers' => array(
-					'Authorization' => 'Basic ' . base64_encode($secret . ':')
-				)
-			);
-			$response = wp_remote_request("https://api.stripe.com/v1/customers/" . $id, $args);
-			$httpCode = wp_remote_retrieve_response_code($response);
-			$customer = json_decode(wp_remote_retrieve_body($response), true);
-			
-			/**
-	        $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/customers/".$id);
-			curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-			#curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			curl_setopt($ch, CURLOPT_POST, 0);
-			
-			ob_start();
-			$response = curl_exec($ch);
-			$response = ob_get_contents();
-			ob_end_clean();
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close ($ch);
-			$customer = json_decode($response, true);
-			**/
-			
-			if ($httpCode < 400) {
-			    
-			    #var_dump($customer);
-			    return $customer;
-			    
-			} else {
-			    
-			    return false;
-			    
-			}
-	        
-	    }
-	    
-	    public function createSubscriptionsForStripe($id, $secret, $subscription, $user){
-	        
-	        $params = array("customer" => $id);
-	        $plans = $subscription['plans'];
-	        for($i = 0; $i < count($plans); $i++){
-	            
-	            $params["items[".$i."][plan]"] = $plans[$i]["id"];
-	            
-	        }
-	        #var_dump($params);
-	        
-	        $args = array(
-				'method' => 'POST',
-				'timeout' => $this->request_timeout, 
-				'body' => $params,
-				'headers' => array(
-					'Authorization' => 'Basic ' . base64_encode($secret . ':')
-				)
-			);
-			$response = wp_remote_request("https://api.stripe.com/v1/subscriptions", $args);
-			$httpCode = wp_remote_retrieve_response_code($response);
-			$subscription = json_decode(wp_remote_retrieve_body($response), true);
-	        
-	        /**
-	        $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/subscriptions");
-			curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			curl_setopt($ch, CURLOPT_POST, 1);
-			
-			ob_start();
-			$response = curl_exec($ch);
-			$response = ob_get_contents();
-			ob_end_clean();
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close ($ch);
-			$subscription = json_decode($response, true);
-			**/
-			
-			if ($httpCode < 400) {
-			    
-			    return $subscription;
-			    
-			} else {
-			    
-			    $message = $this->httpCodeError($httpCode, $payId);
-			    return $message;
-			    
-			}
-	        
-	    }
-        
-        public function update_subscription($secret, $subscription){
-            
-            if ($subscription['payType'] == 'stripe') {
-                
-                $args = array(
-                    'method' => 'GET',
-                    'timeout' => $this->request_timeout, 
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                    )
-                );
-                $response = wp_remote_request("https://api.stripe.com/v1/subscriptions/" . $subscription['subscription_id_for_stripe'], $args);
-                $httpCode = wp_remote_retrieve_response_code($response);
-                $subscription = json_decode(wp_remote_retrieve_body($response), true);
-                
-                /**
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/subscriptions/".$subscription['subscription_id_for_stripe']);
-                curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                curl_setopt($ch, CURLOPT_POST, 0);
-                
-                ob_start();
-                $response = curl_exec($ch);
-                $response = ob_get_contents();
-                ob_end_clean();
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close ($ch);
-                $subscription = json_decode($response, true);
-                **/
-                
-                if ($httpCode < 400) {
-                    
-                    return $subscription;
-                    
-                } else {
-                    
-                    $message = $this->httpCodeError($httpCode, $payId);
-                    return $message;
-                    
-                }
-                
-            }
-            
-        }
-        
-	    public function deleteSubscription($subscription, $secret){
-	        
-	        $response = array("status" => 0, "reload" => 1);
-	        if($subscription['payType'] == "stripe"){
-	            
-	            $args = array(
-                    'method' => 'DELETE',
-                    'timeout' => $this->request_timeout, 
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                    )
-                );
-                $response = wp_remote_request("https://api.stripe.com/v1/subscriptions/" . $subscription['subscription_id_for_stripe'], $args);
-                $httpCode = wp_remote_retrieve_response_code($response);
-                $delete = json_decode(wp_remote_retrieve_body($response), true);
-                
-                /**
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/subscriptions/".$subscription['subscription_id_for_stripe']);
-                curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-                
-                ob_start();
-                $response = curl_exec($ch);
-                $response = ob_get_contents();
-                ob_end_clean();
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close ($ch);
-                $delete = json_decode($response, true);
-                **/
-                
-                if ($httpCode < 400) {
-                    
-                    if ($delete['status'] == 'canceled') {
-                        
-                        $args = array(
-                            'method' => 'DELETE',
-                            'timeout' => $this->request_timeout, 
-                            'headers' => array(
-                                'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                            )
-                        );
-                        $response = wp_remote_request("https://api.stripe.com/v1/customers/" . $subscription['customer_id_for_stripe'], $args);
-                        $httpCode = wp_remote_retrieve_response_code($response);
-                        $delete = json_decode(wp_remote_retrieve_body($response), true);
-                        
-                        /**
-                        $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/customers/".$subscription['customer_id_for_stripe']);
-                        curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-                        
-                        ob_start();
-                        $response = curl_exec($ch);
-                        $response = ob_get_contents();
-                        ob_end_clean();
-                        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                        curl_close ($ch);
-                        $delete = json_decode($response, true);
-                        **/
-                        
-                        if ($httpCode < 400) {
-                            
-                            return $delete;
-                            
-                        } else {
-                            
-                            $message = $this->httpCodeError($httpCode, $payId);
-                            return $message;
-                            
-                        }
-                        
-                    }
-                    
-                } else {
-                    
-                    $message = $this->httpCodeError($httpCode, $payId);
-                    return $message;
-                    
-                }
-                
-            }
-            
-            return $response;
-            
-	    }
-        
         public function pay($payId, $stripe_konbini, $stripe_paypay, $public_key, $secret, $token, $payment_live, $amont, $currency, $key, $name, $email, $bookingDate){
             
+            if (has_filter('booking_package_creditcard_pay')) {
+                return apply_filters('booking_package_creditcard_pay', $payId, $stripe_konbini, $stripe_paypay, $public_key, $secret, $token, $payment_live, $amont, $currency, $key, $name, $email, $bookingDate);
+            }
+
             $response = array('error' => "8001");
             
             if (intval($amont) <= 0) {
@@ -369,6 +62,10 @@
         
         public function cancel($payId, $public_key, $secret, $payment_live, $chargeId){
             
+            if (has_filter('booking_package_creditcard_cancel')) {
+                return apply_filters('booking_package_creditcard_cancel', $payId, $public_key, $secret, $payment_live, $chargeId);
+            }
+
             #var_dump($payId);
             $response = array('error' => "8002");
             if($payId == 'stripe' || $payId == 'stripe_paypay'){
@@ -387,23 +84,12 @@
             
         }
         
-        public function update($payId, $public_key, $secret, $chargeId, $bookingId, $payment_live){
-            
-            $response = array('error' => "8002");
-            if($payId == 'paypal'){
-                
-                $access_token = $this->getAccessTokenPayPal($public_key, $secret, $payment_live);
-                $response = $this->updatePaymentPayPal($chargeId, $bookingId, $access_token, $payment_live);
-                
-            }
-            
-            $this->response = $response;
-	        return $response;
-            
-        }
-        
         public function intentForStripe($secret, $amont, $currency) {
             
+            if (has_filter('booking_package_creditcard_intent_stripe')) {
+                return apply_filters('booking_package_creditcard_intent_stripe', $secret, $amont, $currency);
+            }
+
             $params = array(
                 'amount' => $amont, 
                 'currency' => $currency, 
@@ -431,6 +117,10 @@
         
         public function intentForStripeExpressCheckout($secret, $amont, $currency) {
             
+            if (has_filter('booking_package_creditcard_intent_stripe_express_checkout')) {
+                return apply_filters('booking_package_creditcard_intent_stripe_express_checkout', $secret, $amont, $currency);
+            }
+
             $params = array(
                 'amount' => $amont, 
                 'currency' => $currency, 
@@ -455,6 +145,10 @@
         
         public function intentForStripePayPay($secret, $amont, $currency) {
             
+            if (has_filter('booking_package_creditcard_intent_stripe_paypay')) {
+                return apply_filters('booking_package_creditcard_intent_stripe_paypay', $secret, $amont, $currency);
+            }
+
             $params = array(
                 'amount' => $amont, 
                 'currency' => $currency, 
@@ -478,6 +172,10 @@
         
         public function intentForStripeKonbini($secret, $amont, $currency, $expiresDate) {
             
+            if (has_filter('booking_package_creditcard_intent_stripe_konbini')) {
+                return apply_filters('booking_package_creditcard_intent_stripe_konbini', $secret, $amont, $currency, $expiresDate);
+            }
+
             $params = array(
                 'amount' => $amont, 
                 'currency' => $currency, 
@@ -510,6 +208,10 @@
         
         public function updateIntentForStripe($secret, $amont, $id) {
             
+            if (has_filter('booking_package_creditcard_update_intent_stripe')) {
+                return apply_filters('booking_package_creditcard_update_intent_stripe', $secret, $amont, $id);
+            }
+
             $params = array(
                 'amount' => $amont,
             );
@@ -532,6 +234,10 @@
         
         public function captureStripe($payId, $secret, $token) {
             
+            if (has_filter('booking_package_creditcard_capture_stripe')) {
+                return apply_filters('booking_package_creditcard_capture_stripe', $payId, $secret, $token);
+            }
+
             $params = array();
             $args = array(
                 'method' => 'POST',
@@ -565,6 +271,10 @@
         
         public function commitStripe($payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate) {
             
+            if (has_filter('booking_package_creditcard_commit_stripe')) {
+                return apply_filters('booking_package_creditcard_commit_stripe', $payId, $stripe_konbini, $stripe_paypay, $secret, $token, $amont, $currency, $key, $name, $email, $bookingDate);
+            }
+
             $message = array();
             #$params = array('source' => $token, 'amount' => $amont, 'currency' => $currency, 'description' => "Key: " . $key . " Name: " . $name);
             $response = null;
@@ -648,6 +358,10 @@
         
         public function commitPayPal($payId, $secret, $token, $amont, $currency, $key, $name){
             
+            if (has_filter('booking_package_creditcard_commit_paypal')) {
+                return apply_filters('booking_package_creditcard_commit_paypal', $payId, $secret, $token, $amont, $currency, $key, $name);
+            }
+
             $message = array();
             $bool = true;
             if($bool == true){
@@ -685,8 +399,50 @@
             
         }
         
+        public function update($payId, $public_key, $secret, $chargeId, $bookingId, $payment_live, $name = '', $email = '', $bookingDate = ''){
+
+            if (has_filter('booking_package_creditcard_update')) {
+                return apply_filters('booking_package_creditcard_update', $payId, $public_key, $secret, $chargeId, $bookingId, $payment_live, $name, $email, $bookingDate);
+            }
+
+            $response = array('error' => "8002");
+            if($payId == 'paypal'){
+
+                $access_token = $this->getAccessTokenPayPal($public_key, $secret, $payment_live);
+                $response = $this->updatePaymentPayPal($chargeId, $bookingId, $access_token, $payment_live);
+
+            } else if($payId == 'stripe' || $payId == 'stripe_paypay' || $payId == 'stripe_konbini'){
+                
+                $params = array(
+                    'description' => "Key: " . $bookingId . " Booking: " . $bookingDate . " Name: " . $name . " Emails: " . $email,
+                    'metadata' => array(
+                        'booking_id' => strval($bookingId)
+                    )
+                );
+                $args = array(
+                    'method'  => 'POST',
+                    'timeout' => $this->request_timeout,
+                    'body'    => $params,
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
+                    )
+                );
+                $res = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $chargeId, $args);
+                $response = json_decode(wp_remote_retrieve_body($res), true);
+
+            }
+
+            $this->response = $response;
+            return $response;
+
+        }
+        
         public function getAccessTokenPayPal($public_key, $secret, $payment_live){
             
+            if (has_filter('booking_package_creditcard_get_access_token_paypal')) {
+                return apply_filters('booking_package_creditcard_get_access_token_paypal', $public_key, $secret, $payment_live);
+            }
+
             $sandbox = '';
             if(intval($payment_live) == 0){
                 
@@ -717,6 +473,10 @@
         
         public function capturePayPal($id, $token, $payment_live) {
             
+            if (has_filter('booking_package_creditcard_capture_paypal')) {
+                return apply_filters('booking_package_creditcard_capture_paypal', $id, $token, $payment_live);
+            }
+
             $sandbox = '';
             if(intval($payment_live) == 0){
                 
@@ -763,6 +523,10 @@
         
         public function addBookingIdOnPayPal($id, $bookingId, $token, $payment_live) {
             
+            if (has_filter('booking_package_creditcard_add_booking_id_on_paypal')) {
+                return apply_filters('booking_package_creditcard_add_booking_id_on_paypal', $id, $bookingId, $token, $payment_live);
+            }
+
             $sandbox = '';
             if(intval($payment_live) == 0){
                 
@@ -815,6 +579,10 @@
         
         public function getPaymentDetailsPayPal($id, $token, $payment_live, $bookingId, $name, $email, $bookingDate) {
             
+            if (has_filter('booking_package_creditcard_get_payment_details_paypal')) {
+                return apply_filters('booking_package_creditcard_get_payment_details_paypal', $id, $token, $payment_live, $bookingId, $name, $email, $bookingDate);
+            }
+
             $message = array();
             if (empty($token)) {
                 
@@ -870,6 +638,10 @@
         
         public function updatePaymentPayPal($id, $bookingId, $token, $payment_live){
             
+            if (has_filter('booking_package_creditcard_update_payment_paypal')) {
+                return apply_filters('booking_package_creditcard_update_payment_paypal', $id, $bookingId, $token, $payment_live);
+            }
+
             $sandbox = '';
             if(intval($payment_live) == 0){
                 
@@ -921,6 +693,10 @@
         
         public function refoundPayPal($id, $token, $payment_live){
             
+            if (has_filter('booking_package_creditcard_refound_paypal')) {
+                return apply_filters('booking_package_creditcard_refound_paypal', $id, $token, $payment_live);
+            }
+
             $sandbox = '';
             if(intval($payment_live) == 0){
                 
@@ -1012,93 +788,12 @@
             
         }
         
-        
-        
-        /**
-        public function cancelStripe($payId, $secret, $chargeId){
-            
-            $status = 'requires_capture';
-            if (preg_match('/^pi_/', $chargeId)) {
-                
-                $args = array(
-                    'method' => 'GET',
-                    'timeout' => $this->request_timeout, 
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                    )
-                );
-                $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $chargeId, $args);
-                $httpCode = wp_remote_retrieve_response_code($response);
-                $response = json_decode(wp_remote_retrieve_body($response), true);
-                
-                if ($response['status'] == 'succeeded') {
-                    
-                    $status = 'succeeded';
-                    $chargeId = $response['charges']['data'][0]['id'];
-                    
-                }
-                
-            } else {
-                
-                $status = 'succeeded';
-                
-            }
-            
-            $response = null;
-            $httpCode = null;
-            $message = array();
-            if ($status == 'requires_capture') {
-                
-                $args = array(
-                    'method' => 'POST',
-                    'timeout' => $this->request_timeout, 
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                    )
-                );
-                $response = wp_remote_request('https://api.stripe.com/v1/payment_intents/' . $chargeId . '/cancel', $args);
-                $httpCode = wp_remote_retrieve_response_code($response);
-                
-            } else if ($status == 'succeeded') {
-                
-                $params = array('charge' => $chargeId);
-                
-                $args = array(
-                    'method' => 'POST',
-                    'timeout' => $this->request_timeout, 
-                    'body' => $params,
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . base64_encode($secret . ':')
-                    )
-                );
-                $response = wp_remote_request('https://api.stripe.com/v1/refunds', $args);
-                $httpCode = wp_remote_retrieve_response_code($response);
-                
-            }
-            
-            #$response = json_decode($response, true);
-            $response = json_decode(wp_remote_retrieve_body($response), true);
-            if ($httpCode < 400) {
-                
-                if (isset($response['id']) && $response['status'] == 'succeeded') {
-                    
-                    $message['cardToken'] = $response['id'];
-                    
-                }
-                	
-            } else {
-                
-                $message = $this->httpCodeError($httpCode, $payId);
-                
-            }
-            
-            return $message;
-            
-        }
-        **/
-        
         public function cancelStripe($payId, $secret, $chargeId) {
             
+            if (has_filter('booking_package_creditcard_cancel_stripe')) {
+                return apply_filters('booking_package_creditcard_cancel_stripe', $payId, $secret, $chargeId);
+            }
+
             $status = 'requires_capture';
             $originalId = $chargeId;
             if (preg_match('/^pi_/', $originalId)) {
@@ -1202,10 +897,18 @@
         
         public function cancelPayPal($payId, $secret, $chargeId){
             
+            if (has_filter('booking_package_creditcard_cancel_paypal')) {
+                return apply_filters('booking_package_creditcard_cancel_paypal', $payId, $secret, $chargeId);
+            }
+
         }
         
         public function httpCodeError($httpCode, $payId){
             
+            if (has_filter('booking_package_creditcard_http_code_error')) {
+                return apply_filters('booking_package_creditcard_http_code_error', $httpCode, $payId);
+            }
+
             $message = array('code' => $httpCode);
             if($httpCode == 400){
                 $message['error'] = "The request was unacceptable, often due to missing a required parameter.";

@@ -36,17 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
         this._console.log = this._debug.getConsoleLog();
         
         this.schedule_data = schedule_data;
-        this._isExtensionsValid = parseInt(schedule_data.isExtensionsValid);
         this._webApp = webApp;
         this.url = schedule_data['url'];
         this.nonce = schedule_data['nonce'];
         this.action = schedule_data['action'];
+        this._isExtensionsValid = (schedule_data.isExtensionsValid != null) ? parseInt(schedule_data.isExtensionsValid) : 0;
         this.dateFormat = schedule_data.dateFormat;
         this.clockFormat = schedule_data.clockFormat;
         this.positionOfWeek = schedule_data.positionOfWeek;
         this.positionTimeDate = schedule_data.positionTimeDate;
         this.settingList = schedule_data['list'];
-        this._isExtensionsValid = parseInt(schedule_data.isExtensionsValid);
         this._locale = schedule_data.locale;
         this.upgradeData = {url: schedule_data['url'], nonce: schedule_data['nonce'], action: schedule_data['action'], locale: schedule_data.locale};
         this.xmlHttp = null;
@@ -129,7 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const upgrade = new Upgrade(this.nonce, this.action, this.url);
         
-        object._console.log("this._isExtensionsValid = " + this._isExtensionsValid);
         object._console.log(this.schedule_data);
         object._console.log(booking_package_dictionary);
         
@@ -483,7 +481,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     addCalendarAccountButton.classList.add("hidden_panel");
                     createCloneButton.classList.add("hidden_panel");
                     table.classList.add("hidden_panel");
-                    object.addItem(calendarAccountList, 'addCalendarAccount', {type: calendarType}, object.schedule_data['elementForCalendarAccount'], calendarType, function(json){
+                    var isExtensionsValid = (accountList.length > 0 && accountList[0].isExtensionsValid != null) ? parseInt(accountList[0].isExtensionsValid) : object._isExtensionsValid;
+                    object.addItem(calendarAccountList, 'addCalendarAccount', {type: calendarType, isExtensionsValid: isExtensionsValid}, object.schedule_data['elementForCalendarAccount'], calendarType, function(json){
                         
                         object._console.log(json);
                         if (json != 'close') {
@@ -1111,6 +1110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var period_after_date = document.getElementById("period_after_date");
                 var period_within_date = document.getElementById("period_within_date");
                 period_within_date.classList.add("hidden_panel");
+                document.getElementById("deletePublishedSchedules_freePlan").classList.add("hidden_panel");
                 
                 var delete_incomplete = document.getElementById('delete_incomplete');
                 delete_incomplete.checked = true;
@@ -1119,14 +1119,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 var delete_perfect = document.getElementById('delete_perfect');
                 delete_perfect.disabled = false;
                 
-                document.getElementById("deletePublishedSchedulesButton").textContent = object._i18n.get("Delete");
+                var deletePublishedSchedulesButton = document.getElementById("deletePublishedSchedulesButton");
+                deletePublishedSchedulesButton.textContent = object._i18n.get("Delete");
+                deletePublishedSchedulesButton.disabled = false;
                 document.getElementById("action_delete").checked = true;
                 document.getElementById("period_after").checked = true;
+                document.getElementById("period_all").onclick = function(){
+                    
+                    if(this.checked == true){
+                        
+                        period_within_date.classList.add("hidden_panel");
+                        document.getElementById("deletePublishedSchedules_freePlan").classList.add("hidden_panel");
+                        deletePublishedSchedulesButton.disabled = false;
+                        
+                    }
+                    
+                };
+                
                 document.getElementById("period_after").onclick = function(){
                     
                     if(this.checked == true){
                         
                         period_within_date.classList.add("hidden_panel");
+                        document.getElementById("deletePublishedSchedules_freePlan").classList.add("hidden_panel");
+                        deletePublishedSchedulesButton.disabled = false;
                         
                     }
                     
@@ -1137,6 +1153,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     if(this.checked == true){
                         
                         period_within_date.classList.remove("hidden_panel");
+                        if (object._isExtensionsValid == 0) {
+                            
+                            document.getElementById("deletePublishedSchedules_freePlan").classList.remove("hidden_panel");
+                            //document.getElementById("period_within").disabled = true;
+                            deletePublishedSchedulesButton.disabled = true;
+                            
+                        }
                         
                     }
                     
@@ -1189,7 +1212,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                     }
                     
-                    if (object._isExtensionsValid == 0) {
+                    
+                    if (object._isExtensionsValid == 0 && (key == 'deletePublishedSchedules_to_month' || key == 'deletePublishedSchedules_to_day' || key == 'deletePublishedSchedules_to_year') ) {
                         
                         document.getElementById(key).disabled = true;
                         
@@ -1199,9 +1223,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (object._isExtensionsValid == 0) {
                     
-                    document.getElementById("deletePublishedSchedules_freePlan").classList.remove("hidden_panel");
-                    document.getElementById("period_within").disabled = true;
-                    period_within_date.classList.add("hidden_panel");
+                    //document.getElementById("deletePublishedSchedules_freePlan").classList.remove("hidden_panel");
+                    //document.getElementById("period_within").disabled = true;
+                    //period_within_date.classList.add("hidden_panel");
                     
                 }
                 
@@ -1222,14 +1246,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         deletePublishedSchedules_to_year: timestamp.Y,
                     };
                     
-                    if(object._isExtensionsValid == 1){
+                    for(var key in date_list){
                         
-                        for(var key in date_list){
-                            
-                            var select = document.getElementById(key);
-                            post[key] = select.value;
-                            
-                        }
+                        var select = document.getElementById(key);
+                        post[key] = select.value;
                         
                     }
                     
@@ -2344,7 +2364,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         var messagePanel = object.create('div', object._i18n.get('Select multiple days to add booking time slots.'), null, null, null, null, null);
-        if (object._isExtensionsValid === 0) {
+        if (parseInt(account.isExtensionsValid) === 0) {
             
             messagePanel.classList.add('extensionsValid');
             messagePanel.textContent = object._i18n.get('Paid plan subscription required.');
@@ -2413,7 +2433,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         saveButton.onclick = function(event) {
             
-            if (object._isExtensionsValid === 0) {
+            if (parseInt(account.isExtensionsValid) === 0) {
                 
                 confirm.alertPanelShow(object._i18n.get("Warning"), object._i18n.get("Paid plan subscription required."), false, null);
                 return null;
@@ -2609,7 +2629,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         }
         
-        if (object._isExtensionsValid === 0) {
+        if (parseInt(account.isExtensionsValid) === 0) {
             
             saveForBookingDateButton.disabled = true;
             
@@ -5736,7 +5756,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         };
     	
-        if (object._isExtensionsValid == 1) {
+        if (parseInt(account.isExtensionsValid) === 1) {
             
             saveButton.onclick = function(event){
                 
@@ -5980,7 +6000,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         };
     	
-        if (object._isExtensionsValid == 1) {
+        if (parseInt(account.isExtensionsValid) === 1) {
             
             saveButton.onclick = function(event){
                 
@@ -6141,7 +6161,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                         }
                         
-                        if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && object._isExtensionsValid == 1) {
+                        if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && parseInt(account.isExtensionsValid) == 1) {
                             
                             saveButton.disabled = false;
                             
@@ -6201,7 +6221,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 editBool = true;
                 if (action == "close") {
                     
-                    if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && object._isExtensionsValid == 1) {
+                    if (object.areObjectKeyOrdersEqual(original_columns, ranking_columns) === false && parseInt(account.isExtensionsValid) == 1) {
                         
                         saveButton.disabled = false;
                         
@@ -6233,7 +6253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         };
         
-        if (object._isExtensionsValid == 1) {
+        if (parseInt(account.isExtensionsValid) == 1) {
             
             saveButton.onclick = function(event) {
                 
@@ -6471,7 +6491,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         };
         
-        if (object._isExtensionsValid == 1) {
+        if (parseInt(account.isExtensionsValid) == 1) {
             
             saveButton.onclick = function(event){
                 
@@ -7083,7 +7103,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             var th = object.create('th', object._i18n.get(inputTypeList[key].name), null, null, null, null, null);
             th.setAttribute("scope", "row");
-            var inputPanel = object.createInput(key, data, inputData, account, false, null, object._isExtensionsValid);
+            var inputPanel = object.createInput(key, data, inputData, account, false, null, parseInt(account.isExtensionsValid));
             var td = object.create('td', null, [inputPanel], null, null, null, null);
             var tr = object.create('tr', null, [th, td], null, null, null, null);
             tr.setAttribute("valign", "top");
@@ -7188,7 +7208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         numberOfRoomsAvailable: object._i18n.get('Available room slots'), 
                     }
                     
-                    if (object._isExtensionsValid === 0) {
+                    if (parseInt(account.isExtensionsValid) === 0) {
                         
                         delete(verifyItems.hotelChargeOnDayBeforeNationalHoliday);
                         delete(verifyItems.hotelChargeOnNationalHoliday);
@@ -7899,13 +7919,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             
-        } else if (mode == 'addSubscriptions') {
-            
-            inputTypeList.active.value = "true";
-            inputTypeList.renewal.value = 1;
-            inputTypeList.limit.value = 1;
-            inputTypeList.numberOfTimes.value = 1;
-            
         } else if (mode == 'addTaxes') {
             
             inputTypeList.active.value = "true";
@@ -8331,7 +8344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             
-            var inputPanel = object.createInput(key, data, inputData, account, disabled, eventAction, object._isExtensionsValid);
+            var inputPanel = object.createInput(key, data, inputData, account, disabled, eventAction, parseInt(account.isExtensionsValid));
             if (upperPanel != null) {
                 
                 if (key == "cost") {
@@ -8458,7 +8471,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var cancelButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Cancel") );
         var buttonPanel = object.create('div', null, [saveButton, cancelButton], null, null, 'bottomButtonPanel', null);
         addPanel.appendChild(buttonPanel);
-        if (object._isExtensionsValid === 0 && mode == 'addOptionsForHotel') {
+        if (parseInt(account.isExtensionsValid) === 0 && mode == 'addOptionsForHotel') {
             
             saveButton.disabled = true;
             var extensionsValidPanel = object.create('div', object._i18n.get("Paid plan subscription required."), null, null, null, 'extensionsValid', null);
@@ -8575,11 +8588,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (mode == 'addCoupons') {
                 
                 response = object.getInputData(inputTypeList, inputData);
-                
-            } else if (mode == 'addSubscriptions') {
-                
-                response = object.getInputData(inputTypeList, inputData);
-                postData['rank'] = document.getElementById("courseSort").childNodes.length + 1;
                 
             } else if (mode == 'addTaxes') {
                 
@@ -8947,15 +8955,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
             
-        } else if (mode == 'updateSubscriptions') {
-            
-            inputTypeList.subscription.value = itemData.subscription;
-            inputTypeList.name.value = itemData.name;
-            inputTypeList.active.value = itemData.active;
-            inputTypeList.renewal.value = parseInt(itemData.renewal);
-            inputTypeList.limit.value = parseInt(itemData.limit);
-            inputTypeList.numberOfTimes.value = parseInt(itemData.numberOfTimes);
-            
         } else if (mode == 'updateTaxes') {
             
             inputTypeList.name.value = itemData.name;
@@ -9275,7 +9274,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             
-            var inputPanel = object.createInput(key, data, inputData, account, disabled, eventAction, object._isExtensionsValid);
+            var inputPanel = object.createInput(key, data, inputData, account, disabled, eventAction, parseInt(account.isExtensionsValid));
             if (upperPanel != null) {
                 
                 if (key == "cost") {
@@ -9582,20 +9581,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
         }
         
-        if (inputData.subscription && inputData.subscription.textBox) {
-            
-            object._console.log(inputData.subscription);
-            inputData.subscription.textBox.disabled = true;
-            
-        }
-        
         addPanel.appendChild(table);
         
         var saveButton = object.createButton(null, 'margin-right: 10px;', 'w3tc-button-save button-primary', null, object._i18n.get("Save") );
         var cancelButton = object.createButton(null, null, 'w3tc-button-save button-primary', null, object._i18n.get("Cancel") );
         var buttonPanel = object.create('div', null, [saveButton, cancelButton], null, null, 'bottomButtonPanel', null);
         addPanel.appendChild(buttonPanel);
-        if (object._isExtensionsValid === 0 && mode == 'updateOptionsForHotel') {
+        if (parseInt(account.isExtensionsValid) === 0 && mode == 'updateOptionsForHotel') {
             
             saveButton.disabled = true;
             var extensionsValidPanel = object.create('div', object._i18n.get("Paid plan subscription required."), null, null, null, 'extensionsValid', null);
@@ -9741,11 +9733,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
             } else if (mode == 'updateCoupons') {
-                
-                response = object.getInputData(inputTypeList, inputData);
-                postData['key'] = itemData.key;
-                
-            } else if (mode == "updateSubscriptions") {
                 
                 response = object.getInputData(inputTypeList, inputData);
                 postData['key'] = itemData.key;
@@ -10440,7 +10427,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         var slipRemainder = true;
                         let message = object._i18n.get('Please enable the "%s" item in the "Settings" tab.', [ object._i18n.get('Booking reminder') ] );
-                        if (mailMessageData.key === 'booking_reminder_notification' && (object._isExtensionsValid === 0 || parseInt(account.bookingReminder) === 0) && (enableEmail === 1 || enableSms === 1)) {
+                        if (mailMessageData.key === 'booking_reminder_notification' && (parseInt(account.isExtensionsValid) === 0 || parseInt(account.bookingReminder) === 0) && (enableEmail === 1 || enableSms === 1)) {
                             
                             slipRemainder = false;
                             object._console.log(slipRemainder);
@@ -11042,7 +11029,7 @@ document.addEventListener('DOMContentLoaded', function() {
             object._console.log(options);
             var addButton = object.create('div', object._i18n.get("Add"), null, null, null, 'addLink', null);
             valuePanel.appendChild(addButton);
-            if (object._isExtensionsValid == 0 && input.isExtensionsValidPanel != null && parseInt(input.isExtensionsValidPanel) == 0) {
+            if (parseInt(account.isExtensionsValid) == 0 && input.isExtensionsValidPanel != null && parseInt(input.isExtensionsValidPanel) == 0) {
                 
                 var extensionsValidPanel = document.createElement("div");
                 extensionsValidPanel.classList.add("freePlan");
@@ -12214,7 +12201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                         }
                         filedTd.appendChild(textBox);
-                        if (object._isExtensionsValid == 0 && isExtensionsValidForOption == 1) {
+                        if (parseInt(account.isExtensionsValid) === 0 && isExtensionsValidForOption == 1) {
                             
                             textBox.setAttribute('style', 'color: #ff4646;');
                             textBox.disabled = true;
@@ -12271,7 +12258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                     }
                     filedTd.appendChild(textBox);
-                    if (account.type === 'day' && key === 'price' && object._isExtensionsValid === 0) {
+                    if (account.type === 'day' && key === 'price' && parseInt(account.isExtensionsValid) === 0) {
                         
                         textBox.value = object._i18n.get('Paid plan subscription required.');
                         textBox.disabled = true;
@@ -12280,8 +12267,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     
-                    object._console.log("object._isExtensionsValid = " + object._isExtensionsValid);
-                    if (object._isExtensionsValid == 0 && isExtensionsValid == 1) {
+                    object._console.log("account.isExtensionsValid = " + parseInt(account.isExtensionsValid));
+                    if (parseInt(account.isExtensionsValid) == 0 && isExtensionsValid == 1) {
                         
                         textBox.disabled = true;
                         
@@ -12361,7 +12348,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                     }
                     
-                    if (object._isExtensionsValid == 0 && isExtensionsValid == 1) {
+                    if (parseInt(account.isExtensionsValid) == 0 && isExtensionsValid == 1) {
                         
                         selectBox.disabled = true;
                         

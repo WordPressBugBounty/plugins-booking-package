@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.36
+Version:     1.7.37
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -44,6 +44,8 @@ Domain Path: /languages
 		
 		public $userRoleName = 'booking_package_' . 'member';
 		
+		public $addonName = 'Booking Package Addon';
+		
 		public $locale = 'en';
 		
 		public $pluginLocale = null;
@@ -70,11 +72,7 @@ Domain Path: /languages
 		
 		private $isExtensionsValid = null;
 		
-		private $front_end_js = false;
-		
 		public $currencies = array();
-		
-		public $visitorSubscriptionForStripe = 0;
 		
 		public $groupOfInputField = 0;
 		
@@ -121,6 +119,8 @@ Domain Path: /languages
 		public $notificationsForUser = 0;
 		
 		public $guestLimitsPerTimeSlot = 0;
+		
+		public $install_addon = 0;
 		
 		public function __construct($shortcodes = 0, $widget = false) {
 			
@@ -217,6 +217,12 @@ Domain Path: /languages
 			
 			$textdomain = load_plugin_textdomain($this->plugin_name, false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
 			
+			$locale = apply_filters('plugin_locale', determine_locale(), $this->plugin_name);
+			$custom_mo = plugin_dir_path(__FILE__) . 'languages/' . $this->plugin_name . '-' . $locale . '.mo';
+			if (file_exists($custom_mo)) {
+				load_textdomain('booking-package-addon', $custom_mo);
+			}
+			
 			add_action('booking_package_notification', array($this, 'do_booking_notification'));
 			add_action('wp_dashboard_setup', array($this, 'add_dashboard_widget'));
 			add_action('admin_menu', array($this, 'add_pages'));
@@ -246,13 +252,13 @@ Domain Path: /languages
 			});
 			
 			add_action('widgets_init', array($this, 'register_widget'));
-			//add_action('load-plugins.php', array($this, 'load_plugins'));
 			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 			add_action('init', array($this, 'session_start'));
 			add_filter('login_headerurl', array($this, 'login_headerurl'));
 			add_filter('login_headertext', array($this, 'login_headertext'));
 			add_action('wp_print_footer_scripts', array($this, 'add_footer_scripts'), 5);
 			add_action('admin_post_booking-package-activate-subscription', array($this, 'activatePaidSubscription'));
+			add_action('admin_post_install_booking_package_addon', array($this, 'handle_addon_auto_install'));
 			
 			if (is_admin() === false) {
 				
@@ -404,10 +410,11 @@ Domain Path: /languages
             if ($isExtensionsValid === true) {
 				
 				$calendarAccounts = $schedule->booking_notification();
-				$schedule->deleteCustomers();
 				$setting->checkLatestInvoice();
 				
             }
+
+			$schedule->deleteCustomers();
 			
 		}
 		
@@ -420,7 +427,6 @@ Domain Path: /languages
 			if ($activation === true) {
 				
 				$setting = $this->setting;
-				$setting->activation(BOOKING_PACKAGE_EXTENSION_URL, "activation", $this->plugin_version);
 				$setting->setPaidSubscription('activation');
 				
 			}
@@ -436,16 +442,6 @@ Domain Path: /languages
 			if ($now_version == 0) {
 				
 				add_option($key, $this->plugin_version);
-				
-			} else {
-				
-				if ($this->plugin_version != $now_version) {
-					
-					update_option($key, $this->plugin_version);
-					$setting = $this->setting;
-					$setting->activation(BOOKING_PACKAGE_EXTENSION_URL, "upgrader", $this->plugin_version);
-					
-				}
 				
 			}
 			
@@ -481,61 +477,6 @@ Domain Path: /languages
 					
 				}
 				
-				
-			}
-			
-		}
-		
-		public function load_plugins() {
-			
-			$bool = true;
-			if (function_exists('get_sites') && class_exists('WP_Site_Query')) {
-				
-				include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-				include_once(ABSPATH . 'wp-includes/ms-functions.php');
-				if (is_plugin_active_for_network('booking-package/index.php') === true) {
-					
-					$bool = false;
-					
-				}
-			
-			}
-			
-			if ($bool === true) {
-				
-				$setting = $this->setting;
-	            $isExtensionsValid = $this->getExtensionsValid(false, false);
-				if ($isExtensionsValid === true) {
-					
-					$dictionary = array(
-						'You currently have a valid subscription. Do you want to deactivate the Booking Package?' => __('You currently have a valid subscription. Do you want to deactivate the Booking Package?', 'booking-package'),
-					);
-					$localize_script = array(
-						'url' => admin_url('admin-ajax.php'), 
-						'action' => $this->action_control, 
-						'nonce' => wp_create_nonce($this->action_control."_ajax"), 
-						'prefix' => $this->prefix,
-						'year' => date('Y'), 
-						'month' => date('m'), 
-						'day' => date('d'), 
-						'isExtensionsValid' => $isExtensionsValid,
-						'debug' => $this->dubug_javascript,
-						'pluginName' => $this->plugin_name,
-						'general_setting_url' => admin_url('admin.php?page=booking-package_setting_page&tab=subscriptionLink'), 
-					);
-					
-					$p_v = "?p_v=".$this->plugin_version;
-					wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
-					wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
-					$fontFaceStyle = $this->getFontFaceStyle();
-		            wp_add_inline_style("Control.css", $fontFaceStyle);
-					
-					wp_enqueue_script( 'i18n_js', plugin_dir_url( __FILE__ ).'js/i18n.js', array(), $this->get_plugin_asset_version('js/i18n.js') );
-					wp_enqueue_script('Delete_Plugin_js', plugin_dir_url( __FILE__ ) . 'js/Delete_plugin.js', array(), $this->get_plugin_asset_version('js/Delete_plugin.js') );
-					wp_localize_script('Delete_Plugin_js', $this->prefix.'dictionary', $dictionary);
-					wp_localize_script('Delete_Plugin_js', 'delete_plugin_data', $localize_script);
-					
-				}
 				
 			}
 			
@@ -1057,8 +998,8 @@ Domain Path: /languages
             
             $setting = $this->setting;
             $schedule = new booking_package_schedule($this->prefix, $this->plugin_name, $this->currencies, $this->userRoleName);
-            $isExtensionsValid = $this->getExtensionsValid(false, false);
-            $calendarAccount = $schedule->getCalendarAccount($accountKey, $isExtensionsValid);
+            
+            $calendarAccount = $schedule->getCalendarAccount($accountKey);
 			if ($calendarAccount === false) {
 				
 				echo '<div class="calendarNotFound" style="color: red; font-size: 2em; padding: 1em; text-align: center;">';
@@ -1068,6 +1009,7 @@ Domain Path: /languages
 				
 			}
 			
+			$isExtensionsValid = $calendarAccount['isExtensionsValid'];
 			$deleteKeys = array("googleCalendarID", "idForGoogleWebhook", "expirationForGoogleWebhook", "ical", "icalToken", "email_from", "email_from_title", "email_to", "email_to_title");
 			for ($i = 0; $i < count($deleteKeys); $i++) {
 				
@@ -1094,27 +1036,6 @@ Domain Path: /languages
 			$setting->getCss("front_end.css", plugin_dir_path( __FILE__ ));
 			$front_end_url = $setting->getCssUrl("front_end.css");
             wp_enqueue_style( 'front_end_url', $front_end_url['dirname'], array(), $front_end_url['v']);
-			
-			if ($isExtensionsValid === true) {
-				
-				$this->front_end_js = true;
-				/**
-				$setting->getJavaScript("front_end.js", plugin_dir_path( __FILE__ ));
-				$front_end_javascript_url = $setting->getJavaScriptUrl("front_end.js");
-				wp_enqueue_script('front_end_javascript_url', $front_end_javascript_url['dirname'], array(), $front_end_javascript_url['v']);
-				**/
-				
-			} else {
-				
-				$calendarAccount['hasMultipleServices'] = 0;
-				$calendarAccount['maximumNights'] = 0;
-				$calendarAccount['minimumNights'] = 0;
-				$calendarAccount['bookingVerificationCode'] = 'false';
-				$calendarAccount['bookingVerificationCodeToUser'] = 'false';
-				$calendarAccount['insertConfirmedPage'] = '0';
-				$calendarAccount['displayRemainingCapacity'] = '0';
-				
-			}
 			
 			$member_login_error = 0;
 			$member_form = '';
@@ -1154,7 +1075,7 @@ Domain Path: /languages
 			}
 			do_action('booking_package_login_user_on_front_end_page_as_action', $user);
 			
-			if ($isExtensionsValid !== true) {
+			if ($isExtensionsValid !== 1) {
 				
 				$memberSetting['function_for_member'] = 0;
 				
@@ -1175,7 +1096,7 @@ Domain Path: /languages
 					unset($myBookingDetails['payToken']);
 					
 					
-					$verifyCancellation = $schedule->verifyCancellation($myBookingDetails, $isExtensionsValid, $user['status']);
+					$verifyCancellation = $schedule->verifyCancellation($myBookingDetails, $user['status']);
 					if ($verifyCancellation['cancel'] == true) {
 						
 						$cancellationOfBooking = 1;
@@ -1188,8 +1109,6 @@ Domain Path: /languages
 				
 			}
 			
-			
-			#$memberSetting['subscription_list'] = array();
 			$query = null;
 			if (isset($_GET['bookingID']) === true && isset($_GET['bookingToken']) === true) {
 				
@@ -1289,7 +1208,7 @@ Domain Path: /languages
 			if (isset($_REQUEST['services']) && intval($calendarAccount['courseBool']) == 1) {
 				
 				$hasServices = explode(',', sanitize_text_field($_REQUEST['services']));
-				if ($isExtensionsValid === false || intval($calendarAccount['hasMultipleServices']) == 0) {
+				if ($isExtensionsValid === 0 || intval($calendarAccount['hasMultipleServices']) == 0) {
 					
 					$hasServices = array($hasServices[0]);
 					
@@ -1353,7 +1272,7 @@ Domain Path: /languages
 				
 				if ($service['stopServiceUnderFollowingConditions'] != 'doNotStop') {
 					
-					if ($isExtensionsValid === true) {
+					if ($isExtensionsValid === 1) {
 						
 						$calendarAccount['hasMultipleServices'] = 0;
 						
@@ -1422,7 +1341,6 @@ Domain Path: /languages
 				'googleCalendarID', 
 				'googleCalendarName', 
 				'googleCalendarSync', 
-				'subscriptionIdForStripe'
 			);
 			
 			foreach ($sensitive_keys as $skey) {
@@ -1446,7 +1364,6 @@ Domain Path: /languages
 			$localize_script['memberSetting'] = $memberSetting;
 			$localize_script['cancellationOfBooking'] = $cancellationOfBooking;
 			$localize_script['permalink'] = $permalink;
-			#$localize_script['isExtensionsValid'] = $isExtensionsValid;
 			
 			if (isset($_GET['callback_stripe']) && isset($_GET['redirect_status']) && isset($_GET['payment_intent']) && isset($_GET['payment_intent_client_secret'])) {
 				
@@ -1468,18 +1385,6 @@ Domain Path: /languages
 				$localize_script['userFormFields'][$i] =  $setting->getTranslateFormField($localize_script['userFormFields'][$i], $accountKey, get_locale(), 'user_profile');
 				
 			}
-			
-			
-			if ($isExtensionsValid === true) {
-				
-				$localize_script['isExtensionsValid'] = 1;
-				
-			} else {
-				
-				$localize_script['isExtensionsValid'] = 0;
-				
-			}
-			
 			
 			if (intval($calendarAccount['enableFixCalendar']) == 1) {
 				
@@ -1548,7 +1453,7 @@ Domain Path: /languages
 				
 			}
 			
-			if ($isExtensionsValid === true) {
+			if ($isExtensionsValid === 1) {
 				
 				#$localize_script['taxes'] = $setting->getTaxes($accountKey, 'yes');
 				$taxes = $setting->getTaxes($accountKey, 'yes');
@@ -1627,7 +1532,7 @@ Domain Path: /languages
 			$accountList = $schedule->getCalendarAccountListData("`key`, `name`, `expressionsCheck`, `type`, `courseTitle`, `includeChildrenInRoom`, `numberOfPeopleInRoom`");
 			$localize_script['calendarAccountList'] = $accountList;
 			$paymentMethod = explode(",", $calendarAccount['paymentMethod']);
-			if ((count($paymentMethod) == 1 && strlen($paymentMethod[0]) == 0) || $isExtensionsValid === false) {
+			if ((count($paymentMethod) == 1 && strlen($paymentMethod[0]) == 0) || $isExtensionsValid === 0) {
 				
 				$paymentMethod = array('locally');
 				
@@ -1767,10 +1672,9 @@ Domain Path: /languages
 			$html .= '<div id="booking-package-logout" class="logout hidden_panel">' . $dictionary['Sign Out'] . '</div>';
 			$html .= '<div id="booking-package-edit" class="edit">' . $dictionary['Edit My Profile'] . '</div>';
 			$html .= '<div id="booking-package-bookedHistory" class="edit">' . $dictionary['Booking History'] . '</div>';
-			$html .= '<div id="booking-package-subscribed" class="edit">Subscribed items</div>';
 			$html .= '</div>';
 			$html .= $wq_login_form.$member_form . '</div>';
-			$html .= $this->subscription_form($localize_script['calendarAccount'], $memberSetting);
+			
 			$html .= $htmlElement->myBookingHistory_panel($dictionary);
 			$html .= $htmlElement->myBookingDetails_panel($dictionary);
 			$html .= $htmlElement->cancelBookingDetailsForVisitor_panel($dictionary);
@@ -2114,20 +2018,15 @@ Domain Path: /languages
 				);
 				**/
 				
-				if ($this->front_end_js === true) {
+				$ssl = 'https:';
+				if (is_ssl() === false) {
 					
-					$ssl = 'https:';
-					if (is_ssl() === false) {
-						
-						$ssl = 'http:';
-						
-					}
-					$setting->getJavaScript("front_end.js", plugin_dir_path( __FILE__ ));
-					$front_end_javascript_url = $setting->getJavaScriptUrl("front_end.js");
-					$files['booking-package-script-front_end-js'] =  $ssl . $front_end_javascript_url['dirname'] . '?ver=' . $front_end_javascript_url['v'];
+					$ssl = 'http:';
 					
 				}
-				
+				$setting->getJavaScript("front_end.js", plugin_dir_path( __FILE__ ));
+				$front_end_javascript_url = $setting->getJavaScriptUrl("front_end.js");
+				$files['booking-package-script-front_end-js'] =  $ssl . $front_end_javascript_url['dirname'] . '?ver=' . $front_end_javascript_url['v'];
 				$load_script = file_get_contents(plugin_dir_path( __FILE__ ) . 'js/Load_plugin.js');
 				$html = '';
 				foreach ($files as $id => $file_path) {
@@ -2158,20 +2057,10 @@ Domain Path: /languages
 			
 		}
 		
-		public function subscription_form($calendarAccount, $subscription_form){
-			
-			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);
-			$htmlElement->setManagementUsersV2($this->managementUsersV2);
-			$html = $htmlElement->subscription_form($calendarAccount, $subscription_form);
-			return $html;
-			
-		}
-		
 		public function member_form($user = null, $member_login_error = 0, $dictionary = null) {
 			
 			$htmlElement = new booking_package_HTMLElement($this->prefix, $this->plugin_name, $this->currencies);	
 			$htmlElement->setManagementUsersV2($this->managementUsersV2);
-			$htmlElement->setVisitorSubscriptionForStripe($this->visitorSubscriptionForStripe);
 			$member_form = $htmlElement->member_form($user, $member_login_error, $dictionary);
 			return $member_form;
 			
@@ -2195,12 +2084,15 @@ Domain Path: /languages
             $isExtensionsValid = $this->getExtensionsValid(true, false);
             $dictionary = $this->getDictionary("booking_package_booked_customers", $this->plugin_name);
             $localize_script = $this->localizeScript('booking_package_booked_customers');
+			$localize_script['function_for_member'] = intval(get_option($this->prefix . 'function_for_member', 0));
             $localize_script['isExtensionsValid'] = 0;
-            if ($isExtensionsValid === true) {
-            	
-            	$localize_script['isExtensionsValid'] = 1;
-            	
-            }
+            
+			if ($this->isExtensionsValid === false) {
+				
+				$localize_script['function_for_member'] = 0;
+				
+			}
+			
             $p_v = "?p_v=" . $this->plugin_version;
 			wp_enqueue_style( 'Control.css', plugin_dir_url( __FILE__ ) . 'css/Control.css', array(), $this->get_plugin_asset_version('css/Control.css') );
 			wp_enqueue_style( 'Control_for_madia_css', plugin_dir_url( __FILE__ ) . 'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
@@ -2249,6 +2141,8 @@ Domain Path: /languages
 			
 			$update_class = "";
 			
+			$this->install_panel();
+			
 			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			?>
@@ -2259,7 +2153,7 @@ Domain Path: /languages
 				<div class="">
 					<div class="top_bar">
 						<?php
-						#$this->upgradeButton($isExtensionsValid, true);
+						#$this->upgradeButton(true);
 						?>
 					</div>
 					<div class="<?php print $update_class; ?>settings-error notice is-dismissible" id="res" style="<?php print $updated_style; ?>"></div>
@@ -2449,7 +2343,7 @@ Domain Path: /languages
 			wp_enqueue_style('Control_for_madia_css', plugin_dir_url( __FILE__ ).'css/Control_for_madia.css', array(), $this->get_plugin_asset_version('css/Control_for_madia.css') );
 			wp_enqueue_style('Material_Icons', 'https://fonts.googleapis.com/css?family=Material+Icons');
             wp_add_inline_style("Control.css", $this->getFontFaceStyle());
-			
+			$this->install_panel();
 			?>
 			<div id="booking_pacage_users" class="wrap">
 				
@@ -2476,7 +2370,7 @@ Domain Path: /languages
 								<div class="actionButtonPanelRight">
 									<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add New User", 'booking-package'); ?></button>
 									<?php
-									$this->upgradeButton($isExtensionsValid, true);
+									$this->upgradeButton(true);
 									?>
 								</div>
 							</div>
@@ -2669,7 +2563,7 @@ Domain Path: /languages
 						<div class="actionButtonPanelRight">
 							<button id="add_member" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add New User", 'booking-package'); ?></button>
 							<?php
-							$this->upgradeButton($isExtensionsValid, true);
+							$this->upgradeButton(true);
 							?>
 						</div>
 					</div>
@@ -2925,16 +2819,7 @@ Domain Path: /languages
 			$dictionary = $this->getDictionary("schedule_page", $this->plugin_name);
 			$localize_script = $this->localizeScript('schedule_page');
 			$isExtensionsValid = $this->getExtensionsValid(true, false);
-			if ($isExtensionsValid == true) {
-				
-				$localize_script['isExtensionsValid'] = 1;
-				
-			} else {
-				
-				$localize_script['isExtensionsValid'] = 0;
-				
-			}
-			
+			$localize_script['isExtensionsValid'] = ($isExtensionsValid === true || intval($isExtensionsValid) === 1) ? 1 : 0;
 			$subscriptionRenewalFailedText = $setting->subscriptionRenewalFailed('html', true);
 			print $subscriptionRenewalFailedText;
 			
@@ -3005,7 +2890,7 @@ Domain Path: /languages
 				wp_add_inline_script('schedule_pange', $help_init_script, 'after');
 				
 			}
-			
+			$this->install_panel();
 			
 			?>
 			
@@ -3024,7 +2909,7 @@ Domain Path: /languages
 							<button id="add_new_calendar" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Add Booking Calendar", 'booking-package'); ?></button>
 							<button id="create_clone" type="button" class="w3tc-button-save button-primary" style="margin-right: 10px;"><?php _e("Copy Booking Calendar", 'booking-package'); ?></button>
 							<?php
-								$this->upgradeButton($isExtensionsValid, true);
+								$this->upgradeButton(true);
 							?>
 						</div>
 						<table id="calendar_list_table" class="wp-list-table widefat fixed striped"></table>
@@ -3425,7 +3310,7 @@ Domain Path: /languages
 											?>
 										</label>
 										<p id="deletePublishedSchedules_freePlan" class="hidden_panel freePlan">
-											<?php echo __("With the free plan, date selection is not available.", 'booking-package'); ?>
+											<?php echo __("Paid plan subscription required.", 'booking-package'); ?>
 										</p>
 									</td>
 								</tr>
@@ -3876,8 +3761,7 @@ Domain Path: /languages
             
             $dateFormat = $localize_script['list']['General'][$this->prefix . 'dateFormat']['value'];
             $positionOfWeek = $localize_script['list']['General'][$this->prefix . 'positionOfWeek']['value'];
-            
-			$subscriptions = $this->getSubscriptions();
+            $subscriptions = $this->getSubscriptions();
 			foreach ((array) $subscriptions as $key => $value) {
 				
 				if ($key == 'expiration_date_for_subscriptions' && strlen($value) > 0) {
@@ -3954,7 +3838,7 @@ Domain Path: /languages
 				sprintf( 'var my_editor_settings = %s;', wp_json_encode( $editor_settings ) ),
 				'after'
 			);
-			
+			$this->install_panel();
 			?>
 				
 				<div id="booking_package_general_settings" class="wrap">
@@ -3988,13 +3872,6 @@ Domain Path: /languages
 							</div>
 							<div id="blockEmailListsPanel" class="hidden_panel">
 								<div class="title"><?php _e("Blocks List", 'booking-package'); ?></div>
-								<?php
-								if ($isExtensionsValid === false) {
-									
-									print '<div class="extensionsValid">' . __('Paid plan subscription required.', 'booking-package') . '</div>';
-									
-								}
-								?>
 								<div class="addValuePanel">
 									<input id="<?php print $this->prefix; ?>newEmail" type="text" class="regular-text" placeholder="<?php _e("Block an email address", 'booking-package'); ?>">
 									<button id="<?php print $this->prefix; ?>addBlockEmail" class="w3tc-button-save button-primary"><?php _e("Add", 'booking-package'); ?></button>
@@ -4152,13 +4029,6 @@ Domain Path: /languages
 							<div id="javascriptPanel" class="hidden_panel">
 								
 								<div class="title">JavaScript</div>
-								<?php
-								if ($isExtensionsValid === false) {
-									
-									print '<div class="extensionsValid">' . __('Paid plan subscription required.', 'booking-package') . '</div>';
-									
-								}
-								?>
 								<textarea id="javascript_booking_package" rows="50" style=""><?php print esc_textarea( $front_end_javascript ); ?></textarea>
 								<div class="bottomButtonPanel"><button id="save_javascript" type="button" class="w3tc-button-save button-primary"><?php _e("Save Changes", 'booking-package'); ?></button></div>
 								
@@ -4235,7 +4105,7 @@ Domain Path: /languages
 					</select>
 					
 					<?php
-						$this->upgradeButton($isExtensionsValid, false);
+						$this->upgradeButton(false);
 					?>
 					
 				</div>
@@ -5139,36 +5009,6 @@ Domain Path: /languages
 				
 			}
 			
-			if ($_POST['mode'] == 'deleteSubscription') {
-				
-				$response = $schedule->deleteSubscription($_POST['product'], $_POST['userId']);
-				
-			}
-			
-			if ($_POST['mode'] == 'getSubscriptions') {
-				
-				$response = $setting->getSubscriptions();
-				
-			}
-			
-			if ($_POST['mode'] == 'addSubscriptions') {
-				
-				$response = $setting->addSubscriptions();
-				
-			}
-			
-			if ($_POST['mode'] == 'updateSubscriptions') {
-				
-				$response = $setting->updateSubscriptions();
-				
-			}
-			
-			if ($_POST['mode'] == 'changeSubscriptionsRank') {
-				
-				$response = $setting->changeSubscriptionsRank();
-				
-			}
-			
 			if ($_POST['mode'] == 'getTaxes') {
 				
 				$response = $setting->getTaxes($_POST['accountKey'], 'no');
@@ -5325,6 +5165,287 @@ Domain Path: /languages
 			
 		}
 		
+		public function _text($text) {
+			
+			$translations = get_translations_for_domain('booking-package-addon');
+			return $translations->translate($text);
+			
+		}
+		
+		public function install_panel() {
+				
+			if ($this->install_addon === 0 || has_filter('booking_package_apply_free_plan_limits')) {
+				return;
+			}
+
+			$screen = get_current_screen();
+			if (!$screen || strpos($screen->id, 'booking-package') === false) {
+				return;
+			}
+
+			if ($this->getExtensionsValid(false, false) !== true) {
+				return;
+			}
+			$redirect_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
+			echo '<div class="notice notice-warning" style="padding: 15px 20px; border-left: 4px solid #2271b1; background: #fff; margin: 15px 0;">';
+			echo '<h3 style="margin-top: 0; color: #1d2327;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName ) ) . '</h3>';
+			echo '<p style="font-size: 14px; line-height: 1.6;">' . esc_html( sprintf( $this->_text('To continue using advanced features (such as premium pricing, online payments, and notifications) after upcoming updates, please install and activate the official "%s".'), $this->addonName ) ) . '</p>';
+			echo $this->render_addon_install_form($redirect_url);
+			echo '</div>';
+		}
+		
+		public function enqueue_addon_install_script() {
+			
+			$handle = 'booking_package_download_addon';
+			$script_relative_path = 'js/Upgrade.js';
+			
+			if (!wp_script_is($handle, 'registered')) {
+				
+				wp_register_script(
+					$handle, 
+					plugin_dir_url(__FILE__) . $script_relative_path, 
+					array(), 
+					$this->get_plugin_asset_version($script_relative_path), 
+					true
+				);
+				
+				$localize_data = array(
+					'download_url'     => 'https://saasproject.net/api/download/booking-package-addon.zip',
+					'text_downloading' => sprintf( $this->_text('Downloading %s...'), $this->addonName ),
+					'text_installing'  => $this->_text('Installing and activating add-on...'),
+					'text_completed'   => $this->_text('Completed! Redirecting...'),
+					'text_failed'      => $this->_text('Installation failed.'),
+				);
+				
+				wp_localize_script($handle, 'booking_package_install_addon_data', $localize_data);
+				
+			}
+			
+			wp_enqueue_script($handle);
+			
+		}
+		
+		public function render_addon_install_form($redirect_url) {
+			
+			$addon_file = 'booking-package-addon/index.php';
+			$is_installed = file_exists(WP_PLUGIN_DIR . '/' . $addon_file);
+			$download_url = 'https://saasproject.net/api/download/booking-package-addon.zip';
+			$action_url = admin_url('admin-post.php');
+			
+			if (!$is_installed) {
+				
+				$this->enqueue_addon_install_script();
+				
+			}
+			
+			echo '<form id="booking-package-addon-addon-form" method="post" action="' . esc_url($action_url) . '" enctype="multipart/form-data">';
+			wp_nonce_field('install_booking_package_addon', 'addon_nonce');
+			echo '<input type="hidden" name="action" value="install_booking_package_addon">';
+			echo '<input type="hidden" name="redirect_to" value="' . esc_attr($redirect_url) . '">';
+			
+			if (!$is_installed) {
+				
+				echo '<button type="button" id="booking-package-addon-install-btn" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html($this->_text('Install and Activate Add-on')) . '</button>';
+				echo '<div id="booking-package-addon-install-status" style="margin-top: 12px; font-size: 13px; color: #2271b1; display: none;"></div>';
+				
+				echo '<div id="booking-package-addon-manual-fallback" style="margin-top: 15px; display: none; padding-top: 12px; border-top: 1px solid #dcdcde;">';
+				echo '<p style="margin: 0 0 8px; font-size: 13px; color: #d63638;">' . esc_html($this->_text('Automatic download failed. Please download the ZIP file below and select it to install:')) . '</p>';
+				echo '<p style="margin: 0 0 10px;">';
+				echo '<a href="' . esc_url($download_url) . '" class="button" target="_blank" rel="noopener noreferrer">' . esc_html( sprintf( $this->_text('1. Download %s (ZIP)'), $this->addonName ) ) . '</a>';
+				echo '</p>';
+				echo '<input type="file" name="pluginzip" accept=".zip" required style="margin-right: 8px;">';
+				echo '<button type="submit" class="button button-primary">' . esc_html($this->_text('2. Upload and Activate')) . '</button>';
+				echo '</div>';
+				
+			} else {
+				
+				echo '<button type="submit" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html($this->_text('Activate Add-on')) . '</button>';
+				
+			}
+			
+			echo '</form>';
+			
+			if (!$is_installed) {
+				echo '<script>';
+				echo 'document.addEventListener("DOMContentLoaded", function() {';
+				echo '    if (typeof Add_on !== "undefined") {';
+				echo '        new Add_on();';
+				echo '    }';
+				echo '});';
+				echo '</script>';
+			}
+			
+		}
+
+		public function handle_addon_auto_install() {
+			
+			$is_ajax = !empty($_POST['is_ajax']);
+			if ($this->install_addon !== 1 || !current_user_can('install_plugins') || !current_user_can('activate_plugins')) {
+				
+				if ($is_ajax) {
+					
+					wp_send_json_error(array('message' => __('Permission denied.', 'booking-package')), 403);
+					
+				}
+				
+				wp_die(__('Permission denied.', 'booking-package'), '', array('response' => 403));
+				
+			}
+			
+			check_admin_referer('install_booking_package_addon', 'addon_nonce');
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+			$addon_slug = 'booking-package-addon';
+			$addon_file = $addon_slug . '/index.php';
+			$addon_plugin_path = WP_PLUGIN_DIR . '/' . $addon_file;
+			$redirect_url = !empty($_POST['redirect_to']) ? esc_url_raw(wp_unslash($_POST['redirect_to'])) : wp_get_referer();
+			if (empty($redirect_url)) {
+				
+				$redirect_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
+				
+			}
+
+			if (file_exists($addon_plugin_path)) {
+				
+				if (!is_plugin_active($addon_file)) {
+					
+					activate_plugin($addon_file);
+					
+				}
+				
+				$final_url = add_query_arg(array('addon_activated' => 'true'), $redirect_url);
+				if ($is_ajax) {
+					
+					wp_send_json_success(array('redirect_url' => $final_url));
+					
+				}
+				
+				wp_safe_redirect($final_url);
+				exit;
+				
+			}
+
+			if (empty($_FILES['pluginzip']['name'])) {
+				
+				$msg = $this->_text('No plugin ZIP file was uploaded.');
+				if ($is_ajax) {
+					
+					wp_send_json_error(array('message' => $msg), 400);
+					
+				}
+				
+				wp_die(esc_html($msg));
+				
+			}
+
+			require_once(ABSPATH . 'wp-admin/includes/file.php');
+			require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
+			require_once(ABSPATH . 'wp-admin/includes/plugin-install.php');
+			WP_Filesystem();
+
+			try {
+				
+				ob_start();
+
+				$temp_file = wp_tempnam('booking-package-addon.zip');
+				if (!move_uploaded_file($_FILES['pluginzip']['tmp_name'], $temp_file)) {
+					
+					$temp_file = $_FILES['pluginzip']['tmp_name'];
+					
+				}
+
+				$skin = new Automatic_Upgrader_Skin();
+				$upgrader = new Plugin_Upgrader($skin);
+
+				$result = $upgrader->install($temp_file, array('overwrite_package' => true));
+
+				if (file_exists($temp_file) && $temp_file !== $_FILES['pluginzip']['tmp_name']) {
+					
+					@unlink($temp_file);
+					
+				}
+				
+				ob_end_clean();
+
+				if (is_wp_error($result)) {
+					
+					if ($is_ajax) {
+						
+						wp_send_json_error(array('message' => $result->get_error_message()), 500);
+						
+					}
+					
+					wp_die($result->get_error_message());
+					
+				}
+				
+			} catch (\Throwable $e) {
+				
+				if (ob_get_length()) {
+					
+					ob_end_clean();
+					
+				}
+				
+				if ($is_ajax) {
+					
+					wp_send_json_error(array('message' => $e->getMessage()), 500);
+					
+				}
+				
+				wp_die($e->getMessage());
+				
+			}
+			
+			if (file_exists($addon_plugin_path)) {
+				
+				if (function_exists('wp_clean_plugins_cache')) {
+					
+					wp_clean_plugins_cache();
+					
+				} else {
+					
+					wp_cache_delete('plugins', 'plugins');
+					
+				}
+				
+				$activate_result = activate_plugin($addon_file);
+				if (is_wp_error($activate_result)) {
+					
+					if ($is_ajax) {
+						
+						wp_send_json_error(array('message' => $activate_result->get_error_message()), 500);
+						
+					}
+					
+					wp_die($activate_result->get_error_message());
+					
+				}
+				
+				$final_url = add_query_arg(array('addon_installed' => 'true'), $redirect_url);
+				if ($is_ajax) {
+					
+					wp_send_json_success(array('redirect_url' => $final_url));
+					
+				}
+				
+				wp_safe_redirect($final_url);
+				exit;
+				
+			} else {
+				
+				$msg = $this->_text('Failed to activate the add-on plugin.');
+				if ($is_ajax) {
+					
+					wp_send_json_error(array('message' => $msg), 500);
+					
+				}
+				
+				wp_die(esc_html($msg));
+				
+			}
+			
+		}
+	
 		public function activatePaidSubscription() {
 			
 			if (is_user_logged_in() === false || !current_user_can('manage_options')) {
@@ -5342,9 +5463,51 @@ Domain Path: /languages
 			
 			if (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'booking-package-activate-subscription' && isset($_REQUEST['customer_id_for_subscriptions']) && isset($_REQUEST['subscriptions_id_for_subscriptions'])) {
 				
-				$setting = $this->setting;
-				$setting->lookingForSubscription( sanitize_text_field($_REQUEST['customer_id_for_subscriptions']), sanitize_text_field($_REQUEST['subscriptions_id_for_subscriptions']) );
-				header('Location: ' . admin_url("admin.php?page=" . $this->plugin_name . "_setting_page" . "&tab=subscriptionLink"));
+				$customer_id = sanitize_text_field($_REQUEST['customer_id_for_subscriptions']);
+				$subscription_id = sanitize_text_field($_REQUEST['subscriptions_id_for_subscriptions']);
+				
+				update_option('_' . $this->prefix . 'customer_id_for_subscriptions', $customer_id);
+				update_option('_' . $this->prefix . 'id_for_subscriptions', $subscription_id);
+				if (isset($_REQUEST['customer_email_for_subscriptions'])) {
+					
+					update_option('_' . $this->prefix . 'customer_email_for_subscriptions', sanitize_email($_REQUEST['customer_email_for_subscriptions']));
+					
+				}
+				
+				if (has_filter('booking_package_setting_looking_for_subscription')) {
+
+					apply_filters('booking_package_setting_looking_for_subscription', $customer_id, $subscription_id);
+
+				} else if ($this->install_addon === 0) {
+					
+					$setting = $this->setting;
+					$setting->lookingForSubscription($customer_id, $subscription_id);
+
+				}
+				
+				$setting_page_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
+				
+				require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+				$addon_file = 'booking-package-addon/index.php';
+				if ($this->install_addon === 1 && !is_plugin_active($addon_file) && !has_filter('booking_package_apply_free_plan_limits')) {
+					
+					echo '<!DOCTYPE html><html ' . get_language_attributes() . '><head><meta charset="' . esc_attr(get_bloginfo('charset')) . '">';
+					echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
+					echo '<title>' . esc_html( sprintf( $this->_text('%s Required'), $this->addonName ) ) . '</title>';
+					wp_admin_css('buttons', true);
+					echo '</head><body class="wp-core-ui" style="background: #f0f0f1; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">';
+					echo '<div style="max-width: 600px; background: #fff; padding: 30px 35px; border-left: 4px solid #2271b1; box-shadow: 0 1px 3px rgba(0,0,0,0.13); border-radius: 4px;">';
+					echo '<h2 style="margin-top: 0; color: #1d2327; font-size: 20px;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName) ) . '</h2>';
+					echo '<p style="font-size: 14px; line-height: 1.7; color: #3c434a; margin-bottom: 24px;">' . esc_html( sprintf( $this->_text('To continue using advanced features (such as premium pricing, online payments, and notifications) after upcoming updates, please install and activate the official "%s".'), $this->addonName ) ) . '</p>';
+					$this->render_addon_install_form($setting_page_url);
+					echo '</div>';
+					wp_print_scripts('booking_package_download_addon');
+					echo '</body></html>';
+					die();
+					
+				}
+				
+				header('Location: ' . $setting_page_url);
 				die();
 				
 			}
@@ -5381,29 +5544,16 @@ Domain Path: /languages
 			$setting->validateWpSite($validate);
 			if (is_null($this->isExtensionsValid)) {
 				
-				$this->isExtensionsValid = $setting->getSiteStatus();
-				if (get_option($this->prefix . 'blocksEmail') === false) {
-					
-					add_option($this->prefix . 'blocksEmail', 0);
-					
-				}
-				
+				$this->isExtensionsValid = $setting->getSiteStatus($countExpiration);
 				if ($this->isExtensionsValid === true) {
 					
-					$setting->updateRolesOfPlugin();
-					update_option($this->prefix . 'blocksEmail', 1);
-					
+					$this->setting->updateRolesOfPlugin();
 					
 				} else {
 					
-					$setting->deleteRolesOfPlugin();
-					update_option($this->prefix . 'blocksEmail', 0);
+					$this->setting->deleteRolesOfPlugin();
 					
 				}
-				
-			} else {
-				
-				$this->isExtensionsValid = 0;
 				
 			}
 			
@@ -5419,20 +5569,21 @@ Domain Path: /languages
 			/**
 			var_dump($subscriptions);
 			foreach((array) $subscriptions as $key => $value){
-				
+
 				$subscriptions[$key] = 0;
-				
+
 			}
 			**/
 			return $subscriptions;
-			
+
 		}
 		
-		public function upgradeButton($isExtensionsValid = false, $display = true){
+		public function upgradeButton($display = true){
 			
+			$isExtensionsValid = $this->getExtensionsValid(true, false);
 			if ($isExtensionsValid === true) {
 				
-				return $isExtensionsValid;
+				return null;
 				
 			}
 			
@@ -5590,7 +5741,6 @@ Domain Path: /languages
 					'bookingBool' => 1,
 					'emailEnable' => $emailMessageList,
 					'javascriptFileslist' => $javascriptFileslist,
-					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'startOfWeek' => $startOfWeek,
 					'debug' => $this->dubug_javascript,
 					'today' => date('Ymd'),
@@ -5604,7 +5754,6 @@ Domain Path: /languages
 				
 				$this->setting->setGuestForDayOfTheWeekRates($this->guestForDayOfTheWeekRates);
 				$courseData = $setting->getCourseData();
-				$subscriptionsData = $setting->getSubscriptionsData();
 				$formInputType = $setting->getFormInputType();
 				$guestsInputType = $setting->guestsInputType();
 				$couponsInputType = $setting->couponsInputType();
@@ -5681,18 +5830,6 @@ Domain Path: /languages
 					
 				}
 				
-				if ($this->visitorSubscriptionForStripe == 0) {
-					
-					unset($elementForCalendarAccount['subscriptionIdForStripe']);
-					unset($elementForCalendarAccount['subscriptionIdForPayPal']);
-					unset($elementForCalendarAccount['termsOfServiceForSubscription']);
-					#unset($elementForCalendarAccount['enableTermsOfServiceForSubscription']);
-					unset($elementForCalendarAccount['privacyPolicyForSubscription']);
-					#unset($elementForCalendarAccount['enablePrivacyPolicyForSubscription']);
-					
-					
-				}
-				
 				if ($this->multipleRooms == 0) {
 					
 					unset($elementForCalendarAccount['multipleRooms']);
@@ -5744,7 +5881,6 @@ Domain Path: /languages
 					'list' => array(), 
 					'formInputType' => $formInputType, 
 					'courseData' => $courseData,
-					'subscriptionsData' => $subscriptionsData,
 					'taxesData' => $taxes,
 					'optionsForHotelData' => $setting->getOptionsForHotelData(),
 					'elementForCalendarAccount' => $elementForCalendarAccount, 
@@ -5752,7 +5888,6 @@ Domain Path: /languages
 					'couponsInputType' => $couponsInputType,
 					'is_mobile' => $this->is_mobile,
 					'javascriptFileslist' => $javascriptFileslist,
-					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'timestamp' => $timestamp,
 					'startOfWeek' => $startOfWeek,
 					'currency' => get_option($this->prefix."currency", "usd"),
@@ -5847,7 +5982,6 @@ Domain Path: /languages
 					**/
 					'is_mobile' => $this->is_mobile,
 					'javascriptFileslist' => $javascriptFileslist,
-					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'regularHolidays' => $schedule->getRegularHolidays(date('m'), date('Y'), 'share', $startOfWeek, false),
 					'nationalHolidays' => $schedule->getRegularHolidays(date('m'), date('Y'), 'national', $startOfWeek, false),
 					'startOfWeek' => $startOfWeek,
@@ -5933,7 +6067,6 @@ Domain Path: /languages
 					'locale' => $locale,
 					'is_mobile' => $this->is_mobile,
 					'javascriptFileslist' => $javascriptFileslist,
-					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'startOfWeek' => $startOfWeek,
 					'bookedList' => 'userBookingDetails',
 					'permalink' => get_permalink(),
@@ -5962,7 +6095,6 @@ Domain Path: /languages
 					'nonce' => wp_create_nonce($this->action_control."_ajax"), 
 					'prefix' => $this->prefix,
 					'javascriptFileslist' => $javascriptFileslist,
-					'visitorSubscriptionForStripe' => $this->visitorSubscriptionForStripe,
 					'currency' => $list['General']['booking_package_currency']['value'],
 					'currencies' => $currencies,
 					'clock' => $list['General']['booking_package_clock']['value'],
@@ -6016,7 +6148,6 @@ Domain Path: /languages
 			wp_clear_scheduled_hook('booking_package_notification');
 			
 			$setting = $this->setting;
-			$setting->activation(BOOKING_PACKAGE_EXTENSION_URL, "deactivation");
 			$setting->setPaidSubscription('deactivation');
 			
 			$database = new booking_package_database($this->prefix, $this->db_version);
@@ -6403,7 +6534,6 @@ Domain Path: /languages
 					
 					$timezone = $this->getTimeZone();
 					$setting = $this->setting;
-					$setting->activation(BOOKING_PACKAGE_EXTENSION_URL, "activation", $this->plugin_version, $timezone, $site);
 					restore_current_blog();
 					
 				}

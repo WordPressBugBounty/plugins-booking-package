@@ -23,11 +23,8 @@
         this._servicesControl = new Booking_App_ObjectsControl(reservation_info, booking_package_dictionary);
         this._dictionary = booking_package_dictionary;
         
-        this._subscriptions = booking_package_subscriptions;
-        this._subscription = null;
         this._member = new Booking_Package_Member(reservation_info.prefix, reservation_info.plugin_name, reservation_info.calendarAccount, reservation_info.memberSetting, booking_package_subscriptions, reservation_info.url, reservation_info.nonce, reservation_info.action, reservation_info, booking_package_dictionary, this._debug);
         this._autoWindowScroll = parseInt(reservation_info.autoWindowScroll);
-        this._isExtensionsValid = parseInt(reservation_info.isExtensionsValid);
         this._reservation_info = reservation_info;
         this._uniqueID = reservation_info.uniqueID;
         this._memberSetting = reservation_info.memberSetting;
@@ -164,16 +161,7 @@
             
         }
         
-        if (this._isExtensionsValid != 1) {
-            
-            this._calendarAccount.hasMultipleServices = 0;
-            this._calendarAccount.maximumNights = 0;
-            this._calendarAccount.minimumNights = 0;
-            
-        }
-        
         object._console.log(reservation_info);
-        object._console.log("_isExtensionsValid = " + this._isExtensionsValid);
         
         this._permalink = window.location.href ;
         this._cancellationOfBooking = 0;
@@ -261,10 +249,9 @@
     Booking_Package.prototype.setBookingPackageUserFunction = function(object) {
         
         
-        if (this._bookingPackageUserFunction == null && this._isExtensionsValid == 1) {
+        if (this._bookingPackageUserFunction == null && object != null && typeof object.send === 'function') {
             
             this._bookingPackageUserFunction = object;
-            //this._bookingPackageUserFunction.isCallback(true);
             
         }
         
@@ -272,7 +259,7 @@
     
     Booking_Package.prototype.sendBookingPackageUserFunction = function(eventName, uniqueID) {
         
-        if (this._isExtensionsValid == 1) {
+        if (this._bookingPackageUserFunction != null && typeof this._bookingPackageUserFunction.send === 'function') {
             
             this._bookingPackageUserFunction.send(eventName, uniqueID);
             
@@ -468,18 +455,6 @@
     Booking_Package.prototype.getFunction = function(){
         
         return this._function;
-        
-    };
-    
-    Booking_Package.prototype.setSubscription = function(subscription){
-        
-        this._subscription = subscription;
-        
-    };
-    
-    Booking_Package.prototype.getSubscription = function(){
-        
-        return this._subscription;
         
     };
     
@@ -730,14 +705,6 @@
         
         object._console.log('startCalendar = ' + startCalendar);
         try {
-            
-            if (object._isExtensionsValid == 1 && object._site_subscriptions == null) {
-                
-                object._console.error(object._isExtensionsValid);
-                object._console.error(object._site_subscriptions);
-                throw 'Error subscription';
-                
-            }
             
             month = parseInt(month);
             day = parseInt(day);
@@ -1512,7 +1479,7 @@
                     option.selected = 0;
                     object._console.log(option);
                     
-                    var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+                    var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) );
                     object._console.log(responseCosts);
                     
                     var titleLabel = document.createElement("span");
@@ -2082,7 +2049,7 @@
                 course = true;
                 //var hasReflectService = false;
                 var courseCostPanel = null;
-                var responseCosts = object._servicesControl.getCostsInService(services[key], guestsList, parseInt(object._calendarAccount.guestsBool), object._isExtensionsValid);
+                var responseCosts = object._servicesControl.getCostsInService(services[key], guestsList, parseInt(object._calendarAccount.guestsBool) );
                 object._console.log(responseCosts);
                 var costsWithKey = responseCosts.costsWithKey;
                 //var amount = parseInt(services[key].cost);
@@ -2299,7 +2266,7 @@
                         var option = selectedOptions[i];
                         var optionAmount = 0;
                         object._console.log(option);
-                        var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool), object._isExtensionsValid);
+                        var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) );
                         object._console.log(responseCosts);
                         if (parseInt(option.selected) == 1) {
                             
@@ -2857,7 +2824,7 @@
                         
                     });
                     
-                    if (object._isExtensionsValid == 1 && calendarData.schedule[callback.key].length == 1) {
+                    if (calendarData.schedule[callback.key].length == 1) {
                         
                         var oneSchedule = calendarData.schedule[callback.key][0];
                         
@@ -5555,7 +5522,7 @@
             
             object._console.log(course);
             object._console.log(isNaN(parseInt(course.cost_1)));
-            var responseCosts = object._servicesControl.getCostsInService(course, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+            var responseCosts = object._servicesControl.getCostsInService(course, guestsList, parseInt(object._calendarAccount.guestsBool) );
             object._console.log(responseCosts);
             if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
                 
@@ -5586,98 +5553,6 @@
                 object._console.log(course.description);
                 
             }
-            
-            
-            /**
-            var coursePanel = document.createElement("div");
-            coursePanel.classList.add('service_details')
-            coursePanel.setAttribute("data-key", i);
-            coursePanel.setAttribute("data-status", 1);
-            
-            var courseNamePanel = document.createElement("span");
-            if(typeof course["name"] == "string"){
-                
-                course["name"] = course["name"].replace(/\\/g, "");
-                
-            }
-            courseNamePanel.textContent = course["name"];
-            //coursePanel.appendChild(courseNamePanel);
-            
-            var checkBox = document.createElement("input");
-            checkBox.id = 'service_checkBox_' + i;
-            checkBox.setAttribute("data-key", i);
-            checkBox.type = "checkbox";
-            checkBox.value = "";
-            //checkBox.disabled = true;
-            
-            checkBox.onclick = function() {
-                
-                if (this.checked == true) {
-                    
-                    this.checked = false;
-                    
-                } else {
-                    
-                    this.checked = true;
-                    
-                }
-                
-            };
-            
-            checkBoxList[i] = checkBox;
-            
-            var label = document.createElement("span");
-            label.classList.add('service_name_cost');
-            label.appendChild(checkBox);
-            label.appendChild(courseNamePanel);
-            if(parseInt(object._calendarAccount.hasMultipleServices) == 0){
-                
-                checkBox.classList.add("hidden_panel");
-                
-            }
-            coursePanel.appendChild(label);
-            
-            object._console.log(course);
-            object._console.log(isNaN(parseInt(course.cost_1)));
-            var responseCosts = object._servicesControl.getCostsInService(course, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
-            object._console.log(responseCosts);
-            if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
-                
-                var courseCostPanel = document.createElement("span");
-                courseCostPanel.classList.add("serviceCost");
-                courseCostPanel.classList.add('maximumAndMinimum');
-                coursePanel.appendChild(courseCostPanel);
-                var cost = object._format.formatCost(responseCosts.max, object._currency);
-                if (responseCosts.hasMultipleCosts === true) {
-                    
-                    cost = object._i18n.get('%s to %s', [object._format.formatCost(responseCosts.min, object._currency), object._format.formatCost(responseCosts.max, object._currency)]);
-                    object.createmMximumAndMinimumElements(responseCosts, courseCostPanel);
-                    
-                } else {
-                    
-                    courseCostPanel.textContent = cost;
-                    
-                }
-                
-            }
-            
-            if (course.description != null && course.description.length > 0) {
-                
-                var description = document.createElement("div");
-                description.classList.add("descriptionOfService");
-                description.textContent = course.description.replace(/\\/g, "");
-                coursePanel.appendChild(description);
-                object._console.log(course.description);
-                
-            }
-            
-            var table_row = document.createElement("div");
-            table_row.setAttribute("data-key", i);
-            table_row.setAttribute("data-status", 1);
-            table_row.setAttribute("data-service", course.key);
-            table_row.classList.add("selectable_service_slot");
-            table_row.appendChild(coursePanel);
-            **/
             
             if (course.closed != null && course.closed == 1) {
                 
@@ -5806,7 +5681,7 @@
             table_row.setAttribute("class", "selectable_service_slot");
             table_row.appendChild(label);
             
-            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
+            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) );
             object._console.log(responseCosts);
             if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
                 
@@ -5829,41 +5704,6 @@
             
             optionPanelList.push(table_row);
             
-            /**
-            var optionPanel = document.createElement("div");
-            optionPanel.setAttribute("data-key", i);
-            optionPanel.appendChild(label);
-            
-            var responseCosts = object._servicesControl.getCostsInService(option, guestsList, parseInt(object._calendarAccount.guestsBool) ,object._isExtensionsValid);
-            object._console.log(responseCosts);
-            if (responseCosts.max != null && isNaN(parseInt(responseCosts.max)) === false && parseInt(responseCosts.max) != 0) {
-                
-                var optionCostPanel = document.createElement("span");
-                optionCostPanel.classList.add("serviceCost");
-                optionCostPanel.classList.add('maximumAndMinimum');
-                optionPanel.appendChild(optionCostPanel);
-                var cost = object._format.formatCost(responseCosts.max, object._currency);
-                if (responseCosts.hasMultipleCosts === true) {
-                    
-                    object.createmMximumAndMinimumElements(responseCosts, optionCostPanel);
-                    
-                } else {
-                    
-                    optionCostPanel.textContent = cost;
-                    
-                }
-                
-            }
-            
-            optionPanelList.push(optionPanel);
-            
-            var table_row = document.createElement("div");
-            table_row.setAttribute("data-key", i);
-            table_row.appendChild(optionPanel);
-            
-            table_row.setAttribute("data-status", 1);
-            table_row.setAttribute("class", "selectable_service_slot");
-            **/
             table_row.onclick = function() {
                 
                 var key = parseInt(this.getAttribute("data-key"));
@@ -7918,12 +7758,6 @@
         object._console.log(object._paymentMethod);
         var paymentMethod = object._paymentMethod;
         object._selectedPaymentMethod = paymentMethod[0];
-        if (/** totalCost == 0 || **/ object._isExtensionsValid != 1) {
-            
-            paymentMethod = ['locally'];
-            object._selectedPaymentMethod = 'locally';
-            
-        }
         
         if (paymentMethod.length > 1) {
             

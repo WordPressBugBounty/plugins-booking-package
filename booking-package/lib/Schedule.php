@@ -21,13 +21,13 @@
         
         public $accommodationDetails = null;
         
-        private $isExtensionsValid = null;
+        protected $isExtensionsValid = null;
         
-        private $numberFormatter = false;
+        protected $numberFormatter = false;
         
-        private $currencies = array();
+        protected $currencies = array();
         
-        private $locale = 'en_US';
+        protected $locale = 'en_US';
         
         public $payWithPayPay = 0;
         
@@ -634,11 +634,12 @@
 				
 			}
 			
-			$isExtensionsValid = $this->getExtensionsValid();
-			if ($isExtensionsValid === false) {
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$memberSetting = $setting->getMemberSetting();
+			if (intval($memberSetting['function_for_member']['value']) !== 1) {
 				
 				$response['status'] = 'error';
-				$response['error_messages'] = __("Member related functions are not available", 'booking-package');
+				$response['error_messages'] = __("User registration is currently disabled.", 'booking-package');
 				return $response;
 				
 			}
@@ -858,11 +859,12 @@
         
         public function updateUser($administrator, $accountKey){
 			
-			$isExtensionsValid = $this->getExtensionsValid();
-			if ($isExtensionsValid === false) {
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$memberSetting = $setting->getMemberSetting();
+			if (intval($memberSetting['function_for_member']['value']) !== 1) {
 				
 				$response['status'] = 'error';
-				$response['error_messages'] = __("Member related functions are not available", 'booking-package');
+				$response['error_messages'] = __("User update is currently disabled.", 'booking-package');
 				return $response;
 				
 			}
@@ -1145,7 +1147,7 @@
 				foreach ((array) $users as $key => $user) {
 					
 					$sql = $wpdb->prepare(
-						"SELECT `key`, `status`, `user_login`, `subscription_list`, `profile`, `user_registered`, `locale` FROM `".$table_name."` WHERE `email` = %s;", 
+						"SELECT `key`, `status`, `user_login`, `profile`, `user_registered`, `locale` FROM `".$table_name."` WHERE `email` = %s;", 
 						array(sanitize_text_field($user->user_email))
 					);
 					
@@ -1174,8 +1176,6 @@
 						
 					}
 					
-					
-					#$user->subscription_list = $this->get_subscription_list_of_user($user->ID);
 					if (!empty($row['key'])) {
 						
 						if (empty($row['user_login']) || empty($row['user_registered'])) {
@@ -1216,57 +1216,6 @@
 				}
 				
 			} else {
-				
-				/**
-				$queryList = array();
-				$valueList = array();
-				$keywords = $_POST['keywords'];
-				if (function_exists('mb_convert_kana')) {
-					
-					$keywords = preg_replace('/( |　)/', ' ', mb_convert_kana($keywords, 'a', 'UTF-8'));
-					
-				}
-				
-				$keywords = stripslashes($keywords);
-				$keywords = explode(' ', sanitize_text_field($keywords));
-				for ($i = 0; $i < count($keywords); $i++) {
-					
-					array_push($queryList, "`user_login` LIKE '%%%s%%'");
-					array_push($queryList, "`email` LIKE '%%%s%%'");
-					array_push($queryList, "`value` LIKE '%%%s%%'");
-					array_push($valueList, $keywords[$i]);
-					array_push($valueList, $keywords[$i]);
-					$word = rtrim(ltrim(json_encode($keywords[$i]), '"'), '"');
-					$word = str_replace('\\', '%\\', $word);
-					array_push($valueList, $word);
-					
-				}
-				
-				if (intval($_POST['offset']) < 0) {
-					
-					$_POST['offset'] = 0;
-					
-				}
-				
-				array_push($valueList, intval($_POST['offset']));
-				array_push($valueList, intval($_POST['number']));
-				
-				$table_name = $wpdb->prefix."booking_package_users";
-				$sql = $wpdb->prepare(
-					"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile`, `locale` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
-					$valueList
-				);
-				
-				if (isset($_POST['meta']) && intval($_POST['meta']) == 1) {
-					
-					$sql = $wpdb->prepare(
-						"SELECT `key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile`, `locale` FROM `".$table_name."` WHERE " . implode(' OR ', $queryList) . " LIMIT %d, %d;", 
-						$valueList
-					);
-					
-				}
-				**/
-				
 				
 				$valueList = array();
 				$and_conditions = array();
@@ -1313,8 +1262,8 @@
 				
 				$is_meta = isset($_POST['meta']) && intval($_POST['meta']) === 1;
 				$select_columns = $is_meta 
-					? "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `value`, `profile`, `locale`"
-					: "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `subscription_list`, `user_registered`, `profile`, `locale`";
+					? "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `user_registered`, `value`, `profile`, `locale`"
+					: "`key` AS `ID`, `user_login`, `email` AS `user_email`, `status`, `user_registered`, `profile`, `locale`";
 				
 				if (!empty($and_conditions)) {
 					
@@ -1446,8 +1395,9 @@
         
         public function login($userId, $statusCheck = true) {
 			
-			$isExtensionsValid = $this->getExtensionsValid();
-			if ($isExtensionsValid === false) {
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$memberSetting = $setting->getMemberSetting();
+			if (intval($memberSetting['function_for_member']['value']) !== 1) {
 				
 				return 0;
 				
@@ -1635,16 +1585,6 @@
 						if (!is_int($value) && is_array(array_values($value))) {
 							
 							$reality = true;
-							/**
-							$memberSetting['user_login'] = $user->user_login;
-							$memberSetting['user_email'] = $user->user_email;
-							$memberSetting['value'] = $value;
-							$memberSetting['current_member_id'] = intval($userId);
-							$memberSetting['login'] = 1;
-							$memberSetting['subscription_list'] = $this->get_subscription_list_of_user($userId);
-							
-							$response = array("status" => 1, "user" => $memberSetting);
-							**/
 							
 						} else {
 							
@@ -1699,7 +1639,6 @@
 				$memberSetting['locale'] = get_user_locale($user->ID);
 				$memberSetting['current_member_id'] = intval($userId);
 				$memberSetting['login'] = 1;
-				$memberSetting['subscription_list'] = $this->get_subscription_list_of_user($userId);
 				
 				$response = array("status" => 1, "message" => "", "user" => $memberSetting);
         		
@@ -1709,195 +1648,6 @@
         	
         }
         
-        public function update_subscription_list_of_user($userId, $subscription_list){
-			
-			#$subscription_list = $user['user']['subscription_list'];
-			global $wpdb;
-			$table_name = $wpdb->prefix . "booking_package_users";
-			try {
-				
-				$wpdb->query("START TRANSACTION");
-				$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
-				$bool = $wpdb->update( 
-					$table_name,
-					array(
-						'subscription_list' => sanitize_text_field( json_encode($subscription_list) ), 
-					),
-					array('key' => intval($userId)),
-					array('%s'),
-					array('%d')
-				);
-				$wpdb->query('COMMIT');
-				$wpdb->query('UNLOCK TABLES');
-				
-			} catch (Exception $e) {
-				
-				$wpdb->query('ROLLBACK');
-				$wpdb->query('UNLOCK TABLES');
-				
-			}/** finally {
-				
-				$wpdb->query('UNLOCK TABLES');
-				
-			}**/
-			
-			return $bool;
-			
-        }
-        
-        public function get_subscription_list_of_user($userId){
-			
-			global $wpdb;
-			$table_name = $wpdb->prefix."booking_package_users";
-			$sql = $wpdb->prepare(
-				"SELECT `subscription_list`,`status` FROM `".$table_name."` WHERE `key` = %d;", 
-				array(intval($userId))
-			);
-			$row = $wpdb->get_row($sql, ARRAY_A);
-			$subscription_list = array();
-			if (!is_null($row['subscription_list'])) {
-				
-				$subscription_list = json_decode($row['subscription_list'], true);
-				
-			}
-			
-			if (is_null($subscription_list)) {
-				
-				$subscription_list = array();
-				
-			} else {
-				
-				$dateFormat = intval(get_option($this->prefix."dateFormat", 0));
-    			$positionOfWeek = get_option($this->prefix."positionOfWeek", "before");
-				$deleteKey = array();
-				foreach ((array) $subscription_list as $key => $value) {
-					
-					$delete = false;
-					if ($value['period_end'] < date('U')) {
-						
-						$value = $this->update_subscription($value);
-						if (is_array($value)) {
-							
-							$subscription_list[$key] = $value;
-							
-							if ($value['canceled'] == 1) {
-								
-								#var_dump($subscription_list[$key]);
-								$delete = true;
-								array_push($deleteKey, $key);
-								unset($subscription_list[$key]);
-								
-							}
-							
-							$this->update_subscription_list_of_user($userId, $subscription_list);
-							#var_dump($subscription_list[$value]);
-							
-						} else {
-							
-							array_push($deleteKey, $key);
-							
-						}
-						
-					}
-					
-					if ($delete === false) {
-						
-						$subscription_list[$key]['period_start_date'] = $this->dateFormat($dateFormat, $positionOfWeek, $value['period_start'], "", true, true, 'text');
-						$subscription_list[$key]['period_end_date'] = $this->dateFormat($dateFormat, $positionOfWeek, $value['period_end'], "", true, true, 'text');
-						
-					}
-					
-				}
-				
-			}
-			
-        	return $subscription_list;
-        	
-        }
-        
-        public function update_subscription($subscription){
-			
-			global $wpdb;
-			$response = array("status" => 1);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			if ($subscription['payType'] == 'stripe') {
-				
-				$secret_key = get_option($this->prefix."stripe_secret_key", null);
-				$update_subscription = $creditCard->update_subscription($secret_key, $subscription);
-				$add_subscription = $this->prepare_subscription($subscription['payType'], $update_subscription, $subscription);
-				return $add_subscription;
-				
-			}
-			
-			return false;
-
-        }
-        
-        public function deleteSubscription($productKey = false, $userId = null){
-			
-			global $wpdb;
-			$productKey = sanitize_text_field($productKey);
-			$response = array("status" => 1);
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-			
-			if (is_null($userId)) {
-				
-				$user = $this->get_user();
-				
-			} else {
-				
-				$user = $this->get_user($userId, false);
-				
-			}
-			
-        	if(intval($user['status']) == 1){
-        		
-        		$subscription_list = $user['user']['subscription_list'];
-        		if(isset($subscription_list[$productKey])){
-        			
-        			$secret_key = get_option($this->prefix."stripe_secret_key", null);
-        			$response = $creditCard->deleteSubscription($subscription_list[$productKey], $secret_key);
-        			if($response['deleted'] === true){
-        				
-        				#unset($subscription_list[$productKey]);
-        				$subscription_list[$productKey]['canceled'] = 1;
-        				$bool = $this->update_subscription_list_of_user($user['user']['current_member_id'], $subscription_list);
-        				$response['status'] = 1;
-        				$response['bool'] = $bool;
-        				#$response['user'] = $user;
-        				#$response['subscription_list'] = $subscription_list;
-        				
-        			}else{
-        				
-        				if($response['code'] == 404){
-        					
-        					unset($subscription_list[$productKey]);
-        					$bool = $this->update_subscription_list_of_user($user['user']['current_member_id'], $subscription_list);
-        					$response['bool'] = $bool;
-        					
-        				}
-        				
-        				$response['status'] = 0;
-        				
-        			}
-        			return $response;
-        			
-        		}else{
-        			
-        			$response = array("status" => 0, "reload" => 1);
-        			
-        		}
-        		
-        		return $subscription_list;
-        		
-        	}else{
-        		
-        		return $user;
-        		
-        	}
-        	
-        }
-		
 		public function user_login_for_frontend($user_login, $user_password, $remember) {
 			
 			if (!isset($_POST['googleReCaptchaToken'])) {
@@ -2057,20 +1807,7 @@
 		public function deleteForPluginUser($user_id){
 			
 			global $wpdb;
-			$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
 			$user = $this->get_user($user_id, false);
-			if (isset($user['user']['subscription_list']) && is_null($user['user']['subscription_list']) === false) {
-				
-				$items = $user['user']['subscription_list'];
-				foreach ((array) $items as $key => $value) {
-					
-					$secret_key = get_option($this->prefix."stripe_secret_key", null);
-					$response = $creditCard->deleteSubscription($value, $secret_key);
-					
-				}
-				
-			}
-			
         	$table_name = $wpdb->prefix."booking_package_users";
         	$wpdb->delete($table_name, array('key' => intval($user_id)), array('%d'));
         	do_action('booking_package_delete_user', $user_id);
@@ -2172,254 +1909,6 @@
 			return $response;
 			
 		}
-		
-		public function prepare_subscription($payType, $response_subscription, $subscription){
-			
-			$items = array();
-			for($i = 0; $i < count($response_subscription['items']['data']); $i++){
-				
-				$item = $response_subscription['items']['data'][$i]['plan'];
-				array_push($items, $item);
-				
-			}
-			
-			$canceled = 0;
-			if($response_subscription['status'] == "active"){
-				
-				$canceled = 0;
-				
-			}else if($response_subscription['status'] == "canceled"){
-				
-				$canceled = 1;
-				
-			}
-			
-			$add_subscription = array(
-				'product' => $subscription['product'],
-				'name' => $subscription['name'],
-				'customer_id_for_stripe' => $response_subscription['customer'],
-				'subscription_id_for_stripe' => $response_subscription['id'],
-				'period_start' => $response_subscription['current_period_start'],
-				'period_end' => $response_subscription['current_period_end'],
-				'booking_count' => null,
-				'payType' => sanitize_text_field($payType),
-				'canceled' => $canceled,
-				'items' => $items,
-			);
-			
-			return $add_subscription;
-    		
-    	}
-    	
-    	public function createCustomer(){
-			
-			$user = $this->get_user();
-    		if (intval($user['status']) !== 1) {
-    			return array('status' => 'error', 'message' => __('You do not have permission to access this page.', 'booking-package'));
-    		}
-    		
-    		$response = array("status" => 1);
-    		$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-    		$payment_active = 0;
-    		$payment_live = 0;
-    		$calendarAccount = $this->getCalendarAccount(intval($_POST['calendarAccountKey']));
-    		$paymentMethod = explode(",", $calendarAccount['paymentMethod']);
-			
-			$safeCalendarAccount = $calendarAccount;
-    		$sensitive_keys = array(
-    			'email_from', 
-    			'email_to', 
-    			'icalToken', 
-    			'googleCalendarID', 
-    			'googleCalendarName', 
-    			'googleCalendarSync', 
-    			'subscriptionIdForStripe'
-    		);
-    		foreach ($sensitive_keys as $skey) {
-				
-    			unset($safeCalendarAccount[$skey]);
-				
-    		}
-    		$response['calendarAccount'] = $safeCalendarAccount;
-			
-    		if(intval($user['status']) == 1){
-    			
-    			if(isset($_POST['payType']) && $_POST['payType'] == 'stripe'){
-    				
-    				#$payment_active = get_option($this->prefix."stripe_active", "0");
-    				$payment_active = 0;
-    				if (!is_bool(array_search(strtolower($_POST['payType']), $paymentMethod))) {
-    					
-    					$payment_active = 1;
-    					
-    				}
-	    			
-					$secret_key = get_option($this->prefix."stripe_secret_key", null);
-	    			$products = $calendarAccount["subscriptionIdForStripe"];
-	    			$products = explode(",", $products);
-	    			$subscription = $this->getProductForStripe($secret_key, array($products[0]));
-	    			$response['subscription'] = $subscription;
-	    			if(is_array($subscription)){
-	    				
-	    				$stripe = $creditCard->createCustomer($_POST['payType'], null, $secret_key, $_POST['payToken'], $calendarAccount, $subscription, $user['user'], $payment_live, $payment_active);
-	    				$response['stripe'] = $stripe;
-	    				if(isset($stripe['subscription']['status']) && $stripe['subscription']['status'] == 'active'){
-	    					
-	    					$response_subscription = $stripe['subscription'];
-	    					$subscription_list = $user['user']['subscription_list'];
-	    					#$subscription_list['customer_id_for_stripe'] = $response_subscription['customer'];
-	    					
-	    					$add_subscription = $this->prepare_subscription($_POST['payType'], $response_subscription, $subscription);
-	    					
-	    					/**
-	    					$items = array();
-	    					for($i = 0; $i < count($response_subscription['items']['data']); $i++){
-	    						
-	    						$item = $response_subscription['items']['data'][$i]['plan'];
-	    						array_push($items, $item);
-	    						
-	    					}
-	    					
-	    					$add_subscription = array(
-	    						'product' => $subscription['product'],
-	    						'name' => $subscription['name'],
-	    						'customer_id_for_stripe' => $response_subscription['customer'],
-	    						'subscription_id_for_stripe' => $response_subscription['id'],
-	    						'period_start' => $response_subscription['current_period_start'],
-	    						'period_end' => $response_subscription['current_period_end'],
-	    						'booking_count' => null,
-	    						'payType' => sanitize_text_field($_POST['payType']),
-	    						'items' => $items,
-	    					);
-	    					**/
-	    					
-	    					$subscription_list[$subscription['product']] = $add_subscription;
-	    					$user['user']['subscription_list'] = $subscription_list;
-	    					$update = $this->update_subscription_list_of_user($user['user']['current_member_id'], $subscription_list);
-	    					
-	    					$response['update_subscription'] = $update;
-	    					#$response['user'] = $user;
-	    					$response['subscription_list'] = $subscription_list;
-	    					
-	    				}else{
-	    					
-	    					$response["status"] = 0;
-	    					
-	    				}
-	    				
-	    			}else{
-	    				
-	    				$response["status"] = 0;
-	    				
-	    			}
-	    			
-	    		}else if(isset($_POST['payType']) && $_POST['payType'] == 'paypal'){
-	    			
-	    			#$payment_active = get_option($this->prefix."paypal_active", "0");
-	    			$payment_active = 0;
-    				if (!is_bool(array_search(strtolower($_POST['payType']), $paymentMethod))) {
-    					
-    					$payment_active = 1;
-    					
-    				}
-    				
-					$payment_live = get_option($this->prefix."paypal_live", "0");
-					$public_key = get_option($this->prefix."paypal_client_id", null);
-					$secret_key = get_option($this->prefix."paypal_secret_key", null);
-	    			
-	    		}
-    			
-    		}else{
-    			
-    			$response["status"] = 0;
-    			
-    		}
-    		
-    		return $response;
-    		
-    	}
-    	
-    	public function getProductForStripe($secret, $products = array()){
-    		
-    		$subscriptions = array();
-    		for($index = 0; $index < count($products); $index++){
-    			
-    			$product = $products[$index];
-				$args = array(
-					'method' => 'GET',
-					'timeout' => $this->request_timeout, 
-					'headers' => array(
-						'Authorization' => 'Basic ' . base64_encode($secret . ':')
-					)
-				);
-				$response = wp_remote_request("https://api.stripe.com/v1/plans?limit=100&product=" . $product, $args);
-				$object = json_decode(wp_remote_retrieve_body($response));
-				$statusCode = wp_remote_retrieve_response_code($response);
-				
-				/**
-    			$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/plans?limit=100&product=".$product);
-				curl_setopt($ch, CURLOPT_USERPWD, $secret.":");
-				curl_setopt($ch, CURLOPT_POST, 0);
-				
-				ob_start();
-				$response = curl_exec($ch);
-				$response = ob_get_contents();
-				ob_end_clean();
-				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close ($ch);
-				$response = json_decode($response, true);
-				**/
-				
-				$name = null;
-				$currency = 'usd';
-				$amount = 0;
-				$bool = false;
-				$planKeys = array();
-				$plans = array();
-				for($i = 0; $i < count($response['data']); $i++){
-				    
-				    $data = $response['data'][$i];
-				    if($data['active'] === true){
-				        
-				        $bool = true;
-				        $name = $data['name'];
-				        $currency = $data['currency'];
-				        $amount += intval($data['amount']);
-				        
-				        array_push($planKeys, $data['id']);
-	    		        array_push($plans, array(
-	    		            'id' => $data['id'],
-	    			        'name' => $data['name'],
-	    			        'label' => $data['name'],
-	    			        'amount' => $data['amount'],
-	    			        'currency' => $data['currency'],
-	    		        ));
-				        
-				    }
-				    
-				}
-				
-				if($bool === true){
-					
-					$subscription = array('product' => $product, 'name' => $name, 'amount' => $amount, 'currency' => $currency, 'planKeys' => $planKeys, 'plans' => $plans, 'status' => 1, 'subscribed' => 0);
-		        	array_push($subscriptions, $subscription);
-					
-				}
-    			
-    		}
-    		
-    		if(count($subscriptions) > 0){
-    			
-    			return $subscriptions[0];
-    			
-    		}else{
-    			
-    			return false;
-    			
-    		}
-    		
-    	}
 		
 		public function updateRegularHolidays() {
 			
@@ -3200,6 +2689,7 @@
 			$rows = $wpdb->get_results("SELECT ".$columns." FROM `".$table_name."`;", ARRAY_A);
 			foreach ((array) $rows as $key => $row) {
 				
+				$rows[$key]['autoPublish'] = 1;
 				if (array_key_exists('customizeLabels', $row)) {
 					
 					$rows[$key]['customizeLabels'] = $this->setCustomizeLabels($row, $row['customizeLabels'], true);
@@ -3279,13 +2769,15 @@
 					
 				}
 				
+				$rows[$key] = $this->applyFreePlanLimits($rows[$key]);
+				
 			}
 			
 			return $rows;
         	
         }
         
-        public function getCalendarAccount($accountKey = 1, $isExtensionsValid = null){
+        public function getCalendarAccount($accountKey = 1){
         	
         	global $wpdb;
         	$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
@@ -3309,71 +2801,7 @@
 			$row['customizeLayouts'] = $this->setCustomizeLayouts($row, $row['customizeLayouts']);
 			$row['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('set', $row['maxBookingSlotsPerDay']);
 			$row['limitNumberOfGuests'] = $this->updateLimitNumberOfGuests('set', $row['limitNumberOfGuests']);
-			
-			/**
-			if (isset($row['minimumGuests'])) {
-				
-				$minimumGuests = json_decode($row['minimumGuests'], true);
-				if (empty($minimumGuests) === true) {
-					
-					$minimumGuests = array('enabled' => 0, 'included' => 0, 'number' => 0);
-					
-				}
-				$row['minimumGuests'] = $minimumGuests;
-				
-			}
-			
-			if (isset($row['maximumGuests'])) {
-				
-				$maximumGuests = json_decode($row['maximumGuests'], true);
-				if (empty($maximumGuests) === true) {
-					
-					$maximumGuests = array('enabled' => 0, 'included' => 0, 'number' => 0);
-					
-				}
-				$row['maximumGuests'] = $maximumGuests;
-				
-			}
-			**/
-			if ($isExtensionsValid === false && $row['type'] == 'hotel') {
-				
-				if ($row['hotelChargeOnDayBeforeNationalHoliday'] != 0 || $row['hotelChargeOnNationalHoliday'] != 0) {
-					
-					$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
-					try {
-						
-						$wpdb->query("START TRANSACTION");
-						$wpdb->query("LOCK TABLES `" . $table_name . "` WRITE");
-						$bool = $wpdb->update(
-							$table_name,
-							array(
-								'hotelChargeOnDayBeforeNationalHoliday' => 0, 
-								'hotelChargeOnNationalHoliday' => 0,
-							),
-							array('key' => intval($accountKey)),
-							array(
-								'%d', '%d', 
-							),
-							array('%d')
-						);
-					
-						$wpdb->query('COMMIT');
-						$wpdb->query('UNLOCK TABLES');
-						
-					} catch (Exception $e) {
-						
-						$wpdb->query('ROLLBACK');
-						$wpdb->query('UNLOCK TABLES');
-						
-					}/** finally {
-						
-						$wpdb->query('UNLOCK TABLES');
-						
-					}**/
-					
-				}
-				
-			}
+			$row['autoPublish'] = 1;
 			
 			if (isset($row['timezone']) === true && $row['timezone'] == 'none') {
 				
@@ -3394,22 +2822,65 @@
 				
 			}
 			
-			if (is_null($row['messagingService'])) {
-				
-				#$rows[$key]['messagingService'] = $this->setMessagingServiceInCalendarAccount($row['key']);
-				
-			}
-			
-			
+			$row = $this->applyFreePlanLimits($row);
 			
 			return $row;
         	
         }
+		
+		public function applyFreePlanLimits($calendarAccount, $apply = null) {
+			
+			if (is_null($apply)) {
+				$apply = $this->getExtensionsValid();
+			}
+			$apply = ($apply === 1 || $apply === true) ? 1 : 0;
+			if (has_filter('booking_package_apply_free_plan_limits')) {
+				
+				return apply_filters('booking_package_apply_free_plan_limits', $calendarAccount);
+				
+			} else if ($apply === 0) {
+				
+				$values = array('hasMultipleServices' => 0, 'preparationTime' => 0, 'displayRemainingCapacity' => '0', 'displayRemainingCapacityInCalendar' => 0, 'blockSameTimeBookingByUser' => '0',  'insertConfirmedPage' => '0', 'bookingVerificationCode' => 'false', 'bookingVerificationCodeToUser' => 'false', 'bookingReminder' => '0', 'cancellationOfBooking' => '0', 'cancellation_of_booking' => '0', 'refuseCancellationOfBooking' => '0', 'maximumNights' => 0, 'minimumNights' => 0, 'hotelChargeOnDayBeforeNationalHoliday' => 0, 'hotelChargeOnNationalHoliday' => 0, 'targetSchedules' => 0, 'autoPublish' => 0, 'isExtensionsValid' => 0, 'paymentMethod' => 'locally', 'schedulesSharing' => 0);
+				
+				$calendarAccount['isExtensionsValid'] = 0;
+				foreach ($values as $key => $value) {
+					
+					if (array_key_exists($key, $calendarAccount)) {
+						
+						$calendarAccount[$key] = $value;
+						
+					}
+				
+				}
+				
+				if (isset($calendarAccount['limitNumberOfGuests'])) {
+					
+					$calendarAccount['limitNumberOfGuests'] = array(
+						'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
+						'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
+					);
+					
+				}
+				
+				if (isset($calendarAccount['maxBookingSlotsPerDay']['maxBookingSlotsPerDayStatus'])) {
+					
+					$calendarAccount['maxBookingSlotsPerDay']['maxBookingSlotsPerDayStatus'] = 0;
+					
+				}
+				
+			} else {
+				
+				$calendarAccount['isExtensionsValid'] = 1;
+				
+			}
+			
+			return $calendarAccount;
+			
+		}
         
         public function verificationMaxBookingSlotsPerDay($calendarAccount, $schedule, $applicantCount) {
 			
 			global $wpdb;
-			$isExtensionsValid = $this->getExtensionsValid();
 			$response = array('status' => true, 'message' => null);
 			$maxBookingSlotsPerDay = $calendarAccount['maxBookingSlotsPerDay'];
 			if (intval($maxBookingSlotsPerDay['maxBookingSlotsPerDayStatus']) === 1) {
@@ -3676,17 +3147,6 @@
 				
 			}
 			
-			if (!isset($_POST['enableSubscriptionForStripe']) || $_POST['type'] == 'hotel') {
-				
-				$_POST['subscriptionIdForStripe'] = "";
-				$_POST['enableSubscriptionForStripe'] = 0;
-				$_POST['termsOfServiceForSubscription'] = "";
-				$_POST['enableTermsOfServiceForSubscription'] = 0;
-				$_POST['privacyPolicyForSubscription'] = "";
-				$_POST['enablePrivacyPolicyForSubscription'] = 0;
-				
-			}
-			
 			if (!isset($_POST['displayRemainingCapacityInCalendar'])) {
 				
 				$_POST['displayRemainingCapacityInCalendar'] = 0;
@@ -3733,10 +3193,9 @@
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
 			
-			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
-			$limitNumberOfGuests = $this->updateLimitNumberOfGuests('add', '[]');
+			$_POST['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('add', '[]');
+			$_POST['limitNumberOfGuests'] = $this->updateLimitNumberOfGuests('add', '[]');
 			
-			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
 				'hotelChargeOnSunday', 
 				'hotelChargeOnMonday', 
@@ -3760,45 +3219,13 @@
         		
         	}
 			
-			if ($isExtensionsValid == false) {
-				
-				$_POST['hasMultipleServices'] = 0;
-				$_POST['displayRemainingCapacity'] = 0;
-				$_POST['enableSubscriptionForStripe'] = 0;
-				$_POST['cancellationOfBooking'] = 0;
-				$_POST['allowCancellationVisitor'] = 0;
-				$_POST['allowCancellationUser'] = 0;
-				$_POST['refuseCancellationOfBooking'] = "not_refuse";
-				$_POST['preparationTime'] = 0;
-				$_POST['positionPreparationTime'] = 'before_after';
-				$_POST['hotelChargeOnDayBeforeNationalHoliday'] = 0;
-				$_POST['hotelChargeOnNationalHoliday'] = 0;
-				$_POST['maximumNights'] = 0;
-				$_POST['minimumNights'] = 0;
-				$_POST['schedulesSharing'] = 0;
-				$_POST['targetSchedules'] = 0;
-				$_POST['blockSameTimeBookingByUser'] = 0;
-				$_POST['bookingVerificationCode'] = 'false';
-				$_POST['bookingVerificationCodeToUser'] = 'false';
-				$_POST['bookingReminder'] = 60;
-				$_POST['insertConfirmedPage'] = 0;
-				$_POST['autoPublish'] = 0;
-				$limitNumberOfGuests = array(
-					'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-					'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-				);
-				
-			} else {
-				
-				$_POST['maximumNights'] = $this->getOnlyNumbers($_POST['maximumNights']);
-				$_POST['minimumNights'] = $this->getOnlyNumbers($_POST['minimumNights']);
-				
-			}
-			
+			$_POST['maximumNights'] = $this->getOnlyNumbers($_POST['maximumNights']);
+			$_POST['minimumNights'] = $this->getOnlyNumbers($_POST['minimumNights']);
 			$_POST['numberOfRoomsAvailable'] = $this->getOnlyNumbers($_POST['numberOfRoomsAvailable']);
 			$_POST['numberOfPeopleInRoom'] = $this->getOnlyNumbers($_POST['numberOfPeopleInRoom']);
 			$_POST['maxAccountScheduleDay'] = $this->getOnlyNumbers($_POST['maxAccountScheduleDay']);
 			
+			$_POST = $this->applyFreePlanLimits($_POST);
 			$date = date('U');
 			global $wpdb;
 			$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
@@ -3824,12 +3251,6 @@
 					'displayRemainingCapacity' => intval($_POST['displayRemainingCapacity']),
 					'maxAccountScheduleDay' => intval($_POST['maxAccountScheduleDay']),
 					'unavailableDaysFromToday' => intval($_POST['unavailableDaysFromToday']),
-					'subscriptionIdForStripe' => sanitize_text_field($_POST['subscriptionIdForStripe']),
-					'enableSubscriptionForStripe' => intval($_POST['enableSubscriptionForStripe']),
-					'termsOfServiceForSubscription' => esc_url($_POST['termsOfServiceForSubscription']),
-					'enableTermsOfServiceForSubscription' => intval($_POST['enableTermsOfServiceForSubscription']),
-					'privacyPolicyForSubscription' => esc_url($_POST['privacyPolicyForSubscription']),
-					'enablePrivacyPolicyForSubscription' => intval($_POST['enablePrivacyPolicyForSubscription']),
 					'displayRemainingCapacityInCalendar' => intval($_POST['displayRemainingCapacityInCalendar']),
 					'displayThresholdOfRemainingCapacity' => intval($_POST['displayThresholdOfRemainingCapacity']),
 					'displayRemainingCapacityHasMoreThenThreshold' => sanitize_text_field($_POST['displayRemainingCapacityHasMoreThenThreshold']),
@@ -3875,7 +3296,7 @@
 					'redirectURL' => sanitize_text_field($_POST['redirectURL']),
 					'redirectMode' => sanitize_text_field($_POST['redirectMode']),
 					'guestsBool' => intval(1),
-					'limitNumberOfGuests' => sanitize_text_field( json_encode($limitNumberOfGuests) ),
+					'limitNumberOfGuests' => sanitize_text_field( json_encode($_POST['limitNumberOfGuests']) ),
 					'blockSameTimeBookingByUser' => intval($_POST['blockSameTimeBookingByUser']),
 					'bookingVerificationCode' => sanitize_text_field($_POST['bookingVerificationCode']),
 					'bookingVerificationCodeToUser' => sanitize_text_field($_POST['bookingVerificationCodeToUser']),
@@ -3885,18 +3306,18 @@
 					'formatNightDay' => intval($_POST['formatNightDay']),
 					'messagingService' => sanitize_text_field($messagingService),
 					'autoPublish' => intval($_POST['autoPublish']),
-					'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($maxBookingSlotsPerDay) ),
+					'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($_POST['maxBookingSlotsPerDay']) ),
 				), 
 				array(
-						'%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', 
-						'%s', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', 
-						'%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', 
-						'%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%s', 
-						'%d', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%d', '%s', 
-					)
+					'%s', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d',
+					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
+					'%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%s', '%d',
+					'%s', '%d', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s',
+					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
+					'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
+					'%s', '%s', '%d', '%s', '%d', '%s', '%s', '%d', '%d', '%d',
+					'%d', '%s', '%d', '%s',
+				)
 			);
 			
 			$accountKey = $wpdb->insert_id;
@@ -3932,7 +3353,6 @@
 				'guests' => 'booking_package_guests', 
 				'taxes' => 'booking_package_taxes', 
 				'emails' => 'booking_package_email_settings', 
-				'subscriptions' => 'booking_package_subscriptions'
 			);
 			
 			foreach ((array) $targetList as $key => $table) {
@@ -4103,17 +3523,6 @@
 				
 			}
 			
-			if (!isset($_POST['enableSubscriptionForStripe'])) {
-				
-				$_POST['subscriptionIdForStripe'] = "";
-				$_POST['enableSubscriptionForStripe'] = 0;
-				$_POST['termsOfServiceForSubscription'] = "";
-				$_POST['enableTermsOfServiceForSubscription'] = 0;
-				$_POST['privacyPolicyForSubscription'] = "";
-				$_POST['enablePrivacyPolicyForSubscription'] = 0;
-				
-			}
-			
 			if (!isset($_POST['displayRemainingCapacityInCalendar'])) {
 				
 				$_POST['displayRemainingCapacityInCalendar'] = 0;
@@ -4159,10 +3568,9 @@
 			$_POST['displayRemainingCapacityHasMoreThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasMoreThenThreshold']);
 			$_POST['displayRemainingCapacityHasLessThenThreshold'] = stripslashes($_POST['displayRemainingCapacityHasLessThenThreshold']);
 			$_POST['displayRemainingCapacityHas0'] = stripslashes($_POST['displayRemainingCapacityHas0']);
-			$maxBookingSlotsPerDay = $this->updateMaxBookingSlotsPerDay('add', '[]');
-			$limitNumberOfGuests = $this->updateLimitNumberOfGuests('add', '[]');
+			$_POST['maxBookingSlotsPerDay'] = $this->updateMaxBookingSlotsPerDay('add', '[]');
+			$_POST['limitNumberOfGuests'] = $this->updateLimitNumberOfGuests('add', '[]');
 			
-			$isExtensionsValid = $this->getExtensionsValid();
 			$hotelCharges = array(
 				'hotelChargeOnSunday', 
 				'hotelChargeOnMonday', 
@@ -4186,41 +3594,12 @@
 				
 			}
 			
-			if ($isExtensionsValid === false) {
-				
-				$_POST['hasMultipleServices'] = 0;
-				$_POST['displayRemainingCapacity'] = 0;
-				$_POST['enableSubscriptionForStripe'] = 0;
-				$_POST['cancellationOfBooking'] = 0;
-				$_POST['allowCancellationVisitor'] = 0;
-				$_POST['allowCancellationUser'] = 0;
-				$_POST['refuseCancellationOfBooking'] = "not_refuse";
-				$_POST['preparationTime'] = 0;
-				$_POST['positionPreparationTime'] = 'before_after';
-				$_POST['hotelChargeOnDayBeforeNationalHoliday'] = 0;
-				$_POST['hotelChargeOnNationalHoliday'] = 0;
-				$_POST['maximumNights'] = 0;
-				$_POST['minimumNights'] = 0;
-				$_POST['blockSameTimeBookingByUser'] = 0;
-				$_POST['bookingVerificationCode'] = 'false';
-				$_POST['bookingVerificationCodeToUser'] = 'false';
-				$_POST['bookingReminder'] = 60;
-				$_POST['insertConfirmedPage'] = 0;
-				$limitNumberOfGuests = array(
-					'minimumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-					'maximumGuests' => array('enabled' => 0, 'included' => 0, 'number' => 0),
-				);
-				
-			} else {
-				
-				$_POST['maximumNights'] = $this->getOnlyNumbers($_POST['maximumNights']);
-				$_POST['minimumNights'] = $this->getOnlyNumbers($_POST['minimumNights']);
-				
-			}
-			
+			$_POST['maximumNights'] = $this->getOnlyNumbers($_POST['maximumNights']);
+			$_POST['minimumNights'] = $this->getOnlyNumbers($_POST['minimumNights']);
 			$_POST['numberOfRoomsAvailable'] = $this->getOnlyNumbers($_POST['numberOfRoomsAvailable']);
 			$_POST['numberOfPeopleInRoom'] = $this->getOnlyNumbers($_POST['numberOfPeopleInRoom']);
 			
+			$_POST = $this->applyFreePlanLimits($_POST);
 			$date = date('U');
 			global $wpdb;
 			$table_name = $wpdb->prefix . "booking_package_calendar_accounts";
@@ -4248,12 +3627,6 @@
 						'unavailableDaysFromToday' => intval($_POST['unavailableDaysFromToday']),
 						'enableFixCalendar' => intval($_POST['enableFixCalendar']),
 						'displayRemainingCapacity' => intval($_POST['displayRemainingCapacity']),
-						'subscriptionIdForStripe' => sanitize_text_field($_POST['subscriptionIdForStripe']),
-						'enableSubscriptionForStripe' => intval($_POST['enableSubscriptionForStripe']),
-						'termsOfServiceForSubscription' => esc_url($_POST['termsOfServiceForSubscription']),
-						'enableTermsOfServiceForSubscription' => intval($_POST['enableTermsOfServiceForSubscription']),
-						'privacyPolicyForSubscription' => esc_url($_POST['privacyPolicyForSubscription']),
-						'enablePrivacyPolicyForSubscription' => intval($_POST['enablePrivacyPolicyForSubscription']),
 						'displayRemainingCapacityInCalendar' => intval($_POST['displayRemainingCapacityInCalendar']),
 						'displayThresholdOfRemainingCapacity' => intval($_POST['displayThresholdOfRemainingCapacity']),
 						'displayRemainingCapacityHasMoreThenThreshold' => sanitize_text_field($_POST['displayRemainingCapacityHasMoreThenThreshold']),
@@ -4294,7 +3667,7 @@
 						'multipleRooms' => intval($_POST['multipleRooms']),
 						'redirectURL' => sanitize_text_field($_POST['redirectURL']),
 						'redirectMode' => sanitize_text_field($_POST['redirectMode']),
-						'limitNumberOfGuests' => sanitize_text_field( json_encode($limitNumberOfGuests) ),
+						'limitNumberOfGuests' => sanitize_text_field( json_encode($_POST['limitNumberOfGuests']) ),
 						'blockSameTimeBookingByUser' => intval($_POST['blockSameTimeBookingByUser']),
 						'bookingVerificationCode' => sanitize_text_field($_POST['bookingVerificationCode']),
 						'bookingVerificationCodeToUser' => sanitize_text_field($_POST['bookingVerificationCodeToUser']),
@@ -4304,18 +3677,17 @@
 						'formatNightDay' => intval($_POST['formatNightDay']),
 						'messagingService' => sanitize_text_field($messagingService),
 						'autoPublish' => intval($_POST['autoPublish']),
-						'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($maxBookingSlotsPerDay) ),
+						'maxBookingSlotsPerDay' => sanitize_text_field( json_encode($_POST['maxBookingSlotsPerDay']) ),
 					),
 					array('key' => intval($_POST['accountKey'])),
 					array(
-						'%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d', 
-						'%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d',
-						'%d', '%s', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%s', 
-						'%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', 
-						'%s', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%d', '%d', 
-						'%s', '%d', '%s',
+						'%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
+						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s',
+						'%s', '%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%d',
+						'%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d',
+						'%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
+						'%d', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s',
+						'%d', '%d', '%d', '%d', '%s', '%d', '%s',
 					),
 					array('%d')
 				);
@@ -4470,9 +3842,6 @@
 				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
 				
 				$table_name = $wpdb->prefix . "booking_package_taxes";
-				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
-				
-				$table_name = $wpdb->prefix . "booking_package_subscriptions";
 				$wpdb->delete($table_name, array('accountKey' => intval($_POST['accountKey'])), array('%d'));
 				
 				$table_name = $wpdb->prefix . "booking_package_hotel_options";
@@ -5337,7 +4706,6 @@
 			}
 			
 			global $wpdb;
-			$isExtensionsValid = $this->getExtensionsValid();
 			$uploadDate = date('U');
 			$const_unixTime = date('U', mktime(0, 0, 0, $month, $day, $year));
 			$maxAccountScheduleDay = intval(get_option($this->prefix.'maxAccountScheduleDay', 7));
@@ -5363,6 +4731,7 @@
 				return false;
 				
 			}
+			
 			$rows = array(intval($row['key']) => $row);
 			
 			#$wpdb->query("START TRANSACTION");
@@ -5494,6 +4863,7 @@
 									$calendarAccount['hotelChargeOnSaturday'], 
 								);
 								
+								$cost = $hotelCharges[intval($week)];
 								if (isset($nationalHolidays[intval($nationalHolidayKey)]) && intval($calendarAccount['hotelChargeOnNationalHoliday']) > 0) {
 									
 									$cost = $calendarAccount['hotelChargeOnNationalHoliday'];
@@ -5501,10 +4871,6 @@
 								} else if (isset($nationalHolidays[intval($dayBeforeNationalHolidayKey)]) && intval($calendarAccount['hotelChargeOnDayBeforeNationalHoliday']) > 0) {
 									
 									$cost = $calendarAccount['hotelChargeOnDayBeforeNationalHoliday'];
-									
-								} else {
-									
-									$cost = $hotelCharges[intval($week)];
 									
 								}
 								
@@ -5541,30 +4907,26 @@
 							
 						} else {
 							
-							if ($isExtensionsValid === true) {
-								
-								if ($calendarAccount['type'] === 'hotel' && intval($calendarAccount['autoPublish']) === 1) {
-										
-									$targetDayKey = $year . sprintf('%02d', $month) . sprintf('%02d', $day);
-									if (isset($addedSchedules[$targetDayKey]) && isset($addedSchedules[$targetDayKey]['stop']) && $addedSchedules[$targetDayKey]['stop'] === 'auto_publish') {
-										
-										$table_name = $wpdb->prefix . "booking_package_schedules";
-										$wpdb->update(
-											$table_name,
-											array(
-												'stop' => 'false',
-											),
-											array(
-												'accountKey' => intval($accountKey),
-												'year'       => intval($year),
-												'month'      => intval($month),
-												'day'        => intval($day),
-											),
-											array('%s'),
-											array('%d', '%d', '%d', '%d')
-										);
-										
-									}
+							if ($calendarAccount['type'] === 'hotel' && intval($calendarAccount['autoPublish']) === 1) {
+									
+								$targetDayKey = $year . sprintf('%02d', $month) . sprintf('%02d', $day);
+								if (isset($addedSchedules[$targetDayKey]) && isset($addedSchedules[$targetDayKey]['stop']) && $addedSchedules[$targetDayKey]['stop'] === 'auto_publish') {
+									
+									$table_name = $wpdb->prefix . "booking_package_schedules";
+									$wpdb->update(
+										$table_name,
+										array(
+											'stop' => 'false',
+										),
+										array(
+											'accountKey' => intval($accountKey),
+											'year'       => intval($year),
+											'month'      => intval($month),
+											'day'        => intval($day),
+										),
+										array('%s'),
+										array('%d', '%d', '%d', '%d')
+									);
 									
 								}
 								
@@ -5576,7 +4938,7 @@
 					
 				}
 				
-				if ($isExtensionsValid === true) {
+				if (intval($calendarAccount['autoPublish']) === 1) {
 					
 					$unixTime = date('U', mktime(date('H'), 0, 0, date('m'), date('d'), date('Y')));
 					$table_name = $wpdb->prefix . "booking_package_schedules";
@@ -7188,7 +6550,7 @@
 					if ($cancel === true) {
 						
 						$response['bookedData']['cancel'] = 0;
-						$cancelFlag = $this->verifyCancellation($response['bookedData'], true, $user_id);
+						$cancelFlag = $this->verifyCancellation($response['bookedData'], $user_id);
 						if ($cancelFlag['cancel'] === true) {
 							
 							$response['bookedData']['cancel'] = 1;
@@ -7879,7 +7241,8 @@
 		public function serachCourse($accountKey, $scheduleKey, $key = false, $servicesDetails = null, $bookingYMD = null, $time = false, $bookingID = null){
 			
 			global $wpdb;
-			
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$calendarAccount = $this->getCalendarAccount($accountKey);
 			$table_name = $wpdb->prefix . "booking_package_schedules";
 			$sql = $wpdb->prepare(
 				"SELECT * FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
@@ -7891,7 +7254,7 @@
 			if ($key !== false) {
 				
 				$sql = $wpdb->prepare(
-					"SELECT `key`, `name`, `time`, `cost`, `expirationDateStatus`, `expirationDateFrom`, `expirationDateTo`, `stopServiceUnderFollowingConditions`, `doNotStopServiceAsException`, `stopServiceForDayOfTimes`, `stopServiceForSpecifiedNumberOfTimes` FROM `".$table_name."` WHERE `accountKey` = %d AND `key` = %d LIMIT 0, 1;", 
+					"SELECT * FROM `".$table_name."` WHERE `accountKey` = %d AND `key` = %d LIMIT 0, 1;", 
 					array(intval($accountKey), intval($key))
 				);
 				
@@ -7900,7 +7263,7 @@
 			if ($time !== false) {
 				
 				$sql = $wpdb->prepare(
-					"SELECT `key`, `name`, `time`, `cost`, `expirationDateStatus`, `expirationDateFrom`, `expirationDateTo`, `stopServiceUnderFollowingConditions`, `doNotStopServiceAsException`, `stopServiceForDayOfTimes`, `stopServiceForSpecifiedNumberOfTimes` FROM `".$table_name."` WHERE `accountKey` = %d AND `time` = %d LIMIT 0, 1;", 
+					"SELECT * FROM `".$table_name."` WHERE `accountKey` = %d AND `time` = %d LIMIT 0, 1;", 
 					array(intval($accountKey), intval($time))
 				);
 				
@@ -7912,13 +7275,7 @@
 				
 			} else {
 				
-				$isExtensionsValid = $this->getExtensionsValid();
-				if ($isExtensionsValid !== true) {
-					
-					$row['stopServiceUnderFollowingConditions'] = 'doNotStop';
-					
-				}
-				
+				$row = $setting->verifyService($row, $calendarAccount['isExtensionsValid'], 0);
 				$isBooking = $this->validExpirationDate(intval($bookingYMD), intval($row['expirationDateStatus']), intval($row['expirationDateFrom']), intval($row['expirationDateTo']));
 				if ($isBooking === false) {
 					
@@ -8731,6 +8088,39 @@
 					#$accommodationDetails['checkOut'] = intval($sql_max_unixTime) + (1440 * 60);
 					$accommodationDetails['lastUnixTime'] = intval($sql_max_unixTime);
 					$accommodationDetails['nights'] = $nights;
+					
+					if (has_filter('booking_package_validate_accommodation_nights')) {
+						
+						$validateResult = apply_filters('booking_package_validate_accommodation_nights', array('status' => 'success', 'message' => null), $nights, $calendarAccount);
+						if (isset($validateResult['status']) && $validateResult['status'] === 'error') {
+							
+							return $validateResult;
+							
+						}
+						
+					} else if (intval($calendarAccount['isExtensionsValid']) === 1) {
+						
+						$minNights = intval($calendarAccount['minimumNights']);
+						$maxNights = intval($calendarAccount['maximumNights']);
+						if ($minNights > 0 && $nights < $minNights) {
+							
+							return array(
+								'status'  => 'error',
+								'message' => sprintf(__('Minimum length of stay is %d nights.', 'booking-package'), $minNights)
+							);
+							
+						}
+						if ($maxNights > 0 && $nights > $maxNights) {
+							
+							return array(
+								'status'  => 'error',
+								'message' => sprintf(__('Maximum length of stay is %d nights.', 'booking-package'), $maxNights)
+							);
+							
+						}
+						
+					}
+					
 					$accommodationDetails['accommodationFee'] = $totalCost;
 					$accommodationDetails['sql_max_unixTime'] = $sql_max_unixTime;
 					$maintenanceTime = 0;
@@ -8753,25 +8143,33 @@
 			// Start
 			$personAmount = 0;
 			$optionsAmount = 0;
-			if (!isset($jsonList['rooms']) || !is_array($jsonList['rooms'])) {$jsonList['rooms'] = array();
+			if (!isset($jsonList['rooms']) || !is_array($jsonList['rooms'])) {
+				
+				$jsonList['rooms'] = array();
 				
 			}
 			
-			if (count($jsonList['rooms']) != 0) {$additionalFee = 0;
+			if (count($jsonList['rooms']) != 0) {
+				
+				$additionalFee = 0;
 				$adult = 0;
 				$children = 0;
 				$rooms = array();
-				foreach ((array) $jsonList['rooms'] as$roomKey => $room) {$adultInRoom = 0;
+				foreach ((array) $jsonList['rooms'] as$roomKey => $room) {
+					
+					$adultInRoom = 0;
 					$childrenInRoom = 0;
 					$roomPersonAmount = 0;
 					$roomOptionsAmount = 0;
 					/** guests **/
 					$table_name =$wpdb->prefix . "booking_package_guests";
 					$selectedGuests = (isset($room['guests']) && is_array($room['guests'])) ? $room['guests'] : array();$guestsDetails = array();
-					foreach ((array) $selectedGuests as $key =>$value) {
+					foreach ((array) $selectedGuests as $key => $value) {
 						
-						$guests_row = array();$guestsArray = array();
-						$guests = array();$selected = false;
+						$guests_row = array();
+						$guestsArray = array();
+						$guests = array();
+						$selected = false;
 						if ($type == 'book') {
 							
 							$guestSql =$wpdb->prepare(
@@ -8784,6 +8182,8 @@
 								return array("status" => "error", "message" => __("Invalid booking data.", 'booking-package'));
 								
 							}
+							
+							$guests_row = $setting->verifyGuest($guests_row, $calendarAccount['isExtensionsValid'], 1);
 							$guestsArray = json_decode($guests_row['json'], true);
 							
 						} else if ($type == 'update') {
@@ -8794,28 +8194,25 @@
 							
 						}
 						
-						$guestsArray =$this->updatePricesForGuest($guestsArray,$numberKeys);
-						for ($i = 0; $i < count($guestsArray);$i++) {
+						$guestsArray = $this->updatePricesForGuest($guestsArray,$numberKeys);
+						for ($i = 0; $i < count($guestsArray); $i++) {
 							
-							if (isset($value['number']) && isset($value['name']) && intval($value['number']) == intval($guestsArray[$i]['number']) &&$value['name'] == $guestsArray[$i]['name']) {
+							if (isset($value['number']) && isset($value['name']) && intval($value['number']) == intval($guestsArray[$i]['number']) && $value['name'] == $guestsArray[$i]['name']) {
 								
-								$additionalFee += intval($guestsArray[$i]['price']) *$nights;
-								foreach ((array) $accommodationDetails['scheduleDetails'] as$schedule_day) {
+								$additionalFee += intval($guestsArray[$i]['price']) * $nights;
+								foreach ((array) $accommodationDetails['scheduleDetails'] as $schedule_day) {
 									
-									$priceKey =$schedule_day['priceKeyByDayOfWeek'];
-									$isHolidayKey = in_array($priceKey, array('priceOnDayBeforeNationalHoliday', 'priceOnNationalHoliday'), true);
-									if (intval($guestsArray[$i][$priceKey]) == 0 &&$isHolidayKey === true) {
-										
-										$weekKey = intval($schedule_day['weekKey']);
-										if ($weekKey == 0) {
-											
-											$weekKey = 6; 									 									} else {$weekKey--;
-											
-										}
-										$priceKey = $numberKeys[$weekKey];
-										
+									$weekKey = intval($schedule_day['weekKey']);
+									$dayIndex = ($weekKey == 0) ? 6 : ($weekKey - 1);
+									$weekdayPriceKey = $numberKeys[$dayIndex];
+									
+									$guestPrice = isset($guestsArray[$i][$weekdayPriceKey]) ? intval($guestsArray[$i][$weekdayPriceKey]) : 0;
+									$priceKey = $schedule_day['priceKeyByDayOfWeek'];
+									if (isset($guestsArray[$i][$priceKey]) && intval($guestsArray[$i][$priceKey]) > 0) {
+										$guestPrice = intval($guestsArray[$i][$priceKey]);
 									}
-									$roomPersonAmount += intval($guestsArray[$i][$priceKey]);
+									
+									$roomPersonAmount += $guestPrice;
 									
 								}
 								
@@ -8864,8 +8261,10 @@
 					
 					$table_name =$wpdb->prefix . "booking_package_hotel_options";
 					$totalNumberOfOptions = 0;
-					$optionsList = (isset($room['options']) && is_array($room['options'])) ?$room['options'] : array();
-					foreach ((array) $optionsList as$key => $value) {$selected = false;
+					$optionsList = (isset($room['options']) && is_array($room['options'])) ? $room['options'] : array();
+					foreach ((array) $optionsList as $key => $value) {
+						
+						$selected = false;
 						if ($type == 'book') {
 							
 							$optionSql =$wpdb->prepare(
@@ -8878,7 +8277,14 @@
 								return array("status" => "error", "message" => __("Invalid booking data.", 'booking-package'));
 								
 							}
-							$options =$setting->getTranslateOption($options, intval($originCalendarKey));
+							
+							$options = $setting->verifyOptionForHotel($options, $calendarAccount['isExtensionsValid']);
+							if ($options['active'] == 'false') {
+								
+								continue;
+								
+							}
+							$options = $setting->getTranslateOption($options, intval($originCalendarKey));
 							$optionsArray = json_decode($options['json'], true);
 							
 						} else if ($type == 'update') {
@@ -9018,16 +8424,20 @@
             	
 			}
 			
-			#$totalTax = 0;
 			$taxValue = 0;
 			$extraChargeAmount = 0;
 			$taxList = array();
-			$table_name =$wpdb->prefix . "booking_package_taxes";
-			// END
+			$table_name = $wpdb->prefix . "booking_package_taxes";
 			$sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d AND `active` = 'true' AND `type` = 'surcharge' AND `generation` = 2 ORDER BY ranking ASC;", array(intval($originCalendarKey)));
 			$rows = $wpdb->get_results($sql, ARRAY_A);
 			foreach ((array) $rows as $key => $extraCharge) {
 				
+				$extraCharge = $setting->verifyTax($extraCharge, intval($calendarAccount['isExtensionsValid']));
+				if (isset($extraCharge['active']) && $extraCharge['active'] === 'false') {
+					
+					continue;
+					
+				}
 				$extraCharge = $setting->getTranslateTax($extraCharge, $originCalendarKey);
 				$applicantCountForTax = $applicantCount;
 				$nightsForTax = $nights;
@@ -9068,6 +8478,12 @@
 			$rows = $wpdb->get_results($sql, ARRAY_A);
 			foreach ((array) $rows as $key => $tax) {
 				
+				$tax = $setting->verifyTax($tax, intval($calendarAccount['isExtensionsValid']));
+				if (isset($tax['active']) && $tax['active'] === 'false') {
+					
+					continue;
+					
+				}
 				$tax = $setting->getTranslateTax($tax, $originCalendarKey);
 				$applicantCountForTax = $applicantCount;
 				$nightsForTax = $nights;
@@ -9270,7 +8686,7 @@
 				array_push($taxList, $tax);
 				
 			}
-				
+			
 			$accommodationDetails['taxes'] = $taxList;
 			$accommodationDetails['extraChargeAmount'] = $extraChargeAmount;
 			$accommodationDetails['taxesFee'] = $totalTax;
@@ -9291,10 +8707,10 @@
 		public function createTaxesDetails($accountKey, $calendarType, $totalCost, $bookingYMD = 0, $applicantCount = null, $taxes = null) {
 			
 			global $wpdb;
+			$calendarAccount = $this->getCalendarAccount($accountKey);
 			$setting = new booking_package_setting($this->prefix, $this->pluginName);
 			$extraChargeAmount = 0;
 			$taxesDetails = array();
-			$isExtensionsValid = $this->getExtensionsValid();
 			if (is_null($taxes) === true) {
 				
 				$table_name = $wpdb->prefix . "booking_package_taxes";
@@ -9302,80 +8718,19 @@
 				$taxes = $wpdb->get_results($sql, ARRAY_A);
 				foreach ((array) $taxes as $key => $tax) {
 					
+					$tax = $setting->verifyTax($tax, $calendarAccount['isExtensionsValid']);
+					if (isset($tax['active']) && $tax['active'] === 'false') {
+						
+						unset($taxes[$key]);
+						continue;
+						
+					}
 					$taxes[$key] = $setting->getTranslateTax($tax, $accountKey);
 					
 				}
 				
 			}
     		
-    		/**
-			foreach ((array) $taxes as $key => $tax) {
-				
-				if ($isExtensionsValid !== true) {
-					
-					continue;
-					
-				}
-				
-				if ($bookingYMD != 0 && intval($tax['expirationDateStatus']) == 1) {
-					
-					$isTax = $this->validExpirationDate($bookingYMD, intval($tax['expirationDateStatus']), intval($tax['expirationDateFrom']), intval($tax['expirationDateTo']));
-					if ($isTax === false) {
-						
-						unset($rows[$key]);
-						continue;
-						
-					}
-					
-				}
-				
-				
-				if ($tax['method'] == 'multiplication') {
-					
-					$taxValue =  ($tax['value'] / 100) * $totalCost;
-					if ($tax['tax'] == 'tax_inclusive') {
-						
-						$taxValue = $totalCost * (intval($tax['value']) / (100 + intval($tax['value'])));
-						$taxValue = floor($taxValue);
-						
-					}
-					$tax['taxValue'] = $taxValue;
-					
-				} else {
-					
-					$tax['taxValue'] = intval($tax['value']);
-					
-				}
-				
-				if ($calendarType === 'day' && intval($tax['generation']) === 2) {
-					
-					if ($tax['type'] === 'tax') {
-						
-						$taxValue =  ($tax['value'] / 100) * ($totalCost + $extraChargeAmount);
-						
-						if ($tax['tax'] == 'tax_inclusive') {
-							
-							$taxValue = ($totalCost + $extraChargeAmount) * ( intval($tax['value']) / ( 100 + intval($tax['value']) ) );
-							$taxValue = floor($taxValue);
-							
-						}
-						$tax['taxValue'] = $taxValue;
-						
-					} else if ($tax['type'] === 'surcharge') {
-						
-						$tax['taxValue'] = intval($tax['value']);
-						$extraChargeAmount += intval($tax['value']) * $applicantCount;
-						
-					}
-					
-				}
-				
-				
-				array_push($taxesDetails, $tax);
-				
-			}
-			**/
-			
 			$taxesDetails = $this->getValueForTaxex($taxes, $totalCost, $applicantCount, $calendarType, $bookingYMD);
 			
 			return $taxesDetails;
@@ -9529,6 +8884,12 @@
 		
 		public function intentForStripe() {
 			
+			if (has_filter('booking_package_schedule_intent_stripe')) {
+                
+                return apply_filters('booking_package_schedule_intent_stripe', array('status' => false));
+                
+            }
+			
 			global $wpdb;
 			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
 			if ($verifyAmount !== false && $verifyAmount !== 0) {
@@ -9546,6 +8907,12 @@
 		}
 		
 		public function intentForStripeExpressCheckout() {
+			
+			if (has_filter('booking_package_schedule_intent_stripe_express_checkout')) {
+                
+                return apply_filters('booking_package_schedule_intent_stripe_express_checkout', array('status' => false));
+                
+            }
 			
 			global $wpdb;
 			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
@@ -9565,6 +8932,12 @@
 		
 		public function intentForStripePayPay() {
 			
+			if (has_filter('booking_package_schedule_intent_stripe_paypay')) {
+                
+                return apply_filters('booking_package_schedule_intent_stripe_paypay', array('status' => false));
+                
+            }
+			
 			global $wpdb;
 			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
 			if ($verifyAmount !== false && $verifyAmount !== 0) {
@@ -9582,6 +8955,12 @@
 		}
 		
 		public function intentForStripeKonbini() {
+			
+			if (has_filter('booking_package_schedule_intent_stripe_konbini')) {
+                
+                return apply_filters('booking_package_schedule_intent_stripe_konbini', array('status' => false));
+                
+            }
 			
 			global $wpdb;
 			$verifyAmount = $this->getVerifyAmountForStripePayments($_POST['amount']);
@@ -9601,6 +8980,12 @@
 		}
 		
 		public function getVerifyAmountForStripePayments($amount) {
+			
+			if (has_filter('booking_package_schedule_get_verify_amount_stripe_payments')) {
+                
+                return apply_filters('booking_package_schedule_get_verify_amount_stripe_payments', $amount);
+                
+            }
 			
 			global $wpdb;
 			$verifyAmount = 0;
@@ -9722,19 +9107,6 @@
 			global $wpdb;
 			$response = array('status' => 'success', 'message' => null);
 			$table_name = $wpdb->prefix . "booking_package_block_list";
-			$isExtensionsValid = $this->getExtensionsValid();
-			if (intval(get_option($this->prefix . 'blocksEmail', 0)) == 0) {
-				
-				return $response;
-				
-			}
-			
-			if (!is_null($user_id)) {
-				
-				
-				
-			}
-
     		if (is_array($emails)) {
 				
 				for ($i = 0; $i < count($emails); $i++) {
@@ -10142,6 +9514,12 @@
 		
 		public function sendVerificationCode($administrator = false) {
 			
+			if (has_filter('booking_package_schedule_send_verification_code')) {
+                
+                return apply_filters('booking_package_schedule_send_verification_code', $administrator);
+                
+            }
+			
 			$bookingVerificationCode = 'false';
 			$from = null;
 			$user = null;
@@ -10154,7 +9532,7 @@
 				
 			}
 			$calendarAccount = $this->getCalendarAccount($accountKey);
-			if ($this->getExtensionsValid() !== true) {
+			if (empty($calendarAccount['bookingVerificationCode']) || $calendarAccount['bookingVerificationCode'] === 'false') {
 				
 				return array(
 					'status'  => false,
@@ -10380,6 +9758,12 @@
 		}
 		
 		public function checkVerificationCode($administrator = false) {
+			
+			if (has_filter('booking_package_schedule_check_verification_code')) {
+                
+                return apply_filters('booking_package_schedule_check_verification_code', $administrator);
+                
+            }
 			
 			$inputCode = isset($_POST['verificationCode']) ? trim($_POST['verificationCode']) : '';
     		$token = isset($_POST['verificationToken']) ? sanitize_text_field($_POST['verificationToken']) : '';
@@ -11210,6 +10594,8 @@
 							array('%d')
 						);
 						
+						$creditCard->update($selected_pay_type, $public_key, $secret_key, $cardToken, $lastID, $payment_live, $visitorName, $visitorEmail, $visitorBookingDate);
+						
 					}
 					
 					$userInformation = $this->setUserInformation($form);
@@ -11226,15 +10612,6 @@
 						$cancellationUri = $this->getCancellationUri($permalink, $lastID, $cancellationToken);
 						
 					}
-					
-					/**
-					if(isset($cardToken) && !is_null($cardToken) && $_POST['payType'] == 'paypal'){
-						
-						$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
-						$payResponse = $creditCard->update($_POST['payType'], $public_key, $secret_key, $_POST['payToken'], $lastID, $payment_live);
-						
-					}
-					**/
 					
 				}
     			
@@ -11477,7 +10854,6 @@
 				
 			}
 			
-			$isExtensionsValid = $this->getExtensionsValid();
 			global $wpdb;
 			$table_name = $wpdb->prefix . "booking_package_guests";
 			$active_guests_sql =$wpdb->prepare(
@@ -11523,6 +10899,7 @@
 					
 				} else {
 					
+					$row = $setting->verifyGuest($row, $calendarAccount['isExtensionsValid']);
 					$row = $setting->getTranslateGuest($row, intval($calendarAccount['key']) );
 					$list = json_decode($row['json'], true);
 					array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select")));
@@ -11543,14 +10920,6 @@
 						if ($row['guestsInCapacity'] == 'included' && intval($list[$key]['number']) > 0) {
 							
 							$response['applicantCount'] += intval($list[$key]['number']);
-							
-						}
-						
-						if ($isExtensionsValid !== true) {
-							
-							$row['costInServices'] = 'cost_1';
-							$row['reflectService'] = '0';
-							$row['reflectAdditional'] = '0';
 							
 						}
 						
@@ -11656,7 +11025,7 @@
 			
 			$response['isGuests'] = true;
 			
-			if ($calendarAccount['type'] == 'day' && $isExtensionsValid === true) {
+			if ($calendarAccount['type'] == 'day') {
 				
 				$minimumGuests = $limitNumberOfGuests['minimumGuests'];
 				if ($minimumGuests['enabled'] == 1 && $minimumGuests['number'] > 0) {
@@ -11768,6 +11137,7 @@
 							}
 							
 							$setting = new booking_package_setting($this->prefix, $this->pluginName);
+							$verify_service = $setting->verifyService($verify_service, $calendarAccount['isExtensionsValid']);
 							$verify_service = $setting->getTranslateService($verify_service, $calendarAccount['key']);
 							
 							$jsonList[$i]['time'] = intval($verify_service['time']);
@@ -12032,7 +11402,6 @@
 			$totalCost1 = 0;
 			$totalCost2 = 0;
 			$hasMultipleCosts = false;
-			$isExtensionsValid = $this->getExtensionsValid();
 			if (isset($service['cost_1']) === false) {
 				
 				if (isset($service['cost']) === true) {
@@ -12090,14 +11459,6 @@
 					if (isset($guest['costInServices']) === false) {
 						
 						$guest['costInServices'] = 'cost_1';
-						
-					}
-					
-					if ($isExtensionsValid !== true) {
-						
-						$guest['costInServices'] = 'cost_1';
-						$guest['reflectService'] = '0';
-						$guest['reflectAdditional'] = '0';
 						
 					}
 					
@@ -12473,35 +11834,26 @@
     		
     	}
     	
-		public function verifyCancellation($bookingDetails, $isExtensionsValid = false, $user = 0) {
+		public function verifyCancellation($bookingDetails, $user = 0) {
 			
 			$response = array("cancel" => false);
 			$calendarAccount = $this->getCalendarAccount(intval($bookingDetails['accountKey']));
 			if (intval($calendarAccount['cancellationOfBooking']) == 1) {
 				
 				$unixTime = date('U');
-				if ($isExtensionsValid === true) {
+				$current_cancellation_limit_time = intval($calendarAccount['allowCancellationVisitor']);
+				$cancellation_limit_time = apply_filters( 'booking_package_override_cancellation_limit_time', $current_cancellation_limit_time, intval($calendarAccount['key']) );
+				if ( !is_numeric($cancellation_limit_time) || $cancellation_limit_time <= 0 ) {
 					
-					$current_cancellation_limit_time = intval($calendarAccount['allowCancellationVisitor']);
-					$cancellation_limit_time = apply_filters( 'booking_package_override_cancellation_limit_time', $current_cancellation_limit_time, intval($calendarAccount['key']) );
-					if ( !is_numeric($cancellation_limit_time) || $cancellation_limit_time <= 0 ) {
-					    
-					    $cancellation_limit_time = $current_cancellation_limit_time;
-					    
-					} else {
-					    
-					    $cancellation_limit_time = intval($cancellation_limit_time);
-					    
-					}
-					
-					$unixTime = $unixTime + ($cancellation_limit_time * 60);
-					#$unixTime = $unixTime + (intval($calendarAccount['allowCancellationVisitor']) * 60);
+					$cancellation_limit_time = $current_cancellation_limit_time;
 					
 				} else {
 					
-					$calendarAccount['refuseCancellationOfBooking'] = 'not_refuse';
+					$cancellation_limit_time = intval($cancellation_limit_time);
 					
 				}
+				
+				$unixTime = $unixTime + ($cancellation_limit_time * 60);
 				
 				if ($unixTime < intval($bookingDetails['scheduleUnixTime'])) {
 					
@@ -12544,7 +11896,7 @@
 			$response = array("status" => "error", "key" => intval($deleteKey), "token" => esc_html($token), "cancel" => 0, "myBookingDetails" => array());
     		$myBookingDetails = $bookingDetailsOnVisitor['details'];
     		$_POST['accountKey'] = $myBookingDetails['accountKey'];
-    		$verifyCancellation = $this->verifyCancellation($myBookingDetails, true, 0);
+    		$verifyCancellation = $this->verifyCancellation($myBookingDetails, 0);
     		if ($verifyCancellation['cancel'] === true) {
     			
     			$this->updateStatus($deleteKey, $token, $status);
@@ -13744,7 +13096,7 @@
 			
 		}
 		
-		private function getUserValues($accountKey, $type, $administrator, $personalInformation = null, $user_id = null) {
+		protected function getUserValues($accountKey, $type, $administrator, $personalInformation = null, $user_id = null) {
 			
 			global $wpdb;
 			$setting = new booking_package_setting($this->prefix, $this->pluginName);
@@ -13917,7 +13269,7 @@
 			
 		}
 		
-		private function getExtensionsValid() {
+		protected function getExtensionsValid() {
 			
 			if (is_null($this->isExtensionsValid)) {
 				
@@ -15511,7 +14863,7 @@
 			
 		}
 		
-    	private function createEmailMessage($accountKey, $email_id, $bookingID) {
+    	protected function createEmailMessage($accountKey, $email_id, $bookingID) {
 			
 			global $wpdb;
 			
@@ -15784,7 +15136,7 @@
 			
 		}
 		
-		private function sendMessagingServices($calendarAccount, $customers, $subject, $body) {
+		protected function sendMessagingServices($calendarAccount, $customers, $subject, $body) {
 			
 			$messagingServices = $calendarAccount['messagingService'];
 			
@@ -15800,72 +15152,13 @@
 			
 		}
 		
-		private function sendWhatsApp($customers, $body) {
+		protected function sendWhatsApp($customers, $body) {
 			
-			$isExtensionsValid = $this->getExtensionsValid();
-			if ($isExtensionsValid === false) {
-				
-				return false;
-				
-			} else {
-				
-				$body = str_replace(PHP_EOL, "\n", $body);
-				$whatsApp_active = get_option($this->prefix . "whatsApp_active", 0);
-				$whatsApp_countryCode = get_option($this->prefix . 'whatsApp_countryCode', 0);
-				$whatsApp_phoneId = get_option($this->prefix . 'whatsApp_phoneId', 0);
-				$whatsApp_token = get_option($this->prefix . 'whatsApp_token', 0);
-				if (intval($whatsApp_active) === 1 && !empty($whatsApp_phoneId) && !empty($whatsApp_token)) {
-					
-					for ($i = 0; $i < count($customers); $i++) {
-						
-						$phoneNumber = $customers[$i];
-						if (substr($phoneNumber, 0, 1) === '0') {
-						    $phoneNumber = substr($phoneNumber, 1);
-						}
-						
-						$phoneNumber = $whatsApp_countryCode . $phoneNumber;
-						if (preg_match( '/^\+/', $customers[$i])) {
-							
-							$phoneNumber = $customers[$i];
-							
-						}
-						$phoneNumber = preg_replace('/[^0-9]/', '', $phoneNumber);
-						#var_dump($phoneNumber);
-						
-						$params = array(
-							'messaging_product' => 'whatsapp',
-							'recipient_type' => 'individual',
-							'type' => 'text',
-							'to' => $phoneNumber, 
-							'text' => array(
-								'preview_url' => false,
-								'body' => $body,
-							)
-						);
-						$args = array(
-							'method' => 'POST',
-							'timeout' => $this->request_timeout, 
-							'body' => json_encode($params),
-							'headers' => array(
-								'content-type' => 'application/json', 
-								'Authorization' => 'Bearer ' . trim($whatsApp_token) .'',
-							)
-						);
-						#var_dump($args);
-						$response = wp_remote_request('https://graph.facebook.com/v17.0/' . $whatsApp_phoneId . '/messages', $args);
-						$statusCode = wp_remote_retrieve_response_code($response);
-						$response = json_decode(wp_remote_retrieve_body($response), true);
-						#var_dump($response);
-						
-					}
-					
-				}
-				
-			}
+			return false;
 			
 		}
 		
-		private function twilioSMS($visitorSMS, $body) {
+		protected function twilioSMS($visitorSMS, $body) {
 			
 			$body = str_replace(PHP_EOL, "\n", $body);
 			
@@ -16022,6 +15315,12 @@
         
 		public function booking_notification() {
 			
+			if (has_filter('booking_package_schedule_booking_notification')) {
+                
+                return apply_filters('booking_package_schedule_booking_notification', array('status' => false));
+                
+            }
+			
 			global $wpdb;
 			$calendarAccountList = $this->getCalendarAccountListData();
 			for ($i = 0; $i < count($calendarAccountList); $i++) {
@@ -16124,7 +15423,7 @@
 			
 		}
 		
-		private function jsonDecodeForGuests($json) {
+		protected function jsonDecodeForGuests($json) {
 			
 			$responseGuests = json_decode($json, true);
 			if (isset($responseGuests['guests']) === false) {
@@ -16291,18 +15590,6 @@
 				
 			}
 			
-			if ($mode == 'createCustomer') {
-				
-				$response = $this->createCustomer();
-				
-			}
-			
-			if ($mode == 'deleteSubscription') {
-				
-				$response = $this->deleteSubscription($_POST['product']);
-				
-			}
-			
 			if ($mode == 'deleteUser') {
 				
 				$response = $this->deleteUser(0);
@@ -16342,7 +15629,7 @@
 					
 					if ($customer && intval($customer['user_id']) === intval($user['user']['current_member_id'])) {
 						
-						$verifyCancellation = $this->verifyCancellation($customer, $this->getExtensionsValid(), intval($user['user']['current_member_id']));
+						$verifyCancellation = $this->verifyCancellation($customer, intval($user['user']['current_member_id']));
 						
 						if ($verifyCancellation['cancel'] === true) {
 							
@@ -16381,8 +15668,8 @@
 			return $response;
 			
 		}
-        
-    }
+		
+	}
     
     
     

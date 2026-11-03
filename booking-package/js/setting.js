@@ -668,12 +668,6 @@ window.addEventListener('load', function(){
 		
 		var valueField = document.getElementById(object._prefix + 'newEmail');
 		var addButton = document.getElementById(object._prefix + 'addBlockEmail');
-		if (object._isExtensionsValid == 0) {
-			
-			valueField.disabled = true;
-			addButton.disabled = true;
-			
-		}
 		
 		addButton.onclick = function() {
 			
@@ -706,12 +700,6 @@ window.addEventListener('load', function(){
 			});
 			
 		};
-		
-		if (object._isExtensionsValid == 0) {
-			
-			return null;
-			
-		}
 		
 		var emailTd = object.create('td', object._i18n.get('Email'), null, null, null, null, null);
 		var dateTd = object.create('td', object._i18n.get('Date'), null, null, null, null, null);
@@ -1224,34 +1212,25 @@ window.addEventListener('load', function(){
 			
 		}
 		
-		
-		if (object._isExtensionsValid == 1) {
+		document.getElementById("save_javascript").onclick = function() {
 			
-			document.getElementById("save_javascript").onclick = function() {
+			if (object._wpJavaScriptEditor) {
 				
-				if (object._wpJavaScriptEditor) {
+				const value = object._wpJavaScriptEditor.codemirror.getValue();
+				object._console.log(value);
+				var loadingPanel = document.getElementById("loadingPanel");
+				loadingPanel.classList.remove("hidden_panel");
+				
+				var postData = {mode: 'updateJavaScript', nonce: object._nonce, action: object._action, value: value};
+				object._console.log(postData);
+				var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
 					
-					const value = object._wpJavaScriptEditor.codemirror.getValue();
-					object._console.log(value);
-					var loadingPanel = document.getElementById("loadingPanel");
-					loadingPanel.classList.remove("hidden_panel");
+					object._console.log(json);	
+					loadingPanel.classList.add("hidden_panel");
 					
-					var postData = {mode: 'updateJavaScript', nonce: object._nonce, action: object._action, value: value};
-					object._console.log(postData);
-					var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
-						
-						object._console.log(json);	
-						loadingPanel.classList.add("hidden_panel");
-						
-					});
-					
-				}
+				});
 				
 			}
-			
-		} else {
-			
-			document.getElementById("save_javascript").disabled = true;
 			
 		}
 		

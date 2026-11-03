@@ -11,7 +11,7 @@
         
         public $userRoleName = null;
         
-        private $isExtensionsValid = null;
+        protected $isExtensionsValid = null;
         
         public $request_timeout = 30;
         
@@ -1280,9 +1280,6 @@
                         'hotelCharges' => 0,
                         'maximumNights' => 0,
                         'minimumNights' => 0,
-                        'subscriptionIdForStripe' => 1,
-                        'termsOfServiceForSubscription' => 1,
-                        /**'enableSubscriptionForStripe' => 1,**/
                         'numberOfRoomsAvailable' => 0, 
                         'numberOfPeopleInRoom' => 0, 
                         'includeChildrenInRoom' => 0, 
@@ -1528,11 +1525,7 @@
                 
                 'messagingService' => array('key' => 'messagingService', 'name' => __('Messaging Services', 'booking-package'), 'target' => 'both', 'value' => 'open', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array(0 => __('Disabled', 'booking-package'), /**'facebookMessenger' => 'Facebook Messenger',**/ 'whatsApp' => 'WhatsApp', /**'line' => 'LINE',**/ 'twilio' => 'Twilio SMS')),
                 
-                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'locally', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'stripe_paypay' => sprintf( __('Pay with %s', 'booking-package'), 'PayPay' ), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'))),                'subscriptionIdForStripe' => array('key' => 'subscriptionIdForStripe', 'name' => 'Product ID of subscription for Stripe', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('subscriptionIdForStripe' => array('title' => 'Product ID', 'inputType' => 'TEXT'), 'enableSubscriptionForStripe' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableSubscriptionForStripe" => "")),
-                'termsOfServiceForSubscription' => array('key' => 'termsOfServiceForSubscription', 'name' => 'The terms of service for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('termsOfServiceForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enableTermsOfServiceForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enableTermsOfServiceForSubscription" => "")),
-                'privacyPolicyForSubscription' => array('key' => 'privacyPolicyForSubscription', 'name' => 'The privacy policy for subscription', 'target' => 'both', 'value' => '', 'inputLimit' => 2, 'inputType' => 'SUBSCRIPTION', 'optionKeys' => array('privacyPolicyForSubscription' => array('title' => 'URI', 'inputType' => 'TEXT'), 'enablePrivacyPolicyForSubscription' => array('title' => __('Enabled', 'booking-package'), 'inputType' => 'CHECKBOX')), 'isExtensionsValid' => 1, 'option' => 0, 'optionValues' => array("enablePrivacyPolicyForSubscription" => "")),
-                #'subscriptionIdForPayPal' => array('key' => 'subscriptionIdForPayPal', 'name' => 'Subscription ID for PayPal', 'value' => '', 'inputLimit' => 2, 'inputType' => 'TEXT', 'isExtensionsValid' => 1, 'option' => 0),
-                
+                'paymentMethod' => array('key' => 'paymentMethod', 'name' => __('Payment Methods', 'booking-package'), 'target' => 'both', 'value' => 'locally', 'inputLimit' => 1, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'option' => 0, 'valueList' => array('locally' => __('Local Payment', 'booking-package'), 'stripe' => __('Pay with Stripe', 'booking-package'), 'stripe_paypay' => sprintf( __('Pay with %s', 'booking-package'), 'PayPay' ), 'stripe_konbini' => __('Pay at a convenience store with Stripe', 'booking-package'), 'paypal' => __('Pay with PayPal', 'booking-package'))),                 
                 'hotelCharges' => array(
                     'key' => 'hotelCharges', 
                     'name' => __('Rates', 'booking-package'), 
@@ -2405,21 +2398,6 @@
             
         }
         
-        public function getSubscriptionsData(){
-            
-            $addSubscriptions = array(
-                'subscription' => array('name' => 'Subscription', 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
-                'name' => array('name' => 'Name', 'value' => '', 'inputLimit' => 1, 'inputType' => 'TEXT', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => ''),
-                'active' => array('name' => 'Status', 'value' => '', 'inputLimit' => 2, 'inputType' => 'CHECK', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => array('true' => __('Enabled', 'booking-package'))),
-                'renewal' => array('name' => 'Automatic subscription renewal', 'value' => '', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'valueList' => array('0' => __('Invalid', 'booking-package'), '1' => __('Valid', 'booking-package')), "message" => ''),
-                'limit' => array('name' => 'Booking limit', 'value' => '', 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'valueList' => array('0' => __('Invalid', 'booking-package'), '1' => __('Valid', 'booking-package')), "message" => ''),
-                'numberOfTimes' => array('name' => 'Number of times users can book by the following deadline', 'value' => '', 'inputLimit' => 1, 'inputType' => 'SELECT', 'isExtensionsValid' => 0, 'isExtensionsValidPanel' => 1, 'valueList' => array(1 => '1', 2 => '2')),
-            );
-            
-            return $addSubscriptions;
-            
-        }
-        
         public function getTaxesData(){
             
             $month = array(
@@ -2687,7 +2665,11 @@
                 if (isset($_POST[$key])) {
                     
                     $value = sanitize_text_field($_POST[$key]);
-                    if ($isExtensionsValid !== true && $input['inputType'] == "CHECK") {
+                    if (has_filter('booking_package_verify_member_setting')) {
+                        
+                        $value = apply_filters('booking_package_verify_member_setting', $value, $key, $input);
+                        
+                    } else if ($isExtensionsValid !== true && $input['inputType'] == "CHECK") {
                         
                         $value = 0;
                         
@@ -2712,7 +2694,6 @@
         
         public function update($post){
             
-            $extentionBool = $this->getExtensionsValid();
             $list = $this->getList();
             if (isset($_POST['type']) && $_POST['type'] == "bookingSync") {
                 
@@ -2721,13 +2702,6 @@
             }
             
             foreach ((array) $list as $listKey => $listValue) {
-                /**
-                if ($extentionBool === false && $listKey == 'Stripe') {
-                    
-                    continue;
-                    
-                }
-                **/
                 
                 $category = array();
                 foreach ((array) $listValue as $key => $value) {
@@ -3287,6 +3261,36 @@
             
         }
         
+        public function verifyService($service, $apply = 0, $isArray = 0) {
+            
+            $apply = ($apply === 1 || $apply === true) ? 1 : 0;
+            if (has_filter('booking_package_verify_service')) {
+                
+                return apply_filters('booking_package_verify_service', $service, $isArray);
+                
+            } else if ($apply === 0) {
+                
+                $service['options'] = "[]";
+                $service['timeToProvide'] = array();
+                $service['stopServiceUnderFollowingConditions'] = 'doNotStop';
+                $service['cost_2'] = $service['cost_1'];
+                $service['cost_3'] = $service['cost_1'];
+                $service['cost_4'] = $service['cost_1'];
+                $service['cost_5'] = $service['cost_1'];
+                $service['cost_6'] = $service['cost_1'];
+                
+                if ($isArray === 1) {
+                    
+                    $service['options'] = array();
+                    
+                }
+                
+            }
+            
+            return $service;
+            
+        }
+        
         public function getCourseList($accountKey = 1) {
             
             global $wpdb;
@@ -3337,21 +3341,6 @@
                 
                 if (is_null($rows[$i]['cost_1']) === true) {
                     
-                    /**
-                    $options = json_decode($rows[$i]['options'], true);
-                    for ($a = 0; $a < count($options); $a++) {
-                        
-                        $options[$a]['cost_1'] = $options[$a]['cost'];
-                        $options[$a]['cost_2'] = $options[$a]['cost'];
-                        $options[$a]['cost_3'] = $options[$a]['cost'];
-                        $options[$a]['cost_4'] = $options[$a]['cost'];
-                        $options[$a]['cost_5'] = $options[$a]['cost'];
-                        $options[$a]['cost_6'] = $options[$a]['cost'];
-                        
-                    }
-                    
-                    $rows[$i]['options'] = $options;
-                    **/
                     $options = json_encode($options);
                     $rows[$i]['cost_1'] = $rows[$i]['cost'];
                     $table_name = $wpdb->prefix . "booking_package_services";
@@ -3391,45 +3380,13 @@
                     
                 }
                 
-                if ($isExtensionsValid === false) {
-                    
-                    $rows[$i]['options'] = "[]";
-                    $rows[$i]['timeToProvide'] = array();
-                    $rows[$i]['stopServiceUnderFollowingConditions'] = 'doNotStop';
-                    $rows[$i]['cost_2'] = $rows[$i]['cost_1'];
-                    $rows[$i]['cost_3'] = $rows[$i]['cost_1'];
-                    $rows[$i]['cost_4'] = $rows[$i]['cost_1'];
-                    $rows[$i]['cost_5'] = $rows[$i]['cost_1'];
-                    $rows[$i]['cost_6'] = $rows[$i]['cost_1'];
-                    
-                }
+                $rows[$i] = $this->verifyService($rows[$i], $isExtensionsValid);
                 
             }
-            /**
-            if ($isExtensionsValid === false) {
-				
-				for($i = 0; $i < count($rows); $i++){
-					
-					$rows[$i]['options'] = "[]";
-					
-				}
-				
-			}
-            **/
+            
             return $rows;
             
         }
-        
-        /**
-        public function getAllCourseList(){
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix . "booking_package_services";
-            $sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
-            
-            
-        }
-        **/
         
         public function getCouponsList($accountKey = false) {
             
@@ -3702,6 +3659,78 @@
             
         }
         
+        public function verifyTax($row, $apply) {
+                
+            $apply = ($apply === 1 || $apply === true) ? 1 : 0;
+            if (has_filter('booking_package_verify_tax')) {
+                
+                return apply_filters('booking_package_verify_tax', $row);
+                
+            } else if ($apply === 0) {
+                
+                $row['active'] = 'false';
+                
+            }
+            
+            return $row;
+            
+        }
+        
+        public function verifyGuest($guest, $apply, $updateWeeklyPrice = 0) {
+            
+            $apply = ($apply === 1 || $apply === true) ? 1 : 0;
+            if (!isset($guest['guestsInCapacity']) || empty($guest['guestsInCapacity'])) {
+                
+                $guest['guestsInCapacity'] = 'included';
+                
+            }
+            if (!isset($guest['costInServices']) || empty($guest['costInServices'])) {
+                
+                $guest['costInServices'] = 'cost_1';
+                
+            }
+            
+            $guest['reflectService'] = isset($guest['reflectService']) ? intval($guest['reflectService']) : 0;
+            $guest['reflectAdditional'] = isset($guest['reflectAdditional']) ? intval($guest['reflectAdditional']) : 0;
+            
+            if (has_filter('booking_package_verify_guest')) {
+                
+                return apply_filters('booking_package_verify_guest', $guest, $updateWeeklyPrice);
+                
+            } else if ($apply === 0) {
+                
+                $guest['costInServices'] = 'cost_1';
+                $guest['reflectService'] = '0';
+                $guest['reflectAdditional'] = '0';
+                
+                if ($updateWeeklyPrice === 1) {
+                    
+                    $numberKeys = $this->getListOfDaysOfWeek();
+                    $list = json_decode($guest['json'], true);
+                    for ($i = 0; $i < count($list); $i++) {
+                        
+                        for ($a = 0; $a < count($numberKeys); $a++) {
+                            
+                            if ($numberKeys[$a] == 'priceOnDayBeforeNationalHoliday' || $numberKeys[$a] == 'priceOnNationalHoliday') {
+                                
+                                $list[$i][$numberKeys[$a]] = 0;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    $guest['json'] = json_encode($list);
+                    
+                }
+                
+                
+            }
+            
+            return $guest;
+            
+        }
+        
         public function getGuestsList($accountKey = false, $booking = false) {
             
             global $wpdb;
@@ -3725,13 +3754,6 @@
                     $value = $this->getTranslateGuest($value, intval($accountKey) );
                     $list = json_decode($value['json'], true);
                     array_unshift($list, array("number" => 0, "price" => 0, "name" => __("Select", 'booking-package')));
-                    if ($isExtensionsValid !== true) {
-                        
-                        $value['costInServices'] = 'cost_1';
-                        $value['reflectService'] = '0';
-                        $value['reflectAdditional'] = '0';
-                        
-                    }
                     
                 } else {
                     
@@ -3761,17 +3783,12 @@
                             
                         }
                         
-                        if ($isExtensionsValid === false && ($numberKeys[$a] == 'priceOnDayBeforeNationalHoliday' || $numberKeys[$a] == 'priceOnNationalHoliday')) {
-                            
-                            $list[$i][$numberKeys[$a]] = 0;
-                            
-                        }
-                        
                     }
                     
                 }
                 
                 $value['json'] = json_encode($list);
+                $value = $this->verifyGuest($value, $isExtensionsValid, 1);
                 $rows[$key] = $value;
                 
             }
@@ -3877,39 +3894,7 @@
                         
                     }
                     
-                    $guestsInCapacity = 'included';
-                    if (isset($_POST['guestsInCapacity'])) {
-                        
-                        $guestsInCapacity = $_POST['guestsInCapacity'];
-                        if (empty($_POST['guestsInCapacity']) === true) {
-                            
-                            $guestsInCapacity = 'included';
-                            
-                        }
-                        
-                    }
-                    
-                    $reflectService = 0;
-                    if (isset($_POST['reflectService'])) {
-                        
-                        $reflectService = intval($_POST['reflectService']);
-                        
-                    }
-                    
-                    $reflectAdditional = 0;
-                    if (isset($_POST['reflectAdditional'])) {
-                        
-                        $reflectAdditional = intval($_POST['reflectAdditional']);
-                        
-                    }
-                    
-                    $costInServices = 'cost_1';
-                    if (isset($_POST['costInServices']) && $this->getExtensionsValid() === true) {
-                        
-                        $costInServices = $_POST['costInServices'];
-                        
-                    }
-                    
+                    $_POST = $this->verifyGuest($_POST, $this->getExtensionsValid(), 0);
                     $table_name = $wpdb->prefix."booking_package_guests";
                     try {
 						
@@ -3918,13 +3903,13 @@
                             $table_name,
                             array(
                                 'name' => sanitize_text_field(stripslashes($_POST['name'])), 
-                                'costInServices' => sanitize_text_field($costInServices),
+                                'costInServices' => sanitize_text_field($_POST['costInServices']),
                                 'target' => sanitize_text_field($_POST['target']), 
-                                'guestsInCapacity' => sanitize_text_field($guestsInCapacity),
+                                'guestsInCapacity' => sanitize_text_field($_POST['guestsInCapacity']),
                                 'json' => json_encode($json),
                                 'required' => intval($_POST['required']),
-                                'reflectService' => intval($reflectService),
-                                'reflectAdditional' => intval($reflectAdditional),
+                                'reflectService' => intval($_POST['reflectService']),
+                                'reflectAdditional' => intval($_POST['reflectAdditional']),
                                 'description'       => sanitize_textarea_field(stripslashes($_POST['description'])),
                                 'active' => sanitize_text_field($_POST['active']),
                             ),
@@ -3961,21 +3946,6 @@
             global $wpdb;
             if ($accountKey != false) {
                 
-                /**
-                $numberKeys = array(
-                    'number',
-                    'price',
-                    'priceOnMonday',
-                    'priceOnTuesday',
-                    'priceOnWednesday',
-                    'priceOnThursday',
-                    'priceOnFriday',
-                    'priceOnSaturday',
-                    'priceOnSunday',
-                    'priceOnDayBeforeNationalHoliday',
-                    'priceOnNationalHoliday',
-                );
-                **/
                 $numberKeys = $this->getListOfDaysOfWeek();
                 array_unshift($numberKeys, 'number', 'price');
                 $json = array();
@@ -3995,14 +3965,6 @@
                                 $object[sanitize_text_field($key)] = intval($value);
                                 
                             }
-                            /**
-                            if ($key == 'number' || $key == 'price') {
-                                
-                                $value = $this->getOnlyNumbers($value);
-                                $object[sanitize_text_field($key)] = intval($value);
-                                
-                            }
-                            **/
                             
                         }
                         
@@ -4016,58 +3978,24 @@
                         
                     }
                     
-                    $guestsInCapacity = 'included';
-                    if (isset($_POST['guestsInCapacity'])) {
-                        
-                        $guestsInCapacity = $_POST['guestsInCapacity'];
-                        if (empty($_POST['guestsInCapacity']) === true) {
-                            
-                            $guestsInCapacity = 'included';
-                            
-                        }
-                        
-                    }
-                    
-                    $reflectService = 0;
-                    if (isset($_POST['reflectService'])) {
-                        
-                        $reflectService = intval($_POST['reflectService']);
-                        
-                    }
-                    
-                    $reflectAdditional = 0;
-                    if (isset($_POST['reflectAdditional'])) {
-                        
-                        $reflectAdditional = intval($_POST['reflectAdditional']);
-                        
-                    }
-                    
-                    $costInServices = 'cost_1';
-                    if (isset($_POST['costInServices']) && $this->getExtensionsValid() === true) {
-                        
-                        $costInServices = $_POST['costInServices'];
-                        
-                    }
-                    
+                    $_POST = $this->verifyGuest($_POST, $this->getExtensionsValid(), 0);
                     $table_name = $wpdb->prefix."booking_package_guests";
                     $sql = $wpdb->prepare("SELECT COUNT(*) FROM ".$table_name." WHERE `accountKey` = %d;", array(intval($accountKey)));
                     $row = $wpdb->get_row($sql, ARRAY_A);
                     $count = $row['COUNT(*)'] + 1;
-                    #var_dump($count);
-                    
                     $wpdb->insert(
                         $table_name, 
     					array(
                             'accountKey' => intval($accountKey), 
     			            'name' => sanitize_text_field(stripslashes($_POST['name'])), 
-    			            'costInServices' => sanitize_text_field($costInServices),
+    			            'costInServices' => sanitize_text_field($_POST['costInServices']),
     			            'target' => sanitize_text_field($_POST['target']), 
-    			            'guestsInCapacity' => sanitize_text_field($guestsInCapacity),
+    			            'guestsInCapacity' => sanitize_text_field($_POST['guestsInCapacity']),
     				        'json' => json_encode($json), 
     				        'ranking' => intval($count),
     				        'required' => intval($_POST['required']),
-    				        'reflectService' => intval($reflectService),
-    				        'reflectAdditional' => intval($reflectAdditional),
+    				        'reflectService' => intval($_POST['reflectService']),
+    				        'reflectAdditional' => intval($_POST['reflectAdditional']),
     				        'description'       => sanitize_textarea_field(stripslashes($_POST['description'])),
     				        'active' => sanitize_text_field($_POST['active']),
     					), 
@@ -4290,12 +4218,6 @@
                     
                 }
                 
-                if ($this->getExtensionsValid() === false) {
-                    
-                    $options = array();
-                    
-                }
-                
             }
             
             $timeToProvide = array();
@@ -4311,13 +4233,6 @@
                         
                     }
                     array_push($timeToProvide, $object);
-                    
-                }
-                
-                
-                if ($this->getExtensionsValid() === false) {
-                    
-                    $timeToProvide = array();
                     
                 }
                 
@@ -4357,13 +4272,9 @@
                     
                 }
                 
-                if ($i > 1 && $this->getExtensionsValid() === false) {
-                    
-                    $_POST['cost_' . $i] = 0;
-                    
-                }
-                
             }
+
+            $_POST = $this->verifyService($_POST, $this->getExtensionsValid(), 1);
             
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_services";
@@ -4384,8 +4295,8 @@
                     'active'                => sanitize_text_field($_POST['active']),
                     'target'                => sanitize_text_field($_POST['target']),
                     'selectOptions'         => intval($_POST['selectOptions']),
-                    'options'               => json_encode($options),
-                    'timeToProvide'         => json_encode($timeToProvide),
+                    'options'               => json_encode($_POST['options']),
+                    'timeToProvide'         => json_encode($_POST['timeToProvide']),
                     'expirationDateStatus'  => intval($expirationDateStatus),
                     'expirationDateFrom'    => intval($expirationDateFrom),
                     'expirationDateTo'      => intval($expirationDateTo),
@@ -4450,12 +4361,6 @@
                     
                 }
                 
-                if ($this->getExtensionsValid() === false) {
-                    
-                    $options = array();
-                    
-                }
-                
             }
             
             $timeToProvide = array();
@@ -4476,13 +4381,6 @@
                     }
                     
                     array_push($timeToProvide, $object);
-                    
-                }
-                
-                
-                if ($this->getExtensionsValid() === false) {
-                    
-                    $timeToProvide = array();
                     
                 }
                 
@@ -4522,13 +4420,9 @@
                     
                 }
                 
-                if ($i > 1 && $this->getExtensionsValid() === false) {
-                    
-                    $_POST['cost_' . $i] = 0;
-                    
-                }
-                
             }
+            
+            $_POST = $this->verifyService($_POST, $this->getExtensionsValid(), 1);
             
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_services";
@@ -4550,8 +4444,8 @@
                         'active'                                => sanitize_text_field($_POST['active']),
                         'target'                                => sanitize_text_field($_POST['target']),
                         'selectOptions'                         => intval($_POST['selectOptions']),
-                        'options'                               => json_encode($options),
-                        'timeToProvide'                         => json_encode($timeToProvide),
+                        'options'                               => json_encode($_POST['options']),
+                        'timeToProvide'                         => json_encode($_POST['timeToProvide']),
                         'expirationDateStatus'                  => intval($expirationDateStatus),
                         'expirationDateFrom'                    => intval($expirationDateFrom),
                         'expirationDateTo'                      => intval($expirationDateTo),
@@ -4635,142 +4529,6 @@
             
         }
         
-        public function getSubscriptions(){
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix."booking_package_subscriptions";
-            $sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($_POST['accountKey'])));
-            $rows = $wpdb->get_results($sql, ARRAY_A);
-            $isExtensionsValid = $this->getExtensionsValid();
-            if ($isExtensionsValid === false) {
-				
-				return array();
-				
-			} else {
-			    
-			    return $rows;
-			    
-			}
-            
-        }
-        
-        public function addSubscriptions(){
-            
-            $accountKey = $_POST['accountKey'];
-            if ($this->getExtensionsValid() === false) {
-                
-                return array();
-                
-            }
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix."booking_package_subscriptions";
-            $wpdb->insert(	$table_name, 
-    						array(
-    					   		'accountKey'    => intval($accountKey), 
-    							'name'          => sanitize_text_field($_POST['name']), 
-    							'subscription'  => sanitize_text_field($_POST['subscription']), 
-    							'active'        => sanitize_text_field($_POST['active']), 
-    							'ranking'       => intval($_POST['rank']),
-    							'renewal'       => intval($_POST['renewal']),
-    							'limit'         => intval($_POST['limit']),
-    							'numberOfTimes' => intval($_POST['numberOfTimes']),
-    						), 
-    						array('%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d')
-    					);
-    		
-			$sql = $wpdb->prepare("SELECT * FROM ".$table_name." WHERE `accountKey` = %d ORDER BY ranking ASC;", array(intval($accountKey)));
-            $rows = $wpdb->get_results($sql, ARRAY_A);
-            return $rows;
-            
-        }
-        
-        public function updateSubscriptions(){
-            
-            $accountKey = $_POST['accountKey'];
-            if ($this->getExtensionsValid() === false) {
-                
-                return array();
-                
-            }
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix . "booking_package_subscriptions";
-            try {
-				
-				$wpdb->query("START TRANSACTION");
-				$wpdb->update(
-                    $table_name,
-                    array(
-                        'name' => sanitize_text_field($_POST['name']), 
-                        'active' => sanitize_text_field($_POST['active']),
-                        'renewal' => intval($_POST['renewal']), 
-                        'limit' => intval($_POST['limit']), 
-                        'numberOfTimes' => intval($_POST['numberOfTimes']),
-                    ),
-                    array('key' => intval($_POST['key'])),
-                    array('%s', '%s', '%d', '%d', '%d'),
-                    array('%d')
-                );
-				
-				$wpdb->query('COMMIT');
-				
-			} catch (Exception $e) {
-				
-				$wpdb->query('ROLLBACK');
-				
-			}/** finally {
-				
-				$wpdb->query('UNLOCK TABLES');
-				
-			}**/
-            
-            return $this->getSubscriptions();
-            
-        }
-        
-        public function deleteSubscriptions(){
-            
-        }
-        
-        public function changeSubscriptionsRank(){
-            
-            $keyList = explode(",", $_POST['keyList']);
-            $indexList = explode(",", $_POST['indexList']);
-            
-            global $wpdb;
-            $table_name = $wpdb->prefix . "booking_package_subscriptions";
-            try {
-				
-				$wpdb->query("START TRANSACTION");
-				for($i = 0; $i < count($keyList); $i++){
-                    
-                    $wpdb->update(
-                        $table_name,
-                        array('ranking' => intval($indexList[$i])),
-                        array('key' => intval($keyList[$i])),
-                        array('%d'),
-                        array('%d')
-                    );
-                    
-                }
-				
-				$wpdb->query('COMMIT');
-				
-			} catch (Exception $e) {
-				
-				$wpdb->query('ROLLBACK');
-				
-			}/** finally {
-				
-				$wpdb->query('UNLOCK TABLES');
-				
-			}**/
-            
-            return $this->getSubscriptions();
-            
-        }
-        
         public function getTaxes($accountKey, $sort = 'no') {
             
             global $wpdb;
@@ -4795,15 +4553,13 @@
             
             $rows = $wpdb->get_results($sql, ARRAY_A);
             $isExtensionsValid = $this->getExtensionsValid();
-            if ($isExtensionsValid === false) {
-				
-				return array();
-				
-			} else {
-			    
-			    return $rows;
-			    
-			}
+            foreach ($rows as $key => $row) {
+                
+                $rows[$key] = $this->verifyTax($row, $isExtensionsValid);
+                
+            }
+            
+            return $rows;
             
         }
         
@@ -4843,6 +4599,7 @@
             $expirationDateStatus = $expirationDate['expirationDateStatus'];
             $expirationDateFrom = $expirationDate['expirationDateFrom'];
             $expirationDateTo = $expirationDate['expirationDateTo'];
+            $_POST = $this->verifyTax($_POST, $this->getExtensionsValid());
             
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_taxes";
@@ -4934,6 +4691,7 @@
             
             try {
 				
+                $_POST = $this->verifyTax($_POST, $this->getExtensionsValid());
 				$wpdb->query("START TRANSACTION");
 				$wpdb->update(
                     $table_name,
@@ -5006,6 +4764,7 @@
             $expirationDateStatus = $expirationDate['expirationDateStatus'];
             $expirationDateFrom = $expirationDate['expirationDateFrom'];
             $expirationDateTo = $expirationDate['expirationDateTo'];
+            $_POST = $this->verifyTax($_POST, $this->getExtensionsValid());
             
             global $wpdb;
             $table_name = $wpdb->prefix."booking_package_taxes";
@@ -5147,6 +4906,23 @@
             
         }
         
+        public function verifyOptionForHotel($option, $apply = 0) {
+            
+            $apply = ($apply === 1 || $apply === true) ? 1 : 0;
+            if (has_filter('booking_package_verify_option_hotel')) {
+                
+                return apply_filters('booking_package_verify_option_hotel', $option);
+                
+            } else if ($apply === 0) {
+                
+                $option['active'] = 'false';
+                
+            }
+            
+            return $option;
+            
+        }
+        
         public function getOptionsForHotel($accountKey, $active = false, $booking = false) {
             
             global $wpdb;
@@ -5159,34 +4935,57 @@
             }
             $rows = $wpdb->get_results($sql, ARRAY_A);
             $isExtensionsValid = $this->getExtensionsValid();
-            if ($isExtensionsValid === false) {
-				
-				return array();
-				
-			} else {
-                
-                if ($booking === true) {
+            foreach ((array) $rows as $key => $value) {
+            
+                $value = $this->verifyOptionForHotel($value, $isExtensionsValid);
+                if ($active === true && $value['active'] !== 'true') {
                     
-                    foreach ((array) $rows as $key => $value) {
-                        
-                        $value = $this->getTranslateOption($value, intval($accountKey));
-                        $list = json_decode($value['json'], true);
-                        array_unshift($list, array("adult" => 0, "child" => 0, "room" => 0, "name" => __("Select", 'booking-package')));
-                        for ($i = 0; $i < count($list); $i++) {
-                            
-                            $list[$i]['index'] = $i;
-                            
-                        }
-                        $value['json'] = json_encode($list);
-                        $rows[$key] = $value;
-                        
-                    }
+                    unset($rows[$key]);
+                    continue;
                     
                 }
                 
-                return $rows;
+                if ($booking === true) {
 
-			}
+                    $value = $this->getTranslateOption($value, intval($accountKey));
+                    $list = json_decode($value['json'], true);
+                    array_unshift($list, array("adult" => 0, "child" => 0, "room" => 0, "name" => __("Select", 'booking-package')));
+                    for ($i = 0; $i < count($list); $i++) {
+
+                        $list[$i]['index'] = $i;
+
+                    }
+                    $value['json'] = json_encode($list);
+
+                }
+                $rows[$key] = $value;
+
+            }
+
+            return array_values($rows);
+            /**
+            if ($booking === true) {
+                
+                foreach ((array) $rows as $key => $value) {
+                    
+                    $value = $this->getTranslateOption($value, intval($accountKey));
+                    $list = json_decode($value['json'], true);
+                    array_unshift($list, array("adult" => 0, "child" => 0, "room" => 0, "name" => __("Select", 'booking-package')));
+                    for ($i = 0; $i < count($list); $i++) {
+                        
+                        $list[$i]['index'] = $i;
+                        
+                    }
+                    $value['json'] = json_encode($list);
+                    $value = $this->verifyOptionForHotel($value, $isExtensionsValid);
+                    $rows[$key] = $value;
+                    
+                }
+                
+            }
+            
+            return $rows;
+            */
             
         }
         
@@ -5233,13 +5032,7 @@
                 
             }
             
-            if ($this->getExtensionsValid() === false) {
-                
-                $_POST['active'] = "false";
-                $json = array();
-                
-            }
-            
+            $_POST = $this->verifyOptionForHotel($_POST, $this->getExtensionsValid());
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_hotel_options";
             $wpdb->insert(
@@ -5310,13 +5103,7 @@
                 
             }
             
-            if ($this->getExtensionsValid() === false) {
-                
-                $_POST['active'] = "false";
-                $json = array();
-                
-            }
-            
+            $_POST = $this->verifyOptionForHotel($_POST, $this->getExtensionsValid());
             global $wpdb;
             $table_name = $wpdb->prefix . "booking_package_hotel_options";
             try {
@@ -6262,6 +6049,13 @@
         }
         
         public function lookingForSubscription($customer_id, $subscription_id) {
+            /**
+            if (has_filter('booking_package_setting_looking_for_subscription')) {
+                
+                return apply_filters('booking_package_setting_looking_for_subscription', $customer_id, $subscription_id);
+                
+            }
+             */
             
             global $wpdb;
             $url = BOOKING_PACKAGE_EXTENSION_URL;
@@ -6378,6 +6172,14 @@
         
         public function getUpgradeSubscriptionDetails($plugin_headers) {
             
+            /**
+            if (has_filter('booking_package_get_upgrade_subscription_details')) {
+                
+                return apply_filters('booking_package_get_upgrade_subscription_details', $plugin_headers);
+                
+            }
+             */
+            
             if (!current_user_can('manage_options')) {
                 
                 return array(
@@ -6423,6 +6225,12 @@
         }
         
         public function upgradePlan($type) {
+            
+            if (has_filter('booking_package_setting_upgrade_plan')) {
+                
+                return apply_filters('booking_package_setting_upgrade_plan', $type);
+                
+            }
             
             $response = array('status' => 'error');
             if ($type === 'get') {
@@ -6557,13 +6365,19 @@
         }
         
         public function resetSubscription() {
-            
+            /**
+            if (has_filter('booking_package_reset_subscription')) {
+                
+                return apply_filters('booking_package_reset_subscription', array('status' => true));
+                
+            }
+             */
             $this->deleteSubscriptionData();
             return array('status' => true);
             
         }
         
-        private function deleteSubscriptionData() {
+        protected function deleteSubscriptionData() {
             
             $values = array('customer_id_for_subscriptions', 'id_for_subscriptions', 'customer_email_for_subscriptions', 'invoice_id_for_subscriptions', 'expiration_date_for_subscriptions');
             for ($i = 0; $i < count($values); $i++) {
@@ -6585,11 +6399,18 @@
         
         public function getSubscriptionStatus() {
             
-            return get_option('_' . $this->prefix . 'subscription_status', 'Not subscribed');
+            $status = get_option('_' . $this->prefix . 'subscription_status', 'Not subscribed');
+            return $status;
             
         }
         
-        private function updateSubscriptionStatus($status) {
+        protected function updateSubscriptionStatus($status) {
+            
+            if ($status === 'Active') {
+                
+                delete_option('_' . $this->prefix . 'renewal_failed_notification_log');
+                
+            }
             
             if (get_option('_' . $this->prefix . 'subscription_status') === false) {
                 
@@ -6616,6 +6437,12 @@
 		}
 		
 		public function checkLatestInvoice() {
+            
+            if (has_filter('booking_package_setting_check_latest_invoice')) {
+                
+                return apply_filters('booking_package_setting_check_latest_invoice', null);
+                
+            }
             
             $url = BOOKING_PACKAGE_EXTENSION_URL;
             $latestInvoiceDate = get_option('_' . $this->prefix . 'latestInvoiceDate', null);
@@ -6676,7 +6503,23 @@
         }
 		
 		public function notificationSubscriptionRenewalFailed($checkStatusText = true, $subject = null) {
-		    
+            
+            $log = get_option('_' . $this->prefix . 'renewal_failed_notification_log', array('count' => 0, 'last_sent' => 0));
+            $count     = isset($log['count']) ? intval($log['count']) : 0;
+            $last_sent = isset($log['last_sent']) ? intval($log['last_sent']) : 0;
+            
+            if ($count >= 3) {
+
+                return false;
+
+            }
+            
+            if ($count > 0 && (time() - $last_sent) < (6 * 3600)) {
+
+                return false;
+
+            }
+            
 		    $to = get_option($this->prefix . "email_to", null);
 		    if (empty($to)) {
 				
@@ -6712,12 +6555,27 @@
 		        $subject = __('Paid Subscription Renewal Failed.', 'booking-package');
 		        
 		    }
-            wp_mail(trim( $to ), '[Booking Package] ' . $subject, $text, $headers);
+            $sent = wp_mail(trim( $to ), '[Booking Package] ' . $subject, $text, $headers);
+            if ($sent) {
+                
+                update_option('_' . $this->prefix . 'renewal_failed_notification_log', array(
+                    'count'     => $count + 1,
+                    'last_sent' => time()
+                ));
+                
+            }
+            return $sent;
             
 		}
 		
 		public function subscriptionRenewalFailed($type = 'html', $checkStatusText = true) {
-		    
+            /**
+            if (has_filter('booking_package_subscription_renewal_failed')) {
+                
+                return apply_filters('booking_package_subscription_renewal_failed', $type, $checkStatusText);
+                
+            }
+		     */
 			$status = $this->getSubscriptionStatus();
 			$text = '';
 			if ($status === 'Inactive' || $checkStatusText === false) {
@@ -6760,6 +6618,13 @@
 		}
 		
 		public function setSubscribeSite($scheme = false) {
+            /**
+            if (has_filter('booking_package_set_subscribe_site')) {
+                
+                return apply_filters('booking_package_set_subscribe_site', $scheme);
+                
+            }
+             */
             
             $unique = get_site_url();
             if ($scheme === true) {
@@ -6796,7 +6661,14 @@
 		}
 		
 		public function setOpensslAlgo($algo) {
-		    
+            /** 
+            if (has_filter('booking_package_set_openssl_algo')) {
+                
+                return apply_filters('booking_package_set_openssl_algo', $algo);
+                
+            }
+		     */
+            
 		    if (get_option('_' . $this->prefix . 'openssl_algo') === false) {
                 
                 add_option('_' . $this->prefix . 'openssl_algo', sanitize_text_field($algo));
@@ -6806,6 +6678,13 @@
 		}
 		
 		public function updateSubscribeSite() {
+            /**
+            if (has_filter('booking_package_update_subscribe_site')) {
+                
+                return apply_filters('booking_package_update_subscribe_site', null);
+                
+            }
+             */
             
             $site = get_site_url();
             $unique_without_scheme = wp_hash( preg_replace('#^[^:]+://#', '', $site) );
@@ -6816,6 +6695,12 @@
 		}
 		
 		public function setPaidSubscription($mode) {
+            
+            if (has_filter('booking_package_setting_set_paid_subscription')) {
+                
+                return apply_filters('booking_package_setting_set_paid_subscription', $mode);
+                
+            }
             
             $subscriptions = $this->upgradePlan("get");
 			$isExtensionsValid = $this->getSiteStatus();
@@ -6838,6 +6723,14 @@
         }
         
 		public function updatePaidSubscription($unique) {
+            
+            /**
+            if (has_filter('booking_package_update_paid_subscription')) {
+                
+                return apply_filters('booking_package_update_paid_subscription', $unique);
+                
+            }
+             */
             
             if (is_user_logged_in() === false || (current_user_can('manage_options') === false )) {
                 
@@ -6866,6 +6759,14 @@
 		}
 		
         public function validateWpSite($validate = true) {
+            
+            /**
+            if (has_filter('booking_package_validate_wp_site')) {
+                
+                return (bool) apply_filters('booking_package_validate_wp_site', $validate);
+                
+            }
+             */
             
             if ($validate === false) {
                 
@@ -6914,17 +6815,6 @@
                 
                 if (intval($expiration) > 0) {
                     
-                    /**
-                    $subscriptions = $this->upgradePlan("get");
-                    $statusCode = $this->cancelPaidSubscriptionAtPeriodEnd($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions']);
-                    
-                    if (intval($statusCode) == 200) {
-                        
-                        update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
-                        
-                    }
-                    **/
-                    
                     update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
                     return false;
                     
@@ -6940,6 +6830,12 @@
         
         
         public function getSiteStatus($countExpiration = false) {
+            
+            if (has_filter('booking_package_setting_check_site_status')) {
+                
+                return (bool) apply_filters('booking_package_setting_check_site_status', $countExpiration);
+                
+            }
             
             $url = BOOKING_PACKAGE_EXTENSION_URL;
             $response = array('status' => 'error');
@@ -7037,7 +6933,7 @@
             
         }
         
-        private function encryptValue($value) {
+        protected function encryptValue($value) {
             
             $unique_without_scheme = get_option('_' . $this->prefix . 'unique_without_scheme', false);
             if ( $unique_without_scheme === false ) {
@@ -7057,7 +6953,7 @@
             
         }
         
-        private function decryptValue($value) {
+        protected function decryptValue($value) {
             
             /**
             $unique = get_option('_' . $this->prefix . 'unique', false);
@@ -7109,6 +7005,12 @@
         
         public function cancelPaidSubscriptionAtPeriodEnd($customer_id, $subscription_id) {
             
+            if (has_filter('booking_package_setting_cancel_paid_subscription_at_period_end')) {
+                
+                return apply_filters('booking_package_setting_cancel_paid_subscription_at_period_end', $customer_id, $subscription_id);
+                
+            }
+            
             $params = array(
                 "subscription_mode" => "cancelAtPeriodEnd",
                 "customer_id" => trim($customer_id), 
@@ -7138,8 +7040,14 @@
             return isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : 'unknown';
             
         }
-        
+        /**
         public function activation($url, $mode, $version = null, $timezone = null, $site = null){
+            
+            if (has_filter('booking_package_setting_activation')) {
+                
+                return apply_filters('booking_package_setting_activation', $url, $mode, $version, $timezone, $site);
+                
+            }
             
 			if (is_null($timezone)) {
                 
@@ -7217,7 +7125,8 @@
 			}
 			
 		}
-		
+		 */
+        
 		public function updateRolesOfPlugin() {
 			
 			$manager = $this->prefix . 'manager';
