@@ -995,7 +995,7 @@
             
         }
         details.amount += details.optionsAmount;
-        details.additionalFee += details.optionsAmount;
+        //details.additionalFee += details.optionsAmount;
         object._console.log(details);
         /** Options **/
         
