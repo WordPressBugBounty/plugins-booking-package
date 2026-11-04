@@ -6346,7 +6346,7 @@
                 if (intval($statusCode) !== 200) {
                     
                     error_log('Booking Package [cancelSubscription]: HTTP status ' . $statusCode);
-                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode);
+                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode, 'sendData' => $params);
                     
                 }
                 
@@ -6863,26 +6863,34 @@
             
             if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) ) {
                 
+                /**
                 if ($this->getSubscriptionStatus() !== 'Not subscribed') {
                     
                     $this->deleteSubscriptionData();
                     $this->updateSubscriptionStatus('Not subscribed');
                     
                 }
+                 */
                 
+                $this->deleteSubscriptionData();
+                $this->updateSubscriptionStatus('Not subscribed');
                 return false;
                 
             }
             
-            if ( intval($subscriptions['expiration_date_for_subscriptions']) == 0 && $countExpiration === false ) {
+            if ( $expiration_date == 0 ) {
                 
+                /**
                 if ($this->getSubscriptionStatus() === 'Canceled') {
                     
                     $this->deleteSubscriptionData();
                     $this->updateSubscriptionStatus('Not subscribed');
                     
                 }
+                 */
                 
+                $this->deleteSubscriptionData();
+                $this->updateSubscriptionStatus('Not subscribed');
                 return false;
                 
             }
@@ -6893,6 +6901,12 @@
                     
                     $this->deleteSubscriptionData();
                     $this->updateSubscriptionStatus('Not subscribed');
+                    return false;
+                    
+                }
+                
+                if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) || $this->getSubscriptionStatus() !== 'Active' ) {
+                    
                     return false;
                     
                 }
@@ -6941,17 +6955,21 @@
                     update_option('_' . $this->prefix . "invoice_id_for_subscriptions", sanitize_text_field($response_obj->invoice_id));
                     $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", $expiration_date);
                     $subscriptions = $this->upgradePlan('get');
-                    if ($countExpiration === true) {
-                        
-                        update_option('_' . $this->prefix . 'numberOfVerificationAttemptsForExpiration', 0);
-                        
-                    }
-                    
                     return true;
                     
                 } else if (intval($response_obj->status) === 0) {
                     
                     $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", sanitize_text_field('0'));
+                    
+                    if (isset($response_obj->stripe_status) && $response_obj->stripe_status === 0) {
+                        
+                        $this->updateSubscriptionStatus('Not subscribed');
+                        $this->deleteSubscriptionData();
+                        return false;
+                        
+                    }
+                    
+                    
                     $this->updateSubscriptionStatus('Inactive');
                     $this->notificationSubscriptionRenewalFailed(true);
                     return false;
