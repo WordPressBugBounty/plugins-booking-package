@@ -6299,14 +6299,14 @@
                         } else {
                             
                             update_option('_' . $this->prefix . 'expiration_date_for_subscriptions', 0);
-                             $this->updateSubscriptionStatus('Inactive');
+                             $this->updateSubscriptionStatus('Renewal Failed');
                              $this->notificationSubscriptionRenewalFailed(true);
                             
                         }
                         
                     } else {
                         
-                        #$this->updateSubscriptionStatus('Inactive');
+                        #$this->updateSubscriptionStatus('Renewal Failed');
                         
                     }
                     
@@ -6346,7 +6346,7 @@
                 if (intval($statusCode) !== 200) {
                     
                     error_log('Booking Package [cancelSubscription]: HTTP status ' . $statusCode);
-                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode, 'sendData' => $params);
+                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode);
                     
                 }
                 
@@ -6596,7 +6596,7 @@
             
 			$status = $this->getSubscriptionStatus();
 			$text = '';
-			if ($status === 'Inactive' || $checkStatusText === false) {
+			if ($status === 'Renewal Failed' || $checkStatusText === false) {
 				
 				$text .= '<div id="booking_package_subscriptionRenewalFailed">';
 				if ($checkStatusText === true) {
@@ -6880,17 +6880,13 @@
             
             if ( $expiration_date == 0 ) {
                 
-                /**
-                if ($this->getSubscriptionStatus() === 'Canceled') {
+                if ($this->getSubscriptionStatus() !== 'Renewal Failed') {
                     
                     $this->deleteSubscriptionData();
                     $this->updateSubscriptionStatus('Not subscribed');
                     
                 }
-                 */
                 
-                $this->deleteSubscriptionData();
-                $this->updateSubscriptionStatus('Not subscribed');
                 return false;
                 
             }
@@ -6970,7 +6966,7 @@
                     }
                     
                     
-                    $this->updateSubscriptionStatus('Inactive');
+                    $this->updateSubscriptionStatus('Renewal Failed');
                     $this->notificationSubscriptionRenewalFailed(true);
                     return false;
                     

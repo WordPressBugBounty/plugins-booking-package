@@ -8750,6 +8750,11 @@
     			
     		}
     		
+			if (!is_array($taxes)) {
+				
+				$taxes = array();
+				
+			}
 			
 			usort($taxes, function ($a, $b) {
 				
@@ -11485,10 +11490,6 @@
 								$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'] . ' * ' . $this->formatCost($costsWithKey[$costKey], $currency);
 								$totalCost1 += $costsWithKey[$costKey] * $number;
 								
-							} else {
-								
-								$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'];
-								
 							}
 							
 						}
@@ -11496,11 +11497,6 @@
 					} else if ($number >= 0 && intval($guest['reflectService']) == 0) {
 						
 						array_push($hasSelectedReflectServices, 0);
-						if ($index > 0 && $number >= 0) {
-							
-							$guests[$key]['content'] = $guest['name'] . ': ' . $option['name'];
-							
-						}
 						if ($totalCost2 == 0) {
 							
 							$totalCost2 = $costsWithKey['cost_1'];
@@ -12599,6 +12595,7 @@
 					
 					$checkIn = $accommodationDetails['checkIn'];
 					$checkOut = $accommodationDetails['checkOut'];
+					$taxes = $accommodationDetails['taxes'];
 					
 				}
 				
@@ -12613,7 +12610,7 @@
 						array(
 							'praivateData' => sanitize_text_field( json_encode($form) ), 
 							'accommodationDetails' => sanitize_text_field( json_encode($accommodationDetails) ), 
-							'taxes' => serialize($accommodationDetails['taxes']),
+							'taxes' => sanitize_text_field( json_encode($taxes) ),
 							'checkIn' => intval($checkIn), 
 							'checkOut' => intval($checkOut)
 						),
@@ -15040,6 +15037,12 @@
 				$emailBody = $target['content'];
 				
 				$emailBody = htmlspecialchars_decode($emailBody, ENT_QUOTES|ENT_HTML5);
+				if ($emailFormat != "text") {
+					
+					$emailBody = str_replace(array("\r\n", "\r", "\n"), '', $emailBody);
+					
+				}
+				
 				if (strpos($emailBody, '[stop_email]') !== false) {
 					
 					continue;

@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.43
+Version:     1.7.44
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -7079,6 +7079,7 @@ Domain Path: /languages
 				$dictionary['Email'] = __('Email', 'booking-package');
 				$dictionary['Refresh Token'] = __('Refresh Token', 'booking-package');
 				$dictionary['Active'] = __('Active', 'booking-package');
+				$dictionary['Renewal Failed'] = __('Renewal Failed', 'booking-package');
 				$dictionary['Inactive'] = __('Inactive', 'booking-package');
 				$dictionary['Canceled'] = __('Canceled', 'booking-package');
 				$dictionary['Not subscribed'] = __('Not subscribed', 'booking-package');

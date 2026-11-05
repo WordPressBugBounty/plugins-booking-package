@@ -315,7 +315,7 @@ window.addEventListener('load', function(){
 				
 			}
 			
-			if (key === 'expiration_date' && (object._setting_data.subscription_status === 'Canceled' || object._setting_data.subscription_status === 'Inactive')) {
+			if (key === 'expiration_date' && (object._setting_data.subscription_status === 'Canceled' || object._setting_data.subscription_status === 'Inactive' || object._setting_data.subscription_status === 'Renewal Failed')) {
 				
 				valueTd.appendChild(canceledMessage);
 				valueTd.appendChild(resetSubscriptionMessage);
