@@ -2041,6 +2041,7 @@
             
         }
         */
+       
         for (var key in services) {
             
             if (services[key].selected == 1) {
@@ -2118,9 +2119,13 @@
                                     hasSelectedReflectService = false;
                                     object._console.log(guest);
                                     object._console.log(costsWithKey);
+                                    
                                     if (amount2 == 0) {
+                                        
                                         amount2 = costsWithKey['cost_1'];
+                                        
                                     }
+                                    
                                     if (guest.selectedName != null && parseInt(guest.index) > 0 && guest.number >= 0) {
                                         
                                         var costInService = document.createElement('div');
@@ -2159,6 +2164,7 @@
                     amount2 = parseInt(costsWithKey['cost_1']);
                     
                 }
+                
                 /*
                 if (hasSelectedReflectService === true) {
                     

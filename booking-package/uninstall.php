@@ -88,16 +88,16 @@
 			/**
 			delete_site_option($option_name);
 			
-			$subscriptions = $setting->upgradePlan("get");
+			$subscriptions = $setting->getSubscriptionData("get");
 			$isExtensionsValid = $setting->getSiteStatus();
 			if ($isExtensionsValid == true) {
 				
 				$statusCode = $setting->cancelPaidSubscriptionAtPeriodEnd($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions']);
 				
 			}
+			 */
 			
 			$setting->deleteRolesOfPlugin();
-			 */
 			
 		}
 		

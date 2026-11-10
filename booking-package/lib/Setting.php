@@ -145,7 +145,7 @@
                 'costInServices' => array('key' => 'costInServices', 'name' => __('Applicable Price Level', 'booking-package'), 'value' => 'cost_1', 'inputLimit' => 1, 'inputType' => 'SELECT', 'valueList' => array('cost_1' => __(/**'Cost 1'**/ 'Base Price', 'booking-package'), 'cost_2' => sprintf(__('Price %s', 'booking-package'), '2'), 'cost_3' => sprintf(__('Price %s', 'booking-package'), '3'), 'cost_4' => sprintf(__('Price %s', 'booking-package'), '4'), 'cost_5' => sprintf(__('Price %s', 'booking-package'), '5'), 'cost_6' => sprintf(__('Price %s', 'booking-package'), '6')), 'target' => 'day'),
                 'target' => array('key' => 'target', 'name' => __('Target', 'booking-package'), 'value' => 'adult', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('adult' => __('Adults', 'booking-package'), 'children' => __('Children', 'booking-package')), 'target' => 'hotel'),
                 'guestsInCapacity' => array('key' => 'guestsInCapacity', 'name' => __('Count Total Guests Toward Availability', 'booking-package'), 'value' => 'adult', 'inputLimit' => 1, 'inputType' => 'RADIO', 'valueList' => array('excluded' => __('Excluded', 'booking-package'), 'included' => __('Included', 'booking-package')), 'target' => 'day'),
-                'reflectService' => array('key' => 'reflectService', 'name' => __('Enable Quantity-Based Price Adjustment for Services', 'booking-package'), 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'valueList' => array(1 => __('Enabled', 'booking-package'), 0 => __('Disabled', 'booking-package')), 'target' => 'day'),
+                'reflectService' => array('key' => 'reflectService', 'name' => __('Enable Quantity-Based Price Adjustment for Services', 'booking-package'), 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'valueList' => array(1 => __('Enabled', 'booking-package'), 0 => __('Disabled', 'booking-package')), 'target' => 'day', 'filterHookKey' => 'serviceAndGuestPricing'),
                 'reflectAdditional' => array('key' => 'reflectAdditional', 'name' => __('Enable Quantity-Based Price Adjustment for Extra Charges', 'booking-package'), 'value' => 0, 'inputLimit' => 1, 'inputType' => 'RADIO', 'isExtensionsValid' => 1, 'valueList' => array(1 => __('Enabled', 'booking-package'), 0 => __('Disabled', 'booking-package')), 'target' => 'day'),
                 'json' => array(
                     'key' => 'json', 
@@ -6066,7 +6066,6 @@
                 
             }
              */
-            
             global $wpdb;
             $url = BOOKING_PACKAGE_EXTENSION_URL;
             
@@ -6095,7 +6094,7 @@
             $response = wp_remote_request($url . "lookingForSubscription/", $args);
             if (is_wp_error($response)) {
                 
-                //error_log('Booking Package [lookingForSubscription]: Request failed: ' . $response->get_error_message());
+                //error_log('Booking Package: Request failed: ' . $response->get_error_message());
                 return $license;
                 
             }
@@ -6103,7 +6102,7 @@
             $statusCode = wp_remote_retrieve_response_code($response);
             if (intval($statusCode) !== 200) {
                 
-                //error_log('Booking Package [lookingForSubscription]: HTTP status ' . $statusCode);
+                //error_log('Booking Package: HTTP status ' . $statusCode);
                 return $license;
                 
             }
@@ -6112,7 +6111,7 @@
             $response_data = json_decode($body, true);
             if (!is_array($response_data)) {
                 
-                //error_log('Booking Package [lookingForSubscription]: Invalid JSON response');
+                //error_log('Booking Package: Invalid JSON response');
                 return $license;
                 
             }
@@ -6182,14 +6181,6 @@
         
         public function getUpgradeSubscriptionDetails($plugin_headers) {
             
-            /**
-            if (has_filter('booking_package_get_upgrade_subscription_details')) {
-                
-                return apply_filters('booking_package_get_upgrade_subscription_details', $plugin_headers);
-                
-            }
-             */
-            
             if (!current_user_can('manage_options')) {
                 
                 return array(
@@ -6234,139 +6225,60 @@
             
         }
         
-        public function upgradePlan($type) {
+        public function getSubscriptionData($type) {
             
-            if (has_filter('booking_package_setting_upgrade_plan')) {
-                
-                return apply_filters('booking_package_setting_upgrade_plan', $type);
-                
-            }
-            
-            $response = array('status' => 'error');
-            if ($type === 'get') {
-                
-                $values = array(
+            $response = array();
+            $values = array(
                     'customer_id_for_subscriptions', 
                     'id_for_subscriptions', 
                     'customer_email_for_subscriptions', 
                     'invoice_id_for_subscriptions', 
                     'expiration_date_for_subscriptions'
-                );
-                 
-                for ($i = 0; $i < count($values); $i++) {
+            );
+                
+            for ($i = 0; $i < count($values); $i++) {
+                
+                $key = $values[$i];
+                $value = get_option('_' . $this->prefix . $key, 0);
+                if (get_option($this->prefix . $key) !== false) {
                     
-                    $key = $values[$i];
-                    $value = get_option('_' . $this->prefix . $key, 0);
-                    if (get_option($this->prefix . $key) !== false) {
-                        
-                        $value = get_option($this->prefix . $key);
-                        delete_option($this->prefix . $key);
-                        add_option('_' . $this->prefix . $key, $value);
-                        
-                    }
-                    
-                    $response[$key] = $value;
+                    $value = get_option($this->prefix . $key);
+                    delete_option($this->prefix . $key);
+                    add_option('_' . $this->prefix . $key, $value);
                     
                 }
                 
-                $expiration = $response['expiration_date_for_subscriptions'];
-                if ( is_numeric($expiration) === false ) {
+                $response[$key] = $value;
+                
+            }
+            
+            $expiration = $response['expiration_date_for_subscriptions'];
+            if ( is_numeric($expiration) === false ) {
+                
+                $expiration = $this->decryptValue($expiration);
+                if ($expiration === false) {
                     
-                    $expiration = $this->decryptValue($expiration);
-                    if ($expiration === false) {
-                        
-                        $expiration = 0;
-                        
-                    }
-                    
-                    if (intval($expiration) === 0) {
-                        
-                        $expiration = 0;
-                        
-                    }
-                    
-                } else {
-                    
-                    if (intval($expiration) > 0) {
-                        
-                        $subscriptionDetails = $this->lookingForSubscription($response['customer_id_for_subscriptions'], $response['id_for_subscriptions']);
-                        $expiration = $subscriptionDetails['expiration_date'];
-                        if (intval($subscriptionDetails['status']) === 1) {
-                            
-                            update_option('_' . $this->prefix . 'expiration_date_for_subscriptions', $this->encryptValue($expiration));
-                            $this->updateSubscriptionStatus('Active');
-                            
-                        } else {
-                            
-                            update_option('_' . $this->prefix . 'expiration_date_for_subscriptions', 0);
-                             $this->updateSubscriptionStatus('Renewal Failed');
-                             $this->notificationSubscriptionRenewalFailed(true);
-                            
-                        }
-                        
-                    } else {
-                        
-                        #$this->updateSubscriptionStatus('Renewal Failed');
-                        
-                    }
+                    $expiration = 0;
                     
                 }
                 
-                $response['expiration_date_for_subscriptions'] = intval($expiration);
-                $response['status'] = 'success';
-                
-            } else if ($type === 'delete') {
-                
-                $customer_id = isset($_POST['customer_id']) ? sanitize_text_field($_POST['customer_id']) : '';
-                $subscriptions_id = isset($_POST['subscriptions_id']) ? sanitize_text_field(trim($_POST['subscriptions_id'])) : '';
-                
-                $params = array(
-                    'mode' => 'error', 
-                    'subscription_mode' => 'cancelSubscription',
-                    'customer_id' => $customer_id,
-                    'subscriptions_id' => $subscriptions_id,
-                    'ip' => $this->getClientIP(), 
-                );
-                
-                $args = array(
-                    'method' => 'POST',
-                    'timeout' => $this->request_timeout,
-                    'body' => $params
-                );
-                
-                $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelSubscription/", $args);
-                if (is_wp_error($response)) {
+                if (intval($expiration) === 0) {
                     
-                    error_log('Booking Package [cancelSubscription]: Request failed: ' . $response->get_error_message());
-                    return array('status' => 'error', 'message' => $response->get_error_message());
+                    $expiration = 0;
                     
                 }
                 
-                $statusCode = wp_remote_retrieve_response_code($response);
-                if (intval($statusCode) !== 200) {
-                    
-                    error_log('Booking Package [cancelSubscription]: HTTP status ' . $statusCode);
-                    return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode);
-                    
-                }
+            } else {
                 
-                $body = wp_remote_retrieve_body($response);
-                $response = json_decode($body, true);
-                if (!is_array($response)) {
-                    
-                    error_log('Booking Package [cancelSubscription]: Invalid JSON response');
-                    return array('status' => 'error', 'message' => 'Invalid server response');
-                    
-                }
+                $expiration = 0;
                 
-                $response['url'] = BOOKING_PACKAGE_EXTENSION_URL;
-                if (isset($response['status']) && $response['status'] === 'success') {
-                    
-                    $this->updateSubscriptionStatus('Canceled');
-                    $response['status'] = 'success';
-                    
-                }
+            }
+            
+            $response['expiration_date_for_subscriptions'] = intval($expiration);
+            $response['status'] = true;
+            if (intval($expiration) === 0) {
                 
+                $response['status'] = false;
                 
             }
             
@@ -6375,13 +6287,7 @@
         }
         
         public function resetSubscription() {
-            /**
-            if (has_filter('booking_package_reset_subscription')) {
-                
-                return apply_filters('booking_package_reset_subscription', array('status' => true));
-                
-            }
-             */
+            
             $this->deleteSubscriptionData();
             return array('status' => true);
             
@@ -6466,7 +6372,7 @@
             }
             
             $currentDate = intval(date('Y') . date('m'));
-            $subscriptions = $this->upgradePlan('get');
+            $subscriptions = $this->getSubscriptionData('get');
             $expiration_date = $subscriptions['expiration_date_for_subscriptions'] - (3 * 3600);
             if ($this->getSubscriptionStatus() === 'Active' && $expiration_date < date('U') && $currentDate > intval($latestInvoiceDate)) {
                 
@@ -6587,7 +6493,7 @@
             }
 		     */
             
-            $subscriptions = $this->upgradePlan('get');
+            $subscriptions = $this->getSubscriptionData('get');
 			if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) ) {
                 
 				return '';
@@ -6636,13 +6542,6 @@
 		}
 		
 		public function setSubscribeSite($scheme = false) {
-            /**
-            if (has_filter('booking_package_set_subscribe_site')) {
-                
-                return apply_filters('booking_package_set_subscribe_site', $scheme);
-                
-            }
-             */
             
             $unique = get_site_url();
             if ($scheme === true) {
@@ -6679,13 +6578,6 @@
 		}
 		
 		public function setOpensslAlgo($algo) {
-            /** 
-            if (has_filter('booking_package_set_openssl_algo')) {
-                
-                return apply_filters('booking_package_set_openssl_algo', $algo);
-                
-            }
-		     */
             
 		    if (get_option('_' . $this->prefix . 'openssl_algo') === false) {
                 
@@ -6696,13 +6588,6 @@
 		}
 		
 		public function updateSubscribeSite() {
-            /**
-            if (has_filter('booking_package_update_subscribe_site')) {
-                
-                return apply_filters('booking_package_update_subscribe_site', null);
-                
-            }
-             */
             
             $site = get_site_url();
             $unique_without_scheme = wp_hash( preg_replace('#^[^:]+://#', '', $site) );
@@ -6720,7 +6605,7 @@
                 
             }
             
-            $subscriptions = $this->upgradePlan("get");
+            $subscriptions = $this->getSubscriptionData("get");
 			$isExtensionsValid = $this->getSiteStatus();
 			if ($isExtensionsValid == true) {
                 
@@ -6742,14 +6627,6 @@
         
 		public function updatePaidSubscription($unique) {
             
-            /**
-            if (has_filter('booking_package_update_paid_subscription')) {
-                
-                return apply_filters('booking_package_update_paid_subscription', $unique);
-                
-            }
-             */
-            
             if (is_user_logged_in() === false || (current_user_can('manage_options') === false )) {
                 
                 wp_die(__('Permission denied.', 'booking-package'), '', array('response' => 403));
@@ -6766,7 +6643,7 @@
 		    $site = get_site_url();
 			if ($unique !== false && wp_hash($site) === $unique) {
 				
-				$subscriptions = $this->upgradePlan('get');
+				$subscriptions = $this->getSubscriptionData('get');
 			    $response = $this->lookingForSubscription($subscriptions['customer_id_for_subscriptions'], $subscriptions['id_for_subscriptions']);
                 return $response;
                 
@@ -6775,6 +6652,63 @@
 			return false;
 		    
 		}
+        
+        public function deletePaidSubscription() {
+            
+            $response = array('status' => 'error');
+            $customer_id = isset($_POST['customer_id']) ? sanitize_text_field($_POST['customer_id']) : '';
+            $subscriptions_id = isset($_POST['subscriptions_id']) ? sanitize_text_field(trim($_POST['subscriptions_id'])) : '';
+            
+            $params = array(
+                'mode' => 'error', 
+                'subscription_mode' => 'cancelSubscription',
+                'customer_id' => $customer_id,
+                'subscriptions_id' => $subscriptions_id,
+                'ip' => $this->getClientIP(), 
+            );
+            
+            $args = array(
+                'method' => 'POST',
+                'timeout' => $this->request_timeout,
+                'body' => $params
+            );
+            
+            $response = wp_remote_request(BOOKING_PACKAGE_EXTENSION_URL . "cancelSubscription/", $args);
+            if (is_wp_error($response)) {
+                
+                error_log('Booking Package [cancelSubscription]: Request failed: ' . $response->get_error_message());
+                return array('status' => 'error', 'message' => $response->get_error_message());
+                
+            }
+            
+            $statusCode = wp_remote_retrieve_response_code($response);
+            if (intval($statusCode) !== 200) {
+                
+                error_log('Booking Package [cancelSubscription]: HTTP status ' . $statusCode);
+                return array('status' => 'error', 'message' => 'Server returned HTTP ' . $statusCode);
+                
+            }
+            
+            $body = wp_remote_retrieve_body($response);
+            $response = json_decode($body, true);
+            if (!is_array($response)) {
+                
+                error_log('Booking Package [cancelSubscription]: Invalid JSON response');
+                return array('status' => 'error', 'message' => 'Invalid server response');
+                
+            }
+            
+            $response['url'] = BOOKING_PACKAGE_EXTENSION_URL;
+            if (isset($response['status']) && $response['status'] === 'success') {
+                
+                $this->updateSubscriptionStatus('Canceled');
+                $response['status'] = 'success';
+                
+            }
+            
+            return $response;
+            
+        }
 		
         public function validateWpSite($validate = true) {
             
@@ -6858,7 +6792,7 @@
             $url = BOOKING_PACKAGE_EXTENSION_URL;
             $response = array('status' => 'error');
             $statusCode = 0;
-            $subscriptions = $this->upgradePlan('get');
+            $subscriptions = $this->getSubscriptionData('get');
             $expiration_date = intval($subscriptions['expiration_date_for_subscriptions']);
             
             if ( empty($subscriptions['customer_id_for_subscriptions']) || empty($subscriptions['id_for_subscriptions']) ) {
@@ -6950,7 +6884,7 @@
                     $expiration_date = $this->encryptValue( sanitize_text_field($response_obj->expiration_date) );
                     update_option('_' . $this->prefix . "invoice_id_for_subscriptions", sanitize_text_field($response_obj->invoice_id));
                     $bool = update_option('_' . $this->prefix . "expiration_date_for_subscriptions", $expiration_date);
-                    $subscriptions = $this->upgradePlan('get');
+                    // $subscriptions = $this->getSubscriptionData('get');
                     return true;
                     
                 } else if (intval($response_obj->status) === 0) {

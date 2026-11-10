@@ -17,6 +17,93 @@
             
         }
         
+        public function serviceAndGuestPricing() {
+            
+            $title = __('Service Pricing Calculation and Guest Price Adjustment Specifications', 'booking-package');
+            $intro = __('In a calendar where the type is set to "<b>Booking is completed within 24 hours (hair salon, hospital etc.)</b>", the prices of services (and service options) are calculated by combining the price levels configured in the "<b>Services</b>" tab ("<b>Base Price</b>" to "<b>Price 6</b>") with the "<b>Applicable Price Level</b>" and "<b>Enable Quantity-Based Price Adjustment for Services</b>" settings configured for each guest item in the "<b>Guests</b>" tab.', 'booking-package');
+            
+            $sec1_title = __('1. Calculation Rules Based on "Enable Quantity-Based Price Adjustment for Services"', 'booking-package');
+            $sec1_intro = __('Depending on the configuration of your active guest items, service prices are calculated using one of the following three patterns:', 'booking-package');
+            
+            $pat_a_title = __('Pattern A: When ALL Guest Items Are Set to "Enabled" (Proportional Per-Guest Pricing Model)', 'booking-package');
+            $pat_a_desc = __('The service price is calculated solely from the sum of "<b>(Unit price of the Applicable Price Level) &times; (Number of Guests selected)</b>" for each guest item.', 'booking-package');
+            $pat_a_ex1 = __('<b>Example</b>: If "Adults" ("<b>Applicable Price Level</b>": "<b>Base Price</b>" = $100, "<b>Enable Quantity-Based Price Adjustment for Services</b>": "<b>Enabled</b>") is selected with a quantity of 2, the service price is $100 &times; 2 = $200.', 'booking-package');
+            $pat_a_ex2 = __('<b>How to Configure a Free ($0) Guest Category (e.g., Infants or Observers)</b>: Even if you do not want a specific guest item to add to the service price, set "<b>Enable Quantity-Based Price Adjustment for Services</b>" to "<b>Enabled</b>" for that guest item as well. Then, under "<b>Applicable Price Level</b>", select a price level that is set to <code>0</code> in the "<b>Services</b>" tab (such as "<b>Price 2</b>" or "<b>Price 3</b>").', 'booking-package');
+            
+            $pat_b_title = __('Pattern B: When "Disabled" and "Enabled" Guest Items Are Mixed (Fixed Base Price + Additional Guest Pricing Model)', 'booking-package');
+            $pat_b_desc = __('When guest items set to "<b>Disabled</b>" and guest items set to "<b>Enabled</b>" for "<b>Enable Quantity-Based Price Adjustment for Services</b>" coexist, the total service price is calculated by combining both as follows:', 'booking-package');
+            $pat_b_rule1 = __('If at least one active guest item is set to "<b>Disabled</b>", <b>one unit of the service\'s "Base Price" is always charged as a fixed base fee</b>, regardless of the number of guests selected for that item (even if left unselected or set to 0).', 'booking-package');
+            $pat_b_rule2 = __('When 1 or more guests are selected for any guest item set to "<b>Enabled</b>", their "<b>(Unit price of the Applicable Price Level) &times; (Number of Guests selected)</b>" is <b>added on top of the fixed "Base Price"</b>.', 'booking-package');
+            $pat_b_ex1 = __('<b>Use Case</b>: Ideal for studio rentals or private lessons where a fixed base fee applies for the primary representative ("<b>Disabled</b>": guarantees 1 unit of "<b>Base Price</b>", e.g., $100) and an additional per-person fee applies only when companions are added ("<b>Enabled</b>": e.g., "<b>Price 2</b>" = $20 per additional guest).', 'booking-package');
+            $pat_b_ex2 = __('<b>Important Note</b>: When registering multiple guest items such as "Adults ("<b>Enabled</b>")" and "Children (Free)", if you set the "Children" guest item to "<b>Disabled</b>", one unit of the "<b>Base Price</b>" will be added as a fixed base fee in addition to the per-person charge for "Adults" (resulting in a total equivalent to "selected number of guests + 1"). If you want to calculate the price strictly based on the selected number of guests, please follow <b>Pattern A</b> by setting all guest items to "<b>Enabled</b>" and assigning a price level of <code>0</code> to free guest categories.', 'booking-package');
+            
+            $pat_c_title = __('Pattern C: When ALL Guest Items Are Set to "Disabled" (Flat-Rate Per-Booking Model)', 'booking-package');
+            $pat_c_desc = __('The service price is not multiplied by the number of guests. Regardless of how many guests are selected, only <b>one unit of the service\'s "Base Price"</b> is charged per booking.', 'booking-package');
+            
+            $sec2_title = __('2. Other Guest-Related Pricing and Capacity Settings', 'booking-package');
+            $sec2_item1 = __('<b>"Extra Charge" in Guest "Options"</b>: The "<b>Extra Charge</b>" configured in the "<b>Options</b>" table at the bottom of each guest item\'s edit screen is not multiplied by the "<b>Number of Guests</b>". Instead, the exact amount configured for the selected option is added directly to the total amount.', 'booking-package');
+            $sec2_item2 = __('<b>"Enable Quantity-Based Price Adjustment for Extra Charges"</b>: When set to "<b>Enabled</b>", the unit amount of any "<b>Extra Charge</b>" registered under the "<b>Extra Charges | Taxes</b>" tab is multiplied by the total number of guests selected across all guest items that have this setting "<b>Enabled</b>" (if the total selected number of target guests is 0, or if all guest items are set to "<b>Disabled</b>", the "<b>Extra Charge</b>" is applied once per booking).', 'booking-package');
+            $sec2_item3_title = __('"Count Total Guests Toward Availability"', 'booking-package');
+            $sec2_item3_inc = __('<b>"Included"</b>: The selected "<b>Number of Guests</b>" is deducted from the time slot\'s "<b>Remaining Slots</b>" ("<b>Available Slots</b>"). If at least one active guest item is set to "<b>Included</b>", the customer must select a total of at least 1 guest across the "<b>Included</b>" guest items to complete a booking.', 'booking-package');
+            $sec2_item3_exc = __('<b>"Excluded"</b>: The selected "<b>Number of Guests</b>" is not deducted from the time slot\'s "<b>Remaining Slots</b>". If all active guest items are set to "<b>Excluded</b>", a booking can be completed even when 0 guests are selected, consuming 1 slot for the booker themselves.', 'booking-package');
+            
+$document = <<<EOF
+
+<div>
+    <h2>{$title}</h2>
+    <div>{$intro}</div>
+    <h3>{$sec1_title}</h3>
+    <div>{$sec1_intro}</div>
+    <ol>
+        <li>
+            <b>{$pat_a_title}</b><br>
+            <div>{$pat_a_desc}</div>
+            <ul>
+                <li>{$pat_a_ex1}</li>
+                <li>{$pat_a_ex2}</li>
+            </ul>
+        </li>
+        <li>
+            <b>{$pat_b_title}</b><br>
+            <div>{$pat_b_desc}</div>
+            <ol>
+                <li>{$pat_b_rule1}</li>
+                <li>{$pat_b_rule2}</li>
+            </ol>
+            <ul>
+                <li>{$pat_b_ex1}</li>
+                <li>{$pat_b_ex2}</li>
+            </ul>
+        </li>
+        <li>
+            <b>{$pat_c_title}</b><br>
+            <div>{$pat_c_desc}</div>
+        </li>
+    </ol>
+    <h3>{$sec2_title}</h3>
+    <ul>
+        <li>
+            {$sec2_item1}
+        </li>
+        <li>
+            {$sec2_item2}
+        </li>
+        <li>
+            <b>{$sec2_item3_title}</b>:
+            <ul>
+                <li>{$sec2_item3_inc}</li>
+                <li>{$sec2_item3_exc}</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+EOF;
+            
+            return $document;
+            
+        }
+        
         public function numberOfAvailableDaysFromToday() {
             
 $document = <<<EOF

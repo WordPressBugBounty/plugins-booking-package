@@ -399,7 +399,7 @@ window.addEventListener('load', function(){
 				if (response == true) {
 					
 					object._loadingPanel.setAttribute("class", "loading_modal_backdrop");
-					var postData = {mode: "upgradePlan", type: "delete", nonce: object._nonce, action: object._action, customer_id: subscriptionData.customer_id_for_subscriptions, subscriptions_id: subscriptionData.id_for_subscriptions, delete_customer_id: 1, subscription_mode: 'cancelSubscription'};
+					var postData = {mode: "deletePaidSubscription", type: "delete", nonce: object._nonce, action: object._action, customer_id: subscriptionData.customer_id_for_subscriptions, subscriptions_id: subscriptionData.id_for_subscriptions, delete_customer_id: 1, subscription_mode: 'cancelSubscription'};
 					object.setFunction("subscriptionDiteilPanel", postData);
 					var xmlHttp = new Booking_App_XMLHttp(object._url, postData, object._webApp, function(json){
 						

@@ -11808,10 +11808,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (field.filterHookKey != null && typeof field.filterHookKey === "string") {
                     
-                    const filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', {'help-target': object._prefix + field.filterHookKey});
+                    let filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', { 'help-target': object._prefix + field.filterHookKey });
+                    
+                    
+                    
                     valuePanel.appendChild(filterHookMessage);
                     
                 }
+                
                 
                 if (field.extensionsValidMessage != null && parseInt(field.extensionsValidMessage) == 1 && parseInt(field.isExtensionsValid) == 1 && isExtensionsValid == 0) {
                     
@@ -12072,7 +12076,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (input.filterHookKey != null && typeof input.filterHookKey === "string") {
             
-            const filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', {'help-target': object._prefix + input.filterHookKey});
+            let filterHookMessage = object.create('div', object._i18n.get('Advanced: Dynamically override values via filter hooks.'), null, null, null, 'filterHookMessage bqp-help-trigger', { 'help-target': object._prefix + input.filterHookKey });
+            if (input.key == 'reflectService') {
+                
+                filterHookMessage = object.create('div', object._i18n.get('Note: %s', [object._i18n.get('Service and Guest Pricing Calculation')]), null, null, null, 'filterHookMessage bqp-help-trigger', { 'help-target': object._prefix + input.filterHookKey });
+                
+            }
             valuePanel.appendChild(filterHookMessage);
             
         }

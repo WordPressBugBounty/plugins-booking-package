@@ -659,6 +659,15 @@
 			$response = array("status" => "success", "activation" => $activation);
 			#$user_login = username_exists($s_user_login);
 			$user_pass = trim($_POST['user_pass']);
+			if (strlen($user_pass) < 8) {
+
+				return array(
+					'status' => 'error',
+					'error_messages' => __('Please enter a valid password.', 'booking-package')
+				);
+
+			}
+			
 			$userdata = array(
 				'user_login' => sanitize_user($s_user_login),
 				'user_pass' => $user_pass,
@@ -918,24 +927,38 @@
 			$userId = $user->ID;
 			$userOldEmail = $user->user_email;
 			
-			if ( user_can( $userId, 'manage_options' ) && current_user_can( 'manage_options' ) === false ) {
-                
-                $response['error_messages'] = 'Permission denied: You cannot edit an administrator account.';
-                return $response;
-                
-            }
-			
-			if ($currentUser->ID !== $userId && current_user_can('edit_users') === false) {
+			if (user_can($userId, 'manage_options') && current_user_can('manage_options') === false) {
 				
-				$response['error_messages'] = 'Permission denied: You cannot edit this user.';
+				$response['error_messages'] = 'Permission denied: You cannot edit an administrator account.';
 				return $response;
 				
 			}
-			
-			if ($administrator === 0 && $currentUser->user_login !== sanitize_text_field($_POST['user_login'])) {
+
+			if (intval($administrator) === 1) {
 				
-				$response['error_messages'] = 'Error';
-				return $response;
+				$can_manage_members = current_user_can('manage_options') || current_user_can('edit_users') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
+				if ($can_manage_members === false) {
+					
+					$response['error_messages'] = 'Permission denied: You cannot edit this user.';
+					return $response;
+					
+				}
+				
+				if ($currentUser->ID !== $userId && !current_user_can('manage_options') && $this->isManageableMemberUser($userId) === false) {
+					
+					$response['error_messages'] = 'Permission denied: You can only edit Booking Package member accounts.';
+					return $response;
+					
+				}
+				
+			} else {
+				
+				if ($currentUser->ID !== $userId || $currentUser->user_login !== sanitize_text_field($_POST['user_login'])) {
+					
+					$response['error_messages'] = 'Permission denied: You cannot edit this user.';
+					return $response;
+					
+				}
 				
 			}
 			
@@ -957,10 +980,12 @@
 				$status = 1;
 				$hash = 0;
 				$userdata = array('ID' => $userId);
-				if (isset($_POST['user_email'])) {
+				$user_email = $userOldEmail;
+				if (isset($_POST['user_email']) && is_email(sanitize_email($_POST['user_email']))) {
 					
-					$userdata['user_email'] = sanitize_text_field($_POST['user_email']);
-					$hash = wp_hash(sanitize_text_field($_POST['user_email']) . sanitize_text_field($_POST['user_login']) . date('U'));
+					$user_email = sanitize_email($_POST['user_email']);
+					$userdata['user_email'] = $user_email;
+					$hash = wp_hash($user_email . sanitize_text_field($_POST['user_login']) . date('U'));
 					
 				} else {
 					
@@ -968,11 +993,18 @@
 					
 				}
 				
-				if (isset($_POST['user_pass'])) {
-					
+				if (isset($_POST['user_pass']) && strlen(trim($_POST['user_pass'])) > 0) {
+
+					if (strlen(trim($_POST['user_pass'])) < 8) {
+						
+						$response['error_messages'] = __('Please enter a valid password.', 'booking-package');
+						return $response;
+						
+					}
+
 					$login = 1;
 					$userdata['user_pass'] = $_POST['user_pass'];
-					
+
 				}
 				
 				$user = wp_update_user($userdata);
@@ -995,7 +1027,7 @@
 						
 					}
 					
-					$bool = $this->update_profile($userId, $_POST['user_email'], $status, $customUserFields, $hash);
+					$bool = $this->update_profile($userId, $user_email, $status, $customUserFields, $hash);
 					
 					if ($login == 1) {
 						
@@ -1603,9 +1635,31 @@
 				
 			} else {
 				
+				$bool = false;
+				if (user_can($userId, $this->userRoleName) === true) {
+					
+					$bool = true;
+					
+				} else if (user_can($userId, "subscriber") === true && intval($memberSetting['accept_subscribers_as_users']) == 1) {
+
+					$bool = true;
+					$this->find_users($userId, 1, true);
+
+				} else if (user_can($userId, "contributor") === true && intval($memberSetting['accept_contributors_as_users']) == 1) {
+
+					$bool = true;
+					$this->find_users($userId, 1, true);
+
+				}/** else if (current_user_can("author") === true && intval($memberSetting['accept_authors_as_users'] == 1)) {
+					
+					$bool = true;
+					$this->find_users($userId, 1, true);
+					
+				}**/
+				
 				$user = get_user_by('id', intval($userId));
 				$value = $this->login($userId, $statusCheck);
-				if (!is_int($value) && is_array($value)) {
+				if ($bool === true && !is_int($value) && is_array($value)) {
 					
 					$reality = true;
 					
@@ -1649,6 +1703,18 @@
         }
         
 		public function user_login_for_frontend($user_login, $user_password, $remember) {
+			
+			$setting = new booking_package_setting($this->prefix, $this->pluginName);
+			$member_settings = $setting->getMemberSettingValues();
+			if (intval($member_settings['function_for_member']) === 0) {
+				
+				return array(
+					'status' => 'error',
+					'code' => 'login_disabled',
+					'message' => __('User login is currently disabled.', 'booking-package')
+				);
+				
+			}
 			
 			if (!isset($_POST['googleReCaptchaToken'])) {
 				
@@ -1696,14 +1762,6 @@
 				
 			} else {
 				
-				$bool = 'false';
-				$user_toolbar = intval(get_option($this->prefix . 'user_toolbar', 0));
-				if (intval($user_toolbar) == 1) {
-					
-					$bool = 'true';
-					
-				}
-				update_user_meta($user->ID, 'show_admin_bar_front', $bool);
 				$responseUser = $this->get_user($user->ID, true);
 				if ($responseUser['status'] == 0) {
 					
@@ -1712,8 +1770,18 @@
 					$response['code'] = 'not_approved';
 					$response['message'] = __('Your username has not been approved.', 'booking-package');
 					
+				} else {
+					
+					$bool = 'false';
+					$user_toolbar = intval(get_option($this->prefix . 'user_toolbar', 0));
+					if (intval($user_toolbar) == 1) {
+						
+						$bool = 'true';
+						
+					}
+					update_user_meta($user->ID, 'show_admin_bar_front', $bool);
+					
 				}
-				
 				
 			}
 			
@@ -1767,20 +1835,40 @@
 			}
 			
 			
-			if (user_can( $userId, 'manage_options' ) && current_user_can( 'manage_options' ) === false) {
+			if (user_can($userId, 'manage_options') && current_user_can('manage_options') === false) {
 				
 				$response['error_messages'] = 'Permission denied: You cannot delete an administrator account.';
 				return $response;
 				
 			}
-			
-			if ($currentUser->ID !== $userId && current_user_can( 'delete_users' ) === false) {
+
+			if (intval($administrator) === 1) {
 				
-				$response['error_messages'] = 'Permission denied: You cannot delete this user.';
-				return $response;
+				$can_delete_members = current_user_can('manage_options') || current_user_can('delete_users') || current_user_can($this->prefix . 'manager');
+				if ($can_delete_members === false) {
+					
+					$response['error_messages'] = 'Permission denied: You cannot delete this user.';
+					return $response;
+					
+				}
+				
+				if ($currentUser->ID !== $userId && !current_user_can('manage_options') && $this->isManageableMemberUser($userId) === false) {
+					
+					$response['error_messages'] = 'Permission denied: You can only delete Booking Package member accounts.';
+					return $response;
+					
+				}
+				
+			} else {
+				
+				if ($currentUser->ID !== $userId || $this->isManageableMemberUser($userId) === false) {
+					
+					$response['error_messages'] = 'Permission denied: You cannot delete this account from the front-end.';
+					return $response;
+					
+				}
 				
 			}
-			
 			
 			if ($reality === true) {
 				
@@ -1803,6 +1891,43 @@
 			}
 			
         }
+		
+		public function isManageableMemberUser($userId) {
+			
+			$userId = intval($userId);
+			if ($userId <= 0) {
+				return false;
+			}
+			
+			if ( is_super_admin($userId) || user_can($userId, 'manage_options') || user_can($userId, 'publish_posts') || user_can($userId, 'edit_published_posts') || user_can($userId, 'edit_others_posts') || user_can($userId, 'edit_users') || user_can($userId, 'delete_users') || user_can($userId, $this->prefix . 'manager') || user_can($userId, $this->prefix . 'editor') ) {
+				
+				return false;
+				
+			}
+
+			$setting = new booking_package_setting($this->prefix, $this->pluginName, $this->userRoleName);
+			$memberSetting = $setting->getMemberSettingValues();
+
+			if (user_can($userId, $this->userRoleName) === true) {
+				
+				return true;
+				
+			}
+			
+			if (user_can($userId, 'subscriber') === true && intval($memberSetting['accept_subscribers_as_users']) === 1) {
+				
+				return true;
+				
+			}
+			
+			if (user_can($userId, 'contributor') === true && intval($memberSetting['accept_contributors_as_users']) === 1) {
+				
+				return true;
+				
+			}
+
+			return false;
+		}
 		
 		public function deleteForPluginUser($user_id){
 			
@@ -7976,6 +8101,11 @@
 				$first_unixTime = $first['unixTime'];
 				$last = array('unixTime' => strtotime("+" . $nights . " days", intval($first['unixTime']) ) );
 				$table_name = $wpdb->prefix . "booking_package_schedules";
+				if ($type == 'book' && intval($first_unixTime) !== intval($sql_start_unixTime)) {
+					
+					return array("status" => "error", "message" => __("Invalid booking data.", 'booking-package'));
+					
+				}
 				
 				for ($i = 0; $i <= ($nights - 1); $i++) {
 					
@@ -8149,6 +8279,12 @@
 				
 			}
 			
+			if ($type == 'book' && intval($calendarAccount['guestsBool']) == 1 && count($jsonList['rooms']) !== intval($applicantCount)) {
+				
+				return array("status" => "error", "message" => __("Invalid number of rooms.", 'booking-package'));
+				
+			}
+			
 			if (count($jsonList['rooms']) != 0) {
 				
 				$additionalFee = 0;
@@ -8238,6 +8374,12 @@
 						}
 						
 						if ($selected === false) {
+							
+							if ($type == 'book' && intval($guests_row['required']) === 1) {
+								
+								return array("status" => "error", "message" => __("Invalid booking data.", 'booking-package'));
+								
+							}
 							
 							array_unshift($guestsArray, array("number" => 0, "price" => 0, "name" => "SELECT", "selected" => 1));
 							
@@ -8330,6 +8472,12 @@
 						}
 						
 						if ($selected === false) {
+							
+							if ($type == 'book' && intval($options['required']) === 1) {
+								
+								return array("status" => "error", "message" => __("Invalid booking data.", 'booking-package'));
+								
+							}
 							
 							array_unshift($optionsArray, array("adult" => 0, "child" => 0, "room" => 0, "name" => "SELECT", "selected" => 1));
 							
@@ -9008,7 +9156,6 @@
 			$reflectServiceCount = 1;
 			$reflectAdditionalCount = 1;
 			$accountKey = 1;
-			$accountCalendarKey = 1;
 			if (isset($_POST['accountKey'])) {
 				
 				$accountKey = intval($_POST['accountKey']);
@@ -9017,11 +9164,17 @@
 			}
 			
 			$calendarAccount = $this->getCalendarAccount($accountKey);
+			$accountCalendarKey = $calendarAccount['key'];
+			if (intval($calendarAccount['schedulesSharing']) == 1) {
+				
+				$accountCalendarKey = intval($calendarAccount['targetSchedules']);
+				
+			}
 			
 			$table_name = $wpdb->prefix . "booking_package_schedules";
     		$sql = $wpdb->prepare(
-    			"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
-    			array(intval($_POST['timeKey']))
+    			"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `".$table_name."` WHERE `key` = %d AND `accountKey` = %d AND `status` = 'open';", 
+    			array( intval($_POST['timeKey']), intval($accountCalendarKey) )
     		);
     		$row = $wpdb->get_row($sql, ARRAY_A);
 			if (is_null($row)) {
@@ -9537,7 +9690,7 @@
 				
 			}
 			$calendarAccount = $this->getCalendarAccount($accountKey);
-			if (empty($calendarAccount['bookingVerificationCode']) || $calendarAccount['bookingVerificationCode'] === 'false') {
+			if ($this->getExtensionsValid() !== true) {
 				
 				return array(
 					'status'  => false,
@@ -9935,6 +10088,14 @@
 			
 			
 			$calendarAccount = $this->getCalendarAccount($accountKey);
+			$accountCalendarKey = $calendarAccount['key'];
+			if (empty($calendarAccount) || ($administrator === false && ($calendarAccount['status'] === 'close' || $calendarAccount['status'] === 'closed'))) {
+
+				$this->cancelPayment();
+				return array('status' => 'error', 'message' => __('We do not accept reservations for this calendar.', 'booking-package'));
+
+			}
+			
 			if (intval($calendarAccount['schedulesSharing']) == 1) {
 				
 				$accountCalendarKey = intval($calendarAccount['targetSchedules']);
@@ -9942,7 +10103,14 @@
 			}
 			
 			$function_for_member = intval(get_option($this->prefix . 'function_for_member', 0));
+			$reject_non_member = intval(get_option($this->prefix . 'reject_non_membder', 0));
 			$current_user_info = $this->get_user();
+			if ($administrator === false && $function_for_member === 1 && $reject_non_member === 1 && intval($current_user_info['status']) !== 1) {
+
+				$this->cancelPayment();
+				return array('status' => 'error', 'message' => __('Only users are allowed to make bookings.', 'booking-package'));
+
+			}
 			$required_verification = isset($calendarAccount['bookingVerificationCode']) ? $calendarAccount['bookingVerificationCode'] : 'false';
 			if ($function_for_member === 1 && intval($current_user_info['status']) === 1 && isset($calendarAccount['bookingVerificationCodeToUser'])) {
 				
@@ -10046,10 +10214,16 @@
     		
     		$table_name = $wpdb->prefix . "booking_package_schedules";
     		$sql = $wpdb->prepare(
-    			"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `".$table_name."` WHERE `key` = %d AND `status` = 'open';", 
-    			array(intval($_POST['timeKey']))
+    			"SELECT *, `unixTime` - (`deadlineTime` * 60) as `unixTimeDeadline` FROM `".$table_name."` WHERE `key` = %d AND `accountKey` = %d AND `status` = 'open' AND `stop` = 'false';", 
+    			array( intval($_POST['timeKey']), intval($accountCalendarKey) )
     		);
     		$row = $wpdb->get_row($sql, ARRAY_A);
+			if (is_null($row) === false && $administrator === false && intval($row['publishingDate']) > 0) {
+				
+				$row = null;
+				
+			}
+			
 			if (is_null($row)) {
 				
 				$this->cancelPayment();
@@ -10753,13 +10927,20 @@
 		}
 		public function cancelPayment() {
 			
-			if (isset($_POST['payType']) && $_POST['payType'] == 'stripe') {
+			if (isset($_POST['payType']) && $_POST['payType'] == 'stripe' && !empty($_POST['payToken'])) {
+				
+				$sanitizedToken = sanitize_text_field(trim($_POST['payToken']));
+				if ($this->isPayTokenUsed($sanitizedToken) === true) {
+					
+					return;
+					
+				}
 				
 				$creditCard = new booking_package_CreditCard($this->pluginName, $this->prefix);
 				$secret_key = get_option($this->prefix."stripe_secret_key", null);
 				if (empty($secret_key) === false) {
 					
-					$creditCard->cancelStripe(0, $secret_key, $_POST['payToken']);
+					$creditCard->cancelStripe(0, $secret_key, $sanitizedToken);
 					
 				}
 				
@@ -11116,6 +11297,20 @@
                 	$jsonList = json_decode(stripslashes($selectedServices), true);
                 	
                 }
+				
+				if ($verifyServices === true) {
+				
+					if (intval($calendarAccount['hasMultipleServices']) === 0 && count($jsonList) > 1) {
+						
+						return array('status' => false, 'message' => 'Multiple services cannot be selected.');
+						
+					}
+					
+				}
+				
+				$processed_service_keys = array();
+				$current_user_check = $this->get_user();
+				$is_logged_in_member = (intval($current_user_check['status']) === 1);
                 
                 if (is_array($jsonList) && !empty($jsonList)) {
 					
@@ -11130,15 +11325,29 @@
 							);
 							$verify_service = $wpdb->get_row($sql, ARRAY_A);
 							if (empty($verify_service) === true) {
-								
+
 								return array('status' => false, 'message' => 'Invalid service.');
-								
+
 							}
-							
+
 							if ($verify_service['active'] !== 'true') {
-								
+
 								return array('status' => false, 'message' => 'Service currently suspended.');
-								
+
+							}
+
+							$service_key_int = intval($verify_service['key']);
+							if (in_array($service_key_int, $processed_service_keys, true)) {
+
+								return array('status' => false, 'message' => 'Duplicate service.');
+
+							}
+							$processed_service_keys[] = $service_key_int;
+
+							if (($verify_service['target'] === 'users' && !$is_logged_in_member) || ($verify_service['target'] === 'visitors' && $is_logged_in_member)) {
+
+								return array('status' => false, 'message' => 'Invalid service target.');
+
 							}
 							
 							$setting = new booking_package_setting($this->prefix, $this->pluginName);
@@ -11222,6 +11431,13 @@
 									for ($j = 0; $j < count($verify_options); $j++) {
 										
 										if ($verify_options[$j]['name'] !== $selectedOptionsList[$j]['name']) {
+											
+											return false;
+											
+										}
+										
+										$is_opt_selected = (isset($selectedOptionsList[$j]['selected']) && intval($selectedOptionsList[$j]['selected']) === 1);
+										if (isset($verify_options[$j]['required']) && intval($verify_options[$j]['required']) === 1 && !$is_opt_selected) {
 											
 											return false;
 											
@@ -11895,11 +12111,18 @@
     		$verifyCancellation = $this->verifyCancellation($myBookingDetails, 0);
     		if ($verifyCancellation['cancel'] === true) {
     			
-    			$this->updateStatus($deleteKey, $token, $status);
+    			$this->updateStatus($deleteKey, $token, $status, false);
     			$response['status'] = 'success';
     			$_POST['sendEmail'] = 0;
     			
     		}
+			
+			unset($myBookingDetails['iCalUIDforGoogleCalendar']);
+			unset($myBookingDetails['iCalIDforGoogleCalendar']);
+			unset($myBookingDetails['resultOfGoogleCalendar']);
+			unset($myBookingDetails['resultModeOfGoogleCalendar']);
+			unset($myBookingDetails['payToken']);
+			$myBookingDetails['praivateData'] = array();
     		
     		$response['myBookingDetails'] = $myBookingDetails;
     		#$response['accommodationDetails'] = $accommodationDetails;
@@ -12667,7 +12890,7 @@
 			
 		}
 		
-		public function updateStatus($bookedKey, $bookedToken, $status = 'pending'){
+		public function updateStatus($bookedKey, $bookedToken, $status = 'pending', $administrator = false){
 			
 			global $wpdb;
 			
@@ -12755,7 +12978,8 @@
 			}
 			
 			$ressponse = array();
-			if (isset($_POST['reload']) && intval($_POST['reload']) == 1) {
+			$has_admin_permission = current_user_can('manage_options') || current_user_can('edit_others_posts') || current_user_can($this->prefix . 'manager') || current_user_can($this->prefix . 'editor');
+			if ($administrator === true && $has_admin_permission && isset($_POST['reload']) && intval($_POST['reload']) == 1) {
 				
 				$ressponse = $this->getReservationData(intval($_POST['month']), 1, intval($_POST['year']));
 				

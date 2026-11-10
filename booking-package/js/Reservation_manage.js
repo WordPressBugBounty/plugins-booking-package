@@ -4073,6 +4073,8 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
             }
             
             object._console.log('cost = ' + cost);
+            const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
+            cost += totalAmountForGuests.totalAmount;
             if (coupon.key != null) {
                 
                 var couponPanel = object.createRowPanel(object._i18n.get('Coupon'), "", null, null, null);
@@ -4133,10 +4135,10 @@ function Booking_manage(schedule_data, booking_package_dictionary, webApp) {
                 object._console.log('cost = ' + cost);
                 
             }
-            
+            /**
             const totalAmountForGuests = object._servicesControl.getSelectedGuestTotalAmount(guests);
             cost += totalAmountForGuests.totalAmount;
-            
+            */
             var taxes = new TAXES(object._i18n, reservationData.currency, object._debug, object._numberFormatter, object._currency_info);
             var surchargePanel = taxes.createExtraChargesAndTaxesElement("surchargeTaxTitle");
             var taxePanel = object.createRowPanel("Tax", "", null, null, null);

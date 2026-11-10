@@ -50,7 +50,7 @@
 		    } else if ($payId == 'paypal') {
 		        
 		        $access_token = $this->getAccessTokenPayPal($public_key, $secret, $payment_live);
-		        $response = $this->getPaymentDetailsPayPal($token, $access_token, $payment_live, $key, $name, $email, $bookingDate);
+		        $response = $this->getPaymentDetailsPayPal($token, $access_token, $payment_live, $key, $name, $email, $bookingDate, $amont, $currency);
 		        #var_dump($response);
 		        
 		    }
@@ -577,10 +577,10 @@
             
         }
         
-        public function getPaymentDetailsPayPal($id, $token, $payment_live, $bookingId, $name, $email, $bookingDate) {
+        public function getPaymentDetailsPayPal($id, $token, $payment_live, $bookingId, $name, $email, $bookingDate, $expectedAmount = null, $expectedCurrency = null) {
             
             if (has_filter('booking_package_creditcard_get_payment_details_paypal')) {
-                return apply_filters('booking_package_creditcard_get_payment_details_paypal', $id, $token, $payment_live, $bookingId, $name, $email, $bookingDate);
+                return apply_filters('booking_package_creditcard_get_payment_details_paypal', $id, $token, $payment_live, $bookingId, $name, $email, $bookingDate, $expectedAmount, $expectedCurrency);
             }
 
             $message = array();
@@ -617,6 +617,24 @@
             $response = json_decode(wp_remote_retrieve_body($response), true);
             
             if ($httpCode < 400 && isset($response['status']) && $response['status'] == 'COMPLETED') {
+                
+                if ($expectedAmount !== null && $expectedCurrency !== null) {
+                    
+                    $paidAmount = isset($response['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
+                        ? floatval($response['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
+                        : (isset($response['purchase_units'][0]['amount']['value']) ? floatval($response['purchase_units'][0]['amount']['value']) : -1);
+                    $paidCurrency = isset($response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'])
+                        ? strtoupper($response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'])
+                        : (isset($response['purchase_units'][0]['amount']['currency_code']) ? strtoupper($response['purchase_units'][0]['amount']['currency_code']) : '');
+                    
+                    if (intval(round($paidAmount)) !== intval($expectedAmount) || $paidCurrency !== strtoupper($expectedCurrency)) {
+                        
+                        $message['error'] = 'Payment amount or currency mismatch.';
+                        return $message;
+                        
+                    }
+                    
+                }
                 
                 $message['cardToken'] = isset($response['id']) ? $response['id'] : $id;
                 if (isset($response['purchase_units'][0]['payments']['captures'][0]['id'])) {

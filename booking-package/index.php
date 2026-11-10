@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.44
+Version:     1.7.45
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -216,12 +216,6 @@ Domain Path: /languages
 			add_filter( 'load_textdomain_mofile', array($this, 'plugin_textdomain'), 10, 2);
 			
 			$textdomain = load_plugin_textdomain($this->plugin_name, false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
-			
-			$locale = apply_filters('plugin_locale', determine_locale(), $this->plugin_name);
-			$custom_mo = plugin_dir_path(__FILE__) . 'languages/' . $this->plugin_name . '-' . $locale . '.mo';
-			if (file_exists($custom_mo)) {
-				load_textdomain('booking-package-addon', $custom_mo);
-			}
 			
 			add_action('booking_package_notification', array($this, 'do_booking_notification'));
 			add_action('wp_dashboard_setup', array($this, 'add_dashboard_widget'));
@@ -1460,14 +1454,6 @@ Domain Path: /languages
 				for ($i = 0; $i < count($taxes); $i++) {
 					
 					$localize_script['taxes'][$i] = $setting->getTranslateTax($taxes[$i], $calendarAccount['key']);
-					
-				}
-				
-				
-				$userSubscriptions = $setting->upgradePlan('get');
-				if (is_string($userSubscriptions['customer_id_for_subscriptions'])) {
-					
-					$localize_script['site_subscriptions'] = substr($userSubscriptions['customer_id_for_subscriptions'], -5);
 					
 				}
 				
@@ -4316,14 +4302,20 @@ Domain Path: /languages
 			
 			$mode = isset($_POST['mode']) ? sanitize_text_field($_POST['mode']) : '';
 			$response = array('status' => 'error', 'mode' => $mode );
-			#if (is_user_logged_in() === false || (current_user_can('edit_others_posts') === false && current_user_can('booking_package_manager') === false && current_user_can('booking_package_editor') === false) ) {
 			if (is_user_logged_in() === false || (current_user_can('manage_options') === false && current_user_can('edit_others_posts') === false && current_user_can($this->prefix . 'manager') === false && current_user_can($this->prefix . 'editor') === false) ) {
 				
 				return $response;
 				
 			}
-
-			$admin_only_modes = array('setting', 'updateMemberSetting', 'deleteUser', 'resetSubscription', 'deleteCalendarAccount');
+			
+			$super_admin_only_modes = array( 'getUpgradeSubscriptionDetails', 'getSubscriptionData', 'deletePaidSubscription', 'resetSubscription', 'lookingForSubscription' );
+			if (in_array($mode, $super_admin_modes = $super_admin_only_modes, true)) {
+				if (current_user_can('manage_options') === false) {
+					return array('status' => 'error', 'message' => __('Permission denied.', 'booking-package'));
+				}
+			}
+			
+			$admin_only_modes = array('setting', 'updateMemberSetting', 'deleteUser', 'deleteCalendarAccount', 'updateCss', 'updateJavaScript');
 			if (in_array($mode, $admin_only_modes, true)) {
 				if (current_user_can('manage_options') === false && current_user_can($this->prefix . 'manager') === false) {
 					return array('status' => 'error', 'message' => __('Permission denied.', 'booking-package'));
@@ -4677,9 +4669,15 @@ Domain Path: /languages
 				
 			}
 			
-			if ($_POST['mode'] == 'upgradePlan') {
+			if ($_POST['mode'] == 'getSubscriptionData') {
 				
-				$response = $setting->upgradePlan($_POST['type']);
+				$response = $setting->getSubscriptionData($_POST['type']);
+				
+			}
+			
+			if ($_POST['mode'] == 'deletePaidSubscription') {
+				
+				$response = $setting->deletePaidSubscription();
 				
 			}
 			
@@ -4995,7 +4993,7 @@ Domain Path: /languages
 			
 			if ($_POST['mode'] == 'updateStatus') {
 				
-				$response = $schedule->updateStatus($_POST['key'], $_POST['token'], $_POST['newStatus']);
+				$response = $schedule->updateStatus($_POST['key'], $_POST['token'], $_POST['newStatus'], true);
 				if (intval($_POST['reload']) == 1) {
 					$response['guestsList'] = $setting->getGuestsList($_POST['accountKey'], true);
 					$response['account'] = $schedule->getCalendarAccount($_POST['accountKey']);
@@ -5165,13 +5163,6 @@ Domain Path: /languages
 			
 		}
 		
-		public function _text($text) {
-			
-			$translations = get_translations_for_domain('booking-package-addon');
-			return $translations->translate($text);
-			
-		}
-		
 		public function install_panel() {
 				
 			if ($this->install_addon === 0 || has_filter('booking_package_apply_free_plan_limits')) {
@@ -5188,8 +5179,8 @@ Domain Path: /languages
 			}
 			$redirect_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
 			echo '<div class="notice notice-warning" style="padding: 15px 20px; border-left: 4px solid #2271b1; background: #fff; margin: 15px 0;">';
-			echo '<h3 style="margin-top: 0; color: #1d2327;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName ) ) . '</h3>';
-			echo '<p style="font-size: 14px; line-height: 1.6;">' . esc_html( sprintf( $this->_text('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.'), $this->addonName ) ) . '</p>';
+			echo '<h3 style="margin-top: 0; color: #1d2327;">' . esc_html( sprintf( __('Official "%s" Required', 'booking-package'), $this->addonName ) ) . '</h3>';
+			echo '<p style="font-size: 14px; line-height: 1.6;">' . esc_html( sprintf( __('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.', 'booking-package'), $this->addonName ) ) . '</p>';
 			echo $this->render_addon_install_form($redirect_url);
 			echo '</div>';
 		}
@@ -5211,10 +5202,10 @@ Domain Path: /languages
 				
 				$localize_data = array(
 					'download_url'     => 'https://saasproject.net/api/download/booking-package-addon.zip',
-					'text_downloading' => sprintf( $this->_text('Downloading %s...'), $this->addonName ),
-					'text_installing'  => $this->_text('Installing and activating add-on...'),
-					'text_completed'   => $this->_text('Completed! Redirecting...'),
-					'text_failed'      => $this->_text('Installation failed.'),
+					'text_downloading' => sprintf( __('Downloading %s...', 'booking-package'), $this->addonName ),
+					'text_installing'  => __('Installing and activating add-on...', 'booking-package'),
+					'text_completed'   => __('Completed! Redirecting...', 'booking-package'),
+					'text_failed'      => __('Installation failed.', 'booking-package'),
 				);
 				
 				wp_localize_script($handle, 'booking_package_install_addon_data', $localize_data);
@@ -5245,21 +5236,21 @@ Domain Path: /languages
 			
 			if (!$is_installed) {
 				
-				echo '<button type="button" id="booking-package-addon-install-btn" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html($this->_text('Install and Activate Add-on')) . '</button>';
+				echo '<button type="button" id="booking-package-addon-install-btn" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html(__('Install and Activate Add-on', 'booking-package')) . '</button>';
 				echo '<div id="booking-package-addon-install-status" style="margin-top: 12px; font-size: 13px; color: #2271b1; display: none;"></div>';
 				
 				echo '<div id="booking-package-addon-manual-fallback" style="margin-top: 15px; display: none; padding-top: 12px; border-top: 1px solid #dcdcde;">';
-				echo '<p style="margin: 0 0 8px; font-size: 13px; color: #d63638;">' . esc_html($this->_text('Automatic download failed. Please download the ZIP file below and select it to install:')) . '</p>';
+				echo '<p style="margin: 0 0 8px; font-size: 13px; color: #d63638;">' . esc_html(__('Automatic download failed. Please download the ZIP file below and select it to install:', 'booking-package')) . '</p>';
 				echo '<p style="margin: 0 0 10px;">';
-				echo '<a href="' . esc_url($download_url) . '" class="button" target="_blank" rel="noopener noreferrer">' . esc_html( sprintf( $this->_text('1. Download %s (ZIP)'), $this->addonName ) ) . '</a>';
+				echo '<a href="' . esc_url($download_url) . '" class="button" target="_blank" rel="noopener noreferrer">' . esc_html( sprintf( __('1. Download %s (ZIP)', 'booking-package'), $this->addonName ) ) . '</a>';
 				echo '</p>';
 				echo '<input type="file" name="pluginzip" accept=".zip" required style="margin-right: 8px;">';
-				echo '<button type="submit" class="button button-primary">' . esc_html($this->_text('2. Upload and Activate')) . '</button>';
+				echo '<button type="submit" class="button button-primary">' . esc_html(__('2. Upload and Activate', 'booking-package')) . '</button>';
 				echo '</div>';
 				
 			} else {
 				
-				echo '<button type="submit" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html($this->_text('Activate Add-on')) . '</button>';
+				echo '<button type="submit" class="button button-primary button-hero" style="font-weight: bold;">' . esc_html(__('Activate Add-on', 'booking-package')) . '</button>';
 				
 			}
 			
@@ -5326,7 +5317,7 @@ Domain Path: /languages
 
 			if (empty($_FILES['pluginzip']['name'])) {
 				
-				$msg = $this->_text('No plugin ZIP file was uploaded.');
+				$msg = __('No plugin ZIP file was uploaded.', 'booking-package');
 				if ($is_ajax) {
 					
 					wp_send_json_error(array('message' => $msg), 400);
@@ -5433,7 +5424,7 @@ Domain Path: /languages
 				
 			} else {
 				
-				$msg = $this->_text('Failed to activate the add-on plugin.');
+				$msg = __('Failed to activate the add-on plugin.', 'booking-package');
 				if ($is_ajax) {
 					
 					wp_send_json_error(array('message' => $msg), 500);
@@ -5474,9 +5465,10 @@ Domain Path: /languages
 					
 				}
 				
-				if (has_filter('booking_package_setting_looking_for_subscription')) {
+				/**
+				if (has_filter('booking_package_setting_activate_paid_subscription')) {
 
-					apply_filters('booking_package_setting_looking_for_subscription', $customer_id, $subscription_id);
+					apply_filters('booking_package_setting_activate_paid_subscription', $customer_id, $subscription_id);
 
 				} else if ($this->install_addon === 0) {
 					
@@ -5484,6 +5476,9 @@ Domain Path: /languages
 					$setting->lookingForSubscription($customer_id, $subscription_id);
 
 				}
+				 */
+				
+				$this->setting->lookingForSubscription($customer_id, $subscription_id);
 				
 				$setting_page_url = admin_url("admin.php?page=" . $this->plugin_name . "_setting_page&tab=subscriptionLink");
 				
@@ -5493,12 +5488,12 @@ Domain Path: /languages
 					
 					echo '<!DOCTYPE html><html ' . get_language_attributes() . '><head><meta charset="' . esc_attr(get_bloginfo('charset')) . '">';
 					echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
-					echo '<title>' . esc_html( sprintf( $this->_text('%s Required'), $this->addonName ) ) . '</title>';
+					echo '<title>' . esc_html( sprintf( __('%s Required', 'booking-package'), $this->addonName ) ) . '</title>';
 					wp_admin_css('buttons', true);
 					echo '</head><body class="wp-core-ui" style="background: #f0f0f1; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">';
 					echo '<div style="max-width: 600px; background: #fff; padding: 30px 35px; border-left: 4px solid #2271b1; box-shadow: 0 1px 3px rgba(0,0,0,0.13); border-radius: 4px;">';
-					echo '<h2 style="margin-top: 0; color: #1d2327; font-size: 20px;">' . esc_html( sprintf( $this->_text('Official "%s" Required'), $this->addonName) ) . '</h2>';
-					echo '<p style="font-size: 14px; line-height: 1.7; color: #3c434a; margin-bottom: 24px;">' . esc_html( sprintf( $this->_text('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.'), $this->addonName ) ) . '</p>';
+					echo '<h2 style="margin-top: 0; color: #1d2327; font-size: 20px;">' . esc_html( sprintf( __('Official "%s" Required', 'booking-package'), $this->addonName) ) . '</h2>';
+					echo '<p style="font-size: 14px; line-height: 1.7; color: #3c434a; margin-bottom: 24px;">' . esc_html( sprintf( __('Features including online payments, fee calculations, and notifications have moved to "%s". Please install and activate the add-on to continue using these features.', 'booking-package'), $this->addonName ) ) . '</p>';
 					$this->render_addon_install_form($setting_page_url);
 					echo '</div>';
 					wp_print_scripts('booking_package_download_addon');
@@ -5564,7 +5559,7 @@ Domain Path: /languages
 		public function getSubscriptions() {
 			
 			$setting = $this->setting;
-			$subscriptions = $setting->upgradePlan('get');
+			$subscriptions = $setting->getSubscriptionData('get');
 			unset($subscriptions["status"]);
 			/**
 			var_dump($subscriptions);
@@ -6183,6 +6178,13 @@ Domain Path: /languages
 			$screen->add_help_tab(array(
 				'id' => $this->prefix . 'bulkScheduleRegistration',
 				'title' => __('Bulk Schedule Registration', 'booking-package'),
+				'content' => $content,
+			));
+			
+			$content = $document->serviceAndGuestPricing();
+			$screen->add_help_tab(array(
+				'id' => $this->prefix . 'serviceAndGuestPricing',
+				'title' => __('Service and Guest Pricing Calculation', 'booking-package'),
 				'content' => $content,
 			));
 			
@@ -7051,6 +7053,8 @@ Domain Path: /languages
 				$dictionary['Despite having valid items, the functionality of "%s" is disabled.'] = __('Despite having valid items, the functionality of "%s" is disabled.', 'booking-package');
 				$dictionary["If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field."] = __("If you choose Select, Check, or Radio for the '%s' field, you need to add values to the '%s' field.", 'booking-package');
 				$dictionary['Advanced: Dynamically override values via filter hooks.'] = __("Advanced: Dynamically override values via filter hooks.", 'booking-package');
+				$dictionary['Note: %s'] = __("Note: %s", 'booking-package');
+				$dictionary['Service and Guest Pricing Calculation'] = __("Service and Guest Pricing Calculation", 'booking-package');
 				
 			} else if ($mode == "setting_page") {
 				
