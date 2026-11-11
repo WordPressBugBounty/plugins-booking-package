@@ -592,8 +592,7 @@
     
     Booking_Package_Hotel.prototype.addOptions = function(key, options, room) {
         
-        var clonedOptions = JSON.parse(JSON.stringify(options));
-        this._options[key] = clonedOptions;
+        this._options[key] = options;
         /** Rooms **/
         if (this._rooms[room] == null) {
             
@@ -601,7 +600,7 @@
             
         }
         this._roomNumber.push(room);
-        this._rooms[room]['options'][key] = clonedOptions;
+        this._rooms[room]['options'][key] = JSON.parse(JSON.stringify(options));
         this._console.log('room = ' + room);
         this._console.log(this._rooms);
         /** Rooms **/
@@ -616,8 +615,7 @@
     
     Booking_Package_Hotel.prototype.addGuests = function(key, guests, room){
         
-        var clonedGuests = JSON.parse(JSON.stringify(guests));
-        this._guestsList[key] = clonedGuests;
+        this._guestsList[key] = guests;
         /** Rooms **/
         if (this._rooms[room] == null) {
             
@@ -625,7 +623,7 @@
             
         }
         this._roomNumber.push(room);
-        this._rooms[room]['guests'][key] = clonedGuests;
+        this._rooms[room]['guests'][key] = JSON.parse(JSON.stringify(guests));
         this._console.log('room = ' + room);
         this._console.log(this._rooms);
         /** Rooms **/
