@@ -627,6 +627,26 @@
                         ? strtoupper($response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'])
                         : (isset($response['purchase_units'][0]['amount']['currency_code']) ? strtoupper($response['purchase_units'][0]['amount']['currency_code']) : '');
                     
+                    $zeroDecimalCurrencies = array('JPY', 'KRW', 'HUF', 'TWD', 'TRY', 'THB', 'COP', 'ARS', 'IDR');
+                    if (class_exists('booking_package_setting')) {
+                        
+                        $setting = new booking_package_setting($this->prefix, $this->pluginName);
+                        $currencies = $setting->getCurrencies();
+                        $currencyKey = strtolower($expectedCurrency);
+                        $digits = isset($currencies[$currencyKey]['ISOdigits']) ? intval($currencies[$currencyKey]['ISOdigits']) : (in_array(strtoupper($expectedCurrency), $zeroDecimalCurrencies, true) ? 0 : 2);
+                        
+                    } else {
+                        
+                        $digits = in_array(strtoupper($expectedCurrency), $zeroDecimalCurrencies, true) ? 0 : 2;
+                        
+                    }
+                    
+                    if ($digits > 0 && $paidAmount >= 0) {
+                        
+                        $paidAmount = $paidAmount * pow(10, $digits);
+                        
+                    }
+                    
                     if (intval(round($paidAmount)) !== intval($expectedAmount) || $paidCurrency !== strtoupper($expectedCurrency)) {
                         
                         $message['error'] = 'Payment amount or currency mismatch.';

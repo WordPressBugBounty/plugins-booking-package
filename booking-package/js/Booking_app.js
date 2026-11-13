@@ -5158,6 +5158,7 @@
                             checkBox.checked = false;
                             this.setAttribute("class", "selectable_service_slot");
                             courseList[parseInt(key)].selected = 0;
+                            courseList[parseInt(key)].selectedOptionsList = [];
                             //delete(selectedOptions[key]);
                             
                         } else {
@@ -5166,6 +5167,47 @@
                             this.setAttribute("class", "selectable_service_slot selected_service_slot");
                             courseList[parseInt(key)].selected = 1;
                             //selectedOptions[key] = option;
+                            
+                        }
+                        
+                        for (var i in courseList) {
+                            
+                            if (parseInt(i) != parseInt(key) && courseList[i].selected == 1 && courseList[i].options != null) {
+                                
+                                var otherOptions = JSON.parse(courseList[i].options);
+                                if (otherOptions.length > 0) {
+                                    
+                                    var hasSelectedOption = false;
+                                    if (Array.isArray(courseList[i].selectedOptionsList)) {
+                                        
+                                        for (var j = 0; j < courseList[i].selectedOptionsList.length; j++) {
+                                            
+                                            if (parseInt(courseList[i].selectedOptionsList[j].selected) == 1) {
+                                                
+                                                hasSelectedOption = true;
+                                                break;
+                                                
+                                            }
+                                            
+                                        }
+                                        
+                                    }
+                                    
+                                    if (hasSelectedOption === false) {
+                                        
+                                        courseList[i].selected = 0;
+                                        courseList[i].selectedOptionsList = [];
+                                        if (checkBoxList[i] != null) {
+                                            
+                                            checkBoxList[i].checked = false;
+                                            
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
                             
                         }
                         
@@ -5222,6 +5264,21 @@
                             animationBool = object.createOptions(month, day, year, animationBool, daysListPanel, courseMainPanel, scheduleMainPanel, weekDaysPanelList, calendarData, courseList[parseInt(key)], accountKey, function(response){
                                 
                                 object._console.log(response);
+                                if (response.cancel == 1) {
+                                    
+                                    courseList[parseInt(key)].selected = 0;
+                                    courseList[parseInt(key)].selectedOptionsList = [];
+                                    if (checkBox != null) {
+                                        
+                                        checkBox.checked = false;
+                                        
+                                    }
+                                    
+                                    table_row.setAttribute("class", "selectable_service_slot");
+                                    return;
+                                    
+                                }
+                                
                                 courseList[parseInt(key)].selectedOptionsList = response.selectedOptions;
                                 if (response.next == 1) {
                                     
@@ -5249,6 +5306,11 @@
                             });
                             
                         } else {
+                            
+                            var nextButton = document.getElementById("nextButton");
+                            nextButton.removeEventListener("check", null);
+                            nextButton.classList.add("hidden_panel");
+                            navigationPage.classList.add("hidden_panel");
                             
                             object.createSchedule(month, day, year, animationBool, daysListPanel, courseMainPanel, scheduleMainPanel, weekDaysPanelList, calendarData, courseList, null, accountKey, function(response){
                                 
@@ -5912,6 +5974,23 @@
         returnToDayListButton.removeEventListener("click", null);
         returnToDayListButton.onclick = function(){
             
+            var hasSelectedOption = false;
+            for (var i = 0; i < selectedOptions.length; i++) {
+                
+                if (parseInt(selectedOptions[i].selected) == 1) {
+                    
+                    hasSelectedOption = true;
+                    break;
+                    
+                }
+                
+            }
+            
+            if (hasSelectedOption === false) {
+                
+                callback({selectedOptions: [], next: 0, cancel: 1});
+                
+            }
             //courseMainPanel.style.top = null;
             object.setTopLengthOnServiceElementWithCSS(false);
             courseMainPanel.classList.remove("positionSticky");
@@ -5974,6 +6053,23 @@
             
             returnToDayListButton.classList.add("hidden_panel");
             returnToCalendarButton.classList.remove("hidden_panel");
+            var hasSelectedOption = false;
+            for (var i = 0; i < selectedOptions.length; i++) {
+                
+                if (parseInt(selectedOptions[i].selected) == 1) {
+                    
+                    hasSelectedOption = true;
+                    break;
+                    
+                }
+                
+            }
+            
+            if (hasSelectedOption === false) {
+                
+                callback({selectedOptions: [], next: 0, cancel: 1});
+                
+            }
             
         }
         
@@ -9495,12 +9591,8 @@
                     
                 }
                 
-                if (currency.toLocaleUpperCase() != 'JPY') {
-                    
-                    total = Number(total) / 100;
-                    total = total.toFixed(2);
-                    
-                }
+                total = object._format.formatGatewayAmount(total, currency);
+                
                 object._console.log("total = " + total);
                 var valueList = {};
                 var post = object.verifyForm("paypal", object._nonce, object._action, calendarData.date, schedule, courseList, formData, formPanelList, inputData, valueList, selectedOptions);

@@ -3,7 +3,7 @@
 Plugin Name: Booking Package
 Plugin URI:  https://saasproject.net/plans/
 Description: Booking Package is a high-performance booking calendar system that anyone can easily use.
-Version:     1.7.46
+Version:     1.7.47
 Author:      SAASPROJECT Booking Package
 Author URI:  https://saasproject.net/
 License:     GPL2
@@ -3530,6 +3530,9 @@ Domain Path: /languages
 								<div data-key="time" class="items" style="cursor: auto;">
 									<?php echo __("Time", 'booking-package'); ?>: 
 									<span><input type="time" id="change_booking_time" value="00:00" min="00:00" max="23:59" pattern="[0-9]{2}:[0-9]{2}" required style="cursor: pointer;"></span>
+									<div id="saved_time_slot_notice" class="hidden_panel" style="margin: 0.4em 0 0 0; font-size: 1em; font-weight: normal; color: #d63638;">
+										<?php echo __("The time of a saved time slot cannot be changed.", 'booking-package'); ?>
+									</div>
 								</div>
 								<!--
 								<div data-key="time" class="selectPanel closed">

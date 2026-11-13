@@ -2924,11 +2924,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         var timePanelList = {};
         var hourBlockList = {};
-        var minBlockList = {};
         var deadlineTimeList = {};
         var capacityBlockList = {};
         var remainderBlockList = {};
-        var dotList = {};
         
         if (scheduleData.length == 0) {
             
@@ -3035,13 +3033,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         timePanel.classList.add("hidden_panel");
                         hourBlockList[key].classList.remove("hidden_panel");
                         hourBlockList[key].classList.add("hour");
-                        hourBlockList[key].setAttribute("data-key", read.hour);
-                        hourBlockList[key].textContent = ("0" + read.hour).slice(-2);
-                        dotList[key].setAttribute("class", "dot");
-                        minBlockList[key].classList.remove("hidden_panel");
-                        minBlockList[key].classList.add("hour");
-                        minBlockList[key].setAttribute("data-key", read.min);
-                        minBlockList[key].textContent = ("0" + read.min).slice(-2);
+                        hourBlockList[key].setAttribute("data-hour", read.hour);
+                        hourBlockList[key].setAttribute("data-min", read.min);
+                        hourBlockList[key].textContent = ("0" + read.hour).slice(-2) + " : " + ("0" + read.min).slice(-2);
                         
                         deadlineTimeList[key].setAttribute("class", "min");
                         deadlineTimeList[key].setAttribute("data-key", read.deadline);
@@ -3113,33 +3107,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 object._console.log(this);
                 var select = this.getAttribute("data-select");
-                var values = getScheduleObject(this, "deadline", mode, object.template_schedule_list[select]);
+                var values = getScheduleObject(this, "time", mode, object.template_schedule_list[select]);
                 object._console.log(values);
                 
             };
             
-            var dot = object.create('span', ' : ', null, null, null, 'dot', null);
-            var minBlock = object.create('div', '', null, null, null, 'min', {select: i} );
-            minBlock.onclick = function(event){
-                
-                object._console.log(this);
-                var select = this.getAttribute("data-select");
-                var values = getScheduleObject(this, "deadline", mode, object.template_schedule_list[select]);
-                object._console.log(values);
-                
-            };
-            
-            var timePanel = object.create('div', 'access_time', [hourBlock, dot, minBlock], null, null, 'material-icons noTime', {select: i} );
+            var timePanel = object.create('div', 'access_time', null, null, null, 'material-icons noTime', {select: i} );
             timePanel.onclick = function() {
                 
                 object._console.log(this);
                 var select = this.getAttribute("data-select");
-                var values = getScheduleObject(this, "deadline", mode, object.template_schedule_list[select]);
+                var values = getScheduleObject(this, "time", mode, object.template_schedule_list[select]);
                 object._console.log(values);
                 
             };
             
-            var timeTd = object.create('td', null, [timePanel, hourBlock, dot, minBlock], 'time_slot_id_' + i, null, 'timeTd', null);
+            var timeTd = object.create('td', null, [timePanel, hourBlock], 'time_slot_id_' + i, null, 'timeTd', null);
             /**
             timeTd.onclick = function(event) {
                 
@@ -3190,9 +3173,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             timePanelList[i] = timePanel;
             hourBlockList[i] = hourBlock;
-            minBlockList[i] = minBlock;
             deadlineTimeList[i] = deadlineTimeBlock;
-            dotList[i] = dot;
             capacityBlockList[i] = capacityBlock;
             remainderBlockList[i] = remainderBlock;
             
@@ -3230,7 +3211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
             
-            var schedule_data = {hour: hourBlock, min: minBlock, title: titleBox, cost: null, capacity: capacityBlock, remainder: remainderBlock, stop: checkBox, delete: deletekBox, deadlineTime: deadlineTimeBlock};
+            var schedule_data = {hour: hourBlock, title: titleBox, cost: null, capacity: capacityBlock, remainder: remainderBlock, stop: checkBox, delete: deletekBox, deadlineTime: deadlineTimeBlock};
             
             if (scheduleData[i] != null) {
                 
@@ -3238,17 +3219,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 timePanel.setAttribute("class", "hidden_panel");
                 
-                hourBlock.textContent = ("0" + scheduleData[i]['hour']).slice(-2);
-                hourBlock.setAttribute("data-key", scheduleData[i]['hour']);
-                hourBlock.setAttribute("data-default", scheduleData[i]['hour']);
+                hourBlock.textContent = ("0" + scheduleData[i]['hour']).slice(-2) + " : " + ("0" + scheduleData[i]['min']).slice(-2);
+                hourBlock.setAttribute("data-hour", scheduleData[i]['hour']);
+                hourBlock.setAttribute("data-min", scheduleData[i]['min']);
+                hourBlock.setAttribute("data-default-hour", scheduleData[i]['hour']);
+                hourBlock.setAttribute("data-default-min", scheduleData[i]['min']);
                 hourBlock.setAttribute("class", "hour");
-                
-                dot.setAttribute("class", "dot");
-                
-                minBlock.textContent = ("0" + scheduleData[i]['min']).slice(-2);
-                minBlock.setAttribute("data-key", scheduleData[i]['min']);
-                minBlock.setAttribute("data-default", scheduleData[i]['min']);
-                minBlock.setAttribute("class", "min");
                 
                 var deadlineTime = scheduleData[i]['deadlineTime'];
                 deadlineTimeBlock.textContent = object._i18n.get("%s min before", [deadlineTime]);
@@ -3291,13 +3267,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         schedule_data['key'] = scheduleData[i]['key'];
                         
-                        hourBlock.onclick = null;
-                        minBlock.onclick = null;
-                        timePanel.onclick = null;
-                        hourBlock.style.cursor = 'default';
-                        minBlock.style.cursor = 'default';
-                        timePanel.style.cursor = 'default';
-                        
                     }
                     
                 } else {
@@ -3314,8 +3283,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 timePanel.setAttribute("class", "material-icons noTime");
                 hourBlock.setAttribute("class", "hidden_panel");
-                dot.setAttribute("class", "hidden_panel");
-                minBlock.setAttribute("class", "hidden_panel");
                 
             }
             
@@ -3329,8 +3296,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             object._console.log(scheduleObject);
             object._console.log("mode = " + mode);
-            var values = {};
-            var list = {hour: "hours", min: "minutes", deadlineTime: "deadline", capacity: "capacitys", remainder: "remainders"};
+            var defaultHour = scheduleObject.hour.getAttribute("data-default-hour") == null ? 0 : parseInt(scheduleObject.hour.getAttribute("data-default-hour"));
+            var defaultMin = scheduleObject.hour.getAttribute("data-default-min") == null ? 0 : parseInt(scheduleObject.hour.getAttribute("data-default-min"));
+            var values = {
+                hours: scheduleObject.hour.getAttribute("data-hour") == null ? defaultHour : parseInt(scheduleObject.hour.getAttribute("data-hour")),
+                minutes: scheduleObject.hour.getAttribute("data-min") == null ? defaultMin : parseInt(scheduleObject.hour.getAttribute("data-min")),
+            };
+            var list = {deadlineTime: "deadline", capacity: "capacitys", remainder: "remainders"};
             for (var key in list) {
                 
                 var value = list[key];
@@ -3357,16 +3329,20 @@ document.addEventListener('DOMContentLoaded', function() {
             //var panel = this;
             var select = panel.getAttribute("data-select");
             object._console.log(values);
-            object.selectionSchedulePanel(default_key, values.hours, values.minutes, values.deadline, values.capacitys, values.remainders, function(response) {
+            var isSavedSlot = (mode == 'getPublishedTimeSlots' && scheduleObject.key != null);
+            object.selectionSchedulePanel(default_key, values.hours, values.minutes, values.deadline, values.capacitys, values.remainders, isSavedSlot, function(response) {
                 
                 object._console.log(response);
-                var list = {hour: "hours", min: "minutes", deadlineTime: "deadline", capacity: "capacitys", remainder: "remainders"};
+                var list = {deadlineTime: "deadline", capacity: "capacitys", remainder: "remainders"};
                 if (response == null) {
                     
                     object.template_schedule_list[select].delete.checked = true;
                     timePanelList[select].textContent = "access_time";
                     timePanelList[select].setAttribute("class", "material-icons noTime");
-                    dotList[select].setAttribute("class", "hidden_panel");
+                    object.template_schedule_list[select].hour.removeAttribute("data-hour");
+                    object.template_schedule_list[select].hour.removeAttribute("data-min");
+                    object.template_schedule_list[select].hour.setAttribute("class", "hidden_panel");
+                    object.template_schedule_list[select].hour.textContent = "";
                     for (var key in list) {
                         
                         var value = list[key];
@@ -3382,11 +3358,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             object.template_schedule_list[select][key].setAttribute("class", "material-icons noPerson");
                             object.template_schedule_list[select][key].textContent = "person_add";
                             
-                        } else {
-                            
-                            object.template_schedule_list[select][key].setAttribute("class", "hidden_panel");
-                            object.template_schedule_list[select][key].textContent = "";
-                            
                         }
                         
                     }
@@ -3394,21 +3365,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     
                     object.template_schedule_list[select].delete.checked = false;
-                    panel.setAttribute("class", "hidden_panel");
-                    dotList[select].setAttribute("class", "dot");
+                    timePanelList[select].setAttribute("class", "hidden_panel");
+                    object.template_schedule_list[select].hour.setAttribute("data-hour", response.hours);
+                    object.template_schedule_list[select].hour.setAttribute("data-min", response.minutes);
+                    object.template_schedule_list[select].hour.setAttribute("class", "hour");
+                    object.template_schedule_list[select].hour.textContent = ("0" + response.hours).slice(-2) + " : " + ("0" + response.minutes).slice(-2);
                     for (var key in list) {
                         
                         var value = list[key];
                         object.template_schedule_list[select][key].setAttribute("data-key", response[value]);
-                        
                         object.template_schedule_list[select][key].setAttribute("class", "hour");
                         if (key == "deadlineTime") {
                             
                             object.template_schedule_list[select][key].textContent = object._i18n.get("%s min before", [response[value]]);
-                            
-                        } else if (key == 'hour' || key == 'min') {
-                            
-                            object.template_schedule_list[select][key].textContent = ("0" + response[value]).slice(-2);;
                             
                         } else {
                             
@@ -3486,7 +3455,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (
                         hourBlockList[parseInt(key)].classList.contains("hidden_panel") === false && 
-                        minBlockList[parseInt(key)].classList.contains("hidden_panel") === false && 
                         capacityBlockList[parseInt(key)].classList.contains("hidden_panel") === false
                     ) {
                         
@@ -3521,7 +3489,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (
                     hourBlockList[parseInt(key)].classList.contains("hidden_panel") === false && 
-                    minBlockList[parseInt(key)].classList.contains("hidden_panel") === false && 
                     capacityBlockList[parseInt(key)].classList.contains("hidden_panel") === false
                 ) {
                     
@@ -3553,7 +3520,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
     };
     
-    SCHEDULE.prototype.selectionSchedulePanel = function(default_key ,hours, minutes, deadline, capacitys, remainders, callback) {
+    SCHEDULE.prototype.selectionSchedulePanel = function(default_key ,hours, minutes, deadline, capacitys, remainders, isSavedSlot, callback) {
         
         var object = this;
         object._console.log("default_key = " + default_key);
@@ -3572,6 +3539,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var selectionSchedule = document.getElementById("selectionSchedule");
         let input_time = document.getElementById('change_booking_time');
         input_time.value = '00:00';
+        var saved_time_slot_notice = document.getElementById('saved_time_slot_notice');
+        if (isSavedSlot === true) {
+            
+            input_time.disabled = true;
+            input_time.style.cursor = 'not-allowed';
+            if (saved_time_slot_notice != null) {
+                
+                saved_time_slot_notice.classList.remove('hidden_panel');
+                
+            }
+            
+        } else {
+            
+            input_time.disabled = false;
+            input_time.style.cursor = 'pointer';
+            if (saved_time_slot_notice != null) {
+                
+                saved_time_slot_notice.classList.add('hidden_panel');
+                
+            }
+            
+        }
         
         var items = {};
         var itemsList = selectionSchedule.getElementsByClassName("items");
@@ -3661,7 +3650,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             var key = valuesList[i].getAttribute("data-key");
             
-            if (key == default_key) {
+            if (key == default_key || (default_key == "time" && key == "deadline")) {
                 
                 valuesList[i].classList.add("openAnimation");
                 valuesList[i].classList.remove("closeAnimation");
@@ -3752,6 +3741,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         selectionSchedule.classList.remove("hidden_panel");
+        if (default_key == "time" && isSavedSlot !== true) {
+            
+            input_time.focus();
+            
+        }
         
         var selectionSchedule_hours = document.getElementById("selectionSchedule_hours");
         
@@ -3773,9 +3767,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (callback != null) {
                 
-                let [hours, minutes] = input_time.value.split(':');
-                schedule.hours = hours;
-                schedule.minutes = minutes;
+                if (isSavedSlot !== true) {
+                    
+                    let [hours, minutes] = input_time.value.split(':');
+                    schedule.hours = hours;
+                    schedule.minutes = minutes;
+                    
+                }
                 
                 if (schedule.remainders != null && parseInt(schedule.remainders) > parseInt(schedule.capacitys)) {
                     
@@ -3858,18 +3856,18 @@ document.addEventListener('DOMContentLoaded', function() {
             var minValue = null;
             var capacityValue = null;
             var deadlineTimeValue = 0;
-            if (data['hour'].getAttribute("data-key") != null && data['min'].getAttribute("data-key") != null && data['capacity'].getAttribute("data-key") != null) {
+            if (data['hour'].getAttribute("data-hour") != null && data['hour'].getAttribute("data-min") != null && data['capacity'].getAttribute("data-key") != null) {
                     
-                hourValue = data['hour'].getAttribute("data-key");
-                minValue = data['min'].getAttribute("data-key");
+                hourValue = data['hour'].getAttribute("data-hour");
+                minValue = data['hour'].getAttribute("data-min");
                 capacityValue = data['capacity'].getAttribute("data-key");
                 
             } else {
                 
-                if (data['hour'].getAttribute("data-default") != null && data['min'].getAttribute("data-default") != null && data['capacity'].getAttribute("data-default") != null) {
+                if (data['hour'].getAttribute("data-default-hour") != null && data['hour'].getAttribute("data-default-min") != null && data['capacity'].getAttribute("data-default") != null) {
                     
-                    hourValue = data['hour'].getAttribute("data-default");
-                    minValue = data['min'].getAttribute("data-default");
+                    hourValue = data['hour'].getAttribute("data-default-hour");
+                    minValue = data['hour'].getAttribute("data-default-min");
                     capacityValue = data['capacity'].getAttribute("data-default");
                     
                 }

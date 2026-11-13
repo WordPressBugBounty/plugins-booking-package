@@ -2350,6 +2350,39 @@
         
     };
     
+    FORMAT_COST.prototype.getCurrencyDigits = function (currency) {
+        
+        var object = this;
+        var code = String(currency || '').toLowerCase();
+        if (object._currency_info != null && object._currency_info.info != null && typeof object._currency_info.info.ISOdigits !== 'undefined') {
+            
+        return parseInt(object._currency_info.info.ISOdigits);
+        
+        }
+            
+        var zeroDecimalCurrencies = ['jpy', 'krw', 'huf', 'twd', 'try', 'thb', 'cop', 'ars', 'idr'];
+        if (zeroDecimalCurrencies.indexOf(code) !== -1) {
+                
+            return 0;
+            
+        }
+        
+        return 2;
+    };
+    
+    FORMAT_COST.prototype.formatGatewayAmount = function (cost, currency) {
+        
+        var digits = this.getCurrencyDigits(currency);
+        var numericCost = Number(cost) || 0;
+        if (digits > 0) {
+            
+            return (numericCost / Math.pow(10, digits)).toFixed(digits);
+            
+        }
+        
+        return String(Math.round(numericCost));
+        
+    };
     
     function FORMAT_COST(i18n, debug, numberFormatter, currency_info) {
     	
@@ -2394,8 +2427,11 @@
             if (object._currency_info.info.ISOdigits !== 0) {
                 
                 let digits = object._currency_info.info.ISOdigits;
-                var costString = cost.toString();
-                cost = costString.slice(0, -digits) + '.' + costString.slice(-digits);
+                if (digits > 0) {
+                    
+                    cost = (Number(cost) / Math.pow(10, digits)).toFixed(digits);
+                    
+                }
                 
             }
             
